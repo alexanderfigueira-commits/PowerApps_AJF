@@ -1,0 +1,195 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  Success Screen:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+    Children:
+      - CircleIcon:
+          Control: Circle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =184
+      - SuccessIcon:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Height: =CircleIcon.Height
+            Icon: =Icon.Check
+            PaddingBottom: =Self.PaddingTop
+            PaddingLeft: =Self.PaddingTop
+            PaddingRight: =Self.PaddingTop
+            PaddingTop: =24
+            PressedFill: =RGBA(255, 255, 255, 0.3)
+            Width: =CircleIcon.Width
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =184
+      - SuccessMessage:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 0, 0, 1)
+            Font: =Font.'Open Sans'
+            Height: =CircleIcon.Height
+            Size: =20
+            Text: ="Your request for a coverage was successfully submitted."
+            Width: =Parent.Width * 0.75
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =309
+      - ReturnFormButton:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =46
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =ResetForm(CoverageFormRequest); 
+              NewForm(CoverageFormRequest);
+              Navigate(FormScreen);
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Return to a New Form"
+            Width: =270
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =627
+      - RequestNumberValue:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Size: =32
+            Text: =CoverageFormRequest.LastSubmit.ID
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =515
+      - RequestNumberTitle:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(102, 102, 102, 1)
+            BorderStyle: =BorderStyle.Dashed
+            BorderThickness: =1
+            Font: =Font.'Open Sans'
+            Height: =137
+            Overflow: =Overflow.Scroll
+            PaddingTop: =20
+            Size: =20
+            Text: |-
+              ="Your request number is: "
+            Width: =406
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =441
+      - ContactMessage:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 0, 0, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Lighter
+            Height: =CircleIcon.Height
+            Size: =14
+            Text: ="Your request number was sent to your email address. Our team will contact you soon."
+            Width: =Parent.Width * 0.75
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =364
+      - HeaderContainer1_2:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =125
+            LayoutDirection: =LayoutDirection.Horizontal
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =1366
+          Children:
+            - Logo_EC_Form_2:
+                Control: Image@2.2.3
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Height: =125
+                  Image: ='logo--en'
+                  LayoutMaxHeight: =
+                  LayoutMaxWidth: =
+                  PaddingLeft: =15
+                  Width: =310
+            - Home_Header_3:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  AccessibleLabel: ="This is the header of the application containing the EC Logo and the Title of the Page"
+                  Align: =Align.Center
+                  AlignInContainer: =AlignInContainer.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 255, 255, 1)
+                  Default: |-
+                    ="Coverage Request    ⬛🟨🟥"
+                  DisplayMode: =DisplayMode.View
+                  Fill: =RGBA(0, 18, 107, 1)
+                  Font: =Font.Verdana
+                  Height: =63
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(0, 18, 107, 1)
+                  LayoutMaxHeight: =
+                  LayoutMaxWidth: =
+                  Size: =24
+                  Width: =900
+                  X: =320
+                  Y: =40
+            - Icon19_1:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AlignInContainer: =AlignInContainer.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Height: =40
+                  HoverColor: =ColorFade(Self.Color, 50%)
+                  Icon: =Icon.AddToCalendar
+                  LayoutMaxHeight: =
+                  LayoutMaxWidth: =
+                  OnSelect: |-
+                    =ResetForm(CoverageFormRequest); 
+                    NewForm(CoverageFormRequest);
+                    Navigate('Future Coverages');
+                  Tooltip: ="Future Coverages"
+                  Width: =75
+                  X: =41
+                  Y: =704
+            - Image1_1:
+                Control: Image@2.2.3
+                Properties:
+                  AlignInContainer: =AlignInContainer.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Height: =60
+                  Image: =User().Image
+                  LayoutMaxHeight: =
+                  LayoutMaxWidth: =
+                  RadiusBottomLeft: =3
+                  RadiusBottomRight: =3
+                  RadiusTopLeft: =3
+                  RadiusTopRight: =3
+                  Tooltip: |-
+                    =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                    Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+                  Width: =60
