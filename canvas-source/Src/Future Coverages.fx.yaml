@@ -1,0 +1,818 @@
+"'Future Coverages' As screen":
+    OnVisible: |-
+        =
+        ClearCollect(
+            AllRecords,
+            FirstN(
+                SortByColumns('Coverage Request (Belgium)', "Created", SortOrder.Descending),
+                2000
+            )
+        );
+        
+        
+        ClearCollect(
+            FilterOptions,
+            {Name: "Future Coverage", FilterFunction: "Future"},
+            {Name: "Last 2 Months Submissions", FilterFunction: "Last2Months"},
+            {Name: "Both", FilterFunction: "Both"},
+            {Name: "none", FilterFunction: "none"}
+        );
+        
+        If(
+            CountRows(FutureCoveragesGallery.AllItems) > 0,
+            Select(FutureCoveragesGallery,1)
+        );
+
+    Rectangle4 As rectangle:
+        BorderColor: =RGBA(149, 149, 149, 1)
+        BorderThickness: =2
+        Fill: =RGBA(0, 0, 0, 0)
+        Height: =608
+        Width: =343
+        X: =98
+        Y: =125
+        ZIndex: =1
+
+    "FutureCoveragesGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
+        BorderColor: =RGBA(9, 33, 98, 0.65)
+        BorderThickness: =2
+        DelayItemLoading: =true
+        Fill: =RGBA(237, 237, 237, 0.78)
+        Height: =605
+        Items: |-
+            =SortByColumns(
+                Filter(
+                    AllRecords,
+                    'Created By'.Email = User().Email && (DropdownFilterByStatus.Selected.Value = "All Status" || Status.Value = DropdownFilterByStatus.SelectedText.Value) &&
+                     Switch(
+                        LookUp(FilterOptions, Name = DropdownFilterByCoverageSubmission.Selected.Name).FilterFunction,
+                        "Future", 'Start Date and Time' >= Today(),
+                        "Last2Months", Created > DateAdd(Today(), -60),
+                        "Both", 'Start Date and Time' >= Today() || Created > DateAdd(Today(), -60),
+                        "none", true,
+                        true  // Default to true to show all items if no filter is selected
+                     )
+                ),
+                Text(DropdownSortOrderByDate.Selected.FilterColumn), 
+                DropdownSortOrderBy.Selected.Value
+            )
+            
+            
+            /*
+            SortByColumns(
+                Filter(
+                    'Coverage Request (Belgium)', 
+                    'Created By'.Email = User().Email && ('Start Date and Time' >= Today() || Created > DateAdd(Today(), -60))
+                ), 
+                Text(DropdownSortOrderByDate.Selected.FilterColumn), 
+                DropdownSortOrderBy.Selected.Value
+            )
+            */
+        Layout: =Layout.Vertical
+        LoadingSpinner: =LoadingSpinner.Data
+        TemplatePadding: =0
+        TemplateSize: =521
+        Width: =777
+        X: =476
+        Y: =128
+        ZIndex: =2
+
+        Rectangle3 As rectangle:
+            BorderThickness: =1
+            Fill: =If(ThisItem.IsSelected, RGBA(214, 223, 238, 1), RGBA(0, 0, 0, 0))
+            Height: =502
+            OnSelect: =Select(Parent)
+            Width: =760
+            X: =4
+            Y: =4
+            ZIndex: =1
+
+        EventTitle As label:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 1)
+            Color: =RGBA(71, 69, 64, 1)
+            DisabledColor: =RGBA(186, 186, 186, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =45
+            OnSelect: =Select(Parent)
+            Overflow: =Overflow.Scroll
+            Size: =12
+            Text: =ThisItem.'Event Title'
+            VerticalAlign: =VerticalAlign.Top
+            Width: =674
+            X: =52
+            Y: =58
+            ZIndex: =2
+
+        Subtitle1 As label:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 1)
+            Color: =RGBA(71, 69, 64, 1)
+            DisabledColor: =RGBA(186, 186, 186, 1)
+            FontWeight: =If(ThisItem.IsSelected, FontWeight.Bold, FontWeight.Normal)
+            Height: =25
+            OnSelect: =Select(Parent)
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            Text: =ThisItem.ID
+            VerticalAlign: =VerticalAlign.Top
+            Width: =54
+            X: =17
+            Y: =30
+            ZIndex: =3
+
+        Separator1 As rectangle:
+            BorderColor: =RGBA(0, 0, 255, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =12
+            OnSelect: =Select(Parent)
+            Width: =786
+            Y: =509
+            ZIndex: =4
+
+        Rectangle1 As rectangle:
+            Height: =503
+            OnSelect: =Select(Parent)
+            Visible: =ThisItem.IsSelected
+            Width: =4
+            Y: =4
+            ZIndex: =5
+
+        CreatedOn As label:
+            Align: =Align.Right
+            Color: =RGBA(166, 166, 166, 1)
+            Height: =32
+            OnSelect: =Select(Parent)
+            Size: =11
+            Text: |-
+                =Text(ThisItem.Created, "[$-en-US]dd/mm/yyyy   hh:mm", "en-US")
+            Tooltip: ="Creation Date"
+            Width: =162
+            X: =589
+            Y: =13
+            ZIndex: =6
+
+        Commisioner As label:
+            Align: =Align.Center
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            OnSelect: =Select(Parent)
+            Size: =14
+            Text: =ThisItem.'College Member'.Value
+            Width: =400
+            X: =185
+            Y: =26
+            ZIndex: =7
+
+        StartDateTime As label:
+            BorderColor: =RGBA(202, 202, 202, 1)
+            BorderStyle: =BorderStyle.Dashed
+            BorderThickness: =1
+            Fill: =RGBA(237, 237, 237, 1)
+            Height: =55
+            OnSelect: =Select(Parent)
+            Overflow: =Overflow.Scroll
+            PaddingLeft: =15
+            PaddingRight: =10
+            Text: |-
+                = "From     " & Text(ThisItem.'Start Date and Time', "[$-en-US]dd/mm/yyyy      hh:mm", "en-US") & Char(10) &
+                 "To          " & Text(ThisItem.'End Date and Time', "[$-en-US]dd/mm/yyyy      hh:mm", "en-US")
+            Width: =270
+            X: =50
+            Y: =103
+            ZIndex: =8
+
+        LocationSelected As label:
+            Color: =RGBA(116, 116, 116, 1)
+            Height: =20
+            OnSelect: =Select(Parent)
+            Size: =11
+            Text: =ThisItem.Location.Value
+            Width: =262
+            X: =50
+            Y: =167
+            ZIndex: =9
+
+        Address As label:
+            BorderColor: =RGBA(202, 202, 202, 1)
+            BorderStyle: =BorderStyle.Dashed
+            BorderThickness: =1
+            Fill: =RGBA(237, 237, 237, 1)
+            Height: =55
+            OnSelect: =Select(Parent)
+            Overflow: =Overflow.Scroll
+            Text: =ThisItem.Address
+            Width: =671
+            X: =50
+            Y: =187
+            ZIndex: =10
+
+        Label42 As label:
+            Color: =RGBA(116, 116, 116, 1)
+            Height: =24
+            OnSelect: =Select(Parent)
+            Size: =10
+            Text: ="Type(s) of Event"
+            Tooltip: |
+                =Concat(ThisItem.'Event Type', "- " & Value & Char(10))
+            X: =56
+            Y: =253
+            ZIndex: =12
+
+        Label42_1 As label:
+            Color: =RGBA(116, 116, 116, 1)
+            Height: =27
+            OnSelect: =Select(Parent)
+            Size: =10
+            Text: ="Type(s) of Coverage"
+            Tooltip: |
+                =Concat(ThisItem.'Coverage Type', "- " & Value & Char(10))
+            Width: =181
+            X: =296
+            Y: =252
+            ZIndex: =13
+
+        Label42_2 As label:
+            Color: =RGBA(116, 116, 116, 1)
+            Height: =27
+            OnSelect: =Select(Parent)
+            Size: =10
+            Text: ="Type of Publication"
+            Tooltip: |
+                =ThisItem.'Publication Type'.Value
+            Width: =215
+            X: =506
+            Y: =252
+            ZIndex: =14
+
+        AccreditationInfo As icon.Information:
+            Color: |
+                =If(ThisItem.IsSelected,
+                    If(IsBlank(ThisItem.'Accreditation Info'), RGBA(0, 18, 107, 0.1), RGBA(0, 18, 107, 1)),
+                    If(IsBlank(ThisItem.'Accreditation Info'), RGBA(100, 100, 100, 0.1), RGBA(100, 100, 100, 0.8))
+                )
+            Height: =30
+            Icon: =Icon.DockRight
+            OnSelect: =Select(Parent)
+            Tooltip: |-
+                ="Contacts and Detailed Info for Accreditation:" & Char(10) & Char(10) & ThisItem.'Accreditation Info'
+            Width: =30
+            X: =147
+            Y: =401
+            ZIndex: =15
+
+        Comments As icon.Message:
+            Color: |
+                =If(ThisItem.IsSelected,
+                    If(IsBlank(ThisItem.Comments), RGBA(0, 18, 107, 0.1), RGBA(0, 18, 107, 1)),
+                    If(IsBlank(ThisItem.Comments), RGBA(100, 100, 100, 0.1), RGBA(100, 100, 100, 0.8))
+                )
+            Height: =30
+            Icon: =Icon.Message
+            OnSelect: =Select(Parent)
+            Tooltip: |-
+                ="Comments:" & Char(10) & Char(10) & ThisItem.Comments
+            Width: =30
+            X: =226
+            Y: =425
+            ZIndex: =16
+
+        Accompanying As icon.People:
+            Color: |
+                =If(ThisItem.IsSelected,
+                    If(IsBlank(ThisItem.'Accompanying the Commissioner'), RGBA(0, 18, 107, 0.1), RGBA(0, 18, 107, 1)),
+                    If(IsBlank(ThisItem.'Accompanying the Commissioner'), RGBA(100, 100, 100, 0.1), RGBA(100, 100, 100, 0.8))
+                )
+            Height: =30
+            Icon: =Icon.People
+            OnSelect: =Select(Parent)
+            Tooltip: |-
+                ="Accompanying the Commissioner:" & Char(10) & Char(10) & ThisItem.'Accompanying the Commissioner'
+            Width: =30
+            X: =79
+            Y: =401
+            ZIndex: =17
+
+        Receivers As icon.Send:
+            Color: |
+                =If(ThisItem.IsSelected,
+                    If(IsBlank(ThisItem.'Media Receivers'), RGBA(0, 18, 107, 0.1), RGBA(0, 18, 107, 1)),
+                    If(IsBlank(ThisItem.'Media Receivers'), RGBA(100, 100, 100, 0.1), RGBA(100, 100, 100, 0.8))
+                )
+            Height: =30
+            Icon: =Icon.Newspaper
+            OnSelect: =Select(Parent)
+            Tooltip: |-
+                ="Media Receivers:" & Char(10) & Char(10) & ThisItem.'Media Receivers'
+            Width: =30
+            X: =79
+            Y: =452
+            ZIndex: =18
+
+        ListBox1 As listbox:
+            BorderColor: =RGBA(202, 202, 202, 1)
+            BorderStyle: =BorderStyle.Dashed
+            BorderThickness: =1
+            Default: =""
+            DisabledColor: =RGBA(186, 186, 186, 0.5)
+            DisabledSelectionColor: =RGBA(244, 244, 244, 0.5)
+            DisabledSelectionFill: =RGBA(166, 166, 166, 0.5)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(237, 237, 237, 1)
+            Height: =92
+            Items: =ThisItem.'Event Type'
+            LineHeight: =1.0
+            OnSelect: =Select(Parent)
+            Size: =12
+            Width: =217
+            X: =52
+            Y: =279
+            ZIndex: =19
+
+        ListBox1_1 As listbox:
+            BorderColor: =RGBA(202, 202, 202, 1)
+            BorderStyle: =BorderStyle.Dashed
+            BorderThickness: =1
+            Default: =""
+            DisabledColor: =RGBA(186, 186, 186, 0.5)
+            DisabledSelectionColor: =RGBA(244, 244, 244, 0.5)
+            DisabledSelectionFill: =RGBA(166, 166, 166, 0.5)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(237, 237, 237, 1)
+            Height: =92
+            Items: =ThisItem.'Coverage Type'
+            LineHeight: =1.0
+            OnSelect: =Select(Parent)
+            Size: =12
+            Width: =185
+            X: =293
+            Y: =279
+            ZIndex: =20
+
+        ListBox1_2 As listbox:
+            BorderColor: =RGBA(202, 202, 202, 1)
+            BorderStyle: =BorderStyle.Dashed
+            BorderThickness: =1
+            Default: =""
+            DisabledColor: =RGBA(186, 186, 186, 0.5)
+            DisabledSelectionColor: =RGBA(244, 244, 244, 0.5)
+            DisabledSelectionFill: =RGBA(166, 166, 166, 0.5)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(237, 237, 237, 1)
+            Height: =92
+            Items: =ThisItem.'Publication Type'
+            LineHeight: =1.0
+            OnSelect: =Select(Parent)
+            Size: =12
+            Width: =217
+            X: =506
+            Y: =279
+            ZIndex: =21
+
+        Icon14_1 As icon.Video:
+            Height: =30
+            Icon: =Icon.Video
+            OnSelect: =Select(Parent)
+            Tooltip: |
+                ="Coverage Type: " & Char(10) & ThisItem.'Event Coverage Type'.Value & Char(10) & Char(10) &
+                "Webstreamed: " & Char(10) &ThisItem.Webstreamed.Value & Char(10) & Char(10) &
+                "Webstreamed Organizer: " & Char(10) &
+                ThisItem.'Webstreamed Organizer'
+            Visible: |
+                =If(
+                    !IsBlank(
+                        LookUp(ThisItem.'Coverage Type', Value = "Video Coverage")
+                    ),
+                    true,
+                    false
+                )
+            Width: =30
+            X: =439
+            Y: =341
+            ZIndex: =22
+
+        AttachedDocuments As listbox:
+            BorderColor: =If(ThisItem.IsSelected, RGBA(0, 18, 107, 1), RGBA(0, 0, 0, 0))
+            Default: =""
+            Height: =88
+            Items: =ThisItem.Attachments
+            OnSelect: |
+                =/*
+                If(
+                    !IsBlank(AttachedDocuments.Selected),
+                    Launch(AttachedDocuments.Selected.AbsoluteUri)
+                )
+                */
+            SelectMultiple: =false
+            Width: =416
+            X: =308
+            Y: =405
+            ZIndex: =23
+
+        DocsLabel As label:
+            Align: =Align.Center
+            Color: =RGBA(116, 116, 116, 1)
+            Height: =28
+            OnSelect: =Select(Parent)
+            Size: =11
+            Text: ="Select the Attachments to Open/Download "
+            Width: =416
+            X: =308
+            Y: =377
+            ZIndex: =24
+
+        DownloadIcon As icon.Download:
+            BorderThickness: =1
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =30
+            Icon: =Icon.Download
+            OnSelect: =Launch(AttachedDocuments.Selected.AbsoluteUri)
+            PaddingBottom: =5
+            PaddingLeft: =5
+            PaddingRight: =5
+            PaddingTop: =5
+            Visible: =ThisItem.IsSelected && !IsBlank(AttachedDocuments.Selected)
+            Width: =30
+            X: =731
+            Y: =452
+            ZIndex: =25
+
+        Button1_2 As button:
+            DisplayMode: =If(ThisItem.IsSelected, DisplayMode.Edit, DisplayMode.Disabled)
+            Fill: =RGBA(0, 18, 107, 0.82)
+            FontWeight: =FontWeight.Normal
+            Height: =55
+            OnSelect: |+
+                =
+                Set(
+                    currentSubmission,
+                    LookUp('Coverage Request (Belgium)', ID = ThisItem.ID)
+                );
+                
+                Set(ResetCheckboxes, true);
+                Set(ResetCheckboxes, false);
+                
+                Set(varEventTypes, Blank());
+                Set(otherEventValue, Blank());
+                Set(VIPEventValue, Blank());
+                
+                Set(VideoCoverageSelected, false);
+                Set(OnlyBilateralOtherVIPSelected, false);
+                Set(varEventCoverageType, Blank());
+                Set(varWebstreamed, Blank());
+                Set(varWebstreamedOrganizer, Blank());
+                Reset(CoverageTypeRadio);
+                Reset(WebstreamedRadio);
+                Reset(WebstreamedOrganizerText);
+                
+                Set(varCarbonCopyContactsString, Blank());
+                Set(varCarbonCopyContactsArray, Blank());
+                Set(varCarbonCopyContactsFormattedArray, Table());
+                Reset(CarbonCopyContactComboBox);
+                
+                ResetForm(CoverageFormRequest);
+                NewForm(CoverageFormRequest);
+                
+                Set(varCollegeMember, currentSubmission.'College Member');
+                Set(varEventTitle, currentSubmission.'Event Title');
+                
+                Set(varStartDateTime, currentSubmission.'Start Date and Time');
+                Set(varStartDate, DateValue(Text(varStartDateTime, "mm-dd-yyyy"), "en-US"));
+                // Set(varStartHour, Text(If(Mod(Hour(varStartDateTime),12) = 0, 12, Mod(Hour(varStartDateTime), 12)), "[$-en-US]00"));
+                // Set(varStartAMPM, If(Hour(varStartDateTime) <12, "[$-en-US]AM", "PM"));
+                Set(varStartHour, Text(Hour(varStartDateTime), "[$-en-US]00")); 
+                Set(varStartMinute, Text(Minute(varStartDateTime), "00"));
+                
+                Set(varEndDateTime, currentSubmission.'End Date and Time');
+                Set(varEndDate, DateValue(Text(varEndDateTime, "mm-dd-yyyy"), "en-US"));
+                // Set(varEndHour, Text(If(Mod(Hour(varEndDateTime),12) = 0, 12, Mod(Hour(varEndDateTime), 12)), "[$-en-US]00"));
+                // Set(varEndAMPM, If(Hour(varEndDateTime) <12, "[$-en-US]AM", "PM"));
+                Set(varEndHour, Text(Hour(varEndDateTime), "[$-en-US]00")); 
+                Set(varEndMinute, Text(Minute(varEndDateTime), "00"));
+                
+                Set(varLocation, currentSubmission.Location);
+                Set(varAddress, currentSubmission.Address);
+                
+                Set(varEventTypes, currentSubmission.'Event Type');
+                Set(TypeofEventSelected, EventTypeDropdown.SelectedItems.Value);
+                
+                Set(matchingOtherItem, First(Filter(varEventTypes, StartsWith(Value, "Other: "))));
+                If(!IsBlank(matchingOtherItem),
+                    Set(otherEventValue, Mid(matchingOtherItem.Value, Len("Other :") + 1, Len(matchingOtherItem.Value))),
+                    Set(otherEventValue, "")
+                );
+                
+                Set(matchingVIPItem, First(Filter(varEventTypes, StartsWith(Value, "VIP: "))));
+                If(!IsBlank(matchingVIPItem),
+                    Set(VIPEventValue, Mid(matchingVIPItem.Value, Len("VIP:") + 1, Len(matchingVIPItem.Value))),
+                    Set(VIPEventValue, "")
+                );
+                
+                Set(
+                varEventTypes,
+                    ForAll(
+                        varEventTypes,
+                        Switch(
+                            true,
+                            StartsWith(Value, "Other: "), {Value: "Other"},
+                            StartsWith(Value, "VIP: "), {Value: "Bilateral with other VIP/s"},
+                            {Value: Value} // Default case
+                        )
+                    )
+                );
+                
+                Set(varCoverageTypes, currentSubmission.'Coverage Type');
+                If("Video Coverage" in CoverageTypeDropdown.SelectedItems.Value, Set(VideoCoverageSelected, true));
+                If("Bilateral with other VIP/s" in varEventTypes.Value && CountRows(varEventTypes) = 1, Set(OnlyBilateralOtherVIPSelected, true));
+                
+                Set(varEventCoverageType, currentSubmission.'Event Coverage Type');
+                Set(varWebstreamed, currentSubmission.Webstreamed);
+                Set(varWebstreamedOrganizer, currentSubmission.'Webstreamed Organizer');
+                
+                Set(varPublicationType, currentSubmission.'Publication Type');
+                
+                Set(varContacts, currentSubmission.'Accreditation Info');
+                Set(varSocialMediaContacts, currentSubmission.'Media Receivers');
+                Set(varTravelWithCommissionerContacts, currentSubmission.'Accompanying the Commissioner');
+                Set(varComments, currentSubmission.Comments);
+                
+                Set(varCarbonCopyContactsString, currentSubmission.'Carbon Copy Contacts');
+                Set(varCarbonCopyContactsArray, Split(Trim(currentSubmission.'Carbon Copy Contacts'), ";"));
+                
+                Set(
+                    varCarbonCopyContactsFormattedArray,
+                    ForAll(
+                        varCarbonCopyContactsArray,
+                        {
+                            DisplayName: ThisRecord.Value,
+                            Mail: TrimEnds(ThisRecord.Value)
+                        }
+                    )
+                );
+                
+                Navigate(FormScreen);
+                
+                Notify("The form has been filled with your last submission data " 
+                        & "[ID: " & currentSubmission.ID & "]  [Created on: " & Text(currentSubmission.Created, "dd/mm/yyyy hh:mm AM/PM") & "]", 
+                    NotificationType.Success);
+                
+                
+                
+                
+            RadiusBottomLeft: =5
+            RadiusBottomRight: =5
+            RadiusTopLeft: =5
+            RadiusTopRight: =5
+            Size: =11
+            Text: ="Auto-Fill Current Data"
+            Width: =114
+            X: =607
+            Y: =103
+            ZIndex: =26
+
+        StartDateTime_1 As label:
+            Align: =Align.Center
+            BorderColor: =RGBA(202, 202, 202, 1)
+            BorderStyle: =BorderStyle.Dashed
+            BorderThickness: =1
+            Fill: =RGBA(237, 237, 237, 1)
+            Height: =55
+            OnSelect: =Select(Parent)
+            Size: =11
+            Text: |-
+                =With(
+                    {
+                        totalMinutes: DateDiff(
+                        ThisItem.'Start Date and Time',
+                        ThisItem.'End Date and Time',
+                        TimeUnit.Minutes
+                        )
+                    },
+                
+                  Text(
+                            Int(totalMinutes / 1440) & " days, " & Char(10) &
+                            Int(Mod(totalMinutes, 1440) / 60) & " hours, " & Char(10) &
+                            Mod(totalMinutes, 60) & " minutes"
+                        ) 
+                )
+            Width: =123
+            X: =333
+            Y: =103
+            ZIndex: =27
+
+        Label6 As label:
+            Align: =Align.Center
+            BorderColor: =RGBA(149, 149, 149, 1)
+            BorderThickness: =2
+            Fill: |+
+                =Switch(
+                    ThisItem.Status.Value,
+                    "New", RGBA(200, 200, 200, 1),           // Soft Grey
+                    "Pending Approval", RGBA(255, 255, 150, 1), // Soft Yellow
+                    "Accepted", RGBA(150, 255, 150, 1),       // Soft Green
+                    "Declined", RGBA(255, 150, 150, 1),       // Soft Red
+                    RGBA(0, 0, 0, 0)                          // Default color
+                )
+                
+            Height: =55
+            OnSelect: =Select(Parent)
+            Size: =12
+            Text: =ThisItem.Status.Value
+            Tooltip: ="Current Status"
+            Width: =104
+            X: =479
+            Y: =103
+            ZIndex: =28
+
+        CarbonContacts As icon.Information:
+            Color: |
+                =If(ThisItem.IsSelected,
+                    If(IsBlank(ThisItem.'Carbon Copy Contacts'), RGBA(0, 18, 107, 0.1), RGBA(0, 18, 107, 1)),
+                    If(IsBlank(ThisItem.'Carbon Copy Contacts'), RGBA(100, 100, 100, 0.1), RGBA(100, 100, 100, 0.8))
+                )
+            Height: =30
+            Icon: =Icon.Mail
+            OnSelect: =Select(Parent)
+            Tooltip: |-
+                ="Contacts to be Updated:" & Char(10) & Char(10) & ThisItem.'Carbon Copy Contacts'
+            Width: =30
+            X: =147
+            Y: =452
+            ZIndex: =29
+
+    Label43 As label:
+        Align: =Align.Center
+        FontWeight: =FontWeight.Semibold
+        Height: =73
+        Text: ="Coverages requested by " & Char(10) & User().FullName & Char(10) & Office365Users.MyProfileV2().department
+        Width: =330
+        X: =104
+        Y: =160
+        ZIndex: =3
+
+    HeaderContainer1_1 As groupContainer.horizontalAutoLayoutContainer:
+        Height: =125
+        LayoutGridColumnMinWidth: =0
+        LayoutGridColumns: =6
+        LayoutGridRowMinHeight: =0
+        LayoutGridRows: =6
+        LayoutMode: =LayoutMode.Auto
+        Width: =1366
+        ZIndex: =4
+
+        Logo_EC_Form_1 As image:
+            Height: =125
+            Image: ='logo--en'
+            LayoutMaxHeight: =
+            LayoutMaxWidth: =
+            PaddingLeft: =15
+            Width: =310
+            ZIndex: =1
+
+        Home_Header_2 As text:
+            AccessibleLabel: ="This is the header of the application containing the EC Logo and the Title of the Page"
+            Align: =Align.Center
+            AlignInContainer: =AlignInContainer.Center
+            Color: =RGBA(255, 255, 255, 1)
+            Default: ="Coverage Request    ⬛🟨🟥"
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(0, 18, 107, 1)
+            Font: =Font.Verdana
+            Height: =63
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            LayoutMaxHeight: =
+            LayoutMaxWidth: =
+            Size: =24
+            Width: =900
+            X: =320
+            Y: =40
+            ZIndex: =2
+
+        Icon18 As icon.Home:
+            AlignInContainer: =AlignInContainer.Center
+            Height: =40
+            HoverColor: =ColorFade(Self.Color, 50%)
+            Icon: =Icon.Home
+            LayoutMaxHeight: =
+            LayoutMaxWidth: =
+            OnSelect: =Navigate(FormScreen);
+            Width: =75
+            X: =1270
+            Y: =135
+            ZIndex: =4
+
+        Image1_2 As image:
+            AlignInContainer: =AlignInContainer.Center
+            Height: =60
+            Image: =User().Image
+            LayoutMaxHeight: =
+            LayoutMaxWidth: =
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =60
+            ZIndex: =5
+
+    Icon18_2 As icon.Home:
+        Height: =32
+        HoverColor: =ColorFade(Self.Color, 50%)
+        Icon: =Icon.Reload
+        OnSelect: |-
+            =Refresh('Coverage Request (Belgium)');
+            Select(FutureCoveragesGallery, 1);
+        Tooltip: ="Reload Results"
+        Width: =32
+        X: =306
+        Y: =638
+        ZIndex: =5
+
+    DropdownSortOrderByDate As dropdown:
+        Default: =
+        Height: =30
+        Items: |
+            =[
+                {Name: "Coverage Date", FilterColumn: "StartDateandTime"},
+                {Name: "Submission Date", FilterColumn: "Created"}
+            ]
+        Width: =270
+        X: =134
+        Y: =503
+        ZIndex: =6
+
+    Label5 As label:
+        Text: ="Filter by"
+        Width: =292
+        X: =119
+        Y: =244
+        ZIndex: =7
+
+    Label43_1 As label:
+        Align: =Align.Center
+        FontWeight: =FontWeight.Semibold
+        Height: =36
+        Text: =CountRows(FutureCoveragesGallery.AllItems) & "  results"
+        Width: =211
+        X: =158
+        Y: =399
+        ZIndex: =8
+
+    DropdownSortOrderBy As dropdown:
+        Default: =
+        Height: =30
+        Items: |
+            =[
+                {Name: "Ascending", Value: SortOrder.Ascending},
+                {Name: "Descending", Value: SortOrder.Descending}
+            ]
+        Width: =270
+        X: =134
+        Y: =555
+        ZIndex: =9
+
+    Label5_1 As label:
+        Text: ="Order by"
+        Width: =292
+        X: =119
+        Y: =442
+        ZIndex: =10
+
+    DropdownFilterByCoverageSubmission As dropdown:
+        Default: =
+        Height: =30
+        Items: =FilterOptions.Name
+        Width: =270
+        X: =134
+        Y: =296
+        ZIndex: =11
+
+    Icon4 As icon.Reset:
+        Height: =34
+        Icon: =Icon.Reset
+        OnSelect: |-
+            =Reset(DropdownFilterByCoverageSubmission);
+            Reset(DropdownFilterByStatus);
+            Reset(DropdownSortOrderByDate);
+            Reset(DropdownSortOrderBy);
+        Tooltip: ="Reset Filters"
+        Width: =34
+        X: =201
+        Y: =635
+        ZIndex: =12
+
+    DropdownFilterByStatus As dropdown:
+        Default: =
+        Height: =30
+        Items: =["All Status", "New", "Pending Approval", "Not Accepted", "Cancel", "Accepted"]
+        Width: =270
+        X: =134
+        Y: =348
+        ZIndex: =13
+

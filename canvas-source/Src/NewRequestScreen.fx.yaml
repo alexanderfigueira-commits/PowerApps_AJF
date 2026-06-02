@@ -1,0 +1,392 @@
+NewRequestScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+    OnVisible: |-
+        =If(IsBlank(varMediaType), Set(varMediaType, "Photo"));
+        If(IsBlank(varDG), Set(varDG, "DG COMM"))
+
+    NR_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =52
+        Width: =1366
+        X: =0
+        Y: =0
+        ZIndex: =1
+
+    NR_Back As button:
+        BorderThickness: =0
+        Color: =RGBA(186, 202, 226, 1)
+        Fill: =RGBA(0, 18, 107, 1)
+        HoverColor: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(HomeScreen)
+        Size: =13
+        Text: ="←  My requests"
+        Width: =160
+        X: =16
+        Y: =10
+        ZIndex: =2
+
+    NR_Breadcrumb As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =52
+        Size: =13
+        Text: =" /  " & If(IsBlank(varProjectName), "New request", varProjectName)
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =500
+        X: =184
+        Y: =0
+        ZIndex: =3
+
+    NR_TabsBg As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =50
+        Width: =1366
+        X: =0
+        Y: =52
+        ZIndex: =4
+
+    NR_Tab1 As button:
+        BorderThickness: =0
+        Color: =RGBA(0, 18, 107, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        HoverFill: =RGBA(255, 255, 255, 1)
+        Size: =13
+        Text: ="1.  Info"
+        Width: =150
+        X: =16
+        Y: =52
+        ZIndex: =5
+
+    NR_Tab1Line As rectangle:
+        Fill: =RGBA(56, 96, 178, 1)
+        Height: =3
+        Width: =150
+        X: =16
+        Y: =99
+        ZIndex: =6
+
+    NR_Tab2 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(MediaInfoScreen)
+        Size: =13
+        Text: ="2.  Metadata"
+        Width: =170
+        X: =176
+        Y: =52
+        ZIndex: =7
+
+    NR_Tab3 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(DocumentationScreen)
+        Size: =13
+        Text: ="3.  Legal docs"
+        Width: =160
+        X: =356
+        Y: =52
+        ZIndex: =8
+
+    NR_Tab4 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(AttachmentsScreen)
+        Size: =13
+        Text: ="4.  Attachments"
+        Width: =170
+        X: =526
+        Y: =52
+        ZIndex: =9
+
+    NR_Card As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =560
+        Width: =892
+        X: =32
+        Y: =122
+        ZIndex: =10
+
+    NR_SectionHeader As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =30
+        Size: =18
+        Text: ="Identification"
+        Width: =840
+        X: =56
+        Y: =142
+        ZIndex: =11
+
+    NR_LblDG As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="DG / Agency requesting *"
+        Width: =400
+        X: =56
+        Y: =184
+        ZIndex: =12
+
+    NR_DG As combobox:
+        DefaultSelectedItems: =Table({Value: varDG})
+        Height: =40
+        Items: =["DG COMM", "DG EAC", "DG GROW", "DG HOME", "DG MARE", "DG REGIO", "SG", "EU Agency"]
+        OnChange: =Set(varDG, Self.Selected.Value)
+        SelectMultiple: =false
+        Width: =400
+        X: =56
+        Y: =210
+        ZIndex: =13
+
+    NR_LblProject As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Project / production title *"
+        Width: =836
+        X: =56
+        Y: =262
+        ZIndex: =14
+
+    NR_Project As text:
+        Default: =varProjectName
+        HintText: ="e.g. EU Climate Summit 2026 — opening session"
+        Height: =40
+        OnChange: =Set(varProjectName, Self.Value)
+        Width: =836
+        X: =56
+        Y: =288
+        ZIndex: =15
+
+    NR_LblContact As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Point of contact (responsible owner) *"
+        Width: =400
+        X: =56
+        Y: =340
+        ZIndex: =16
+
+    NR_Contact As text:
+        Default: =varContact
+        HintText: ="Name of person responsible for this submission"
+        Height: =40
+        OnChange: =Set(varContact, Self.Value)
+        Width: =400
+        X: =56
+        Y: =366
+        ZIndex: =17
+
+    NR_LblContactEmail As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Contact email *"
+        Width: =400
+        X: =488
+        Y: =340
+        ZIndex: =18
+
+    NR_ContactEmail As text:
+        Default: =Coalesce(varContactEmail, User().Email)
+        HintText: ="email@ec.europa.eu"
+        Height: =40
+        OnChange: =Set(varContactEmail, Self.Value)
+        Width: =400
+        X: =488
+        Y: =366
+        ZIndex: =19
+
+    NR_Divider As rectangle:
+        Fill: =RGBA(230, 232, 238, 1)
+        Height: =1
+        Width: =836
+        X: =56
+        Y: =430
+        ZIndex: =20
+
+    NR_LblMediaType As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =30
+        Size: =18
+        Text: ="Production type"
+        Width: =836
+        X: =56
+        Y: =444
+        ZIndex: =21
+
+    NR_MediaHint As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =22
+        Size: =12
+        Text: ="One ticket is dedicated to a single production type. This drives the metadata and legal sections."
+        Width: =836
+        X: =56
+        Y: =476
+        ZIndex: =22
+
+    NR_CardPhoto As button:
+        BorderColor: =If(varMediaType="Photo", RGBA(56,96,178,1), RGBA(220,224,230,1))
+        BorderThickness: =If(varMediaType="Photo", 2, 1)
+        Color: =If(varMediaType="Photo", RGBA(0,18,107,1), RGBA(60,66,80,1))
+        Fill: =If(varMediaType="Photo", RGBA(230,236,245,1), RGBA(255,255,255,1))
+        FontWeight: =FontWeight.Semibold
+        Height: =72
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varMediaType, "Photo")
+        Size: =14
+        Text: ="📷  Photo"
+        Width: =200
+        X: =56
+        Y: =508
+        ZIndex: =23
+
+    NR_CardVideo As button:
+        BorderColor: =If(varMediaType="Video", RGBA(56,96,178,1), RGBA(220,224,230,1))
+        BorderThickness: =If(varMediaType="Video", 2, 1)
+        Color: =If(varMediaType="Video", RGBA(0,18,107,1), RGBA(60,66,80,1))
+        Fill: =If(varMediaType="Video", RGBA(230,236,245,1), RGBA(255,255,255,1))
+        FontWeight: =FontWeight.Semibold
+        Height: =72
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varMediaType, "Video")
+        Size: =14
+        Text: ="🎬  Video"
+        Width: =200
+        X: =268
+        Y: =508
+        ZIndex: =24
+
+    NR_CardAudio As button:
+        BorderColor: =If(varMediaType="Audio", RGBA(56,96,178,1), RGBA(220,224,230,1))
+        BorderThickness: =If(varMediaType="Audio", 2, 1)
+        Color: =If(varMediaType="Audio", RGBA(0,18,107,1), RGBA(60,66,80,1))
+        Fill: =If(varMediaType="Audio", RGBA(230,236,245,1), RGBA(255,255,255,1))
+        FontWeight: =FontWeight.Semibold
+        Height: =72
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varMediaType, "Audio")
+        Size: =14
+        Text: ="🎙  Audio"
+        Width: =200
+        X: =480
+        Y: =508
+        ZIndex: =25
+
+    NR_CardPodcast As button:
+        BorderColor: =If(varMediaType="Podcast", RGBA(56,96,178,1), RGBA(220,224,230,1))
+        BorderThickness: =If(varMediaType="Podcast", 2, 1)
+        Color: =If(varMediaType="Podcast", RGBA(0,18,107,1), RGBA(60,66,80,1))
+        Fill: =If(varMediaType="Podcast", RGBA(230,236,245,1), RGBA(255,255,255,1))
+        FontWeight: =FontWeight.Semibold
+        Height: =72
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varMediaType, "Podcast")
+        Size: =14
+        Text: ="🎧  Podcast"
+        Width: =200
+        X: =692
+        Y: =508
+        ZIndex: =26
+
+    NR_BottomBar As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =56
+        Width: =1366
+        X: =0
+        Y: =712
+        ZIndex: =27
+
+    NR_BtnNext As button:
+        Color: =RGBA(255, 255, 255, 1)
+        Fill: =RGBA(56, 96, 178, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(MediaInfoScreen)
+        Size: =14
+        Text: ="Next: Metadata  →"
+        Width: =200
+        X: =1142
+        Y: =720
+        ZIndex: =28
+
+    NR_SideCard As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =220
+        Width: =380
+        X: =948
+        Y: =122
+        ZIndex: =29
+
+    NR_SideTitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =11
+        Text: ="USEFUL LINKS"
+        Width: =340
+        X: =968
+        Y: =140
+        ZIndex: =30
+
+    NR_Link1 As label:
+        Color: =RGBA(56, 96, 178, 1)
+        Height: =28
+        Size: =13
+        Text: ="→  Central deposit guidelines"
+        Width: =340
+        X: =968
+        Y: =168
+        ZIndex: =31
+
+    NR_Link2 As label:
+        Color: =RGBA(56, 96, 178, 1)
+        Height: =28
+        Size: =13
+        Text: ="→  AV Portal"
+        Width: =340
+        X: =968
+        Y: =200
+        ZIndex: =32
+
+    NR_Link3 As label:
+        Color: =RGBA(56, 96, 178, 1)
+        Height: =28
+        Size: =13
+        Text: ="→  Contact the AV Library team"
+        Width: =340
+        X: =968
+        Y: =232
+        ZIndex: =33
+
+    NR_SideNote As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =80
+        Size: =12
+        Text: ="Selected type: " & varMediaType & ". The next steps adapt their fields to this production type."
+        Width: =340
+        X: =968
+        Y: =272
+        ZIndex: =34

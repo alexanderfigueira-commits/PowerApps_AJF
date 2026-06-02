@@ -1,0 +1,326 @@
+DocumentationScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+
+    DC_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =52
+        Width: =1366
+        X: =0
+        Y: =0
+        ZIndex: =1
+
+    DC_Back As button:
+        BorderThickness: =0
+        Color: =RGBA(186, 202, 226, 1)
+        Fill: =RGBA(0, 18, 107, 1)
+        HoverColor: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(HomeScreen)
+        Size: =13
+        Text: ="←  My requests"
+        Width: =160
+        X: =16
+        Y: =10
+        ZIndex: =2
+
+    DC_Breadcrumb As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =52
+        Size: =13
+        Text: =" /  " & If(IsBlank(varProjectName), "New request", varProjectName)
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =500
+        X: =184
+        Y: =0
+        ZIndex: =3
+
+    DC_TabsBg As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =50
+        Width: =1366
+        X: =0
+        Y: =52
+        ZIndex: =4
+
+    DC_Tab1 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(NewRequestScreen)
+        Size: =13
+        Text: ="✓  1.  Info"
+        Width: =150
+        X: =16
+        Y: =52
+        ZIndex: =5
+
+    DC_Tab2 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(MediaInfoScreen)
+        Size: =13
+        Text: ="✓  2.  Metadata"
+        Width: =170
+        X: =176
+        Y: =52
+        ZIndex: =6
+
+    DC_Tab3 As button:
+        BorderThickness: =0
+        Color: =RGBA(0, 18, 107, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        HoverFill: =RGBA(255, 255, 255, 1)
+        Size: =13
+        Text: ="3.  Legal docs"
+        Width: =160
+        X: =356
+        Y: =52
+        ZIndex: =7
+
+    DC_Tab3Line As rectangle:
+        Fill: =RGBA(56, 96, 178, 1)
+        Height: =3
+        Width: =160
+        X: =356
+        Y: =99
+        ZIndex: =8
+
+    DC_Tab4 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(AttachmentsScreen)
+        Size: =13
+        Text: ="4.  Attachments"
+        Width: =170
+        X: =526
+        Y: =52
+        ZIndex: =9
+
+    DC_Banner As rectangle:
+        BorderColor: =RGBA(147, 197, 253, 1)
+        BorderThickness: =1
+        Fill: =RGBA(239, 246, 255, 1)
+        Height: =48
+        Width: =1286
+        X: =32
+        Y: =116
+        ZIndex: =10
+
+    DC_BannerText As label:
+        Color: =RGBA(30, 64, 175, 1)
+        Height: =48
+        Size: =13
+        Text: ="Select the contract case that matches how this production was produced, then complete the mandatory legal checklist below."
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =1240
+        X: =56
+        Y: =116
+        ZIndex: =11
+
+    DC_LblCase As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =30
+        Size: =18
+        Text: ="Contract case"
+        Width: =600
+        X: =32
+        Y: =178
+        ZIndex: =12
+
+    DC_Case As dropdown:
+        Height: =44
+        Items: |-
+            =[
+                "Case 1 — direct or framework service contract",
+                "Case 2 — direct service contract",
+                "Case 3 — co-production agreement",
+                "Case 4 — acquisition of existing material",
+                "Case 5 — internal EU production",
+                "Case 6 — donation / free licence"
+            ]
+        OnChange: =Set(varContractCase, Self.Selected.Value)
+        Width: =1286
+        X: =32
+        Y: =212
+        ZIndex: =13
+
+    DC_LblRef As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Contract reference number *"
+        Visible: =Not(IsBlank(varContractCase))
+        Width: =500
+        X: =32
+        Y: =270
+        ZIndex: =14
+
+    DC_Ref As text:
+        Default: =varContractRef
+        HintText: ="e.g. COMM-2026-PHOTO-0142"
+        Height: =40
+        OnChange: =Set(varContractRef, Self.Value)
+        Visible: =Not(IsBlank(varContractCase))
+        Width: =500
+        X: =32
+        Y: =296
+        ZIndex: =15
+
+    DC_Divider As rectangle:
+        Fill: =RGBA(230, 232, 238, 1)
+        Height: =1
+        Width: =1286
+        X: =32
+        Y: =356
+        ZIndex: =16
+
+    DC_LblRights As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =30
+        Size: =18
+        Text: ="Rights & mandatory documents"
+        Width: =600
+        X: =32
+        Y: =370
+        ZIndex: =17
+
+    DC_ChkModel As checkbox.'Checkbox':
+        Height: =36
+        OnCheck: =Set(varModelRelease, true)
+        OnUncheck: =Set(varModelRelease, false)
+        Text: ="Recognisable persons appear — model release forms required"
+        Width: =900
+        X: =28
+        Y: =406
+        ZIndex: =18
+
+    DC_ChkMusic As checkbox.'Checkbox':
+        Height: =36
+        OnCheck: =Set(varMusicLicence, true)
+        OnUncheck: =Set(varMusicLicence, false)
+        Text: ="Production contains music — licensing documentation required"
+        Width: =900
+        X: =28
+        Y: =446
+        ZIndex: =19
+
+    DC_ChkPreexisting As checkbox.'Checkbox':
+        Height: =36
+        OnCheck: =Set(varPreexisting, true)
+        OnUncheck: =Set(varPreexisting, false)
+        Text: ="Contains pre-existing rights material — annex(es) required"
+        Width: =900
+        X: =28
+        Y: =486
+        ZIndex: =20
+
+    DC_ChecklistCard As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(250, 251, 252, 1)
+        Height: =150
+        Width: =1286
+        X: =32
+        Y: =534
+        ZIndex: =21
+
+    DC_ChecklistTitle As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =24
+        Size: =12
+        Text: ="MANDATORY LEGAL DOCUMENTS CHECKLIST"
+        Width: =800
+        X: =56
+        Y: =546
+        ZIndex: =22
+
+    DC_Check1 As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =26
+        Size: =13
+        Text: =If(Not(IsBlank(varContractCase)), "✓", "○") & "  Signed contract / agreement (" & Coalesce(varContractCase, "select a case") & ")"
+        Width: =1200
+        X: =56
+        Y: =574
+        ZIndex: =23
+
+    DC_Check2 As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =26
+        Size: =13
+        Text: =If(Not(varModelRelease), "✓  Model release — not required", "○  Model release forms — required, upload on Attachments")
+        Width: =1200
+        X: =56
+        Y: =602
+        ZIndex: =24
+
+    DC_Check3 As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =26
+        Size: =13
+        Text: =If(Not(varMusicLicence), "✓  Music licence — not required", "○  Music licensing document — required, upload on Attachments")
+        Width: =1200
+        X: =56
+        Y: =630
+        ZIndex: =25
+
+    DC_Check4 As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =26
+        Size: =13
+        Text: =If(Not(varPreexisting), "✓  Pre-existing rights — none declared", "○  Pre-existing rights annex(es) — required, upload on Attachments")
+        Width: =1200
+        X: =56
+        Y: =658
+        ZIndex: =26
+
+    DC_BottomBar As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =56
+        Width: =1366
+        X: =0
+        Y: =712
+        ZIndex: =27
+
+    DC_BtnPrev As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =40
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(MediaInfoScreen)
+        Size: =14
+        Text: ="←  Previous"
+        Width: =140
+        X: =32
+        Y: =720
+        ZIndex: =28
+
+    DC_BtnNext As button:
+        Color: =RGBA(255, 255, 255, 1)
+        Fill: =RGBA(56, 96, 178, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(AttachmentsScreen)
+        Size: =14
+        Text: ="Next: Attachments  →"
+        Width: =200
+        X: =1142
+        Y: =720
+        ZIndex: =29
