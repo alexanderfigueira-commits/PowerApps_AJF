@@ -557,7 +557,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =36
             HoverFill: =RGBA(29, 78, 216, 1)
-            OnSelect: =Navigate(DocumentationScreen)
+            OnSelect: =Navigate(MediaInfoScreen)
             RadiusBottomLeft: =6
             RadiusBottomRight: =6
             RadiusTopLeft: =6

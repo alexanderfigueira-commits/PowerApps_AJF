@@ -1,0 +1,852 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# ************************************************************************************************
+Screens:
+  MediaInfoScreen:
+    Properties:
+      Fill: =RGBA(249, 250, 251, 1)
+    Children:
+      # ── Top navigation bar ──────────────────────────────────────────────
+      - NavBar2:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(15, 15, 15, 1)
+            Height: =48
+            Width: =1366
+            X: =0
+            Y: =0
+      - NavBackIcon2:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(200, 200, 200, 1)
+            Height: =24
+            HoverColor: =RGBA(255, 255, 255, 1)
+            Icon: =Icon.ChevronLeft
+            OnSelect: =Navigate(NewRequestScreen)
+            Width: =24
+            X: =16
+            Y: =12
+      - NavBreadcrumb2:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(156, 163, 175, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =13
+            Text: ="My requests  /  " & If(IsBlank(varProjectName), "New request", varProjectName)
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =400
+            X: =44
+            Y: =0
+      - NavDraftBadge2:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(243, 244, 246, 1)
+            Height: =24
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Width: =48
+            X: =1302
+            Y: =12
+      - NavDraftLabel2:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            Color: =RGBA(75, 85, 99, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =12
+            Text: ="Draft"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =48
+            X: =1302
+            Y: =12
+      # ── Step tabs ────────────────────────────────────────────────────────
+      - StepTabsBg2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =48
+            Width: =1366
+            X: =0
+            Y: =48
+      - StepTab1Label2:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            OnSelect: =Navigate(NewRequestScreen)
+            Size: =13
+            Text: ="✓  1. Info"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =120
+            X: =0
+            Y: =48
+      - StepTab2Active:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(37, 99, 235, 1)
+            Height: =3
+            Width: =200
+            X: =140
+            Y: =93
+      - StepTab2Label2:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(37, 99, 235, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =48
+            Size: =13
+            Text: ="2. Media information"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =200
+            X: =140
+            Y: =48
+      - StepTab3Label2:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =13
+            Text: ="3. Documentation"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =180
+            X: =360
+            Y: =48
+      - StepTab4Label2:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =13
+            Text: ="4. Attachments"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =160
+            X: =560
+            Y: =48
+      # ── Main content area ────────────────────────────────────────────────
+      - ContentBg2:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(249, 250, 251, 1)
+            Height: =616
+            Width: =1366
+            X: =0
+            Y: =96
+      - ContentCard2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =580
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: =900
+            X: =32
+            Y: =108
+      # ── Media details section heading ─────────────────────────────────────
+      - SectionMediaDetails:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =18
+            Text: ="Media details"
+            Width: =860
+            X: =52
+            Y: =128
+      # ── Shared fields ────────────────────────────────────────────────────
+      - LblEventTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Production / event title *"
+            Width: =860
+            X: =52
+            Y: =168
+      - TxtEventTitle:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="e.g. EU Climate Summit 2026 — opening session"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =860
+            X: =52
+            Y: =196
+      - LblDescription:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Description *"
+            Width: =160
+            X: =52
+            Y: =250
+      - LblDescriptionHint:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(156, 163, 175, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =12
+            Text: ="(max 500 characters)"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =160
+            X: =218
+            Y: =250
+      - TxtDescription:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =80
+            Mode: =TextMode.MultiLine
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =860
+            X: =52
+            Y: =278
+      - LblProductionDate:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Production date *"
+            Width: =400
+            X: =52
+            Y: =372
+      - DpProductionDate:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =280
+            X: =52
+            Y: =400
+      # ── Photo-specific fields ─────────────────────────────────────────────
+      - PhotoDivider:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(229, 231, 235, 1)
+            Height: =1
+            Visible: =varMediaType = "Photo reportage"
+            Width: =860
+            X: =52
+            Y: =452
+      - PhotoSectionHeader:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =15
+            Text: ="Photo details"
+            Visible: =varMediaType = "Photo reportage"
+            Width: =860
+            X: =52
+            Y: =462
+      - LblPhotoCount:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Number of photographs *"
+            Visible: =varMediaType = "Photo reportage"
+            Width: =400
+            X: =52
+            Y: =490
+      - TxtPhotoCount:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="e.g. 45"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varMediaType = "Photo reportage"
+            Width: =200
+            X: =52
+            Y: =518
+      - LblPhotographer:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Photographer / Agency *"
+            Visible: =varMediaType = "Photo reportage"
+            Width: =400
+            X: =280
+            Y: =490
+      - TxtPhotographer:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="Full name or agency"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varMediaType = "Photo reportage"
+            Width: =440
+            X: =280
+            Y: =518
+      - LblLocation:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Location / Country"
+            Visible: =varMediaType = "Photo reportage"
+            Width: =400
+            X: =52
+            Y: =572
+      - TxtLocation:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="City, Country"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varMediaType = "Photo reportage"
+            Width: =420
+            X: =52
+            Y: =600
+      - LblCopyright:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Copyright holder *"
+            Visible: =varMediaType = "Photo reportage"
+            Width: =400
+            X: =492
+            Y: =572
+      - TxtCopyright:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="Institution or name"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varMediaType = "Photo reportage"
+            Width: =380
+            X: =492
+            Y: =600
+      # ── Video-specific fields ─────────────────────────────────────────────
+      - VideoDivider:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(229, 231, 235, 1)
+            Height: =1
+            Visible: =varMediaType = "Video"
+            Width: =860
+            X: =52
+            Y: =452
+      - VideoSectionHeader:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =15
+            Text: ="Video details"
+            Visible: =varMediaType = "Video"
+            Width: =860
+            X: =52
+            Y: =462
+      - LblVideoDuration:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Duration (mm:ss) *"
+            Visible: =varMediaType = "Video"
+            Width: =400
+            X: =52
+            Y: =490
+      - TxtVideoDuration:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="e.g. 04:32"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varMediaType = "Video"
+            Width: =200
+            X: =52
+            Y: =518
+      - LblDirectorProducer:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Director / Producer *"
+            Visible: =varMediaType = "Video"
+            Width: =400
+            X: =280
+            Y: =490
+      - TxtDirectorProducer:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="Full name or production company"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varMediaType = "Video"
+            Width: =440
+            X: =280
+            Y: =518
+      - LblVideoLanguage:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Language *"
+            Visible: =varMediaType = "Video"
+            Width: =400
+            X: =52
+            Y: =572
+      - DdVideoLanguage:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            ChevronBackground: =RGBA(249, 250, 251, 1)
+            ChevronFill: =RGBA(107, 114, 128, 1)
+            DisplayFields: =["Value"]
+            Font: =Font.'Open Sans'
+            Height: =40
+            HoverFill: =RGBA(243, 244, 246, 1)
+            Items: =["English", "French", "German", "Spanish", "Italian", "Dutch", "Polish", "Portuguese", "Other"]
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            SearchFields: =["Value"]
+            SelectMultiple: =false
+            Visible: =varMediaType = "Video"
+            Width: =280
+            X: =52
+            Y: =600
+      - LblVideoFormat:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Format"
+            Visible: =varMediaType = "Video"
+            Width: =400
+            X: =360
+            Y: =572
+      - DdVideoFormat:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            ChevronBackground: =RGBA(249, 250, 251, 1)
+            ChevronFill: =RGBA(107, 114, 128, 1)
+            DisplayFields: =["Value"]
+            Font: =Font.'Open Sans'
+            Height: =40
+            HoverFill: =RGBA(243, 244, 246, 1)
+            Items: =["HD 1080p", "HD 720p", "4K UHD", "SD", "Other"]
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            SearchFields: =["Value"]
+            SelectMultiple: =false
+            Visible: =varMediaType = "Video"
+            Width: =280
+            X: =360
+            Y: =600
+      # ── Audio-specific fields ─────────────────────────────────────────────
+      - AudioDivider:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(229, 231, 235, 1)
+            Height: =1
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =860
+            X: =52
+            Y: =452
+      - AudioSectionHeader:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =15
+            Text: ="Audio details"
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =860
+            X: =52
+            Y: =462
+      - LblEpisodeSeries:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Episode / Series title"
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =400
+            X: =52
+            Y: =490
+      - TxtEpisodeSeries:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="e.g. Episode 3 — Energy transition"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =420
+            X: =52
+            Y: =518
+      - LblPresenter:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Presenter / Host *"
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =400
+            X: =492
+            Y: =490
+      - TxtPresenter:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="Full name"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =380
+            X: =492
+            Y: =518
+      - LblAudioLanguage:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Language *"
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =400
+            X: =52
+            Y: =572
+      - DdAudioLanguage:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            ChevronBackground: =RGBA(249, 250, 251, 1)
+            ChevronFill: =RGBA(107, 114, 128, 1)
+            DisplayFields: =["Value"]
+            Font: =Font.'Open Sans'
+            Height: =40
+            HoverFill: =RGBA(243, 244, 246, 1)
+            Items: =["English", "French", "German", "Spanish", "Italian", "Dutch", "Polish", "Portuguese", "Other"]
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            SearchFields: =["Value"]
+            SelectMultiple: =false
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =280
+            X: =52
+            Y: =600
+      - LblAudioDuration:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Duration (mm:ss) *"
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =400
+            X: =360
+            Y: =572
+      - TxtAudioDuration:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="e.g. 28:15"
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =200
+            X: =360
+            Y: =600
+      # ── Right sidebar ─────────────────────────────────────────────────────
+      - SidebarCard2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(249, 250, 251, 1)
+            Height: =180
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: =218
+            X: =948
+            Y: =108
+      - SidebarMediaTypeTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(156, 163, 175, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =11
+            Text: ="MEDIA TYPE"
+            Width: =180
+            X: =964
+            Y: =120
+      - SidebarMediaTypeValue:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(37, 99, 235, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =14
+            Text: =varMediaType
+            Width: =180
+            X: =964
+            Y: =148
+      - SidebarDivider2:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(229, 231, 235, 1)
+            Height: =1
+            Width: =180
+            X: =964
+            Y: =184
+      - SidebarTipsTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(156, 163, 175, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =11
+            Text: ="TIPS"
+            Width: =180
+            X: =964
+            Y: =192
+      - SidebarTipsPhoto:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            Height: =72
+            Size: =12
+            Text: ="Include all photographs even if some are similar. You can add technical metadata per batch."
+            Visible: =varMediaType = "Photo reportage"
+            Width: =180
+            X: =964
+            Y: =210
+      - SidebarTipsVideo:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =12
+            Text: ="Provide the final edited version. Raw footage is not accepted."
+            Visible: =varMediaType = "Video"
+            Width: =180
+            X: =964
+            Y: =210
+      - SidebarTipsAudio:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            Height: =60
+            Size: =12
+            Text: ="Provide the final mixed audio. Include transcript if available."
+            Visible: =varMediaType = "Audio / Podcast"
+            Width: =180
+            X: =964
+            Y: =210
+      # ── Bottom action bar ────────────────────────────────────────────────
+      - BottomBar2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =56
+            Width: =1366
+            X: =0
+            Y: =712
+      - BtnPrev2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            BorderThickness: =1
+            Color: =RGBA(55, 65, 81, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverFill: =RGBA(243, 244, 246, 1)
+            OnSelect: =Navigate(NewRequestScreen)
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Size: =13
+            Text: ="←  Previous"
+            Width: =112
+            X: =32
+            Y: =724
+      - BtnSaveDraft2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            BorderThickness: =1
+            Color: =RGBA(55, 65, 81, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverFill: =RGBA(243, 244, 246, 1)
+            OnSelect: =Notify("Draft saved", NotificationType.Success)
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Size: =13
+            Text: ="Save draft"
+            Width: =112
+            X: =152
+            Y: =724
+      - BtnNext2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(37, 99, 235, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(37, 99, 235, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =36
+            HoverFill: =RGBA(29, 78, 216, 1)
+            OnSelect: =Navigate(DocumentationScreen)
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Size: =13
+            Text: ="Next: documentation  →"
+            Width: =180
+            X: =1154
+            Y: =724

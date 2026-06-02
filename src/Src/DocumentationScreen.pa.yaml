@@ -1,14 +1,20 @@
 # ************************************************************************************************
 # Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
 # Use the maker portal to create and edit your Power Apps.
+#
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
 # ************************************************************************************************
 Screens:
   DocumentationScreen:
     Properties:
-      Fill: =RGBA(255, 255, 255, 1)
-      OnVisible: =Set(varContractCase, ""); Set(varContractRef, ""); Set(varModelRelease, false)
+      Fill: =RGBA(249, 250, 251, 1)
+      OnVisible: |-
+        =Set(varContractCase, "");
+        Set(varContractRef, "");
+        Set(varModelRelease, false)
     Children:
-      # ── Top navigation bar ──────────────────────────────────────────────
+      # ── Navigation bar ───────────────────────────────────────────────────
       - NavBar3:
           Control: Rectangle@2.3.0
           Properties:
@@ -25,7 +31,7 @@ Screens:
             Height: =24
             HoverColor: =RGBA(255, 255, 255, 1)
             Icon: =Icon.ChevronLeft
-            OnSelect: =Navigate(NewRequestScreen)
+            OnSelect: =Navigate(MediaInfoScreen)
             Width: =24
             X: =16
             Y: =12
@@ -36,12 +42,12 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =48
             Size: =13
-            Text: ="My requests  /  Citizens' dialogue — Porto leg"
+            Text: ="My requests  /  " & If(IsBlank(varProjectName), "New request", varProjectName)
             VerticalAlign: =VerticalAlign.Middle
-            Width: =380
+            Width: =420
             X: =44
             Y: =0
-      - NavDraftBadge3:
+      - NavDraftRect3:
           Control: Rectangle@2.3.0
           Properties:
             Fill: =RGBA(243, 244, 246, 1)
@@ -66,7 +72,7 @@ Screens:
             Width: =48
             X: =1302
             Y: =12
-      # ── Step tabs (1 and 2 completed, 3 active) ──────────────────────────
+      # ── Step tabs — 1 ✓, 2 ✓, 3 active ─────────────────────────────────
       - StepTabsBg3:
           Control: Rectangle@2.3.0
           Properties:
@@ -77,7 +83,7 @@ Screens:
             Width: =1366
             X: =0
             Y: =48
-      - StepTab1Done:
+      - Tab1Done3:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
@@ -87,30 +93,31 @@ Screens:
             Size: =13
             Text: ="✓  1. Info"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =120
-            X: =0
+            Width: =130
+            X: =16
             Y: =48
-      - StepTab2Done:
+      - Tab2Done3:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
             Font: =Font.'Open Sans'
             Height: =48
+            OnSelect: =Navigate(MediaInfoScreen)
             Size: =13
             Text: ="✓  2. Media information"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =200
-            X: =140
+            Width: =196
+            X: =162
             Y: =48
-      - StepTab3Active:
+      - Tab3ActiveLine3:
           Control: Rectangle@2.3.0
           Properties:
             Fill: =RGBA(37, 99, 235, 1)
             Height: =3
-            Width: =160
-            X: =360
+            Width: =172
+            X: =374
             Y: =93
-      - StepTab3Label:
+      - Tab3Label3:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(37, 99, 235, 1)
@@ -120,10 +127,10 @@ Screens:
             Size: =13
             Text: ="3. Documentation"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =160
-            X: =360
+            Width: =172
+            X: =374
             Y: =48
-      - StepTab4Label3:
+      - Tab4Label3:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
@@ -132,17 +139,17 @@ Screens:
             Size: =13
             Text: ="4. Attachments"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =150
-            X: =540
+            Width: =160
+            X: =562
             Y: =48
       # ── Info banner ───────────────────────────────────────────────────────
-      - InfoBannerBg:
+      - InfoBannerBg3:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =RGBA(147, 197, 253, 1)
             BorderThickness: =1
             Fill: =RGBA(239, 246, 255, 1)
-            Height: =48
+            Height: =52
             RadiusBottomLeft: =6
             RadiusBottomRight: =6
             RadiusTopLeft: =6
@@ -150,7 +157,7 @@ Screens:
             Width: =1302
             X: =32
             Y: =112
-      - InfoBannerIcon:
+      - InfoBannerIcon3:
           Control: Classic/Icon@2.5.0
           Properties:
             BorderColor: =RGBA(0, 0, 0, 0)
@@ -158,22 +165,22 @@ Screens:
             Height: =24
             Icon: =Icon.Information
             Width: =24
-            X: =52
-            Y: =124
-      - InfoBannerText:
+            X: =56
+            Y: =126
+      - InfoBannerText3:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(30, 64, 175, 1)
             Font: =Font.'Open Sans'
-            Height: =48
+            Height: =52
             Size: =13
-            Text: ="Tick the contract case that matches how this material was produced. Cases are mutually exclusive. The matching document upload will become required on the Attachments tab."
+            Text: ="Tick the contract case that matches how this production was produced. Cases are mutually exclusive. The required documents will be listed on the Attachments tab."
             VerticalAlign: =VerticalAlign.Middle
-            Width: =1240
-            X: =84
+            Width: =1230
+            X: =90
             Y: =112
       # ── Contract case section ─────────────────────────────────────────────
-      - SectionContractCase:
+      - LblContractCaseSection:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(17, 24, 39, 1)
@@ -182,17 +189,17 @@ Screens:
             Height: =32
             Size: =18
             Text: ="Contract case"
-            Width: =900
+            Width: =800
             X: =32
-            Y: =174
+            Y: =178
       # Case 1
-      - Case1Bg:
+      - Case1Card:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =If(varContractCase = "Case1", RGBA(37, 99, 235, 1), RGBA(229, 231, 235, 1))
-            BorderThickness: =1
-            Fill: =RGBA(255, 255, 255, 1)
-            Height: =60
+            BorderThickness: =If(varContractCase = "Case1", 2, 1)
+            Fill: =If(varContractCase = "Case1", RGBA(239, 246, 255, 1), RGBA(255, 255, 255, 1))
+            Height: =64
             OnSelect: =Set(varContractCase, "Case1")
             RadiusBottomLeft: =6
             RadiusBottomRight: =6
@@ -200,8 +207,8 @@ Screens:
             RadiusTopRight: =6
             Width: =1302
             X: =32
-            Y: =212
-      - Case1Radio:
+            Y: =218
+      - Case1RadioOuter:
           Control: Circle@2.3.0
           Properties:
             BorderColor: =If(varContractCase = "Case1", RGBA(37, 99, 235, 1), RGBA(156, 163, 175, 1))
@@ -210,9 +217,9 @@ Screens:
             Height: =20
             OnSelect: =Set(varContractCase, "Case1")
             Width: =20
-            X: =56
-            Y: =232
-      - Case1RadioFill:
+            X: =60
+            Y: =240
+      - Case1RadioInner:
           Control: Circle@2.3.0
           Properties:
             Fill: =RGBA(37, 99, 235, 1)
@@ -220,41 +227,41 @@ Screens:
             OnSelect: =Set(varContractCase, "Case1")
             Visible: =varContractCase = "Case1"
             Width: =10
-            X: =61
-            Y: =237
+            X: =65
+            Y: =245
       - Case1Title:
           Control: Label@2.5.1
           Properties:
-            Color: =RGBA(17, 24, 39, 1)
+            Color: =If(varContractCase = "Case1", RGBA(37, 99, 235, 1), RGBA(17, 24, 39, 1))
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =24
+            Height: =26
             OnSelect: =Set(varContractCase, "Case1")
             Size: =13
             Text: ="Case 1 — direct or framework service contract"
-            Width: =800
-            X: =88
-            Y: =216
-      - Case1Subtitle:
+            Width: =900
+            X: =94
+            Y: =222
+      - Case1Sub:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
             Font: =Font.'Open Sans'
-            Height: =20
+            Height: =22
             OnSelect: =Set(varContractCase, "Case1")
             Size: =12
             Text: ="Tick the relevant sub-types (framework, specific, offer)"
-            Width: =800
-            X: =88
-            Y: =242
-      # Case 2 (selected state shown by default)
-      - Case2Bg:
+            Width: =900
+            X: =94
+            Y: =250
+      # Case 2
+      - Case2Card:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =If(varContractCase = "Case2", RGBA(37, 99, 235, 1), RGBA(229, 231, 235, 1))
             BorderThickness: =If(varContractCase = "Case2", 2, 1)
             Fill: =If(varContractCase = "Case2", RGBA(239, 246, 255, 1), RGBA(255, 255, 255, 1))
-            Height: =60
+            Height: =64
             OnSelect: =Set(varContractCase, "Case2")
             RadiusBottomLeft: =6
             RadiusBottomRight: =6
@@ -262,8 +269,8 @@ Screens:
             RadiusTopRight: =6
             Width: =1302
             X: =32
-            Y: =280
-      - Case2Radio:
+            Y: =290
+      - Case2RadioOuter:
           Control: Circle@2.3.0
           Properties:
             BorderColor: =If(varContractCase = "Case2", RGBA(37, 99, 235, 1), RGBA(156, 163, 175, 1))
@@ -272,9 +279,9 @@ Screens:
             Height: =20
             OnSelect: =Set(varContractCase, "Case2")
             Width: =20
-            X: =56
-            Y: =300
-      - Case2RadioFill:
+            X: =60
+            Y: =312
+      - Case2RadioInner:
           Control: Circle@2.3.0
           Properties:
             Fill: =RGBA(37, 99, 235, 1)
@@ -282,61 +289,61 @@ Screens:
             OnSelect: =Set(varContractCase, "Case2")
             Visible: =varContractCase = "Case2"
             Width: =10
-            X: =61
-            Y: =305
+            X: =65
+            Y: =317
       - Case2Title:
           Control: Label@2.5.1
           Properties:
             Color: =If(varContractCase = "Case2", RGBA(37, 99, 235, 1), RGBA(17, 24, 39, 1))
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =24
+            Height: =26
             OnSelect: =Set(varContractCase, "Case2")
             Size: =13
             Text: ="Case 2 — direct service contract"
-            Width: =800
-            X: =88
-            Y: =284
-      - Case2Subtitle:
+            Width: =900
+            X: =94
+            Y: =294
+      - Case2Sub:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(37, 99, 235, 1)
             Font: =Font.'Open Sans'
-            Height: =20
+            Height: =22
             OnSelect: =Set(varContractCase, "Case2")
             Size: =12
             Text: ="Contract reference number is required (see below)"
             Visible: =varContractCase = "Case2"
-            Width: =800
-            X: =88
-            Y: =310
-      # Cases 3-6 collapsed
-      - Cases36Bg:
+            Width: =900
+            X: =94
+            Y: =322
+      # Cases 3–6 collapsed row
+      - Cases36Card:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =RGBA(229, 231, 235, 1)
             BorderThickness: =1
             Fill: =RGBA(249, 250, 251, 1)
-            Height: =44
+            Height: =48
             RadiusBottomLeft: =6
             RadiusBottomRight: =6
             RadiusTopLeft: =6
             RadiusTopRight: =6
             Width: =1302
             X: =32
-            Y: =348
+            Y: =362
       - Cases36Label:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
             Font: =Font.'Open Sans'
-            Height: =44
+            Height: =48
             Size: =13
-            Text: ="Cases 3 to 6 (collapsed)"
+            Text: ="Cases 3 to 6 (collapsed — click to expand)"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =400
-            X: =52
-            Y: =348
+            Width: =600
+            X: =56
+            Y: =362
       - Cases36Chevron:
           Control: Classic/Icon@2.5.0
           Properties:
@@ -346,7 +353,7 @@ Screens:
             Icon: =Icon.ChevronDown
             Width: =24
             X: =1294
-            Y: =360
+            Y: =374
       # ── Contract reference number ─────────────────────────────────────────
       - LblContractRef:
           Control: Label@2.5.1
@@ -357,13 +364,13 @@ Screens:
             Height: =24
             Size: =13
             Text: ="Contract reference number *"
-            Width: =400
+            Width: =480
             X: =32
-            Y: =406
+            Y: =424
       - TxtContractRef:
           Control: Classic/TextInput@2.3.2
           Properties:
-            BorderColor: =RGBA(209, 213, 219, 1)
+            BorderColor: =If(IsBlank(Self.Text) And varContractCase = "Case2", RGBA(239, 68, 68, 1), RGBA(209, 213, 219, 1))
             Default: =varContractRef
             Font: =Font.'Open Sans'
             Height: =40
@@ -373,20 +380,32 @@ Screens:
             RadiusBottomRight: =6
             RadiusTopLeft: =6
             RadiusTopRight: =6
-            Width: =460
+            Width: =480
             X: =32
-            Y: =434
-      # ── Divider ───────────────────────────────────────────────────────────
-      - SectionDivider3:
+            Y: =452
+      - LblContractRefHint:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(156, 163, 175, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =12
+            Text: ="Required when Case 2 is selected"
+            Visible: =varContractCase = "Case2" And IsBlank(varContractRef)
+            Width: =480
+            X: =32
+            Y: =496
+      # ── Section divider ───────────────────────────────────────────────────
+      - Divider3:
           Control: Rectangle@2.3.0
           Properties:
             Fill: =RGBA(229, 231, 235, 1)
             Height: =1
             Width: =1302
             X: =32
-            Y: =490
-      # ── Model release section ─────────────────────────────────────────────
-      - SectionModelRelease:
+            Y: =524
+      # ── Rights transfer section ───────────────────────────────────────────
+      - LblRightsSection:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(17, 24, 39, 1)
@@ -394,12 +413,12 @@ Screens:
             FontWeight: =FontWeight.Bold
             Height: =32
             Size: =18
-            Text: ="Model release"
-            Width: =600
+            Text: ="Rights & model release"
+            Width: =800
             X: =32
-            Y: =504
-      # Checkbox row
-      - ModelReleaseCBBg:
+            Y: =538
+      # Rights transfer checkbox
+      - RightsTransferCard:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =RGBA(229, 231, 235, 1)
@@ -412,7 +431,46 @@ Screens:
             RadiusTopRight: =6
             Width: =1302
             X: =32
-            Y: =544
+            Y: =578
+      - RightsTransferCB:
+          Control: Classic/Check@2.3.5
+          Properties:
+            BorderColor: =RGBA(156, 163, 175, 1)
+            CheckmarkFill: =RGBA(37, 99, 235, 1)
+            Default: =varRightsTransfer
+            Height: =24
+            OnCheck: =Set(varRightsTransfer, true)
+            OnUncheck: =Set(varRightsTransfer, false)
+            Width: =24
+            X: =60
+            Y: =590
+      - RightsTransferLabel:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =13
+            Text: ="A rights transfer agreement or licence has been signed for this production"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =900
+            X: =96
+            Y: =578
+      # Model release checkbox
+      - ModelReleaseCard:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =48
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =1302
+            X: =32
+            Y: =634
       - ModelReleaseCB:
           Control: Classic/Check@2.3.5
           Properties:
@@ -423,20 +481,20 @@ Screens:
             OnCheck: =Set(varModelRelease, true)
             OnUncheck: =Set(varModelRelease, false)
             Width: =24
-            X: =56
-            Y: =556
-      - ModelReleaseCBLabel:
+            X: =60
+            Y: =646
+      - ModelReleaseLabel:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(55, 65, 81, 1)
             Font: =Font.'Open Sans'
             Height: =48
             Size: =13
-            Text: ="Recognisable private persons appear in the photos"
+            Text: ="Recognisable private persons appear in the photos / video (model release forms required)"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =700
-            X: =92
-            Y: =544
+            Width: =900
+            X: =96
+            Y: =634
       # Model release confirmation banner
       - ModelReleaseConfirmBg:
           Control: Rectangle@2.3.0
@@ -444,7 +502,7 @@ Screens:
             BorderColor: =RGBA(134, 239, 172, 1)
             BorderThickness: =1
             Fill: =RGBA(240, 253, 244, 1)
-            Height: =56
+            Height: =52
             RadiusBottomLeft: =6
             RadiusBottomRight: =6
             RadiusTopLeft: =6
@@ -452,18 +510,18 @@ Screens:
             Visible: =varModelRelease
             Width: =1302
             X: =32
-            Y: =600
-      - ModelReleaseConfirmCB:
-          Control: Classic/Check@2.3.5
+            Y: =690
+      - ModelReleaseConfirmCBIcon:
+          Control: Classic/Icon@2.5.0
           Properties:
-            BorderColor: =RGBA(34, 197, 94, 1)
-            CheckmarkFill: =RGBA(22, 163, 74, 1)
-            Default: =true
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 163, 74, 1)
             Height: =24
+            Icon: =Icon.Check
             Visible: =varModelRelease
             Width: =24
-            X: =56
-            Y: =616
+            X: =60
+            Y: =704
       - ModelReleaseConfirmTitle:
           Control: Label@2.5.1
           Properties:
@@ -472,24 +530,12 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =24
             Size: =13
-            Text: ="Yes, model release forms are required"
+            Text: ="Model release forms required — upload on Attachments tab will be mandatory"
             Visible: =varModelRelease
-            Width: =600
-            X: =92
-            Y: =604
-      - ModelReleaseConfirmSub:
-          Control: Label@2.5.1
-          Properties:
-            Color: =RGBA(22, 163, 74, 1)
-            Font: =Font.'Open Sans'
-            Height: =20
-            Size: =12
-            Text: ="🔗  Upload on Attachments tab is now mandatory"
-            Visible: =varModelRelease
-            Width: =600
-            X: =92
-            Y: =630
-      # ── Bottom action bar ────────────────────────────────────────────────
+            Width: =900
+            X: =96
+            Y: =703
+      # ── Bottom action bar ─────────────────────────────────────────────────
       - BottomBar3:
           Control: Rectangle@2.3.0
           Properties:
@@ -510,14 +556,14 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =36
             HoverFill: =RGBA(243, 244, 246, 1)
-            OnSelect: =Navigate(NewRequestScreen)
+            OnSelect: =Navigate(MediaInfoScreen)
             RadiusBottomLeft: =6
             RadiusBottomRight: =6
             RadiusTopLeft: =6
             RadiusTopRight: =6
             Size: =13
             Text: ="←  Previous"
-            Width: =112
+            Width: =120
             X: =32
             Y: =724
       - BtnSaveDraft3:
@@ -538,12 +584,12 @@ Screens:
             Size: =13
             Text: ="Save draft"
             Width: =112
-            X: =152
+            X: =160
             Y: =724
       - BtnNextAttachments:
           Control: Classic/Button@2.2.0
           Properties:
-            BorderColor: =RGBA(37, 99, 235, 1)
+            BorderColor: =RGBA(0, 0, 0, 0)
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             Fill: =RGBA(37, 99, 235, 1)
@@ -558,6 +604,6 @@ Screens:
             RadiusTopRight: =6
             Size: =13
             Text: ="Next: attachments  →"
-            Width: =180
-            X: =1154
+            Width: =188
+            X: =1146
             Y: =724

@@ -1,13 +1,16 @@
 # ************************************************************************************************
 # Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
 # Use the maker portal to create and edit your Power Apps.
+#
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
 # ************************************************************************************************
 Screens:
   AttachmentsScreen:
     Properties:
       Fill: =RGBA(249, 250, 251, 1)
     Children:
-      # ── Top navigation bar ──────────────────────────────────────────────
+      # ── Navigation bar ───────────────────────────────────────────────────
       - NavBar4:
           Control: Rectangle@2.3.0
           Properties:
@@ -35,12 +38,12 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =48
             Size: =13
-            Text: ="My requests  /  Citizens' dialogue — Porto leg"
+            Text: ="My requests  /  " & If(IsBlank(varProjectName), "New request", varProjectName)
             VerticalAlign: =VerticalAlign.Middle
-            Width: =380
+            Width: =420
             X: =44
             Y: =0
-      - NavDraftBadge4:
+      - NavDraftRect4:
           Control: Rectangle@2.3.0
           Properties:
             Fill: =RGBA(243, 244, 246, 1)
@@ -65,7 +68,7 @@ Screens:
             Width: =48
             X: =1302
             Y: =12
-      # ── Step tabs (1, 2, 3 completed — 4 active) ─────────────────────────
+      # ── Step tabs — 1 ✓, 2 ✓, 3 ✓, 4 active ────────────────────────────
       - StepTabsBg4:
           Control: Rectangle@2.3.0
           Properties:
@@ -76,7 +79,7 @@ Screens:
             Width: =1366
             X: =0
             Y: =48
-      - StepTab1Done4:
+      - Tab1Done4:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
@@ -86,22 +89,23 @@ Screens:
             Size: =13
             Text: ="✓  1. Info"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =120
-            X: =0
+            Width: =130
+            X: =16
             Y: =48
-      - StepTab2Done4:
+      - Tab2Done4:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
             Font: =Font.'Open Sans'
             Height: =48
+            OnSelect: =Navigate(MediaInfoScreen)
             Size: =13
             Text: ="✓  2. Media information"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =200
-            X: =140
+            Width: =196
+            X: =162
             Y: =48
-      - StepTab3Done4:
+      - Tab3Done4:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
@@ -112,17 +116,17 @@ Screens:
             Text: ="✓  3. Documentation"
             VerticalAlign: =VerticalAlign.Middle
             Width: =180
-            X: =360
+            X: =374
             Y: =48
-      - StepTab4Active:
+      - Tab4ActiveLine:
           Control: Rectangle@2.3.0
           Properties:
             Fill: =RGBA(37, 99, 235, 1)
             Height: =3
-            Width: =150
-            X: =560
+            Width: =160
+            X: =570
             Y: =93
-      - StepTab4Label:
+      - Tab4Label4:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(37, 99, 235, 1)
@@ -132,10 +136,34 @@ Screens:
             Size: =13
             Text: ="4. Attachments"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =150
-            X: =560
+            Width: =160
+            X: =570
             Y: =48
-      # ── Attachment row 1 — Master photo files (Complete) ─────────────────
+      # ── Page intro ────────────────────────────────────────────────────────
+      - AttachPageTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =18
+            Text: ="Upload your files"
+            Width: =800
+            X: =32
+            Y: =112
+      - AttachPageSub:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =13
+            Text: ="Master files and supporting documents required for the Central Deposit to process your request."
+            Width: =900
+            X: =32
+            Y: =148
+      # ── Attachment row 1 — Master files (Complete) ───────────────────────
       - Att1Card:
           Control: Rectangle@2.3.0
           Properties:
@@ -149,11 +177,11 @@ Screens:
             RadiusTopRight: =8
             Width: =1302
             X: =32
-            Y: =112
-      - Att1Thumb:
+            Y: =184
+      - Att1ThumbBg:
           Control: Rectangle@2.3.0
           Properties:
-            Fill: =RGBA(209, 213, 219, 1)
+            Fill: =RGBA(219, 234, 254, 1)
             Height: =48
             RadiusBottomLeft: =4
             RadiusBottomRight: =4
@@ -161,31 +189,41 @@ Screens:
             RadiusTopRight: =4
             Width: =48
             X: =52
-            Y: =124
+            Y: =196
+      - Att1ThumbIcon:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(37, 99, 235, 1)
+            Height: =24
+            Icon: =Icon.Folder
+            Width: =24
+            X: =64
+            Y: =208
       - Att1Title:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(17, 24, 39, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =24
+            Height: =26
             Size: =13
-            Text: ="Master photo files"
-            Width: =700
+            Text: ="Master " & Lower(varMediaType) & " files"
+            Width: =800
             X: =116
-            Y: =124
-      - Att1Subtitle:
+            Y: =192
+      - Att1Sub:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
             Font: =Font.'Open Sans'
-            Height: =20
+            Height: =22
             Size: =12
             Text: ="3 files uploaded · stored in AV Deposit library"
-            Width: =700
+            Width: =800
             X: =116
-            Y: =150
-      - Att1StatusBadge:
+            Y: =220
+      - Att1BadgeBg:
           Control: Rectangle@2.3.0
           Properties:
             Fill: =RGBA(220, 252, 231, 1)
@@ -194,10 +232,10 @@ Screens:
             RadiusBottomRight: =14
             RadiusTopLeft: =14
             RadiusTopRight: =14
-            Width: =96
-            X: =1222
-            Y: =134
-      - Att1StatusLabel:
+            Width: =104
+            X: =1214
+            Y: =206
+      - Att1BadgeLabel:
           Control: Label@2.5.1
           Properties:
             Align: =Align.Center
@@ -208,10 +246,10 @@ Screens:
             Size: =12
             Text: ="Complete"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =96
-            X: =1222
-            Y: =134
-      # ── Attachment row 2 — Contract scan (Complete) ───────────────────────
+            Width: =104
+            X: =1214
+            Y: =206
+      # ── Attachment row 2 — Contract scan (Complete) ──────────────────────
       - Att2Card:
           Control: Rectangle@2.3.0
           Properties:
@@ -225,11 +263,11 @@ Screens:
             RadiusTopRight: =8
             Width: =1302
             X: =32
-            Y: =196
-      - Att2Thumb:
+            Y: =268
+      - Att2ThumbBg:
           Control: Rectangle@2.3.0
           Properties:
-            Fill: =RGBA(209, 213, 219, 1)
+            Fill: =RGBA(220, 252, 231, 1)
             Height: =48
             RadiusBottomLeft: =4
             RadiusBottomRight: =4
@@ -237,31 +275,41 @@ Screens:
             RadiusTopRight: =4
             Width: =48
             X: =52
-            Y: =208
+            Y: =280
+      - Att2ThumbIcon:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 101, 52, 1)
+            Height: =24
+            Icon: =Icon.DocumentWithContent
+            Width: =24
+            X: =64
+            Y: =292
       - Att2Title:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(17, 24, 39, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =24
+            Height: =26
             Size: =13
             Text: ="Contract scan *"
-            Width: =700
+            Width: =800
             X: =116
-            Y: =208
-      - Att2Subtitle:
+            Y: =276
+      - Att2Sub:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(107, 114, 128, 1)
             Font: =Font.'Open Sans'
-            Height: =20
+            Height: =22
             Size: =12
-            Text: ="Required — Case 2 selected"
-            Width: =700
+            Text: ="Required — " & If(IsBlank(varContractCase), "select contract case in Documentation", "Case 2 selected · " & varContractRef)
+            Width: =800
             X: =116
-            Y: =234
-      - Att2StatusBadge:
+            Y: =304
+      - Att2BadgeBg:
           Control: Rectangle@2.3.0
           Properties:
             Fill: =RGBA(220, 252, 231, 1)
@@ -270,10 +318,10 @@ Screens:
             RadiusBottomRight: =14
             RadiusTopLeft: =14
             RadiusTopRight: =14
-            Width: =96
-            X: =1222
-            Y: =218
-      - Att2StatusLabel:
+            Width: =104
+            X: =1214
+            Y: =290
+      - Att2BadgeLabel:
           Control: Label@2.5.1
           Properties:
             Align: =Align.Center
@@ -284,16 +332,16 @@ Screens:
             Size: =12
             Text: ="Complete"
             VerticalAlign: =VerticalAlign.Middle
-            Width: =96
-            X: =1222
-            Y: =218
-      # ── Attachment row 3 — Model release forms (Missing / required) ───────
+            Width: =104
+            X: =1214
+            Y: =290
+      # ── Attachment row 3 — Rights transfer (Complete) ────────────────────
       - Att3Card:
           Control: Rectangle@2.3.0
           Properties:
-            BorderColor: =RGBA(252, 165, 165, 1)
+            BorderColor: =RGBA(229, 231, 235, 1)
             BorderThickness: =1
-            Fill: =RGBA(255, 241, 242, 1)
+            Fill: =RGBA(255, 255, 255, 1)
             Height: =72
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
@@ -301,11 +349,11 @@ Screens:
             RadiusTopRight: =8
             Width: =1302
             X: =32
-            Y: =280
-      - Att3Thumb:
+            Y: =352
+      - Att3ThumbBg:
           Control: Rectangle@2.3.0
           Properties:
-            Fill: =RGBA(252, 165, 165, 1)
+            Fill: =RGBA(220, 252, 231, 1)
             Height: =48
             RadiusBottomLeft: =4
             RadiusBottomRight: =4
@@ -313,50 +361,147 @@ Screens:
             RadiusTopRight: =4
             Width: =48
             X: =52
-            Y: =292
+            Y: =364
+      - Att3ThumbIcon:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(22, 101, 52, 1)
+            Height: =24
+            Icon: =Icon.Ribbon
+            Width: =24
+            X: =64
+            Y: =376
       - Att3Title:
           Control: Label@2.5.1
           Properties:
-            Color: =RGBA(185, 28, 28, 1)
+            Color: =RGBA(17, 24, 39, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =24
+            Height: =26
             Size: =13
-            Text: ="Model release forms *"
-            Width: =700
+            Text: ="Rights transfer / licence agreement *"
+            Width: =800
             X: =116
-            Y: =292
-      - Att3Subtitle:
+            Y: =360
+      - Att3Sub:
           Control: Label@2.5.1
           Properties:
-            Color: =RGBA(220, 38, 38, 1)
+            Color: =RGBA(107, 114, 128, 1)
             Font: =Font.'Open Sans'
-            Height: =20
+            Height: =22
             Size: =12
-            Text: ="Required because recognisable persons appear · one per person"
-            Width: =700
+            Text: ="Signed agreement granting the EU AV Library distribution rights"
+            Width: =800
             X: =116
-            Y: =318
-      - BtnUpload:
+            Y: =388
+      - Att3BadgeBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(220, 252, 231, 1)
+            Height: =28
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Width: =104
+            X: =1214
+            Y: =374
+      - Att3BadgeLabel:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            Color: =RGBA(22, 101, 52, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Size: =12
+            Text: ="Complete"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =104
+            X: =1214
+            Y: =374
+      # ── Attachment row 4 — Model release (Required / pending) ────────────
+      - Att4Card:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =If(varModelRelease, RGBA(252, 165, 165, 1), RGBA(229, 231, 235, 1))
+            BorderThickness: =1
+            Fill: =If(varModelRelease, RGBA(255, 241, 242, 1), RGBA(255, 255, 255, 1))
+            Height: =72
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: =1302
+            X: =32
+            Y: =436
+      - Att4ThumbBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(varModelRelease, RGBA(254, 226, 226, 1), RGBA(243, 244, 246, 1))
+            Height: =48
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Width: =48
+            X: =52
+            Y: =448
+      - Att4ThumbIcon:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =If(varModelRelease, RGBA(185, 28, 28, 1), RGBA(107, 114, 128, 1))
+            Height: =24
+            Icon: =Icon.Person
+            Width: =24
+            X: =64
+            Y: =460
+      - Att4Title:
+          Control: Label@2.5.1
+          Properties:
+            Color: =If(varModelRelease, RGBA(185, 28, 28, 1), RGBA(17, 24, 39, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =26
+            Size: =13
+            Text: ="Model release forms *"
+            Width: =800
+            X: =116
+            Y: =444
+      - Att4Sub:
+          Control: Label@2.5.1
+          Properties:
+            Color: =If(varModelRelease, RGBA(220, 38, 38, 1), RGBA(107, 114, 128, 1))
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =12
+            Text: =If(varModelRelease, "Required because recognisable persons appear · one form per person", "Only required if recognisable persons appear (tick box in Documentation)")
+            Width: =900
+            X: =116
+            Y: =472
+      - Att4UploadBtn:
           Control: Classic/Button@2.2.0
           Properties:
-            BorderColor: =RGBA(209, 213, 219, 1)
+            BorderColor: =If(varModelRelease, RGBA(239, 68, 68, 1), RGBA(209, 213, 219, 1))
             BorderThickness: =1
-            Color: =RGBA(55, 65, 81, 1)
+            Color: =If(varModelRelease, RGBA(185, 28, 28, 1), RGBA(55, 65, 81, 1))
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
             Height: =36
             HoverFill: =RGBA(243, 244, 246, 1)
-            OnSelect: =Notify("Upload functionality requires SharePoint Attachments control", NotificationType.Information)
+            OnSelect: =Notify("SharePoint Attachments connector required for file upload", NotificationType.Information)
             RadiusBottomLeft: =6
             RadiusBottomRight: =6
             RadiusTopLeft: =6
             RadiusTopRight: =6
             Size: =13
             Text: ="Upload"
-            Width: =88
-            X: =1230
-            Y: =300
+            Width: =96
+            X: =1222
+            Y: =454
       # ── Submission workflow info banner ───────────────────────────────────
       - SubmitInfoBg:
           Control: Rectangle@2.3.0
@@ -364,14 +509,14 @@ Screens:
             BorderColor: =RGBA(147, 197, 253, 1)
             BorderThickness: =1
             Fill: =RGBA(239, 246, 255, 1)
-            Height: =64
+            Height: =72
             RadiusBottomLeft: =6
             RadiusBottomRight: =6
             RadiusTopLeft: =6
             RadiusTopRight: =6
             Width: =1302
             X: =32
-            Y: =370
+            Y: =524
       - SubmitInfoIcon:
           Control: Classic/Icon@2.5.0
           Properties:
@@ -380,8 +525,8 @@ Screens:
             Height: =24
             Icon: =Icon.Information
             Width: =24
-            X: =52
-            Y: =388
+            X: =56
+            Y: =548
       - SubmitInfoTitle:
           Control: Label@2.5.1
           Properties:
@@ -392,20 +537,77 @@ Screens:
             Size: =13
             Text: ="Submission workflow"
             Width: =600
-            X: =88
-            Y: =374
+            X: =92
+            Y: =530
       - SubmitInfoBody:
           Control: Label@2.5.1
           Properties:
             Color: =RGBA(30, 64, 175, 1)
             Font: =Font.'Open Sans'
-            Height: =24
+            Height: =36
             Size: =12
-            Text: ="After you submit, the AV Library team reviews your request. Status updates: Sent → Ongoing → Accepted (or Returned for correction)."
+            Text: ="After submission, the AV Library Central Deposit team reviews your request for technical and editorial quality. Status: Sent → Ongoing → Accepted (or Returned for correction)."
             Width: =1200
-            X: =88
-            Y: =400
-      # ── Bottom action bar ────────────────────────────────────────────────
+            X: =92
+            Y: =558
+      # ── Quality checklist ─────────────────────────────────────────────────
+      - QCTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Size: =14
+            Text: ="Submission checklist"
+            Width: =400
+            X: =32
+            Y: =612
+      - QC1:
+          Control: Label@2.5.1
+          Properties:
+            Color: =If(Not(IsBlank(varProjectName)), RGBA(22, 101, 52, 1), RGBA(107, 114, 128, 1))
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =13
+            Text: =If(Not(IsBlank(varProjectName)), "✓  Project name provided", "○  Project name missing")
+            Width: =400
+            X: =32
+            Y: =644
+      - QC2:
+          Control: Label@2.5.1
+          Properties:
+            Color: =If(Not(IsBlank(varMediaType)), RGBA(22, 101, 52, 1), RGBA(107, 114, 128, 1))
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =13
+            Text: =If(Not(IsBlank(varMediaType)), "✓  Media type selected: " & varMediaType, "○  Media type not selected")
+            Width: =500
+            X: =32
+            Y: =670
+      - QC3:
+          Control: Label@2.5.1
+          Properties:
+            Color: =If(Not(IsBlank(varContractCase)), RGBA(22, 101, 52, 1), RGBA(107, 114, 128, 1))
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =13
+            Text: =If(Not(IsBlank(varContractCase)), "✓  Contract case selected", "○  Contract case not selected")
+            Width: =400
+            X: =460
+            Y: =644
+      - QC4:
+          Control: Label@2.5.1
+          Properties:
+            Color: =If(!varModelRelease, RGBA(22, 101, 52, 1), RGBA(220, 38, 38, 1))
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =13
+            Text: =If(!varModelRelease, "✓  No model release required", "⚠  Model release forms pending upload")
+            Width: =440
+            X: =460
+            Y: =670
+      # ── Bottom action bar ─────────────────────────────────────────────────
       - BottomBar4:
           Control: Rectangle@2.3.0
           Properties:
@@ -433,7 +635,7 @@ Screens:
             RadiusTopRight: =6
             Size: =13
             Text: ="←  Previous"
-            Width: =112
+            Width: =120
             X: =32
             Y: =724
       - BtnSaveDraft4:
@@ -454,19 +656,18 @@ Screens:
             Size: =13
             Text: ="Save draft"
             Width: =112
-            X: =152
+            X: =160
             Y: =724
       - BtnSubmitRequest:
           Control: Classic/Button@2.2.0
           Properties:
-            BorderColor: =RGBA(156, 163, 175, 1)
+            BorderColor: =RGBA(0, 0, 0, 0)
             BorderThickness: =0
-            Color: =RGBA(107, 114, 128, 1)
-            DisabledBorderColor: =RGBA(156, 163, 175, 1)
+            Color: =If(varModelRelease, RGBA(107, 114, 128, 1), RGBA(255, 255, 255, 1))
             DisabledColor: =RGBA(107, 114, 128, 1)
             DisabledFill: =RGBA(229, 231, 235, 1)
             DisplayMode: =If(varModelRelease, DisplayMode.Disabled, DisplayMode.Edit)
-            Fill: =RGBA(229, 231, 235, 1)
+            Fill: =If(varModelRelease, RGBA(229, 231, 235, 1), RGBA(37, 99, 235, 1))
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =36
@@ -478,6 +679,6 @@ Screens:
             RadiusTopRight: =6
             Size: =13
             Text: =If(varModelRelease, "Submit request (1 missing)", "Submit request")
-            Width: =200
-            X: =1134
+            Width: =220
+            X: =1114
             Y: =724
