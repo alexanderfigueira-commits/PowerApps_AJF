@@ -1,0 +1,414 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# ************************************************************************************************
+Screens:
+  HomeScreen:
+    Properties:
+      Fill: =RGBA(249, 250, 251, 1)
+      OnVisible: =Set(varFilter, "All")
+    Children:
+      # ── Top navigation bar ──────────────────────────────────────────────
+      - NavBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(15, 15, 15, 1)
+            Height: =56
+            Width: =1366
+            X: =0
+            Y: =0
+      - NavLogoCircle:
+          Control: Circle@2.3.0
+          Properties:
+            Fill: =RGBA(37, 99, 235, 1)
+            Height: =36
+            Width: =36
+            X: =16
+            Y: =10
+      - NavLogoInitial:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =36
+            Size: =16
+            Text: ="A"
+            Width: =36
+            X: =16
+            Y: =10
+      - NavAppTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =36
+            Size: =14
+            Text: ="AV Central Deposit"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =220
+            X: =60
+            Y: =10
+      - NavUserName:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            Color: =RGBA(200, 200, 200, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            Size: =13
+            Text: =User().FullName
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =120
+            X: =1170
+            Y: =10
+      - NavAvatarCircle:
+          Control: Circle@2.3.0
+          Properties:
+            Fill: =RGBA(37, 99, 235, 1)
+            Height: =36
+            Width: =36
+            X: =1314
+            Y: =10
+      - NavAvatarInitials:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =36
+            Size: =13
+            Text: =Upper(Left(User().FullName, 1)) & Upper(Mid(User().FullName, Find(" ", User().FullName) + 1, 1))
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =36
+            X: =1314
+            Y: =10
+      # ── Page header ─────────────────────────────────────────────────────
+      - PageTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =40
+            Size: =24
+            Text: ="My requests"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =500
+            X: =64
+            Y: =88
+      - PageSubtitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =13
+            Text: ="Audiovisual production deposits submitted by your DG"
+            Width: =600
+            X: =64
+            Y: =132
+      - BtnNewRequest:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(37, 99, 235, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(37, 99, 235, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =40
+            HoverBorderColor: =RGBA(29, 78, 216, 1)
+            HoverFill: =RGBA(29, 78, 216, 1)
+            OnSelect: =Navigate(NewRequestScreen)
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Size: =13
+            Text: ="+ New request"
+            Width: =148
+            X: =1154
+            Y: =96
+      # ── Status filter chips ──────────────────────────────────────────────
+      - ChipAll:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter = "All", RGBA(17, 24, 39, 1), RGBA(209, 213, 219, 1))
+            BorderThickness: =1
+            Color: =If(varFilter = "All", RGBA(17, 24, 39, 1), RGBA(107, 114, 128, 1))
+            Fill: =If(varFilter = "All", RGBA(255, 255, 255, 1), RGBA(249, 250, 251, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =If(varFilter = "All", FontWeight.Semibold, FontWeight.Normal)
+            Height: =32
+            HoverFill: =RGBA(243, 244, 246, 1)
+            OnSelect: =Set(varFilter, "All")
+            RadiusBottomLeft: =16
+            RadiusBottomRight: =16
+            RadiusTopLeft: =16
+            RadiusTopRight: =16
+            Size: =13
+            Text: ="All"
+            Width: =52
+            X: =64
+            Y: =172
+      - ChipDraft:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter = "Draft", RGBA(17, 24, 39, 1), RGBA(209, 213, 219, 1))
+            BorderThickness: =1
+            Color: =If(varFilter = "Draft", RGBA(17, 24, 39, 1), RGBA(107, 114, 128, 1))
+            Fill: =If(varFilter = "Draft", RGBA(255, 255, 255, 1), RGBA(249, 250, 251, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =If(varFilter = "Draft", FontWeight.Semibold, FontWeight.Normal)
+            Height: =32
+            HoverFill: =RGBA(243, 244, 246, 1)
+            OnSelect: =Set(varFilter, "Draft")
+            RadiusBottomLeft: =16
+            RadiusBottomRight: =16
+            RadiusTopLeft: =16
+            RadiusTopRight: =16
+            Size: =13
+            Text: ="Draft"
+            Width: =64
+            X: =124
+            Y: =172
+      - ChipSent:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter = "Sent", RGBA(17, 24, 39, 1), RGBA(209, 213, 219, 1))
+            BorderThickness: =1
+            Color: =If(varFilter = "Sent", RGBA(17, 24, 39, 1), RGBA(107, 114, 128, 1))
+            Fill: =If(varFilter = "Sent", RGBA(255, 255, 255, 1), RGBA(249, 250, 251, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =If(varFilter = "Sent", FontWeight.Semibold, FontWeight.Normal)
+            Height: =32
+            HoverFill: =RGBA(243, 244, 246, 1)
+            OnSelect: =Set(varFilter, "Sent")
+            RadiusBottomLeft: =16
+            RadiusBottomRight: =16
+            RadiusTopLeft: =16
+            RadiusTopRight: =16
+            Size: =13
+            Text: ="Sent"
+            Width: =58
+            X: =196
+            Y: =172
+      - ChipOngoing:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter = "Ongoing", RGBA(17, 24, 39, 1), RGBA(209, 213, 219, 1))
+            BorderThickness: =1
+            Color: =If(varFilter = "Ongoing", RGBA(17, 24, 39, 1), RGBA(107, 114, 128, 1))
+            Fill: =If(varFilter = "Ongoing", RGBA(255, 255, 255, 1), RGBA(249, 250, 251, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =If(varFilter = "Ongoing", FontWeight.Semibold, FontWeight.Normal)
+            Height: =32
+            HoverFill: =RGBA(243, 244, 246, 1)
+            OnSelect: =Set(varFilter, "Ongoing")
+            RadiusBottomLeft: =16
+            RadiusBottomRight: =16
+            RadiusTopLeft: =16
+            RadiusTopRight: =16
+            Size: =13
+            Text: ="Ongoing"
+            Width: =78
+            X: =262
+            Y: =172
+      - ChipAccepted:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter = "Accepted", RGBA(17, 24, 39, 1), RGBA(209, 213, 219, 1))
+            BorderThickness: =1
+            Color: =If(varFilter = "Accepted", RGBA(17, 24, 39, 1), RGBA(107, 114, 128, 1))
+            Fill: =If(varFilter = "Accepted", RGBA(255, 255, 255, 1), RGBA(249, 250, 251, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =If(varFilter = "Accepted", FontWeight.Semibold, FontWeight.Normal)
+            Height: =32
+            HoverFill: =RGBA(243, 244, 246, 1)
+            OnSelect: =Set(varFilter, "Accepted")
+            RadiusBottomLeft: =16
+            RadiusBottomRight: =16
+            RadiusTopLeft: =16
+            RadiusTopRight: =16
+            Size: =13
+            Text: ="Accepted"
+            Width: =88
+            X: =348
+            Y: =172
+      # ── Requests table ───────────────────────────────────────────────────
+      - TableCard:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =390
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: =1238
+            X: =64
+            Y: =220
+      - TableHeaderRow:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(243, 244, 246, 1)
+            Height: =44
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Width: =1238
+            X: =64
+            Y: =220
+      - ThProject:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="PROJECT"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =460
+            X: =80
+            Y: =220
+      - ThMedia:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="MEDIA"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =180
+            X: =540
+            Y: =220
+      - ThSubmitted:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="SUBMITTED"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =200
+            X: =720
+            Y: =220
+      - ThStatus:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="STATUS"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =200
+            X: =920
+            Y: =220
+      - RequestsGallery:
+          Control: Gallery@2.8.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            Height: =346
+            Items: =If(varFilter = "All", 'Coverage Request (Belgium)', Filter('Coverage Request (Belgium)', Status.Value = varFilter))
+            ShowScrollbar: =false
+            TemplatePadding: =0
+            TemplateSize: =60
+            Width: =1238
+            X: =64
+            Y: =264
+          Children:
+            - RowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(229, 231, 235, 1)
+                  BorderThickness: =1
+                  Fill: =RGBA(255, 255, 255, 0)
+                  Height: =1
+                  Width: =1238
+                  X: =0
+                  Y: =59
+            - RowProject:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(17, 24, 39, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =60
+                  Size: =13
+                  Text: =If(IsBlank(ThisItem.Title), "Untitled draft", ThisItem.Title)
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =460
+                  X: =16
+                  Y: =0
+            - RowMedia:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(107, 114, 128, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =60
+                  Size: =13
+                  Text: =If(IsBlank(ThisItem.'Media Type'), "—", ThisItem.'Media Type'.Value)
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =180
+                  X: =476
+                  Y: =0
+            - RowSubmitted:
+                Control: Label@2.5.1
+                Properties:
+                  Color: =RGBA(107, 114, 128, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =60
+                  Size: =13
+                  Text: =If(IsBlank(ThisItem.Created), "—", Text(ThisItem.Created, "D MMM YYYY"))
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =200
+                  X: =656
+                  Y: =0
+            - StatusBadgeBg:
+                Control: Rectangle@2.3.0
+                Properties:
+                  Fill: =Switch(ThisItem.Status.Value, "Accepted", RGBA(220, 252, 231, 1), "Ongoing", RGBA(219, 234, 254, 1), "Sent", RGBA(254, 243, 199, 1), RGBA(243, 244, 246, 1))
+                  Height: =28
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Width: =96
+                  X: =856
+                  Y: =16
+            - StatusBadgeLabel:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  Color: =Switch(ThisItem.Status.Value, "Accepted", RGBA(22, 101, 52, 1), "Ongoing", RGBA(30, 64, 175, 1), "Sent", RGBA(146, 64, 14, 1), RGBA(75, 85, 99, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", ThisItem.Status.Value)
+                  VerticalAlign: =VerticalAlign.Middle
+                  Width: =96
+                  X: =856
+                  Y: =16
+            - RowSelectTarget:
+                Control: Rectangle@2.3.0
+                Properties:
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Height: =60
+                  HoverFill: =RGBA(249, 250, 251, 0.8)
+                  OnSelect: =Set(varSelectedRequest, ThisItem); Navigate(NewRequestScreen)
+                  Width: =1238
+                  X: =0
+                  Y: =0

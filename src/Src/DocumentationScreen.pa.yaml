@@ -1,0 +1,563 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# ************************************************************************************************
+Screens:
+  DocumentationScreen:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      OnVisible: =Set(varContractCase, ""); Set(varContractRef, ""); Set(varModelRelease, false)
+    Children:
+      # ── Top navigation bar ──────────────────────────────────────────────
+      - NavBar3:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(15, 15, 15, 1)
+            Height: =48
+            Width: =1366
+            X: =0
+            Y: =0
+      - NavBack3:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(200, 200, 200, 1)
+            Height: =24
+            HoverColor: =RGBA(255, 255, 255, 1)
+            Icon: =Icon.ChevronLeft
+            OnSelect: =Navigate(NewRequestScreen)
+            Width: =24
+            X: =16
+            Y: =12
+      - NavBreadcrumb3:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(156, 163, 175, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =13
+            Text: ="My requests  /  Citizens' dialogue — Porto leg"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =380
+            X: =44
+            Y: =0
+      - NavDraftBadge3:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(243, 244, 246, 1)
+            Height: =24
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Width: =48
+            X: =1302
+            Y: =12
+      - NavDraftLabel3:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            Color: =RGBA(75, 85, 99, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =12
+            Text: ="Draft"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =48
+            X: =1302
+            Y: =12
+      # ── Step tabs (1 and 2 completed, 3 active) ──────────────────────────
+      - StepTabsBg3:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =48
+            Width: =1366
+            X: =0
+            Y: =48
+      - StepTab1Done:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            OnSelect: =Navigate(NewRequestScreen)
+            Size: =13
+            Text: ="✓  1. Info"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =120
+            X: =0
+            Y: =48
+      - StepTab2Done:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =13
+            Text: ="✓  2. Media information"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =200
+            X: =140
+            Y: =48
+      - StepTab3Active:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(37, 99, 235, 1)
+            Height: =3
+            Width: =160
+            X: =360
+            Y: =93
+      - StepTab3Label:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(37, 99, 235, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =48
+            Size: =13
+            Text: ="3. Documentation"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =160
+            X: =360
+            Y: =48
+      - StepTab4Label3:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =13
+            Text: ="4. Attachments"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =150
+            X: =540
+            Y: =48
+      # ── Info banner ───────────────────────────────────────────────────────
+      - InfoBannerBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(147, 197, 253, 1)
+            BorderThickness: =1
+            Fill: =RGBA(239, 246, 255, 1)
+            Height: =48
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =1302
+            X: =32
+            Y: =112
+      - InfoBannerIcon:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(37, 99, 235, 1)
+            Height: =24
+            Icon: =Icon.Information
+            Width: =24
+            X: =52
+            Y: =124
+      - InfoBannerText:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(30, 64, 175, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =13
+            Text: ="Tick the contract case that matches how this material was produced. Cases are mutually exclusive. The matching document upload will become required on the Attachments tab."
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =1240
+            X: =84
+            Y: =112
+      # ── Contract case section ─────────────────────────────────────────────
+      - SectionContractCase:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =18
+            Text: ="Contract case"
+            Width: =900
+            X: =32
+            Y: =174
+      # Case 1
+      - Case1Bg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =If(varContractCase = "Case1", RGBA(37, 99, 235, 1), RGBA(229, 231, 235, 1))
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =60
+            OnSelect: =Set(varContractCase, "Case1")
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =1302
+            X: =32
+            Y: =212
+      - Case1Radio:
+          Control: Circle@2.3.0
+          Properties:
+            BorderColor: =If(varContractCase = "Case1", RGBA(37, 99, 235, 1), RGBA(156, 163, 175, 1))
+            BorderThickness: =2
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =20
+            OnSelect: =Set(varContractCase, "Case1")
+            Width: =20
+            X: =56
+            Y: =232
+      - Case1RadioFill:
+          Control: Circle@2.3.0
+          Properties:
+            Fill: =RGBA(37, 99, 235, 1)
+            Height: =10
+            OnSelect: =Set(varContractCase, "Case1")
+            Visible: =varContractCase = "Case1"
+            Width: =10
+            X: =61
+            Y: =237
+      - Case1Title:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            OnSelect: =Set(varContractCase, "Case1")
+            Size: =13
+            Text: ="Case 1 — direct or framework service contract"
+            Width: =800
+            X: =88
+            Y: =216
+      - Case1Subtitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            OnSelect: =Set(varContractCase, "Case1")
+            Size: =12
+            Text: ="Tick the relevant sub-types (framework, specific, offer)"
+            Width: =800
+            X: =88
+            Y: =242
+      # Case 2 (selected state shown by default)
+      - Case2Bg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =If(varContractCase = "Case2", RGBA(37, 99, 235, 1), RGBA(229, 231, 235, 1))
+            BorderThickness: =If(varContractCase = "Case2", 2, 1)
+            Fill: =If(varContractCase = "Case2", RGBA(239, 246, 255, 1), RGBA(255, 255, 255, 1))
+            Height: =60
+            OnSelect: =Set(varContractCase, "Case2")
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =1302
+            X: =32
+            Y: =280
+      - Case2Radio:
+          Control: Circle@2.3.0
+          Properties:
+            BorderColor: =If(varContractCase = "Case2", RGBA(37, 99, 235, 1), RGBA(156, 163, 175, 1))
+            BorderThickness: =2
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =20
+            OnSelect: =Set(varContractCase, "Case2")
+            Width: =20
+            X: =56
+            Y: =300
+      - Case2RadioFill:
+          Control: Circle@2.3.0
+          Properties:
+            Fill: =RGBA(37, 99, 235, 1)
+            Height: =10
+            OnSelect: =Set(varContractCase, "Case2")
+            Visible: =varContractCase = "Case2"
+            Width: =10
+            X: =61
+            Y: =305
+      - Case2Title:
+          Control: Label@2.5.1
+          Properties:
+            Color: =If(varContractCase = "Case2", RGBA(37, 99, 235, 1), RGBA(17, 24, 39, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            OnSelect: =Set(varContractCase, "Case2")
+            Size: =13
+            Text: ="Case 2 — direct service contract"
+            Width: =800
+            X: =88
+            Y: =284
+      - Case2Subtitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(37, 99, 235, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            OnSelect: =Set(varContractCase, "Case2")
+            Size: =12
+            Text: ="Contract reference number is required (see below)"
+            Visible: =varContractCase = "Case2"
+            Width: =800
+            X: =88
+            Y: =310
+      # Cases 3-6 collapsed
+      - Cases36Bg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(249, 250, 251, 1)
+            Height: =44
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =1302
+            X: =32
+            Y: =348
+      - Cases36Label:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(107, 114, 128, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            Size: =13
+            Text: ="Cases 3 to 6 (collapsed)"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =400
+            X: =52
+            Y: =348
+      - Cases36Chevron:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(107, 114, 128, 1)
+            Height: =24
+            Icon: =Icon.ChevronDown
+            Width: =24
+            X: =1294
+            Y: =360
+      # ── Contract reference number ─────────────────────────────────────────
+      - LblContractRef:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Contract reference number *"
+            Width: =400
+            X: =32
+            Y: =406
+      - TxtContractRef:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            Default: =varContractRef
+            Font: =Font.'Open Sans'
+            Height: =40
+            HintText: ="e.g. COMM-2026-PHOTO-0142"
+            OnChange: =Set(varContractRef, Self.Text)
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =460
+            X: =32
+            Y: =434
+      # ── Divider ───────────────────────────────────────────────────────────
+      - SectionDivider3:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(229, 231, 235, 1)
+            Height: =1
+            Width: =1302
+            X: =32
+            Y: =490
+      # ── Model release section ─────────────────────────────────────────────
+      - SectionModelRelease:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(17, 24, 39, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =32
+            Size: =18
+            Text: ="Model release"
+            Width: =600
+            X: =32
+            Y: =504
+      # Checkbox row
+      - ModelReleaseCBBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =48
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Width: =1302
+            X: =32
+            Y: =544
+      - ModelReleaseCB:
+          Control: Classic/Check@2.3.5
+          Properties:
+            BorderColor: =RGBA(156, 163, 175, 1)
+            CheckmarkFill: =RGBA(37, 99, 235, 1)
+            Default: =varModelRelease
+            Height: =24
+            OnCheck: =Set(varModelRelease, true)
+            OnUncheck: =Set(varModelRelease, false)
+            Width: =24
+            X: =56
+            Y: =556
+      - ModelReleaseCBLabel:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(55, 65, 81, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Size: =13
+            Text: ="Recognisable private persons appear in the photos"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =700
+            X: =92
+            Y: =544
+      # Model release confirmation banner
+      - ModelReleaseConfirmBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(134, 239, 172, 1)
+            BorderThickness: =1
+            Fill: =RGBA(240, 253, 244, 1)
+            Height: =56
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =varModelRelease
+            Width: =1302
+            X: =32
+            Y: =600
+      - ModelReleaseConfirmCB:
+          Control: Classic/Check@2.3.5
+          Properties:
+            BorderColor: =RGBA(34, 197, 94, 1)
+            CheckmarkFill: =RGBA(22, 163, 74, 1)
+            Default: =true
+            Height: =24
+            Visible: =varModelRelease
+            Width: =24
+            X: =56
+            Y: =616
+      - ModelReleaseConfirmTitle:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(22, 101, 52, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =13
+            Text: ="Yes, model release forms are required"
+            Visible: =varModelRelease
+            Width: =600
+            X: =92
+            Y: =604
+      - ModelReleaseConfirmSub:
+          Control: Label@2.5.1
+          Properties:
+            Color: =RGBA(22, 163, 74, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            Size: =12
+            Text: ="🔗  Upload on Attachments tab is now mandatory"
+            Visible: =varModelRelease
+            Width: =600
+            X: =92
+            Y: =630
+      # ── Bottom action bar ────────────────────────────────────────────────
+      - BottomBar3:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(229, 231, 235, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =56
+            Width: =1366
+            X: =0
+            Y: =712
+      - BtnPrev3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            BorderThickness: =1
+            Color: =RGBA(55, 65, 81, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverFill: =RGBA(243, 244, 246, 1)
+            OnSelect: =Navigate(NewRequestScreen)
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Size: =13
+            Text: ="←  Previous"
+            Width: =112
+            X: =32
+            Y: =724
+      - BtnSaveDraft3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(209, 213, 219, 1)
+            BorderThickness: =1
+            Color: =RGBA(55, 65, 81, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverFill: =RGBA(243, 244, 246, 1)
+            OnSelect: =Notify("Draft saved", NotificationType.Success)
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Size: =13
+            Text: ="Save draft"
+            Width: =112
+            X: =152
+            Y: =724
+      - BtnNextAttachments:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(37, 99, 235, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(37, 99, 235, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =36
+            HoverFill: =RGBA(29, 78, 216, 1)
+            OnSelect: =Navigate(AttachmentsScreen)
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Size: =13
+            Text: ="Next: attachments  →"
+            Width: =180
+            X: =1154
+            Y: =724
