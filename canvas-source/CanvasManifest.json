@@ -11,7 +11,7 @@
   },
   "Properties": {
     "AppCreationSource": "AppFromScratch",
-    "AppDescription": "Coverage Request Form",
+    "AppDescription": "AV Central Deposit — parent/child media management",
     "AppPreviewFlagsMap": {
       "adaptivepaging": false,
       "aibuilderserviceenrollment": false,
@@ -74,7 +74,7 @@
       "optimizedforteamsmeeting": false,
       "optimizestartscreenpublishedappload": false,
       "packagemodernruntime": false,
-      "pdffunction": false,
+      "pdffunction": true,
       "powerfxdecimal": false,
       "powerfxv1": false,
       "primaryoutputpropertycoerciondeprecated": true,
@@ -117,13 +117,13 @@
     "Id": "823932f0-8907-4f30-91b0-a2da8a16dfdd",
     "LocalDatabaseReferences": "",
     "ManualOfflineProfileId": "",
-    "Name": "Coverage Request",
+    "Name": "AV Central Deposit",
     "OriginatingVersion": "1.324",
     "ParserErrorCount": 0,
     "ShowStatusBar": false
   },
   "PublishInfo": {
-    "AppName": "Coverage Request",
+    "AppName": "AV Central Deposit",
     "BackgroundColor": "rgba(50, 86, 160, 1)",
     "IconColor": "RGBA(255,255,255,1)",
     "IconName": "CheckList",
@@ -134,6 +134,17 @@
     "UserLocale": "en-US"
   },
   "ScreenOrder": [
+    "HomeScreen",
+    "ProjectScreen",
+    "ChildInfoScreen",
+    "ChildMetaScreen",
+    "ChildLegalScreen",
+    "ChildValidScreen",
+    "ConfirmationScreen",
+    "NewRequestScreen",
+    "MediaInfoScreen",
+    "DocumentationScreen",
+    "AttachmentsScreen2",
     "FormScreen",
     "Success Screen",
     "Future Coverages",

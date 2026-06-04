@@ -3,21 +3,15 @@ App As appinfo:
     OnStart: |-
         =// Initialize the Office365Connected variable
         Set(Office365Connected, true);
-        
-        //Set the pop message
         Set(varShowPopup, false);
-        
-        // Check Office 365 profile access and update the Office365Connected variable
         IfError(
             Set(MyProfile, Office365Users.MyProfile()),
             Set(Office365Connected, false)
         );
-        
         Set(VideoCoverageSelected, false);
         Set(OnlyConferenceEventSelected, false);
         Set(ConferenceEventSelected, false);
         Set(ResetCheckboxes, false);
-        
         Set(varCollegeMember, Blank());
         Set(varEventTitle, Blank());
         Set(varStartDateTime, Blank());
@@ -39,12 +33,7 @@ App As appinfo:
         Set(varWebstreamedOrganizer, Blank());
         Set(varPublicationType, Blank());
         Set(varContacts, Blank());
-        
-        
         Set(varComments, Blank());
-        
-        
-        
         NewForm(CoverageFormRequest);
         Set(varFilter, "All");
         Set(varMediaType, "Photo");
@@ -59,6 +48,28 @@ App As appinfo:
         Set(varMusicLicence, false);
         Set(varPreexisting, false);
         Set(varAIVoiceover, false);
+        Set(varSelectedProject, Blank());
+        Set(varSelectedChild, Blank());
+        Set(varFilterStartDate, Blank());
+        Set(varFilterEndDate, Blank());
+        Set(varFilterOwner, "");
+        Set(varIncludeChildren, false);
+        Set(varChildTitle, Blank());
+        Set(varCaptureDate, Blank());
+        Set(varChildLocation, "");
+        Set(varChildTags, "");
+        Set(varChildStatus, "Draft");
+        Set(varLanguages, "");
+        Set(varDescription, Blank());
+        Set(varCredits, "");
+        Set(varModelReleaseProvided, false);
+        Set(varMusicProvided, false);
+        Set(varPreexistingProvided, false);
+        Set(varCase1SubType, Blank());
+        Set(varProjectOwner, User().FullName);
+        Set(varProjectStartDate, Blank());
+        Set(varProjectEndDate, Blank());
+        Set(varProjectStatus, "Draft");
     StartScreen: =HomeScreen
     Theme: =PowerAppsTheme
 
@@ -68,4 +79,3 @@ App As appinfo:
         OnNew: =false
         OnSave: =false
         OnView: =false
-

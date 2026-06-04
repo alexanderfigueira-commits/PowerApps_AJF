@@ -20,13 +20,17 @@
           },
           "SuspensionDates": {
             "tableName": "5995c8f7-f1f9-49b3-a838-6409af0ffc2b"
+          },
+          "AV Central Deposit Projects": {
+            "tableName": "av-central-deposit-projects-placeholder"
           }
         }
       }
     },
     "dataSources": [
       "Coverage Request (Belgium)",
-      "SuspensionDates"
+      "SuspensionDates",
+      "AV Central Deposit Projects"
     ],
     "dependencies": {},
     "dependents": [],
