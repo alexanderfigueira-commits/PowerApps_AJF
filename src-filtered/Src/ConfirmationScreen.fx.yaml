@@ -1,0 +1,122 @@
+ConfirmationScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+
+    CF_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =64
+        Width: =1366
+        ZIndex: =1
+
+    CF_AppTitle As label:
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =64
+        Size: =16
+        Text: ="AV Central Deposit"
+        Width: =400
+        X: =24
+        ZIndex: =2
+
+    CF_Circle As circle.Circle:
+        Fill: =RGBA(223, 245, 233, 1)
+        Height: =110
+        Width: =110
+        X: =(Parent.Width - Self.Width) / 2
+        Y: =150
+        ZIndex: =3
+
+    CF_Check As label:
+        Align: =Align.Center
+        Color: =RGBA(22, 128, 80, 1)
+        Height: =110
+        Size: =54
+        Text: ="✓"
+        Width: =110
+        X: =(Parent.Width - Self.Width) / 2
+        Y: =150
+        ZIndex: =4
+
+    CF_Title As label:
+        Align: =Align.Center
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Size: =24
+        Text: ="Your request has been submitted"
+        Width: =Parent.Width
+        Y: =280
+        ZIndex: =5
+
+    CF_Subtitle As label:
+        Align: =Align.Center
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =28
+        Size: =14
+        Text: ="The Central Deposit team will review it and may contact your point of contact for clarification."
+        Width: =Parent.Width
+        Y: =324
+        ZIndex: =6
+
+    CF_RefCard As rectangle:
+        BorderColor: =RGBA(186, 202, 226, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =120
+        Width: =440
+        X: =(Parent.Width - Self.Width) / 2
+        Y: =376
+        ZIndex: =7
+
+    CF_RefLabel As label:
+        Align: =Align.Center
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =24
+        Size: =12
+        Text: ="YOUR TICKET REFERENCE"
+        Width: =440
+        X: =(Parent.Width - 440) / 2
+        Y: =396
+        ZIndex: =8
+
+    CF_RefValue As label:
+        Align: =Align.Center
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =50
+        Size: =32
+        Text: =Coalesce(varTicketRef, "CD-PENDING")
+        Width: =440
+        X: =(Parent.Width - 440) / 2
+        Y: =424
+        ZIndex: =9
+
+    CF_EmailNote As label:
+        Align: =Align.Center
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =24
+        Size: =12
+        Text: ="A copy of this reference is kept against your request in My requests."
+        Width: =Parent.Width
+        Y: =516
+        ZIndex: =10
+
+    CF_BtnHome As button:
+        Height: =46
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: |-
+            =Set(varProjectName, Blank());
+            Set(varContact, Blank());
+            Set(varFTPPath, Blank());
+            Set(varContractCase, Blank());
+            Set(varContractRef, Blank());
+            Set(varModelRelease, false);
+            Set(varMusicLicence, false);
+            Set(varPreexisting, false);
+            Set(varMediaType, "Photo");
+            Navigate(HomeScreen)
+        Size: =14
+        Text: ="Back to My requests"
+        Width: =260
+        X: =(Parent.Width - Self.Width) / 2
+        Y: =560
+        ZIndex: =11
+

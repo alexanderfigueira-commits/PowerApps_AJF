@@ -1,0 +1,298 @@
+MediaInfoScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+
+    MI_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =52
+        Width: =1366
+        ZIndex: =1
+
+    MI_Back As button:
+        BorderThickness: =0
+        Color: =RGBA(186, 202, 226, 1)
+        Fill: =RGBA(0, 18, 107, 1)
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(HomeScreen)
+        Size: =13
+        Text: ="←  My requests"
+        X: =16
+        Y: =10
+        ZIndex: =2
+
+    MI_Breadcrumb As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =52
+        Text: =" /  " & If(IsBlank(varProjectName), "New request", varProjectName)
+        Width: =500
+        X: =184
+        ZIndex: =3
+
+    MI_TabsBg As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =50
+        Width: =1366
+        Y: =52
+        ZIndex: =4
+
+    MI_Tab1 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(NewRequestScreen)
+        Size: =13
+        Text: ="✓  1.  Info"
+        Width: =150
+        X: =16
+        Y: =52
+        ZIndex: =5
+
+    MI_Tab2 As button:
+        BorderThickness: =0
+        Color: =RGBA(0, 18, 107, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(255, 255, 255, 1)
+        Size: =13
+        Text: ="2.  Metadata"
+        Width: =170
+        X: =176
+        Y: =52
+        ZIndex: =6
+
+    MI_Tab2Line As rectangle:
+        Height: =3
+        Width: =170
+        X: =176
+        Y: =99
+        ZIndex: =7
+
+    MI_Tab3 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(DocumentationScreen)
+        Size: =13
+        Text: ="3.  Legal docs"
+        X: =356
+        Y: =52
+        ZIndex: =8
+
+    MI_Tab4 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(AttachmentsScreen2)
+        Size: =13
+        Text: ="4.  Attachments"
+        Width: =170
+        X: =526
+        Y: =52
+        ZIndex: =9
+
+    MI_Card As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =560
+        Width: =1286
+        X: =32
+        Y: =122
+        ZIndex: =10
+
+    MI_TypeBadge As button:
+        BorderThickness: =0
+        Color: =RGBA(0, 18, 107, 1)
+        DisplayMode: =DisplayMode.View
+        Fill: =RGBA(230, 236, 245, 1)
+        Height: =32
+        Size: =12
+        Text: =varMediaType
+        Width: =140
+        X: =56
+        Y: =142
+        ZIndex: =11
+
+    MI_SectionHeader As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =30
+        Size: =18
+        Text: ="Metadata"
+        Width: =840
+        X: =56
+        Y: =184
+        ZIndex: =12
+
+    MI_LblTitle As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: ="Descriptive title *"
+        Width: =600
+        X: =56
+        Y: =224
+        ZIndex: =13
+
+    MI_Title As text:
+        Default: =varEventTitle
+        HintText: ="Title as it should appear in the AV catalogue"
+        OnChange: =Set(varEventTitle, Self.Value)
+        Width: =1230
+        X: =56
+        Y: =250
+        ZIndex: =14
+
+    MI_LblDesc As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: ="Description *"
+        Width: =600
+        X: =56
+        Y: =302
+        ZIndex: =15
+
+    MI_Desc As text:
+        Default: =varDescription
+        Height: =72
+        HintText: ="Editorial description, context and keywords (max 500 characters)"
+        Mode: =TextMode.MultiLine
+        OnChange: =Set(varDescription, Self.Value)
+        Width: =1230
+        X: =56
+        Y: =328
+        ZIndex: =16
+
+    MI_LblDate As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: ="Production date *"
+        Width: =300
+        X: =56
+        Y: =414
+        ZIndex: =17
+
+    MI_Date As datepicker:
+        Width: =300
+        X: =56
+        Y: =440
+        ZIndex: =18
+
+    MI_LblLanguage As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: ="Language version(s)"
+        Width: =300
+        X: =388
+        Y: =414
+        ZIndex: =19
+
+    MI_Language As combobox:
+        Items: =["EN", "FR", "DE", "ES", "IT", "PL", "NL", "Multilingual"]
+        Width: =300
+        X: =388
+        Y: =440
+        ZIndex: =20
+
+    MI_LblCredits As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: =If(varMediaType="Photo", "Photographer / agency", If(varMediaType="Audio" Or varMediaType="Podcast", "Presenter / producer", "Director / producer"))
+        Width: =500
+        X: =720
+        Y: =414
+        ZIndex: =21
+
+    MI_Credits As text:
+        Default: =""
+        HintText: ="Production credits"
+        Width: =566
+        X: =720
+        Y: =440
+        ZIndex: =22
+
+    MI_LblFTP As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: ="FTP delivery path *  (where the master files were delivered)"
+        Width: =900
+        X: =56
+        Y: =504
+        ZIndex: =23
+
+    MI_FTP As text:
+        Default: =varFTPPath
+        HintText: |-
+            ="ftp://avdeposit.ec.europa.eu/incoming/2026/…"
+        OnChange: =Set(varFTPPath, Self.Value)
+        Width: =1230
+        X: =56
+        Y: =530
+        ZIndex: =24
+
+    MI_AICheck As checkbox.Checkbox:
+        Height: =40
+        OnCheck: =Set(varAIVoiceover, true)
+        OnUncheck: =Set(varAIVoiceover, false)
+        Text: ="This production uses an AI-generated voice-over"
+        Width: =700
+        X: =52
+        Y: =588
+        ZIndex: =25
+
+    MI_BottomBar As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =56
+        Width: =1366
+        Y: =712
+        ZIndex: =26
+
+    MI_BtnPrev As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(NewRequestScreen)
+        Size: =14
+        Text: ="←  Previous"
+        Width: =140
+        X: =32
+        Y: =720
+        ZIndex: =27
+
+    MI_BtnNext As button:
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(DocumentationScreen)
+        Size: =14
+        Text: |-
+            ="Next: Legal docs  →"
+        Width: =200
+        X: =1142
+        Y: =720
+        ZIndex: =28
+
+    Label12_4 As label:
+        Align: =Align.Center
+        AutoHeight: =true
+        Color: =RGBA(149, 149, 149, 1)
+        FontWeight: =FontWeight.Semibold
+        Size: =11
+        Text: |-
+            ="Audiovisual Service - DG COMM
+            This site is managed by the Directorate-General for Communication"
+        Width: =691
+        X: =265
+        Y: =717
+        ZIndex: =29
+
