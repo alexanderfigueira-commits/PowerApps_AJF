@@ -81,29 +81,25 @@ HomeScreen As screen:
             Navigate(ReviewScreen)
         Size: =13
         Text: ="👁  Review queue"
-        Width: =160
-        X: =1040
+        Width: =150
+        X: =1036
         Y: =92
         ZIndex: =36
 
-    HomeBtnNewRight As button:
+    HomeBtnPrint As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
         Height: =44
-        HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: |-
-            =Set(varCurrentProject, Blank());
-            Set(varParentTitle, "");
-            Set(varParentDG, "");
-            Set(varParentFTPPath, "");
-            Set(varParentOwnerContact, "");
-            Set(varParentOwnerEmail, User().Email);
-            Navigate(ProjectScreen)
-        Size: =14
-        Text: ="+  New project"
-        Width: =160
-        X: =1218
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: =Print()
+        Size: =13
+        Text: ="🖨  Print"
+        Width: =110
+        X: =1202
         Y: =92
-        ZIndex: =37
-        Visible: =false
+        ZIndex: =38
 
     HomeChipAll As button:
         BorderColor: =If(varFilter="All", RGBA(0,18,107,1), RGBA(220,224,230,1))
@@ -260,14 +256,50 @@ HomeScreen As screen:
         Y: =244
         ZIndex: =33
 
+    HomeCounterBar As label:
+        Color: |-
+            =If(
+                CountIf(HomeGallery.AllItems, Status.Value = "Rejected") > 0,
+                RGBA(193, 40, 40, 1),
+                If(
+                    CountRows(HomeGallery.AllItems) > 0
+                    And CountIf(HomeGallery.AllItems, Status.Value = "Approved") = CountRows(HomeGallery.AllItems),
+                    RGBA(22, 128, 80, 1),
+                    RGBA(96, 104, 120, 1)
+                )
+            )
+        Height: =28
+        Size: =12
+        Text: |-
+            =Text(CountRows(HomeGallery.AllItems)) & If(CountRows(HomeGallery.AllItems) = 1, "  project", "  projects") & "   " &
+            If(
+                CountIf(HomeGallery.AllItems, Status.Value = "Rejected") > 0,
+                "⚠  " & Text(CountIf(HomeGallery.AllItems, Status.Value = "Rejected")) & " rejected",
+                If(
+                    CountRows(HomeGallery.AllItems) > 0
+                    And CountIf(HomeGallery.AllItems, Status.Value = "Approved") = CountRows(HomeGallery.AllItems),
+                    "✓  all approved",
+                    If(
+                        CountIf(HomeGallery.AllItems, Status.Value = "Draft") > 0,
+                        "◌  " & Text(CountIf(HomeGallery.AllItems, Status.Value = "Draft")) & " in draft",
+                        ""
+                    )
+                )
+            )
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =900
+        X: =48
+        Y: =288
+        ZIndex: =39
+
     HomeTableCard As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =408
+        Height: =380
         Width: =1270
         X: =48
-        Y: =292
+        Y: =320
         ZIndex: =14
 
     HomeTableHeader As rectangle:
@@ -275,7 +307,7 @@ HomeScreen As screen:
         Height: =44
         Width: =1270
         X: =48
-        Y: =292
+        Y: =320
         ZIndex: =15
 
     HomeThProject As label:
@@ -286,7 +318,7 @@ HomeScreen As screen:
         Text: ="PROJECT"
         Width: =440
         X: =68
-        Y: =292
+        Y: =320
         ZIndex: =16
 
     HomeThDG As label:
@@ -297,7 +329,7 @@ HomeScreen As screen:
         Text: ="DG"
         Width: =160
         X: =530
-        Y: =292
+        Y: =320
         ZIndex: =17
 
     HomeThArchives As label:
@@ -309,7 +341,7 @@ HomeScreen As screen:
         Visible: =Not(varShowLinked)
         Width: =140
         X: =710
-        Y: =292
+        Y: =320
         ZIndex: =18
 
     HomeThLinked As label:
@@ -321,7 +353,7 @@ HomeScreen As screen:
         Visible: =varShowLinked
         Width: =200
         X: =710
-        Y: =292
+        Y: =320
         ZIndex: =34
 
     HomeThStatus As label:
@@ -332,18 +364,15 @@ HomeScreen As screen:
         Text: ="STATUS"
         Width: =180
         X: =930
-        Y: =292
+        Y: =320
         ZIndex: =19
 
     "HomeGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
         BorderColor: =RGBA(220, 224, 230, 1)
         DelayItemLoading: =true
-        Height: =358
+        Height: =330
         Items: |-
-            =// DG and Project-name both use StartsWith on text columns — fully delegable against SharePoint.
-            // Status chip uses equality on a Choice field — delegable.
-            // 'Created By'.Email restricts to the signed-in user's own projects — delegable.
-            Filter(
+            =Filter(
                 AVCentralDepositProjects,
                 'Created By'.Email = User().Email,
                 varFilter = "All" Or Status.Value = varFilter,
@@ -356,7 +385,7 @@ HomeScreen As screen:
         TemplateSize: =60
         Width: =1270
         X: =48
-        Y: =340
+        Y: =368
         ZIndex: =20
 
         HomeRowSelect As rectangle:
@@ -413,10 +442,7 @@ HomeScreen As screen:
             Color: =RGBA(96, 104, 120, 1)
             Height: =59
             OnSelect: =Select(Parent)
-            Text: |-
-                =// LinkedProject.Value is the title of the linked project from the SP Lookup column.
-                // This is a field value already present in the row — no extra query — so no delegation issue.
-                If(IsBlank(ThisItem.LinkedProject.Value), "—", ThisItem.LinkedProject.Value)
+            Text: =If(IsBlank(ThisItem.LinkedProject.Value), "—", ThisItem.LinkedProject.Value)
             Visible: =varShowLinked
             Width: =200
             X: =662
@@ -455,7 +481,7 @@ HomeScreen As screen:
         Visible: =CountRows(HomeGallery.AllItems) = 0
         Width: =1270
         X: =48
-        Y: =502
+        Y: =530
         ZIndex: =21
 
     Image1_5 As image:
