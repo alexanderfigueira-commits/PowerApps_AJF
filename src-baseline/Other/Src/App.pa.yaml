@@ -1,0 +1,72 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+App:
+  Properties:
+    BackEnabled: =false
+    OnStart: |-
+      =// Initialize the Office365Connected variable
+      Set(Office365Connected, true);
+
+      //Set the pop message
+      Set(varShowPopup, false);
+
+      // Check Office 365 profile access and update the Office365Connected variable
+      IfError(
+          Set(MyProfile, Office365Users.MyProfile()),
+          Set(Office365Connected, false)
+      );
+
+      Set(VideoCoverageSelected, false);
+      Set(OnlyConferenceEventSelected, false);
+      Set(ConferenceEventSelected, false);
+      Set(ResetCheckboxes, false);
+
+      Set(varCollegeMember, Blank());
+      Set(varEventTitle, Blank());
+      Set(varStartDateTime, Blank());
+      Set(varStartDate, Blank());
+      Set(varStartHour, Blank());
+      Set(varStartMinute, Blank());
+      Set(varEndDateTime, Blank());
+      Set(varEndDate, Blank());
+      Set(varEndHour, Blank());
+      Set(varEndMinute, Blank());
+      Set(varLocation, Blank());
+      Set(varAddress, Blank());
+      Set(varEventTypes, Blank());
+      Set(otherEventValue, Blank());
+      Set(VIPEventValue, Blank());
+      Set(varCoverageTypes, Blank());
+      Set(varEventCoverageType, Blank());
+      Set(varWebstreamed, Blank());
+      Set(varWebstreamedOrganizer, Blank());
+      Set(varPublicationType, Blank());
+      Set(varContacts, Blank());
+
+
+      Set(varComments, Blank());
+
+
+
+      NewForm(CoverageFormRequest);
+      Set(varFilter, "All");
+      Set(varMediaType, "Photo");
+      Set(varDG, "DG COMM");
+      Set(varProjectName, Blank());
+      Set(varContact, Blank());
+      Set(varContactEmail, User().Email);
+      Set(varFTPPath, Blank());
+      Set(varContractCase, Blank());
+      Set(varContractRef, Blank());
+      Set(varModelRelease, false);
+      Set(varMusicLicence, false);
+      Set(varPreexisting, false);
+      Set(varAIVoiceover, false);
+    StartScreen: =HomeScreen
+    Theme: =PowerAppsTheme

@@ -1,0 +1,432 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  MediaInfoScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+    Children:
+      - MI_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =52
+            Width: =1366
+      - MI_Back:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(186, 202, 226, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: =Navigate(HomeScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="←  My requests"
+            X: =16
+            Y: =10
+      - MI_Breadcrumb:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =52
+            Text: =" /  " & If(IsBlank(varProjectName), "New request", varProjectName)
+            Width: =500
+            X: =184
+      - MI_TabsBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =50
+            Width: =1366
+            Y: =52
+      - MI_Tab1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(NewRequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="✓  1.  Info"
+            Width: =150
+            X: =16
+            Y: =52
+      - MI_Tab2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 18, 107, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 1)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="2.  Metadata"
+            Width: =170
+            X: =176
+            Y: =52
+      - MI_Tab2Line:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =3
+            Width: =170
+            X: =176
+            Y: =99
+      - MI_Tab3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(DocumentationScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="3.  Legal docs"
+            X: =356
+            Y: =52
+      - MI_Tab4:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(AttachmentsScreen2)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="4.  Attachments"
+            Width: =170
+            X: =526
+            Y: =52
+      - MI_Card:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =560
+            Width: =1286
+            X: =32
+            Y: =122
+      - MI_TypeBadge:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 18, 107, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(230, 236, 245, 1)
+            Font: =Font.'Open Sans'
+            Height: =32
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: =varMediaType
+            Width: =140
+            X: =56
+            Y: =142
+      - MI_SectionHeader:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =18
+            Text: ="Metadata"
+            Width: =840
+            X: =56
+            Y: =184
+      - MI_LblTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Descriptive title *"
+            Width: =600
+            X: =56
+            Y: =224
+      - MI_Title:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =varEventTitle
+            Font: =Font.'Open Sans'
+            HintText: ="Title as it should appear in the AV catalogue"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =Set(varEventTitle, Self.Value)
+            Width: =1230
+            X: =56
+            Y: =250
+      - MI_LblDesc:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Description *"
+            Width: =600
+            X: =56
+            Y: =302
+      - MI_Desc:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =varDescription
+            Font: =Font.'Open Sans'
+            Height: =72
+            HintText: ="Editorial description, context and keywords (max 500 characters)"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varDescription, Self.Value)
+            Width: =1230
+            X: =56
+            Y: =328
+      - MI_LblDate:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Production date *"
+            Width: =300
+            X: =56
+            Y: =414
+      - MI_Date:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            IconBackground: =RGBA(56, 96, 178, 1)
+            IconFill: =RGBA(255, 255, 255, 1)
+            Width: =300
+            X: =56
+            Y: =440
+      - MI_LblLanguage:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Language version(s)"
+            Width: =300
+            X: =388
+            Y: =414
+      - MI_Language:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(56, 96, 178, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            ChevronHoverFill: =RGBA(255, 255, 255, 1)
+            DefaultSelectedItems: =First(ComboBoxSample)
+            Font: =Font.'Open Sans'
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Items: =["EN", "FR", "DE", "ES", "IT", "PL", "NL", "Multilingual"]
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(56, 96, 178, 1)
+            Width: =300
+            X: =388
+            Y: =440
+      - MI_LblCredits:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: =If(varMediaType="Photo", "Photographer / agency", If(varMediaType="Audio" Or varMediaType="Podcast", "Presenter / producer", "Director / producer"))
+            Width: =500
+            X: =720
+            Y: =414
+      - MI_Credits:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =""
+            Font: =Font.'Open Sans'
+            HintText: ="Production credits"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =566
+            X: =720
+            Y: =440
+      - MI_LblFTP:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="FTP delivery path *  (where the master files were delivered)"
+            Width: =900
+            X: =56
+            Y: =504
+      - MI_FTP:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =varFTPPath
+            Font: =Font.'Open Sans'
+            HintText: ="ftp://avdeposit.ec.europa.eu/incoming/2026/…"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =Set(varFTPPath, Self.Value)
+            Width: =1230
+            X: =56
+            Y: =530
+      - MI_AICheck:
+          Control: Classic/CheckBox@2.1.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+            CheckmarkFill: =RGBA(0, 0, 0, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HoverColor: =RGBA(0, 18, 107, 1)
+            OnCheck: =Set(varAIVoiceover, true)
+            OnUncheck: =Set(varAIVoiceover, false)
+            Text: ="This production uses an AI-generated voice-over"
+            Width: =700
+            X: =52
+            Y: =588
+      - MI_BottomBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =56
+            Width: =1366
+            Y: =712
+      - MI_BtnPrev:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(NewRequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="←  Previous"
+            Width: =140
+            X: =32
+            Y: =720
+      - MI_BtnNext:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: =Navigate(DocumentationScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: |-
+              ="Next: Legal docs  →"
+            Width: =200
+            X: =1142
+            Y: =720
+      - Label12_4:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(149, 149, 149, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: |-
+              ="Audiovisual Service - DG COMM
+              This site is managed by the Directorate-General for Communication"
+            Width: =691
+            X: =265
+            Y: =717
