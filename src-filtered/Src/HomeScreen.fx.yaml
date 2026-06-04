@@ -63,10 +63,47 @@ HomeScreen As screen:
             Navigate(ProjectScreen)
         Size: =14
         Text: ="+  New project"
-        Width: =180
-        X: =1138
+        Width: =160
+        X: =860
         Y: =92
         ZIndex: =8
+
+    HomeBtnReview As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =44
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: |-
+            =Set(varReviewProject, Blank());
+            Set(varReviewComment, "");
+            Navigate(ReviewScreen)
+        Size: =13
+        Text: ="👁  Review queue"
+        Width: =160
+        X: =1040
+        Y: =92
+        ZIndex: =36
+
+    HomeBtnNewRight As button:
+        Height: =44
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: |-
+            =Set(varCurrentProject, Blank());
+            Set(varParentTitle, "");
+            Set(varParentDG, "");
+            Set(varParentFTPPath, "");
+            Set(varParentOwnerContact, "");
+            Set(varParentOwnerEmail, User().Email);
+            Navigate(ProjectScreen)
+        Size: =14
+        Text: ="+  New project"
+        Width: =160
+        X: =1218
+        Y: =92
+        ZIndex: =37
+        Visible: =false
 
     HomeChipAll As button:
         BorderColor: =If(varFilter="All", RGBA(0,18,107,1), RGBA(220,224,230,1))
@@ -110,20 +147,6 @@ HomeScreen As screen:
         Y: =180
         ZIndex: =11
 
-    HomeChipInReview As button:
-        BorderColor: =If(varFilter="In review", RGBA(0,18,107,1), RGBA(220,224,230,1))
-        BorderThickness: =1
-        Color: =If(varFilter="In review", RGBA(0,18,107,1), RGBA(96,104,120,1))
-        Fill: =If(varFilter="In review", RGBA(255,255,255,1), RGBA(247,248,250,1))
-        Height: =34
-        OnSelect: =Set(varFilter, "In review")
-        Size: =12
-        Text: ="In review"
-        Width: =110
-        X: =326
-        Y: =180
-        ZIndex: =12
-
     HomeChipApproved As button:
         BorderColor: =If(varFilter="Approved", RGBA(0,18,107,1), RGBA(220,224,230,1))
         BorderThickness: =1
@@ -134,19 +157,33 @@ HomeScreen As screen:
         Size: =12
         Text: ="Approved"
         Width: =110
+        X: =326
+        Y: =180
+        ZIndex: =12
+
+    HomeChipRejected As button:
+        BorderColor: =If(varFilter="Rejected", RGBA(0,18,107,1), RGBA(220,224,230,1))
+        BorderThickness: =1
+        Color: =If(varFilter="Rejected", RGBA(0,18,107,1), RGBA(96,104,120,1))
+        Fill: =If(varFilter="Rejected", RGBA(255,255,255,1), RGBA(247,248,250,1))
+        Height: =34
+        OnSelect: =Set(varFilter, "Rejected")
+        Size: =12
+        Text: ="Rejected"
+        Width: =100
         X: =444
         Y: =180
         ZIndex: =13
 
-    HomeChipReturned As button:
-        BorderColor: =If(varFilter="Returned", RGBA(0,18,107,1), RGBA(220,224,230,1))
+    HomeToggleLinked As button:
+        BorderColor: =If(varShowLinked, RGBA(0,18,107,1), RGBA(220,224,230,1))
         BorderThickness: =1
-        Color: =If(varFilter="Returned", RGBA(0,18,107,1), RGBA(96,104,120,1))
-        Fill: =If(varFilter="Returned", RGBA(255,255,255,1), RGBA(247,248,250,1))
+        Color: =If(varShowLinked, RGBA(0,18,107,1), RGBA(96,104,120,1))
+        Fill: =If(varShowLinked, RGBA(230,236,245,1), RGBA(247,248,250,1))
         Height: =34
-        OnSelect: =Set(varFilter, "Returned")
+        OnSelect: =Set(varShowLinked, Not(varShowLinked))
         Size: =12
-        Text: ="Returned"
+        Text: ="⬡  Linked"
         Width: =110
         X: =562
         Y: =180
@@ -247,7 +284,7 @@ HomeScreen As screen:
         Height: =44
         Size: =11
         Text: ="PROJECT"
-        Width: =500
+        Width: =440
         X: =68
         Y: =292
         ZIndex: =16
@@ -258,8 +295,8 @@ HomeScreen As screen:
         Height: =44
         Size: =11
         Text: ="DG"
-        Width: =200
-        X: =590
+        Width: =160
+        X: =530
         Y: =292
         ZIndex: =17
 
@@ -269,10 +306,23 @@ HomeScreen As screen:
         Height: =44
         Size: =11
         Text: ="ARCHIVES"
+        Visible: =Not(varShowLinked)
         Width: =140
-        X: =810
+        X: =710
         Y: =292
         ZIndex: =18
+
+    HomeThLinked As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =44
+        Size: =11
+        Text: ="LINKED PROJECT"
+        Visible: =varShowLinked
+        Width: =200
+        X: =710
+        Y: =292
+        ZIndex: =34
 
     HomeThStatus As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -280,8 +330,8 @@ HomeScreen As screen:
         Height: =44
         Size: =11
         Text: ="STATUS"
-        Width: =200
-        X: =1030
+        Width: =180
+        X: =930
         Y: =292
         ZIndex: =19
 
@@ -336,7 +386,7 @@ HomeScreen As screen:
             Height: =59
             OnSelect: =Select(Parent)
             Text: =If(IsBlank(ThisItem.Title), "Untitled project", ThisItem.Title)
-            Width: =500
+            Width: =440
             X: =20
             ZIndex: =3
 
@@ -345,8 +395,8 @@ HomeScreen As screen:
             Height: =59
             OnSelect: =Select(Parent)
             Text: =If(IsBlank(ThisItem.DG), "—", ThisItem.DG)
-            Width: =200
-            X: =542
+            Width: =160
+            X: =482
             ZIndex: =4
 
         HomeRowArchives As label:
@@ -354,9 +404,23 @@ HomeScreen As screen:
             Height: =59
             OnSelect: =Select(Parent)
             Text: =Text(CountRows(Filter(CentralDepositMainList, ParentProject.Id = ThisItem.ID)))
+            Visible: =Not(varShowLinked)
             Width: =140
-            X: =762
+            X: =662
             ZIndex: =5
+
+        HomeRowLinked As label:
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =59
+            OnSelect: =Select(Parent)
+            Text: |-
+                =// LinkedProject.Value is the title of the linked project from the SP Lookup column.
+                // This is a field value already present in the row — no extra query — so no delegation issue.
+                If(IsBlank(ThisItem.LinkedProject.Value), "—", ThisItem.LinkedProject.Value)
+            Visible: =varShowLinked
+            Width: =200
+            X: =662
+            ZIndex: =35
 
         HomeRowBadge As button:
             BorderThickness: =0
@@ -364,9 +428,8 @@ HomeScreen As screen:
                 =Switch(ThisItem.Status.Value,
                     "Approved", RGBA(22, 128, 80, 1),
                     "Submitted", RGBA(56, 96, 178, 1),
-                    "In review", RGBA(180, 95, 6, 1),
                     "Draft", RGBA(96, 104, 120, 1),
-                    "Returned", RGBA(193, 40, 40, 1),
+                    "Rejected", RGBA(193, 40, 40, 1),
                     RGBA(96, 104, 120, 1))
             DisabledBorderColor: =Self.BorderColor
             DisplayMode: =DisplayMode.View
@@ -374,14 +437,13 @@ HomeScreen As screen:
                 =Switch(ThisItem.Status.Value,
                     "Approved", RGBA(223, 245, 233, 1),
                     "Submitted", RGBA(230, 236, 245, 1),
-                    "In review", RGBA(255, 247, 230, 1),
                     "Draft", RGBA(240, 242, 246, 1),
-                    "Returned", RGBA(253, 235, 235, 1),
+                    "Rejected", RGBA(253, 235, 235, 1),
                     RGBA(240, 242, 246, 1))
             Size: =11
             Text: =If(IsBlank(ThisItem.Status.Value), "Draft", ThisItem.Status.Value)
             Width: =150
-            X: =982
+            X: =882
             Y: =16
             ZIndex: =6
 

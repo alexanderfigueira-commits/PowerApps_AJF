@@ -140,10 +140,8 @@
     "ChildMetaScreen",
     "ChildLegalScreen",
     "ChildValidScreen",
+    "ReviewScreen",
     "NewRequestScreen",
-    "DocumentationScreen",
-    "ConfirmationScreen",
-    "AttachmentsScreen2",
-    "MediaInfoScreen"
+    "ConfirmationScreen"
   ]
 }

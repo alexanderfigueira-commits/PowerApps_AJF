@@ -89,6 +89,10 @@ App As appinfo:
         Set(varChildPreexistingProvided, false);
         Set(varFilterDG, "");
         Set(varFilterProject, "");
+        Set(varShowLinked, false);
+        Set(varReviewComment, "");
+        Set(varReviewProject, Blank());
+        Set(varParentLinkedProjectId, 0);
     StartScreen: =HomeScreen
     Theme: =PowerAppsTheme
 
