@@ -134,8 +134,13 @@
     "UserLocale": "en-US"
   },
   "ScreenOrder": [
-    "NewRequestScreen",
     "HomeScreen",
+    "ProjectScreen",
+    "ChildInfoScreen",
+    "ChildMetaScreen",
+    "ChildLegalScreen",
+    "ChildValidScreen",
+    "NewRequestScreen",
     "DocumentationScreen",
     "ConfirmationScreen",
     "AttachmentsScreen2",

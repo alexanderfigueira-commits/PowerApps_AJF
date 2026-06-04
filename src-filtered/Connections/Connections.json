@@ -14,6 +14,9 @@
     "datasets": {
       "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm": {
         "dataSources": {
+          "AVCentralDepositProjects": {
+            "tableName": "11111111-2222-3333-4444-555555555555"
+          },
           "CentralDepositMainList": {
             "tableName": "53fddb2f-3219-4783-8dc1-df18406a5bbc"
           },
@@ -24,6 +27,7 @@
       }
     },
     "dataSources": [
+      "AVCentralDepositProjects",
       "SuspensionDates",
       "CentralDepositMainList"
     ],

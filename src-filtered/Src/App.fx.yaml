@@ -59,6 +59,36 @@ App As appinfo:
         Set(varMusicLicence, false);
         Set(varPreexisting, false);
         Set(varAIVoiceover, false);
+        Set(varCurrentProject, Blank());
+        Set(varParentTitle, "");
+        Set(varParentDG, "");
+        Set(varParentFTPPath, "");
+        Set(varParentOwnerContact, "");
+        Set(varParentOwnerEmail, User().Email);
+        Set(varCurrentChild, Blank());
+        Set(varChildTitle, "");
+        Set(varChildMediaType, "Photo");
+        Set(varChildDescription, "");
+        Set(varChildCaptureDate, Blank());
+        Set(varChildProductionPlace, "");
+        Set(varChildCredits, "");
+        Set(varChildLanguageVersions, "");
+        Set(varChildEpisodeTitle, "");
+        Set(varChildEpisodeSummary, "");
+        Set(varChildSeasonNumber, 0);
+        Set(varChildEpisodeNumber, 0);
+        Set(varChildAIVoiceover, false);
+        Set(varChildContractCase, Blank());
+        Set(varChildContractCase1Sub, Blank());
+        Set(varChildContractRef, "");
+        Set(varChildModelRelease, false);
+        Set(varChildModelReleaseProvided, false);
+        Set(varChildMusicUsed, false);
+        Set(varChildMusicLicenceProvided, false);
+        Set(varChildPreexisting, false);
+        Set(varChildPreexistingProvided, false);
+        Set(varFilterDG, "");
+        Set(varFilterProject, "");
     StartScreen: =HomeScreen
     Theme: =PowerAppsTheme
 

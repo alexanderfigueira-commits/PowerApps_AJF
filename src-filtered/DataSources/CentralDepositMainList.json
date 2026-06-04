@@ -74,6 +74,9 @@
       "SubtitlesProvided": "SubtitlesProvided",
       "SubtitlesProvided#Id": "SubtitlesProvided Id",
       "ThumbnailTimecode": "ThumbnailTimecode",
+      "FTPPath": "FTPPath",
+      "ParentProject": "ParentProject",
+      "ParentProject#Id": "ParentProject Id",
       "Title": "Project"
     },
     "DatasetName": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",

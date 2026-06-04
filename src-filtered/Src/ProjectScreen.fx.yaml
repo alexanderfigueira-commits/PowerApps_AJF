@@ -1,0 +1,582 @@
+ProjectScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+    OnVisible: |-
+        =// Refresh the children gallery whenever we return to this screen
+        If(
+            Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0,
+            Refresh(CentralDepositMainList)
+        )
+
+    PS_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =52
+        Width: =1366
+        X: =0
+        Y: =0
+        ZIndex: =1
+
+    PS_Back As button:
+        BorderThickness: =0
+        Color: =RGBA(186, 202, 226, 1)
+        Fill: =RGBA(0, 18, 107, 1)
+        HoverColor: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(HomeScreen)
+        Size: =13
+        Text: ="←  My projects"
+        Width: =160
+        X: =16
+        Y: =10
+        ZIndex: =2
+
+    PS_Breadcrumb As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =52
+        Size: =13
+        Text: =" /  " & If(IsBlank(varParentTitle) Or varParentTitle = "", "New project", varParentTitle)
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =600
+        X: =184
+        Y: =0
+        ZIndex: =3
+
+    PS_StatusBadge As button:
+        BorderThickness: =0
+        Color: |-
+            =Switch(varCurrentProject.Status.Value,
+                "Approved", RGBA(22, 128, 80, 1),
+                "Submitted", RGBA(56, 96, 178, 1),
+                "In review", RGBA(180, 95, 6, 1),
+                "Draft", RGBA(96, 104, 120, 1),
+                "Returned", RGBA(193, 40, 40, 1),
+                RGBA(96, 104, 120, 1))
+        DisplayMode: =DisplayMode.View
+        Fill: |-
+            =Switch(varCurrentProject.Status.Value,
+                "Approved", RGBA(223, 245, 233, 1),
+                "Submitted", RGBA(230, 236, 245, 1),
+                "In review", RGBA(255, 247, 230, 1),
+                "Draft", RGBA(240, 242, 246, 1),
+                "Returned", RGBA(253, 235, 235, 1),
+                RGBA(240, 242, 246, 1))
+        FontWeight: =FontWeight.Semibold
+        Height: =32
+        Size: =11
+        Text: =If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, "New", If(IsBlank(varCurrentProject.Status.Value), "Draft", varCurrentProject.Status.Value))
+        Visible: =Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0
+        Width: =120
+        X: =1200
+        Y: =10
+        ZIndex: =4
+
+    PS_ProjectCard As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =248
+        Width: =1302
+        X: =32
+        Y: =68
+        ZIndex: =5
+
+    PS_CardTitle As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =30
+        Size: =16
+        Text: =If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, "New project", "Project details")
+        Width: =600
+        X: =56
+        Y: =82
+        ZIndex: =6
+
+    PS_LblTitle As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Project title *"
+        Width: =500
+        X: =56
+        Y: =122
+        ZIndex: =7
+
+    PS_Title As text:
+        Default: =varParentTitle
+        HintText: ="e.g. EU Climate Action Week 2026 — opening session"
+        Height: =40
+        OnChange: =Set(varParentTitle, Self.Value)
+        Width: =800
+        X: =56
+        Y: =148
+        ZIndex: =8
+
+    PS_LblDG As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="DG / Agency *"
+        Width: =300
+        X: =880
+        Y: =122
+        ZIndex: =9
+
+    PS_DG As text:
+        Default: =varParentDG
+        HintText: ="e.g. DG COMM"
+        Height: =40
+        OnChange: =Set(varParentDG, Self.Value)
+        Width: =400
+        X: =880
+        Y: =148
+        ZIndex: =10
+
+    PS_LblOwner As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Point of contact (owner) *"
+        Width: =380
+        X: =56
+        Y: =200
+        ZIndex: =11
+
+    PS_Owner As text:
+        Default: =varParentOwnerContact
+        HintText: ="Name of the responsible person"
+        Height: =40
+        OnChange: =Set(varParentOwnerContact, Self.Value)
+        Width: =380
+        X: =56
+        Y: =226
+        ZIndex: =12
+
+    PS_LblOwnerEmail As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Contact email *"
+        Width: =380
+        X: =460
+        Y: =200
+        ZIndex: =13
+
+    PS_OwnerEmail As text:
+        Default: =Coalesce(varParentOwnerEmail, User().Email)
+        HintText: ="email@ec.europa.eu"
+        Height: =40
+        OnChange: =Set(varParentOwnerEmail, Self.Value)
+        Width: =380
+        X: =460
+        Y: =226
+        ZIndex: =14
+
+    PS_LblFTP As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="FTP delivery path *  (where master files are delivered)"
+        Width: =700
+        X: =880
+        Y: =200
+        ZIndex: =15
+
+    PS_FTP As text:
+        Default: =varParentFTPPath
+        HintText: ="ftp://avdeposit.ec.europa.eu/incoming/2026/…"
+        Height: =40
+        OnChange: =Set(varParentFTPPath, Self.Value)
+        Width: =416
+        X: =880
+        Y: =226
+        ZIndex: =16
+
+    PS_BtnSaveProject As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        DisabledColor: =RGBA(186, 196, 214, 1)
+        DisabledFill: =RGBA(240, 242, 246, 1)
+        DisplayMode: =If(IsBlank(varParentTitle) Or varParentTitle = "", DisplayMode.Disabled, DisplayMode.Edit)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =36
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: |-
+            =Set(varCurrentProject,
+                Patch(AVCentralDepositProjects,
+                    If(
+                        IsBlank(varCurrentProject) Or varCurrentProject.ID = 0,
+                        Defaults(AVCentralDepositProjects),
+                        LookUp(AVCentralDepositProjects, ID = varCurrentProject.ID)
+                    ),
+                    {
+                        Title: varParentTitle,
+                        DG: varParentDG,
+                        OwnerContact: varParentOwnerContact,
+                        OwnerEmail: varParentOwnerEmail,
+                        FTPPath: varParentFTPPath,
+                        Status: If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, {Value: "Draft"}, varCurrentProject.Status)
+                    }
+                )
+            );
+            If(IsError(varCurrentProject),
+                Notify("Error saving project. Please try again.", NotificationType.Error),
+                Notify("Project saved.", NotificationType.Success)
+            )
+        Size: =13
+        Text: =If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, "Save project", "Update project")
+        Width: =160
+        X: =56
+        Y: =280
+        ZIndex: =17
+
+    PS_ArchivesSection As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =32
+        Size: =16
+        Text: ="Archives  (" & If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, "0", Text(CountRows(PS_ChildrenGallery.AllItems))) & ")"
+        Width: =600
+        X: =32
+        Y: =330
+        ZIndex: =18
+
+    PS_BtnAddArchive As button:
+        Color: =RGBA(255, 255, 255, 1)
+        DisabledColor: =RGBA(255, 255, 255, 1)
+        DisabledFill: =RGBA(186, 196, 214, 1)
+        DisplayMode: =If(IsBlank(varParentTitle) Or varParentTitle = "", DisplayMode.Disabled, DisplayMode.Edit)
+        Fill: =RGBA(56, 96, 178, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =36
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: |-
+            =// Step 1: ensure the parent project is saved (has a real ID)
+            If(
+                IsBlank(varCurrentProject) Or varCurrentProject.ID = 0,
+                Set(varCurrentProject,
+                    Patch(AVCentralDepositProjects, Defaults(AVCentralDepositProjects),
+                        {
+                            Title: varParentTitle,
+                            DG: varParentDG,
+                            OwnerContact: varParentOwnerContact,
+                            OwnerEmail: varParentOwnerEmail,
+                            FTPPath: varParentFTPPath,
+                            Status: {Value: "Draft"}
+                        }
+                    )
+                )
+            );
+            // Step 2: if parent save succeeded, create the child stub and navigate
+            If(
+                Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0,
+                // Reset child vars
+                Set(varCurrentChild, Blank());
+                Set(varChildTitle, ""); Set(varChildMediaType, "Photo");
+                Set(varChildDescription, ""); Set(varChildCaptureDate, Blank());
+                Set(varChildProductionPlace, ""); Set(varChildCredits, "");
+                Set(varChildLanguageVersions, ""); Set(varChildAIVoiceover, false);
+                Set(varChildContractCase, Blank()); Set(varChildContractCase1Sub, Blank());
+                Set(varChildContractRef, ""); Set(varChildModelRelease, false);
+                Set(varChildModelReleaseProvided, false); Set(varChildMusicUsed, false);
+                Set(varChildMusicLicenceProvided, false); Set(varChildPreexisting, false);
+                Set(varChildPreexistingProvided, false);
+                Set(varChildEpisodeTitle, ""); Set(varChildEpisodeSummary, "");
+                Set(varChildSeasonNumber, 0); Set(varChildEpisodeNumber, 0);
+                // Create child stub record so it gets an ID (required for SP Attachments)
+                Set(varCurrentChild,
+                    Patch(CentralDepositMainList, Defaults(CentralDepositMainList),
+                        {
+                            Project: "New archive",
+                            ParentProject: {Id: varCurrentProject.ID, Value: varCurrentProject.Title},
+                            DepositStatus: {Value: "New"},
+                            MediaType: {Value: "Photo"}
+                        }
+                    )
+                );
+                If(IsError(varCurrentChild),
+                    Notify("Error creating archive. Please try again.", NotificationType.Error),
+                    Navigate(ChildInfoScreen)
+                ),
+                Notify("Could not save project. Check required fields.", NotificationType.Error)
+            )
+        Size: =13
+        Text: ="+  Add archive"
+        Width: =160
+        X: =1160
+        Y: =330
+        ZIndex: =19
+
+    PS_ChildrenCard As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =320
+        Width: =1302
+        X: =32
+        Y: =372
+        ZIndex: =20
+
+    PS_ChildrenHeader As rectangle:
+        Fill: =RGBA(240, 242, 246, 1)
+        Height: =40
+        Width: =1302
+        X: =32
+        Y: =372
+        ZIndex: =21
+
+    PS_ThTitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        Size: =11
+        Text: ="ARCHIVE TITLE"
+        Width: =420
+        X: =56
+        Y: =372
+        ZIndex: =22
+
+    PS_ThType As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        Size: =11
+        Text: ="TYPE"
+        Width: =160
+        X: =500
+        Y: =372
+        ZIndex: =23
+
+    PS_ThValidation As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        Size: =11
+        Text: ="VALIDATION"
+        Width: =200
+        X: =680
+        Y: =372
+        ZIndex: =24
+
+    PS_ThStatus As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        Size: =11
+        Text: ="STATUS"
+        Width: =180
+        X: =900
+        Y: =372
+        ZIndex: =25
+
+    "PS_ChildrenGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
+        BorderColor: =RGBA(220, 224, 230, 1)
+        DelayItemLoading: =true
+        Height: =276
+        Items: |-
+            =If(
+                IsBlank(varCurrentProject) Or varCurrentProject.ID = 0,
+                Filter(CentralDepositMainList, 1 = 2),
+                Sort(
+                    Filter(CentralDepositMainList, ParentProject.Id = varCurrentProject.ID),
+                    Modified, SortOrder.Descending
+                )
+            )
+        Layout: =Layout.Vertical
+        LoadingSpinner: =LoadingSpinner.Data
+        TemplatePadding: =0
+        TemplateSize: =56
+        Visible: =Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0
+        Width: =1302
+        X: =32
+        Y: =416
+        ZIndex: =26
+
+        PS_CRowSelect As rectangle:
+            Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+            Height: =55
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+                =// Load existing child data into vars then open the child form
+                Set(varCurrentChild, ThisItem);
+                Set(varChildTitle, If(IsBlank(ThisItem.Project) Or ThisItem.Project = "New archive", "", ThisItem.Project));
+                Set(varChildMediaType, If(IsBlank(ThisItem.MediaType.Value), "Photo", ThisItem.MediaType.Value));
+                Set(varChildDescription, Coalesce(ThisItem.Description, ""));
+                Set(varChildCaptureDate, ThisItem.CaptureDate);
+                Set(varChildProductionPlace, Coalesce(ThisItem.ProductionPlace, ""));
+                Set(varChildCredits, Coalesce(ThisItem.Photographer, ThisItem.Director, ThisItem.Producer, ""));
+                Set(varChildLanguageVersions, Coalesce(ThisItem.LanguageVersions.Value, ""));
+                Set(varChildAIVoiceover, Coalesce(ThisItem.AIVoiceover, false));
+                Set(varChildContractCase, Coalesce(ThisItem.ContractCase.Value, ""));
+                Set(varChildContractRef, Coalesce(ThisItem.ContractReference, ""));
+                Set(varChildModelRelease, false);
+                Set(varChildModelReleaseProvided, false);
+                Set(varChildMusicUsed, Coalesce(ThisItem.MusicUsed, false));
+                Set(varChildMusicLicenceProvided, Coalesce(ThisItem.MusicLicenseProvided, false));
+                Set(varChildPreexisting, false);
+                Set(varChildPreexistingProvided, Coalesce(ThisItem.PreexistingRightsProvided, false));
+                Set(varChildEpisodeTitle, Coalesce(ThisItem.EpisodeTitle, ""));
+                Set(varChildEpisodeSummary, Coalesce(ThisItem.EpisodeSummary, ""));
+                Navigate(ChildInfoScreen)
+            Width: =1302
+            ZIndex: =1
+
+        PS_CRowDivider As rectangle:
+            Fill: =RGBA(230, 232, 238, 1)
+            Height: =1
+            Width: =1302
+            Y: =55
+            ZIndex: =2
+
+        PS_CRowTitle As label:
+            Color: =RGBA(32, 31, 30, 1)
+            Height: =55
+            OnSelect: =Select(Parent)
+            Text: =If(IsBlank(ThisItem.Project) Or ThisItem.Project = "New archive", "— untitled archive —", ThisItem.Project)
+            Width: =420
+            X: =24
+            ZIndex: =3
+
+        PS_CRowType As label:
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =55
+            OnSelect: =Select(Parent)
+            Text: =If(IsBlank(ThisItem.MediaType.Value), "—", ThisItem.MediaType.Value)
+            Width: =160
+            X: =468
+            ZIndex: =4
+
+        PS_CRowValid As label:
+            Color: |-
+                =// Quick validation: check the three most critical fields
+                If(
+                    Not(IsBlank(ThisItem.Project)) And ThisItem.Project <> "New archive"
+                    And Not(IsBlank(ThisItem.MediaType.Value))
+                    And Not(IsBlank(ThisItem.ContractCase.Value)),
+                    RGBA(22, 128, 80, 1),
+                    RGBA(193, 40, 40, 1)
+                )
+            Height: =55
+            OnSelect: =Select(Parent)
+            Text: |-
+                =If(
+                    Not(IsBlank(ThisItem.Project)) And ThisItem.Project <> "New archive"
+                    And Not(IsBlank(ThisItem.MediaType.Value))
+                    And Not(IsBlank(ThisItem.ContractCase.Value)),
+                    "✓  Ready",
+                    "⚠  Incomplete"
+                )
+            Width: =200
+            X: =648
+            ZIndex: =5
+
+        PS_CRowBadge As button:
+            BorderThickness: =0
+            Color: |-
+                =Switch(ThisItem.DepositStatus.Value,
+                    "Approved", RGBA(22, 128, 80, 1),
+                    "Submitted", RGBA(56, 96, 178, 1),
+                    "Pending Approval", RGBA(180, 95, 6, 1),
+                    "New", RGBA(56, 96, 178, 1),
+                    "Rejected", RGBA(193, 40, 40, 1),
+                    RGBA(96, 104, 120, 1))
+            DisabledBorderColor: =Self.BorderColor
+            DisplayMode: =DisplayMode.View
+            Fill: |-
+                =Switch(ThisItem.DepositStatus.Value,
+                    "Approved", RGBA(223, 245, 233, 1),
+                    "Submitted", RGBA(230, 236, 245, 1),
+                    "Pending Approval", RGBA(255, 247, 230, 1),
+                    "New", RGBA(230, 236, 245, 1),
+                    "Rejected", RGBA(253, 235, 235, 1),
+                    RGBA(240, 242, 246, 1))
+            Size: =11
+            Text: =If(IsBlank(ThisItem.DepositStatus.Value), "New", ThisItem.DepositStatus.Value)
+            Width: =140
+            X: =852
+            Y: =14
+            ZIndex: =6
+
+        PS_CRowDelete As button:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(193, 40, 40, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HoverFill: =RGBA(253, 235, 235, 1)
+            OnSelect: |-
+                =Remove(CentralDepositMainList, ThisItem);
+                Refresh(CentralDepositMainList)
+            Size: =11
+            Text: ="Remove"
+            Width: =90
+            X: =1178
+            Y: =12
+            ZIndex: =7
+
+    PS_ChildrenEmpty As label:
+        Align: =Align.Center
+        Color: =RGBA(140, 148, 160, 1)
+        Size: =13
+        Text: ="No archives yet. Press \"+  Add archive\" to add the first one."
+        Visible: =Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0 And CountRows(PS_ChildrenGallery.AllItems) = 0
+        Width: =1302
+        X: =32
+        Y: =500
+        ZIndex: =27
+
+    PS_NewProjectHint As label:
+        Align: =Align.Center
+        Color: =RGBA(140, 148, 160, 1)
+        Size: =13
+        Text: ="Save the project first to start adding archives."
+        Visible: =IsBlank(varCurrentProject) Or varCurrentProject.ID = 0
+        Width: =1302
+        X: =32
+        Y: =500
+        ZIndex: =28
+
+    PS_BottomBar As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =56
+        Width: =1366
+        X: =0
+        Y: =712
+        ZIndex: =29
+
+    PS_BtnSubmitProject As button:
+        Color: =RGBA(255, 255, 255, 1)
+        DisabledColor: =RGBA(255, 255, 255, 1)
+        DisabledFill: =RGBA(186, 196, 214, 1)
+        DisplayMode: |-
+            =If(
+                Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0
+                And CountRows(PS_ChildrenGallery.AllItems) > 0,
+                DisplayMode.Edit,
+                DisplayMode.Disabled
+            )
+        Fill: =RGBA(56, 96, 178, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: |-
+            =Set(varCurrentProject,
+                Patch(AVCentralDepositProjects,
+                    LookUp(AVCentralDepositProjects, ID = varCurrentProject.ID),
+                    { Status: {Value: "Submitted"} }
+                )
+            );
+            Notify("Project submitted successfully.", NotificationType.Success);
+            Navigate(HomeScreen)
+        Size: =14
+        Text: ="Submit project  →"
+        Width: =200
+        X: =1142
+        Y: =720
+        ZIndex: =30
