@@ -99,7 +99,7 @@ NewRequestScreen As screen:
         Color: =RGBA(96, 104, 120, 1)
         Fill: =RGBA(255, 255, 255, 1)
         HoverFill: =RGBA(247, 248, 250, 1)
-        OnSelect: =Navigate(AttachmentsScreen)
+        OnSelect: =Navigate(AttachmentsScreen2)
         Size: =13
         Text: ="4.  Attachments"
         Width: =170

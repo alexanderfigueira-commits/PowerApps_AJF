@@ -148,20 +148,7 @@ HomeScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =36
         HoverFill: =RGBA(230, 236, 245, 1)
-        OnSelect: |-
-            =// Export the current home screen view as PDF.
-            // Requires pdffunction preview flag enabled in CanvasManifest.
-            // ExpandContainers:true captures scrolling gallery rows fully.
-            Download(
-                PDF(
-                    HomeScreen,
-                    {
-                        Size: PaperSize.A4,
-                        Orientation: PaperOrientation.Landscape,
-                        ExpandContainers: true
-                    }
-                )
-            )
+        OnSelect: =Notify("PDF export requires the pdffunction preview feature. Enable it in Settings > Upcoming features > Experimental.", NotificationType.Information)
         Size: =12
         Text: ="Export to PDF"
         Width: =148
