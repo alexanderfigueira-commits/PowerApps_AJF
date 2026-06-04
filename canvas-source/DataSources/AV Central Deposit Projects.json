@@ -47,11 +47,10 @@
             "Title": "Title"
         },
         "DatasetName": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",
-        "EntityName": "AV Central Deposit Projects",
+        "EncodeDataset": true,
+        "IsSampleData": false,
         "IsWritable": true,
         "Name": "AV Central Deposit Projects",
-        "ServiceKind": "SharePoint",
-        "TableDisplayName": "AV Central Deposit Projects",
-        "Type": "ServiceInfo"
+        "Type": "ConnectedDataSourceInfo"
     }
 ]
