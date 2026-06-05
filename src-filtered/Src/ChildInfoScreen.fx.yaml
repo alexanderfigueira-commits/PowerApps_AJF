@@ -108,10 +108,10 @@ ChildInfoScreen As screen:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =560
+        Height: =800 + Switch(varChildMediaType, "Video", 160, "Podcast", 320, 0)
         Width: =1302
         X: =32
-        Y: =118
+        Y: =108
         ZIndex: =10
 
     CI_SectionHeader As label:
@@ -122,18 +122,18 @@ ChildInfoScreen As screen:
         Text: ="Archive identification"
         Width: =840
         X: =56
-        Y: =138
+        Y: =128
         ZIndex: =11
 
     CI_LblMediaType As label:
         Color: =RGBA(0, 18, 107, 1)
         FontWeight: =FontWeight.Bold
-        Height: =28
+        Height: =24
         Size: =15
         Text: ="Production type *"
         Width: =840
         X: =56
-        Y: =178
+        Y: =168
         ZIndex: =12
 
     CI_MediaHint As label:
@@ -143,72 +143,56 @@ ChildInfoScreen As screen:
         Text: ="Select the type of media for this archive. This drives conditional fields throughout the form."
         Width: =900
         X: =56
-        Y: =206
+        Y: =192
         ZIndex: =13
 
     CI_CardPhoto As button:
-        BorderColor: =If(varChildMediaType="Photo", RGBA(56,96,178,1), RGBA(220,224,230,1))
-        BorderThickness: =If(varChildMediaType="Photo", 2, 1)
-        Color: =If(varChildMediaType="Photo", RGBA(0,18,107,1), RGBA(60,66,80,1))
-        Fill: =If(varChildMediaType="Photo", RGBA(230,236,245,1), RGBA(255,255,255,1))
+        BorderColor: =If(varChildMediaType = "Photo", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
+        BorderThickness: =If(varChildMediaType = "Photo", 2, 1)
+        Color: =If(varChildMediaType = "Photo", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(varChildMediaType = "Photo", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
         FontWeight: =FontWeight.Semibold
         Height: =72
         HoverFill: =RGBA(240, 242, 246, 1)
         OnSelect: =Set(varChildMediaType, "Photo")
         Size: =14
         Text: ="📷  Photo"
-        Width: =200
+        Width: =220
         X: =56
-        Y: =236
+        Y: =220
         ZIndex: =14
 
     CI_CardVideo As button:
-        BorderColor: =If(varChildMediaType="Video", RGBA(56,96,178,1), RGBA(220,224,230,1))
-        BorderThickness: =If(varChildMediaType="Video", 2, 1)
-        Color: =If(varChildMediaType="Video", RGBA(0,18,107,1), RGBA(60,66,80,1))
-        Fill: =If(varChildMediaType="Video", RGBA(230,236,245,1), RGBA(255,255,255,1))
+        BorderColor: =If(varChildMediaType = "Video", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
+        BorderThickness: =If(varChildMediaType = "Video", 2, 1)
+        Color: =If(varChildMediaType = "Video", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(varChildMediaType = "Video", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
         FontWeight: =FontWeight.Semibold
         Height: =72
         HoverFill: =RGBA(240, 242, 246, 1)
         OnSelect: =Set(varChildMediaType, "Video")
         Size: =14
         Text: ="🎬  Video"
-        Width: =200
-        X: =268
-        Y: =236
+        Width: =220
+        X: =290
+        Y: =220
         ZIndex: =15
 
-    CI_CardAudio As button:
-        BorderColor: =If(varChildMediaType="Audio", RGBA(56,96,178,1), RGBA(220,224,230,1))
-        BorderThickness: =If(varChildMediaType="Audio", 2, 1)
-        Color: =If(varChildMediaType="Audio", RGBA(0,18,107,1), RGBA(60,66,80,1))
-        Fill: =If(varChildMediaType="Audio", RGBA(230,236,245,1), RGBA(255,255,255,1))
-        FontWeight: =FontWeight.Semibold
-        Height: =72
-        HoverFill: =RGBA(240, 242, 246, 1)
-        OnSelect: =Set(varChildMediaType, "Audio")
-        Size: =14
-        Text: ="🎙  Audio"
-        Width: =200
-        X: =480
-        Y: =236
-        ZIndex: =16
-
     CI_CardPodcast As button:
-        BorderColor: =If(varChildMediaType="Podcast", RGBA(56,96,178,1), RGBA(220,224,230,1))
-        BorderThickness: =If(varChildMediaType="Podcast", 2, 1)
-        Color: =If(varChildMediaType="Podcast", RGBA(0,18,107,1), RGBA(60,66,80,1))
-        Fill: =If(varChildMediaType="Podcast", RGBA(230,236,245,1), RGBA(255,255,255,1))
+        BorderColor: =If(varChildMediaType = "Podcast", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
+        BorderThickness: =If(varChildMediaType = "Podcast", 2, 1)
+        Color: =If(varChildMediaType = "Podcast", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(varChildMediaType = "Podcast", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
         FontWeight: =FontWeight.Semibold
         Height: =72
         HoverFill: =RGBA(240, 242, 246, 1)
         OnSelect: =Set(varChildMediaType, "Podcast")
         Size: =14
         Text: ="🎧  Podcast"
-        Width: =200
-        X: =692
-        Y: =236
-        ZIndex: =17
+        Width: =220
+        X: =524
+        Y: =220
+        ZIndex: =16
 
     CI_LblTitle As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -218,8 +202,8 @@ ChildInfoScreen As screen:
         Text: ="Archive / production title *"
         Width: =800
         X: =56
-        Y: =326
-        ZIndex: =18
+        Y: =308
+        ZIndex: =17
 
     CI_Title As text:
         Default: =varChildTitle
@@ -228,8 +212,30 @@ ChildInfoScreen As screen:
         OnChange: =Set(varChildTitle, Self.Value)
         Width: =900
         X: =56
-        Y: =352
+        Y: =334
+        ZIndex: =18
+
+    CI_LblDescription As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Description"
+        Width: =800
+        X: =56
+        Y: =390
         ZIndex: =19
+
+    CI_Description As text:
+        Default: =varChildDescription
+        Height: =64
+        HintText: ="Brief description of the content"
+        Mode: =TextMode.MultiLine
+        OnChange: =Set(varChildDescription, Self.Value)
+        Width: =900
+        X: =56
+        Y: =416
+        ZIndex: =20
 
     CI_LblCaptureDate As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -239,8 +245,8 @@ ChildInfoScreen As screen:
         Text: ="Capture / production date *"
         Width: =300
         X: =56
-        Y: =406
-        ZIndex: =20
+        Y: =496
+        ZIndex: =21
 
     CI_CaptureDate As datepicker:
         DefaultDate: =varChildCaptureDate
@@ -248,8 +254,8 @@ ChildInfoScreen As screen:
         OnChange: =Set(varChildCaptureDate, Self.SelectedDate)
         Width: =300
         X: =56
-        Y: =432
-        ZIndex: =21
+        Y: =522
+        ZIndex: =22
 
     CI_LblPlace As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -259,8 +265,8 @@ ChildInfoScreen As screen:
         Text: ="Production place"
         Width: =300
         X: =388
-        Y: =406
-        ZIndex: =22
+        Y: =496
+        ZIndex: =23
 
     CI_Place As text:
         Default: =varChildProductionPlace
@@ -269,31 +275,100 @@ ChildInfoScreen As screen:
         OnChange: =Set(varChildProductionPlace, Self.Value)
         Width: =300
         X: =388
-        Y: =432
-        ZIndex: =23
+        Y: =522
+        ZIndex: =24
 
-    CI_LblEpisode As label:
+    CI_LblProductType As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Product type"
+        Visible: =varChildMediaType = "Video"
+        Width: =600
+        X: =56
+        Y: =578
+        ZIndex: =25
+
+    CI_ProductType As text:
+        Default: =varChildProductType
+        Height: =40
+        HintText: ="e.g. Documentary, News, Feature, Institutional..."
+        OnChange: =Set(varChildProductType, Self.Value)
+        Visible: =varChildMediaType = "Video"
+        Width: =600
+        X: =56
+        Y: =604
+        ZIndex: =26
+
+    CI_LblSeriesTitle As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Series title"
+        Visible: =varChildMediaType = "Podcast"
+        Width: =600
+        X: =56
+        Y: =578
+        ZIndex: =27
+
+    CI_SeriesTitle As text:
+        Default: =varChildSeriesTitle
+        Height: =40
+        HintText: ="Name of the podcast series"
+        OnChange: =Set(varChildSeriesTitle, Self.Value)
+        Visible: =varChildMediaType = "Podcast"
+        Width: =600
+        X: =56
+        Y: =604
+        ZIndex: =28
+
+    CI_LblEpisodeTitle As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
         Size: =13
         Text: ="Episode title"
-        Visible: =varChildMediaType = "Audio" Or varChildMediaType = "Podcast"
-        Width: =400
+        Visible: =varChildMediaType = "Podcast"
+        Width: =390
         X: =56
-        Y: =488
-        ZIndex: =24
+        Y: =660
+        ZIndex: =29
 
     CI_EpisodeTitle As text:
         Default: =varChildEpisodeTitle
-        HintText: ="Episode or segment title"
         Height: =40
+        HintText: ="Episode or segment title"
         OnChange: =Set(varChildEpisodeTitle, Self.Value)
-        Visible: =varChildMediaType = "Audio" Or varChildMediaType = "Podcast"
-        Width: =400
+        Visible: =varChildMediaType = "Podcast"
+        Width: =390
         X: =56
-        Y: =514
-        ZIndex: =25
+        Y: =686
+        ZIndex: =30
+
+    CI_LblSeasonNumber As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Season nr."
+        Visible: =varChildMediaType = "Podcast"
+        Width: =160
+        X: =464
+        Y: =660
+        ZIndex: =31
+
+    CI_SeasonNumber As text:
+        Default: =Text(varChildSeasonNumber)
+        Height: =40
+        HintText: ="0"
+        OnChange: =Set(varChildSeasonNumber, Value(Self.Text))
+        Visible: =varChildMediaType = "Podcast"
+        Width: =160
+        X: =464
+        Y: =686
+        ZIndex: =32
 
     CI_LblEpisodeSummary As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -301,22 +376,159 @@ ChildInfoScreen As screen:
         Height: =22
         Size: =13
         Text: ="Episode summary"
-        Visible: =varChildMediaType = "Audio" Or varChildMediaType = "Podcast"
-        Width: =500
-        X: =480
-        Y: =488
-        ZIndex: =26
+        Visible: =varChildMediaType = "Podcast"
+        Width: =390
+        X: =56
+        Y: =742
+        ZIndex: =33
 
     CI_EpisodeSummary As text:
         Default: =varChildEpisodeSummary
-        HintText: ="Short summary for this episode"
         Height: =40
+        HintText: ="Short summary for this episode"
         OnChange: =Set(varChildEpisodeSummary, Self.Value)
-        Visible: =varChildMediaType = "Audio" Or varChildMediaType = "Podcast"
-        Width: =500
+        Visible: =varChildMediaType = "Podcast"
+        Width: =390
+        X: =56
+        Y: =768
+        ZIndex: =34
+
+    CI_LblEpisodeNumber As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Episode nr."
+        Visible: =varChildMediaType = "Podcast"
+        Width: =160
+        X: =464
+        Y: =742
+        ZIndex: =35
+
+    CI_EpisodeNumber As text:
+        Default: =Text(varChildEpisodeNumber)
+        Height: =40
+        HintText: ="0"
+        OnChange: =Set(varChildEpisodeNumber, Value(Self.Text))
+        Visible: =varChildMediaType = "Podcast"
+        Width: =160
+        X: =464
+        Y: =768
+        ZIndex: =36
+
+    CI_LblProductionEndDate As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Production end date"
+        Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+        Width: =300
+        X: =56
+        Y: =578 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0)
+        ZIndex: =37
+
+    CI_ProductionEndDate As datepicker:
+        DefaultDate: =varChildProductionEndDate
+        Height: =40
+        OnChange: =Set(varChildProductionEndDate, Self.SelectedDate)
+        Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+        Width: =300
+        X: =56
+        Y: =604 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0)
+        ZIndex: =38
+
+    CI_LblPubStartDate As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Publication start date"
+        Width: =300
+        X: =56
+        Y: =578 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =39
+
+    CI_PubStartDate As datepicker:
+        DefaultDate: =varChildPublicationStartDate
+        Height: =40
+        OnChange: =Set(varChildPublicationStartDate, Self.SelectedDate)
+        Width: =300
+        X: =56
+        Y: =604 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =40
+
+    CI_LblPubEndDate As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Publication end date"
+        Width: =300
+        X: =388
+        Y: =578 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =41
+
+    CI_PubEndDate As datepicker:
+        DefaultDate: =varChildPublicationEndDate
+        Height: =40
+        OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
+        Width: =300
+        X: =388
+        Y: =604 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =42
+
+    CI_LblLinks As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Reference links"
+        Width: =800
+        X: =56
+        Y: =658 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =43
+
+    CI_Links As text:
+        Default: =varChildLinks
+        Height: =40
+        HintText: ="Relevant URLs or SharePoint references"
+        OnChange: =Set(varChildLinks, Self.Value)
+        Width: =900
+        X: =56
+        Y: =684 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =44
+
+    CI_LblTags As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Pertinent tags"
+        Width: =800
+        X: =56
+        Y: =738 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =45
+
+    CI_Tags As text:
+        Default: =varChildTags
+        Height: =40
+        HintText: ="Comma-separated keywords for discoverability"
+        OnChange: =Set(varChildTags, Self.Value)
+        Width: =900
+        X: =56
+        Y: =764 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =46
+
+    CI_ScrollHint As label:
+        Color: =RGBA(150, 158, 175, 1)
+        Height: =20
+        Size: =11
+        Text: ="↓  Scroll down to see all fields and save"
+        Width: =400
         X: =480
-        Y: =514
-        ZIndex: =27
+        Y: =740
+        ZIndex: =47
 
     CI_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -325,8 +537,8 @@ ChildInfoScreen As screen:
         Height: =56
         Width: =1366
         X: =0
-        Y: =712
-        ZIndex: =28
+        Y: =820 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =48
 
     CI_BtnSave As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -336,16 +548,25 @@ ChildInfoScreen As screen:
         Height: =40
         HoverFill: =RGBA(247, 248, 250, 1)
         OnSelect: |-
-            =// Save Info tab fields to the child record
-            Patch(CentralDepositMainList,
+            =Patch(CentralDepositMainList,
                 LookUp(CentralDepositMainList, ID = varCurrentChild.ID),
                 {
                     Project: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
                     MediaType: {Value: varChildMediaType},
-                    CaptureDate: varChildCaptureDate,
-                    ProductionPlace: varChildProductionPlace,
-                    EpisodeTitle: varChildEpisodeTitle,
-                    EpisodeSummary: varChildEpisodeSummary
+                    Description: varChildDescription,
+                    Capture_x0020_Date: varChildCaptureDate,
+                    Production_x0020_Place: varChildProductionPlace,
+                    ProductType: If(varChildMediaType = "Video", varChildProductType, ""),
+                    SeriesTitle: If(varChildMediaType = "Podcast", varChildSeriesTitle, ""),
+                    Episode_x0020_Title: If(varChildMediaType = "Podcast", varChildEpisodeTitle, ""),
+                    Episode_x0020_Summary: If(varChildMediaType = "Podcast", varChildEpisodeSummary, ""),
+                    Season_x0020_Number: If(varChildMediaType = "Podcast", varChildSeasonNumber, 0),
+                    Episode_x0020_Number: If(varChildMediaType = "Podcast", varChildEpisodeNumber, 0),
+                    Production_x0020_End_x0020_Date: If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", varChildProductionEndDate, Blank()),
+                    Publication_x0020_Start_x0020_Da: varChildPublicationStartDate,
+                    Publication_x0020_End_x0020_Date: varChildPublicationEndDate,
+                    Links_x0020_Ref: varChildLinks,
+                    Tags: varChildTags
                 }
             );
             Notify("Info saved.", NotificationType.Success)
@@ -353,8 +574,8 @@ ChildInfoScreen As screen:
         Text: ="Save"
         Width: =100
         X: =32
-        Y: =720
-        ZIndex: =29
+        Y: =828 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =49
 
     CI_BtnNext As button:
         Color: =RGBA(255, 255, 255, 1)
@@ -363,16 +584,25 @@ ChildInfoScreen As screen:
         Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
-            =// Auto-save before moving to next tab
-            Patch(CentralDepositMainList,
+            =Patch(CentralDepositMainList,
                 LookUp(CentralDepositMainList, ID = varCurrentChild.ID),
                 {
                     Project: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
                     MediaType: {Value: varChildMediaType},
-                    CaptureDate: varChildCaptureDate,
-                    ProductionPlace: varChildProductionPlace,
-                    EpisodeTitle: varChildEpisodeTitle,
-                    EpisodeSummary: varChildEpisodeSummary
+                    Description: varChildDescription,
+                    Capture_x0020_Date: varChildCaptureDate,
+                    Production_x0020_Place: varChildProductionPlace,
+                    ProductType: If(varChildMediaType = "Video", varChildProductType, ""),
+                    SeriesTitle: If(varChildMediaType = "Podcast", varChildSeriesTitle, ""),
+                    Episode_x0020_Title: If(varChildMediaType = "Podcast", varChildEpisodeTitle, ""),
+                    Episode_x0020_Summary: If(varChildMediaType = "Podcast", varChildEpisodeSummary, ""),
+                    Season_x0020_Number: If(varChildMediaType = "Podcast", varChildSeasonNumber, 0),
+                    Episode_x0020_Number: If(varChildMediaType = "Podcast", varChildEpisodeNumber, 0),
+                    Production_x0020_End_x0020_Date: If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", varChildProductionEndDate, Blank()),
+                    Publication_x0020_Start_x0020_Da: varChildPublicationStartDate,
+                    Publication_x0020_End_x0020_Date: varChildPublicationEndDate,
+                    Links_x0020_Ref: varChildLinks,
+                    Tags: varChildTags
                 }
             );
             Navigate(ChildMetaScreen)
@@ -380,5 +610,5 @@ ChildInfoScreen As screen:
         Text: ="Next: Metadata  →"
         Width: =200
         X: =1142
-        Y: =720
-        ZIndex: =30
+        Y: =828 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =50

@@ -77,6 +77,13 @@ App As appinfo:
         Set(varChildEpisodeSummary, "");
         Set(varChildSeasonNumber, 0);
         Set(varChildEpisodeNumber, 0);
+        Set(varChildSeriesTitle, "");
+        Set(varChildProductType, "");
+        Set(varChildProductionEndDate, Blank());
+        Set(varChildPublicationStartDate, Blank());
+        Set(varChildPublicationEndDate, Blank());
+        Set(varChildLinks, "");
+        Set(varChildTags, "");
         Set(varChildAIVoiceover, false);
         Set(varChildContractCase, Blank());
         Set(varChildContractCase1Sub, Blank());
