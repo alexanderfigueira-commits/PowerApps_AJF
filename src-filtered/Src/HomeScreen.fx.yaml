@@ -3,15 +3,7 @@ HomeScreen As screen:
     OnVisible: |-
         =Set(varFilter, "All");
         Set(varFilterDG, "");
-        Set(varFilterProject, "");
-        Patch(AVCentralDepositPresence,
-            Coalesce(
-                LookUp(AVCentralDepositPresence, Title = User().Email),
-                Defaults(AVCentralDepositPresence)
-            ),
-            {Title: User().Email, UserName: User().FullName, LastSeen: Now()}
-        );
-        Refresh(AVCentralDepositPresence)
+        Set(varFilterProject, "")
 
     HomeTopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
@@ -30,18 +22,6 @@ HomeScreen As screen:
         Y: =14
         ZIndex: =4
 
-    HomeOnlineCount As label:
-        Color: =RGBA(186, 202, 226, 1)
-        Height: =28
-        Size: =11
-        Text: ="●  " & Text(CountRows(Filter(AVCentralDepositPresence, DateDiff(LastSeen, Now(), Minutes) <= 5))) & " online"
-        Tooltip: ="Users active in the last 5 minutes"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =120
-        X: =870
-        Y: =14
-        ZIndex: =40
-
     HomeUserName As label:
         Color: =RGBA(186, 202, 226, 1)
         Height: =36
@@ -50,23 +30,6 @@ HomeScreen As screen:
         X: =1124
         Y: =15
         ZIndex: =5
-
-    HomePresenceTimer As timer:
-        AutoPause: =false
-        AutoStart: =true
-        Duration: =60000
-        OnTimerEnd: |-
-            =Patch(AVCentralDepositPresence,
-                Coalesce(
-                    LookUp(AVCentralDepositPresence, Title = User().Email),
-                    Defaults(AVCentralDepositPresence)
-                ),
-                {Title: User().Email, UserName: User().FullName, LastSeen: Now()}
-            );
-            Refresh(AVCentralDepositPresence)
-        Repeat: =true
-        Visible: =false
-        ZIndex: =41
 
     HomePageTitle As label:
         Color: =RGBA(0, 18, 107, 1)
@@ -353,7 +316,7 @@ HomeScreen As screen:
         Height: =44
         Size: =11
         Text: ="PROJECT"
-        Width: =440
+        Width: =400
         X: =68
         Y: =320
         ZIndex: =16
@@ -364,8 +327,8 @@ HomeScreen As screen:
         Height: =44
         Size: =11
         Text: ="DG"
-        Width: =160
-        X: =530
+        Width: =140
+        X: =488
         Y: =320
         ZIndex: =17
 
@@ -376,8 +339,8 @@ HomeScreen As screen:
         Size: =11
         Text: ="ARCHIVES"
         Visible: =Not(varShowLinked)
-        Width: =140
-        X: =710
+        Width: =120
+        X: =648
         Y: =320
         ZIndex: =18
 
@@ -388,8 +351,8 @@ HomeScreen As screen:
         Size: =11
         Text: ="LINKED PROJECT"
         Visible: =varShowLinked
-        Width: =200
-        X: =710
+        Width: =180
+        X: =648
         Y: =320
         ZIndex: =34
 
@@ -399,10 +362,21 @@ HomeScreen As screen:
         Height: =44
         Size: =11
         Text: ="STATUS"
-        Width: =180
-        X: =930
+        Width: =160
+        X: =790
         Y: =320
         ZIndex: =19
+
+    HomeThAction As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =44
+        Size: =11
+        Text: ="ACTION"
+        Width: =160
+        X: =1070
+        Y: =320
+        ZIndex: =37
 
     "HomeGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -452,7 +426,7 @@ HomeScreen As screen:
             Height: =59
             OnSelect: =Select(Parent)
             Text: =If(IsBlank(ThisItem.Title), "Untitled project", ThisItem.Title)
-            Width: =440
+            Width: =400
             X: =20
             ZIndex: =3
 
@@ -461,8 +435,8 @@ HomeScreen As screen:
             Height: =59
             OnSelect: =Select(Parent)
             Text: =If(IsBlank(ThisItem.DG), "—", ThisItem.DG)
-            Width: =160
-            X: =482
+            Width: =140
+            X: =440
             ZIndex: =4
 
         HomeRowArchives As label:
@@ -471,8 +445,8 @@ HomeScreen As screen:
             OnSelect: =Select(Parent)
             Text: =Text(CountRows(Filter(CentralDepositMainList, ParentProject.Id = ThisItem.ID)))
             Visible: =Not(varShowLinked)
-            Width: =140
-            X: =662
+            Width: =120
+            X: =600
             ZIndex: =5
 
         HomeRowLinked As label:
@@ -481,8 +455,8 @@ HomeScreen As screen:
             OnSelect: =Select(Parent)
             Text: =If(IsBlank(ThisItem.LinkedProject.Value), "—", ThisItem.LinkedProject.Value)
             Visible: =varShowLinked
-            Width: =200
-            X: =662
+            Width: =180
+            X: =600
             ZIndex: =35
 
         HomeRowBadge As button:
@@ -506,30 +480,28 @@ HomeScreen As screen:
             Size: =11
             Text: =If(IsBlank(ThisItem.Status.Value), "Draft", ThisItem.Status.Value)
             Width: =150
-            X: =882
+            X: =740
             Y: =16
             ZIndex: =6
 
-        HomeRowNotify As button:
-            BorderColor: =RGBA(220, 224, 230, 1)
+        HomeRowReview As button:
+            BorderColor: =RGBA(56, 96, 178, 1)
             BorderThickness: =1
             Color: =RGBA(56, 96, 178, 1)
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =30
-            HoverFill: =RGBA(230, 236, 245, 1)
-            HoverColor: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 1)
             OnSelect: |-
-                =Office365Outlook.SendEmailV2(
-                    varManagerEmail,
-                    "Review reminder: " & ThisItem.Title,
-                    "<p>Dear reviewer,</p><p>This is a reminder that the following project is awaiting your review in the <b>AV Central Deposit</b> system:</p><p><b>Project:</b> " & ThisItem.Title & "<br><b>DG:</b> " & Coalesce(ThisItem.DG, "—") & "<br><b>Owner:</b> " & Coalesce(ThisItem.OwnerContact, "—") & " (" & Coalesce(ThisItem.OwnerEmail, "—") & ")</p><p>Please log in and visit the <b>Review queue</b> to approve or reject this project.</p><p>Thank you.</p>"
-                );
-                Notify("Reminder sent to reviewer.", NotificationType.Success)
-            Size: =14
-            Text: ="✉"
-            Tooltip: ="Send review reminder to manager"
+                =Set(varReviewProject, ThisItem);
+                Set(varReviewComment, "");
+                Navigate(ReviewScreen)
+            Size: =12
+            Text: ="Review  →"
+            Tooltip: ="Open in review queue to approve or reject"
             Visible: =ThisItem.Status.Value = "Submitted"
-            Width: =36
+            Width: =120
             X: =1100
             Y: =14
             ZIndex: =7

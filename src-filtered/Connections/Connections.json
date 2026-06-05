@@ -22,9 +22,6 @@
           },
           "SuspensionDates": {
             "tableName": "5995c8f7-f1f9-49b3-a838-6409af0ffc2b"
-          },
-          "AVCentralDepositPresence": {
-            "tableName": "33333333-4444-5555-6666-777788889999"
           }
         }
       }
@@ -32,8 +29,7 @@
     "dataSources": [
       "AVCentralDepositProjects",
       "SuspensionDates",
-      "CentralDepositMainList",
-      "AVCentralDepositPresence"
+      "CentralDepositMainList"
     ],
     "dependencies": {},
     "dependents": [],
@@ -60,28 +56,5 @@
     "dependencies": {},
     "dependents": [],
     "id": "5d475d4e-3f06-4b7c-8070-e7bb7330bb6c"
-  },
-  "cc112233-aabb-ddef-0011-223344556677": {
-    "appActions": [
-      "SendEmailV2",
-      "ReplyToV2",
-      "GetEmails",
-      "SendEmail"
-    ],
-    "connectionRef": {
-      "apiTier": "Standard",
-      "displayName": "Office 365 Outlook",
-      "iconUri": "https://static.powerapps.com/resource/ppcr/releases/v1.0.1809/1.0.1809.4723/office365/icon.png",
-      "id": "/providers/microsoft.powerapps/apis/shared_office365",
-      "parameterHints": {},
-      "parameterHintsV2": {}
-    },
-    "datasets": {},
-    "dataSources": [
-      "Office365Outlook"
-    ],
-    "dependencies": {},
-    "dependents": [],
-    "id": "cc112233-aabb-ddef-0011-223344556677"
   }
 }

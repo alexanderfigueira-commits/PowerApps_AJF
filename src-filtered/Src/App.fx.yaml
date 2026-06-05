@@ -93,7 +93,6 @@ App As appinfo:
         Set(varReviewComment, "");
         Set(varReviewProject, Blank());
         Set(varParentLinkedProjectId, 0);
-        Set(varManagerEmail, "av-review@ec.europa.eu");
     StartScreen: =HomeScreen
     Theme: =PowerAppsTheme
 
