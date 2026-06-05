@@ -4,7 +4,9 @@ HomeScreen As screen:
         =Set(varFilter, "All");
         Set(varFilterDG, "");
         Set(varFilterRequest, "");
-        Set(varFilterArchive, "")
+        Set(varFilterArchive, "");
+        Set(varFilterStartDate, Blank());
+        Set(varFilterEndDate, Blank())
 
     HomeTopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
@@ -61,8 +63,6 @@ HomeScreen As screen:
             Set(varRequestDescription, "");
             Set(varRequestOwnerContact, "");
             Set(varRequestOwnerEmail, User().Email);
-            Set(varRequestStartDate, Blank());
-            Set(varRequestEndDate, Blank());
             Navigate(RequestScreen)
         Size: =14
         Text: ="+  New request"
@@ -193,7 +193,7 @@ HomeScreen As screen:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =62
+        Height: =120
         Width: =1270
         X: =48
         Y: =222
@@ -262,6 +262,44 @@ HomeScreen As screen:
         Y: =244
         ZIndex: =42
 
+    HomeLblFilterStart As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: ="START DATE"
+        Width: =160
+        X: =68
+        Y: =287
+        ZIndex: =43
+
+    HomeFilterStart As datePicker:
+        DefaultDate: =varFilterStartDate
+        OnChange: =Set(varFilterStartDate, Self.SelectedDate)
+        Width: =200
+        X: =68
+        Y: =305
+        ZIndex: =44
+
+    HomeLblFilterEnd As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: ="END DATE"
+        Width: =160
+        X: =288
+        Y: =287
+        ZIndex: =45
+
+    HomeFilterEnd As datePicker:
+        DefaultDate: =varFilterEndDate
+        OnChange: =Set(varFilterEndDate, Self.SelectedDate)
+        Width: =200
+        X: =288
+        Y: =305
+        ZIndex: =46
+
     HomeBtnClear As button:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
@@ -273,14 +311,18 @@ HomeScreen As screen:
             =Set(varFilterDG, "");
             Set(varFilterRequest, "");
             Set(varFilterArchive, "");
+            Set(varFilterStartDate, Blank());
+            Set(varFilterEndDate, Blank());
             Reset(HomeFilterDG);
             Reset(HomeFilterRequest);
-            Reset(HomeFilterArchive)
+            Reset(HomeFilterArchive);
+            Reset(HomeFilterStart);
+            Reset(HomeFilterEnd)
         Size: =12
         Text: ="Clear"
         Width: =80
         X: =1230
-        Y: =244
+        Y: =302
         ZIndex: =33
 
     HomeCounterBar As label:
@@ -316,7 +358,7 @@ HomeScreen As screen:
         VerticalAlign: =VerticalAlign.Middle
         Width: =900
         X: =48
-        Y: =288
+        Y: =346
         ZIndex: =39
 
     HomeTableCard As rectangle:
@@ -326,7 +368,7 @@ HomeScreen As screen:
         Height: =380
         Width: =1270
         X: =48
-        Y: =320
+        Y: =378
         ZIndex: =14
 
     HomeTableHeader As rectangle:
@@ -334,7 +376,7 @@ HomeScreen As screen:
         Height: =44
         Width: =1270
         X: =48
-        Y: =320
+        Y: =378
         ZIndex: =15
 
     HomeThRequest As label:
@@ -345,7 +387,7 @@ HomeScreen As screen:
         Text: ="REQUEST"
         Width: =400
         X: =68
-        Y: =320
+        Y: =378
         ZIndex: =16
 
     HomeThDG As label:
@@ -356,7 +398,7 @@ HomeScreen As screen:
         Text: ="DG"
         Width: =140
         X: =488
-        Y: =320
+        Y: =378
         ZIndex: =17
 
     HomeThArchives As label:
@@ -367,7 +409,7 @@ HomeScreen As screen:
         Text: ="ARCHIVES"
         Width: =120
         X: =648
-        Y: =320
+        Y: =378
         ZIndex: =18
 
     HomeThStatus As label:
@@ -378,7 +420,7 @@ HomeScreen As screen:
         Text: ="STATUS"
         Width: =160
         X: =790
-        Y: =320
+        Y: =378
         ZIndex: =19
 
     HomeThAction As label:
@@ -389,7 +431,7 @@ HomeScreen As screen:
         Text: ="ACTION"
         Width: =160
         X: =1070
-        Y: =320
+        Y: =378
         ZIndex: =37
 
     "HomeGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
@@ -404,7 +446,9 @@ HomeScreen As screen:
                 varFilterDG = "" Or IsBlank(varFilterDG) Or StartsWith(DG, varFilterDG),
                 varFilterRequest = "" Or IsBlank(varFilterRequest) Or StartsWith(Title, varFilterRequest),
                 varFilterArchive = "" Or IsBlank(varFilterArchive) Or
-                    CountRows(Filter(CentralDepositMainList, ParentProject.Id = ID And StartsWith(Project, varFilterArchive))) > 0
+                    CountRows(Filter(CentralDepositMainList, ParentProject.Id = ID And StartsWith(Project, varFilterArchive))) > 0,
+                IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
+                IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate
             )
         Layout: =Layout.Vertical
         LoadingSpinner: =LoadingSpinner.Data
@@ -412,7 +456,7 @@ HomeScreen As screen:
         TemplateSize: =60
         Width: =1270
         X: =48
-        Y: =368
+        Y: =426
         ZIndex: =20
 
         HomeRowSelect As rectangle:
@@ -426,8 +470,6 @@ HomeScreen As screen:
                 Set(varRequestDescription, Coalesce(ThisItem.Description, ""));
                 Set(varRequestOwnerContact, ThisItem.OwnerContact);
                 Set(varRequestOwnerEmail, ThisItem.OwnerEmail);
-                Set(varRequestStartDate, ThisItem.StartRequestDate);
-                Set(varRequestEndDate, ThisItem.EndRequestDate);
                 Navigate(RequestScreen)
             Width: =1270
             ZIndex: =1
@@ -521,7 +563,7 @@ HomeScreen As screen:
         Visible: =CountRows(HomeGallery.AllItems) = 0
         Width: =1270
         X: =48
-        Y: =530
+        Y: =588
         ZIndex: =21
 
     Image1_5 As image:

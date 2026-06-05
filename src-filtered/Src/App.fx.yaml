@@ -53,8 +53,8 @@ App As appinfo:
         Set(varRequestDescription, "");
         Set(varRequestOwnerContact, "");
         Set(varRequestOwnerEmail, User().Email);
-        Set(varRequestStartDate, Blank());
-        Set(varRequestEndDate, Blank());
+        Set(varFilterStartDate, Blank());
+        Set(varFilterEndDate, Blank());
         Set(varCurrentChild, Blank());
         Set(varChildTitle, "");
         Set(varChildMediaType, "Photo");
@@ -88,6 +88,8 @@ App As appinfo:
         Set(varFilterDG, "");
         Set(varFilterRequest, "");
         Set(varFilterArchive, "");
+        Set(varFilterStartDate, Blank());
+        Set(varFilterEndDate, Blank());
         Set(varReviewComment, "");
         Set(varReviewProject, Blank());
     StartScreen: =HomeScreen
