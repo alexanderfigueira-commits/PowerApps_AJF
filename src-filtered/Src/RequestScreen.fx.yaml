@@ -1,13 +1,12 @@
-ProjectScreen As screen:
+RequestScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: |-
         =If(
-            Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0,
+            Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
             Refresh(CentralDepositMainList)
-        );
-        Set(varParentLinkedProjectId, If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, 0, Coalesce(varCurrentProject.'LinkedProject Id', 0)))
+        )
 
-    PS_TopBar As rectangle:
+    RS_TopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
         Height: =52
         Width: =1366
@@ -15,7 +14,7 @@ ProjectScreen As screen:
         Y: =0
         ZIndex: =1
 
-    PS_Back As button:
+    RS_Back As button:
         BorderThickness: =0
         Color: =RGBA(186, 202, 226, 1)
         Fill: =RGBA(0, 18, 107, 1)
@@ -23,27 +22,27 @@ ProjectScreen As screen:
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: =Navigate(HomeScreen)
         Size: =13
-        Text: ="←  My projects"
+        Text: ="←  My requests"
         Width: =160
         X: =16
         Y: =10
         ZIndex: =2
 
-    PS_Breadcrumb As label:
+    RS_Breadcrumb As label:
         Color: =RGBA(186, 202, 226, 1)
         Height: =52
         Size: =13
-        Text: =" /  " & If(IsBlank(varParentTitle) Or varParentTitle = "", "New project", varParentTitle)
+        Text: =" /  " & If(IsBlank(varRequestTitle) Or varRequestTitle = "", "New request", varRequestTitle)
         VerticalAlign: =VerticalAlign.Middle
         Width: =600
         X: =184
         Y: =0
         ZIndex: =3
 
-    PS_StatusBadge As button:
+    RS_StatusBadge As button:
         BorderThickness: =0
         Color: |-
-            =Switch(varCurrentProject.Status.Value,
+            =Switch(varCurrentRequest.Status.Value,
                 "Approved", RGBA(22, 128, 80, 1),
                 "Submitted", RGBA(56, 96, 178, 1),
                 "Rejected", RGBA(193, 40, 40, 1),
@@ -51,7 +50,7 @@ ProjectScreen As screen:
                 RGBA(96, 104, 120, 1))
         DisplayMode: =DisplayMode.View
         Fill: |-
-            =Switch(varCurrentProject.Status.Value,
+            =Switch(varCurrentRequest.Status.Value,
                 "Approved", RGBA(223, 245, 233, 1),
                 "Submitted", RGBA(230, 236, 245, 1),
                 "Rejected", RGBA(253, 235, 235, 1),
@@ -60,56 +59,56 @@ ProjectScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =32
         Size: =11
-        Text: =If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, "New", If(IsBlank(varCurrentProject.Status.Value), "Draft", varCurrentProject.Status.Value))
-        Visible: =Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0
+        Text: =If(IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0, "New", If(IsBlank(varCurrentRequest.Status.Value), "Draft", varCurrentRequest.Status.Value))
+        Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
         Width: =120
         X: =1200
         Y: =10
         ZIndex: =4
 
-    PS_ProjectCard As rectangle:
+    RS_RequestCard As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =352
+        Height: =490
         Width: =1302
         X: =32
         Y: =68
         ZIndex: =5
 
-    PS_CardTitle As label:
+    RS_CardTitle As label:
         Color: =RGBA(0, 18, 107, 1)
         FontWeight: =FontWeight.Bold
         Height: =30
         Size: =16
-        Text: =If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, "New project", "Project details")
+        Text: =If(IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0, "New request", "Request details")
         Width: =600
         X: =56
         Y: =82
         ZIndex: =6
 
-    PS_LblTitle As label:
+    RS_LblTitle As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
         Size: =13
-        Text: ="Project title *"
+        Text: ="Request title *"
         Width: =500
         X: =56
         Y: =120
         ZIndex: =7
 
-    PS_Title As text:
-        Default: =varParentTitle
+    RS_Title As text:
+        Default: =varRequestTitle
         HintText: ="e.g. EU Climate Action Week 2026 — opening session"
         Height: =40
-        OnChange: =Set(varParentTitle, Self.Value)
+        OnChange: =Set(varRequestTitle, Self.Value)
         Width: =800
         X: =56
         Y: =146
         ZIndex: =8
 
-    PS_LblDG As label:
+    RS_LblDG As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
@@ -120,17 +119,17 @@ ProjectScreen As screen:
         Y: =120
         ZIndex: =9
 
-    PS_DG As text:
-        Default: =varParentDG
+    RS_DG As text:
+        Default: =varRequestDG
         HintText: ="e.g. DG COMM"
         Height: =40
-        OnChange: =Set(varParentDG, Self.Value)
+        OnChange: =Set(varRequestDG, Self.Value)
         Width: =400
         X: =880
         Y: =146
         ZIndex: =10
 
-    PS_LblOwner As label:
+    RS_LblOwner As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
@@ -141,17 +140,17 @@ ProjectScreen As screen:
         Y: =198
         ZIndex: =11
 
-    PS_Owner As text:
-        Default: =varParentOwnerContact
+    RS_Owner As text:
+        Default: =varRequestOwnerContact
         HintText: ="Name of the responsible person"
         Height: =40
-        OnChange: =Set(varParentOwnerContact, Self.Value)
+        OnChange: =Set(varRequestOwnerContact, Self.Value)
         Width: =380
         X: =56
         Y: =224
         ZIndex: =12
 
-    PS_LblOwnerEmail As label:
+    RS_LblOwnerEmail As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
@@ -162,169 +161,193 @@ ProjectScreen As screen:
         Y: =198
         ZIndex: =13
 
-    PS_OwnerEmail As text:
-        Default: =Coalesce(varParentOwnerEmail, User().Email)
+    RS_OwnerEmail As text:
+        Default: =Coalesce(varRequestOwnerEmail, User().Email)
         HintText: ="email@ec.europa.eu"
         Height: =40
-        OnChange: =Set(varParentOwnerEmail, Self.Value)
+        OnChange: =Set(varRequestOwnerEmail, Self.Value)
         Width: =380
         X: =460
         Y: =224
         ZIndex: =14
 
-    PS_LblFTP As label:
+    RS_LblStartDate As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
         Size: =13
-        Text: ="FTP delivery path *"
-        Width: =400
+        Text: ="Request start date"
+        Width: =300
         X: =880
         Y: =198
         ZIndex: =15
 
-    PS_FTP As text:
-        Default: =varParentFTPPath
-        HintText: ="ftp://avdeposit.ec.europa.eu/incoming/2026/…"
+    RS_StartDate As datepicker:
+        DefaultDate: =varRequestStartDate
         Height: =40
-        OnChange: =Set(varParentFTPPath, Self.Value)
-        Width: =416
+        OnChange: =Set(varRequestStartDate, Self.SelectedDate)
+        Width: =300
         X: =880
         Y: =224
         ZIndex: =16
 
-    PS_LblLinked As label:
+    RS_LblEndDate As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
         Size: =13
-        Text: ="Linked project  (optional — link to a related audio / video project)"
-        Width: =750
-        X: =56
-        Y: =278
+        Text: ="Request end date"
+        Width: =300
+        X: =1200
+        Y: =198
         ZIndex: =17
 
-    PS_Linked As dropdown:
+    RS_EndDate As datepicker:
+        DefaultDate: =varRequestEndDate
         Height: =40
-        Items: =AddColumns(Sort(Filter(AVCentralDepositProjects, ID <> Coalesce(varCurrentProject.ID, 0)), Title), "Value", Title)
-        OnChange: =Set(varParentLinkedProjectId, Self.Selected.ID)
-        Width: =700
-        X: =56
-        Y: =304
+        OnChange: =Set(varRequestEndDate, Self.SelectedDate)
+        Width: =300
+        X: =1200
+        Y: =224
         ZIndex: =18
 
-    PS_BtnSaveProject As button:
+    RS_LblDescription As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="Request description"
+        Width: =1230
+        X: =56
+        Y: =278
+        ZIndex: =19
+
+    RS_Description As text:
+        Default: =varRequestDescription
+        Height: =100
+        HintText: ="Describe the purpose, context and scope of this request"
+        Mode: =TextMode.MultiLine
+        OnChange: =Set(varRequestDescription, Self.Value)
+        Width: =1230
+        X: =56
+        Y: =304
+        ZIndex: =20
+
+    RS_RejectionBanner As rectangle:
+        BorderColor: =RGBA(254, 202, 202, 1)
+        BorderThickness: =1
+        Fill: =RGBA(254, 242, 242, 1)
+        Height: =56
+        Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
+        Width: =1230
+        X: =56
+        Y: =418
+        ZIndex: =21
+
+    RS_RejectionTitle As label:
+        Color: =RGBA(153, 27, 27, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =24
+        Size: =13
+        Text: ="⛔  Request rejected — please review the comment, fix any issues, and resubmit."
+        Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
+        Width: =1210
+        X: =66
+        Y: =422
+        ZIndex: =22
+
+    RS_RejectionComment As label:
+        Color: =RGBA(153, 27, 27, 1)
+        Height: =24
+        Size: =12
+        Text: ="Reviewer comment:  " & Coalesce(varCurrentRequest.ReviewerComments, "—")
+        Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
+        Width: =1210
+        X: =66
+        Y: =446
+        ZIndex: =23
+
+    RS_BtnSaveRequest As button:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Color: =RGBA(60, 66, 80, 1)
         DisabledColor: =RGBA(186, 196, 214, 1)
         DisabledFill: =RGBA(240, 242, 246, 1)
-        DisplayMode: =If(IsBlank(varParentTitle) Or varParentTitle = "", DisplayMode.Disabled, DisplayMode.Edit)
+        DisplayMode: =If(IsBlank(varRequestTitle) Or varRequestTitle = "", DisplayMode.Disabled, DisplayMode.Edit)
         Fill: =RGBA(255, 255, 255, 1)
         Height: =36
         HoverFill: =RGBA(230, 236, 245, 1)
         OnSelect: |-
-            =Set(varCurrentProject,
+            =Set(varCurrentRequest,
                 Patch(AVCentralDepositProjects,
                     If(
-                        IsBlank(varCurrentProject) Or varCurrentProject.ID = 0,
+                        IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
                         Defaults(AVCentralDepositProjects),
-                        LookUp(AVCentralDepositProjects, ID = varCurrentProject.ID)
+                        LookUp(AVCentralDepositProjects, ID = varCurrentRequest.ID)
                     ),
                     {
-                        Title: varParentTitle,
-                        DG: varParentDG,
-                        OwnerContact: varParentOwnerContact,
-                        OwnerEmail: varParentOwnerEmail,
-                        FTPPath: varParentFTPPath,
-                        LinkedProject: If(varParentLinkedProjectId > 0, {Id: varParentLinkedProjectId, Value: ""}, Blank()),
-                        Status: If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, {Value: "Draft"}, varCurrentProject.Status)
+                        Title: varRequestTitle,
+                        DG: varRequestDG,
+                        OwnerContact: varRequestOwnerContact,
+                        OwnerEmail: varRequestOwnerEmail,
+                        Description: varRequestDescription,
+                        StartRequestDate: varRequestStartDate,
+                        EndRequestDate: varRequestEndDate,
+                        Status: If(IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0, {Value: "Draft"}, varCurrentRequest.Status)
                     }
                 )
             );
-            If(IsError(varCurrentProject),
-                Notify("Error saving project. Please try again.", NotificationType.Error),
-                Notify("Project saved.", NotificationType.Success)
+            If(IsError(varCurrentRequest),
+                Notify("Error saving request. Please try again.", NotificationType.Error),
+                Notify("Request saved.", NotificationType.Success)
             )
         Size: =13
-        Text: =If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, "Save project", "Update project")
+        Text: =If(IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0, "Save request", "Update request")
         Width: =160
         X: =56
-        Y: =362
-        ZIndex: =19
+        Y: =490
+        ZIndex: =24
 
-    PS_RejectionBanner As rectangle:
-        BorderColor: =RGBA(254, 202, 202, 1)
-        BorderThickness: =1
-        Fill: =RGBA(254, 242, 242, 1)
-        Height: =72
-        Visible: =Not(IsBlank(varCurrentProject)) And varCurrentProject.Status.Value = "Rejected"
-        Width: =1302
-        X: =32
-        Y: =432
-        ZIndex: =20
-
-    PS_RejectionTitle As label:
-        Color: =RGBA(153, 27, 27, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =24
-        Size: =13
-        Text: ="⛔  Project rejected — please review the comment, fix any issues, and resubmit."
-        Visible: =Not(IsBlank(varCurrentProject)) And varCurrentProject.Status.Value = "Rejected"
-        Width: =1260
-        X: =52
-        Y: =436
-        ZIndex: =21
-
-    PS_RejectionComment As label:
-        Color: =RGBA(153, 27, 27, 1)
-        Height: =36
-        Size: =12
-        Text: ="Reviewer comment:  " & Coalesce(varCurrentProject.ReviewerComments, "—")
-        Visible: =Not(IsBlank(varCurrentProject)) And varCurrentProject.Status.Value = "Rejected"
-        Width: =1260
-        X: =52
-        Y: =460
-        ZIndex: =22
-
-    PS_ArchivesSection As label:
+    RS_ArchivesSection As label:
         Color: =RGBA(0, 18, 107, 1)
         FontWeight: =FontWeight.Bold
         Height: =32
         Size: =16
-        Text: ="Archives  (" & If(IsBlank(varCurrentProject) Or varCurrentProject.ID = 0, "0", Text(CountRows(PS_ChildrenGallery.AllItems))) & ")"
+        Text: ="Archives  (" & If(IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0, "0", Text(CountRows(RS_ChildrenGallery.AllItems))) & ")"
         Width: =600
         X: =32
-        Y: =516
-        ZIndex: =23
+        Y: =572
+        ZIndex: =25
 
-    PS_BtnAddArchive As button:
+    RS_BtnAddArchive As button:
         Color: =RGBA(255, 255, 255, 1)
         DisabledColor: =RGBA(255, 255, 255, 1)
         DisabledFill: =RGBA(186, 196, 214, 1)
-        DisplayMode: =If(IsBlank(varParentTitle) Or varParentTitle = "", DisplayMode.Disabled, DisplayMode.Edit)
+        DisplayMode: =If(IsBlank(varRequestTitle) Or varRequestTitle = "", DisplayMode.Disabled, DisplayMode.Edit)
         Fill: =RGBA(56, 96, 178, 1)
         FontWeight: =FontWeight.Semibold
         Height: =36
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
             =If(
-                IsBlank(varCurrentProject) Or varCurrentProject.ID = 0,
-                Set(varCurrentProject,
+                IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
+                Set(varCurrentRequest,
                     Patch(AVCentralDepositProjects, Defaults(AVCentralDepositProjects),
                         {
-                            Title: varParentTitle,
-                            DG: varParentDG,
-                            OwnerContact: varParentOwnerContact,
-                            OwnerEmail: varParentOwnerEmail,
-                            FTPPath: varParentFTPPath,
+                            Title: varRequestTitle,
+                            DG: varRequestDG,
+                            OwnerContact: varRequestOwnerContact,
+                            OwnerEmail: varRequestOwnerEmail,
+                            Description: varRequestDescription,
+                            StartRequestDate: varRequestStartDate,
+                            EndRequestDate: varRequestEndDate,
                             Status: {Value: "Draft"}
                         }
                     )
                 )
             );
             If(
-                Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0,
+                Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
                 Set(varCurrentChild, Blank());
                 Set(varChildTitle, ""); Set(varChildMediaType, "Photo");
                 Set(varChildDescription, ""); Set(varChildCaptureDate, Blank());
@@ -337,11 +360,12 @@ ProjectScreen As screen:
                 Set(varChildPreexistingProvided, false);
                 Set(varChildEpisodeTitle, ""); Set(varChildEpisodeSummary, "");
                 Set(varChildSeasonNumber, 0); Set(varChildEpisodeNumber, 0);
+                Set(varChildFTPPath, "");
                 Set(varCurrentChild,
                     Patch(CentralDepositMainList, Defaults(CentralDepositMainList),
                         {
                             Project: "New archive",
-                            ParentProject: {Id: varCurrentProject.ID, Value: varCurrentProject.Title},
+                            ParentProject: {Id: varCurrentRequest.ID, Value: varCurrentRequest.Title},
                             DepositStatus: {Value: "New"},
                             MediaType: {Value: "Photo"}
                         }
@@ -351,34 +375,34 @@ ProjectScreen As screen:
                     Notify("Error creating archive. Please try again.", NotificationType.Error),
                     Navigate(ChildInfoScreen)
                 ),
-                Notify("Could not save project. Check required fields.", NotificationType.Error)
+                Notify("Could not save request. Check required fields.", NotificationType.Error)
             )
         Size: =13
         Text: ="+  Add archive"
         Width: =160
         X: =1160
-        Y: =516
-        ZIndex: =24
+        Y: =572
+        ZIndex: =26
 
-    PS_ChildrenCard As rectangle:
+    RS_ChildrenCard As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
         Height: =316
         Width: =1302
         X: =32
-        Y: =560
-        ZIndex: =25
+        Y: =612
+        ZIndex: =27
 
-    PS_ChildrenHeader As rectangle:
+    RS_ChildrenHeader As rectangle:
         Fill: =RGBA(240, 242, 246, 1)
         Height: =40
         Width: =1302
         X: =32
-        Y: =560
-        ZIndex: =26
+        Y: =612
+        ZIndex: =28
 
-    PS_ThTitle As label:
+    RS_ThTitle As label:
         Color: =RGBA(96, 104, 120, 1)
         FontWeight: =FontWeight.Semibold
         Height: =40
@@ -386,10 +410,10 @@ ProjectScreen As screen:
         Text: ="ARCHIVE TITLE"
         Width: =420
         X: =56
-        Y: =560
-        ZIndex: =27
+        Y: =612
+        ZIndex: =29
 
-    PS_ThType As label:
+    RS_ThType As label:
         Color: =RGBA(96, 104, 120, 1)
         FontWeight: =FontWeight.Semibold
         Height: =40
@@ -397,10 +421,10 @@ ProjectScreen As screen:
         Text: ="TYPE"
         Width: =160
         X: =500
-        Y: =560
-        ZIndex: =28
+        Y: =612
+        ZIndex: =30
 
-    PS_ThValidation As label:
+    RS_ThValidation As label:
         Color: =RGBA(96, 104, 120, 1)
         FontWeight: =FontWeight.Semibold
         Height: =40
@@ -408,10 +432,10 @@ ProjectScreen As screen:
         Text: ="VALIDATION"
         Width: =200
         X: =680
-        Y: =560
-        ZIndex: =29
+        Y: =612
+        ZIndex: =31
 
-    PS_ThStatus As label:
+    RS_ThStatus As label:
         Color: =RGBA(96, 104, 120, 1)
         FontWeight: =FontWeight.Semibold
         Height: =40
@@ -419,33 +443,34 @@ ProjectScreen As screen:
         Text: ="STATUS"
         Width: =180
         X: =900
-        Y: =560
-        ZIndex: =30
+        Y: =612
+        ZIndex: =32
 
-    "PS_ChildrenGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
+    "RS_ChildrenGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
         BorderColor: =RGBA(220, 224, 230, 1)
         DelayItemLoading: =true
         Height: =272
         Items: |-
             =If(
-                IsBlank(varCurrentProject) Or varCurrentProject.ID = 0,
+                IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
                 Filter(CentralDepositMainList, 1 = 2),
                 Sort(
-                    Filter(CentralDepositMainList, ParentProject.Id = varCurrentProject.ID),
+                    Filter(CentralDepositMainList, ParentProject.Id = varCurrentRequest.ID),
                     Modified, SortOrder.Descending
                 )
             )
         Layout: =Layout.Vertical
         LoadingSpinner: =LoadingSpinner.Data
+        ShowScrollbar: =true
         TemplatePadding: =0
         TemplateSize: =56
-        Visible: =Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0
+        Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
         Width: =1302
         X: =32
-        Y: =600
-        ZIndex: =31
+        Y: =652
+        ZIndex: =33
 
-        PS_CRowSelect As rectangle:
+        RS_CRowSelect As rectangle:
             Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
             Height: =55
             HoverFill: =RGBA(240, 242, 246, 1)
@@ -469,18 +494,19 @@ ProjectScreen As screen:
                 Set(varChildPreexistingProvided, Coalesce(ThisItem.PreexistingRightsProvided, false));
                 Set(varChildEpisodeTitle, Coalesce(ThisItem.EpisodeTitle, ""));
                 Set(varChildEpisodeSummary, Coalesce(ThisItem.EpisodeSummary, ""));
+                Set(varChildFTPPath, Coalesce(ThisItem.FTPPath, ""));
                 Navigate(ChildInfoScreen)
             Width: =1302
             ZIndex: =1
 
-        PS_CRowDivider As rectangle:
+        RS_CRowDivider As rectangle:
             Fill: =RGBA(230, 232, 238, 1)
             Height: =1
             Width: =1302
             Y: =55
             ZIndex: =2
 
-        PS_CRowTitle As label:
+        RS_CRowTitle As label:
             Color: =RGBA(32, 31, 30, 1)
             Height: =55
             OnSelect: =Select(Parent)
@@ -489,7 +515,7 @@ ProjectScreen As screen:
             X: =24
             ZIndex: =3
 
-        PS_CRowType As label:
+        RS_CRowType As label:
             Color: =RGBA(96, 104, 120, 1)
             Height: =55
             OnSelect: =Select(Parent)
@@ -498,7 +524,7 @@ ProjectScreen As screen:
             X: =468
             ZIndex: =4
 
-        PS_CRowValid As label:
+        RS_CRowValid As label:
             Color: |-
                 =If(
                     Not(IsBlank(ThisItem.Project)) And ThisItem.Project <> "New archive"
@@ -523,7 +549,7 @@ ProjectScreen As screen:
             X: =648
             ZIndex: =5
 
-        PS_CRowBadge As button:
+        RS_CRowBadge As button:
             BorderThickness: =0
             Color: |-
                 =Switch(ThisItem.DepositStatus.Value,
@@ -550,7 +576,7 @@ ProjectScreen As screen:
             Y: =14
             ZIndex: =6
 
-        PS_CRowDelete As button:
+        RS_CRowDelete As button:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Color: =RGBA(193, 40, 40, 1)
@@ -567,47 +593,47 @@ ProjectScreen As screen:
             Y: =12
             ZIndex: =7
 
-    PS_ChildrenEmpty As label:
+    RS_ChildrenEmpty As label:
         Align: =Align.Center
         Color: =RGBA(140, 148, 160, 1)
         Size: =13
         Text: ="No archives yet. Press \"+  Add archive\" to add the first one."
-        Visible: =Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0 And CountRows(PS_ChildrenGallery.AllItems) = 0
+        Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0 And CountRows(RS_ChildrenGallery.AllItems) = 0
         Width: =1302
         X: =32
-        Y: =700
-        ZIndex: =32
+        Y: =752
+        ZIndex: =34
 
-    PS_NewProjectHint As label:
+    RS_NewRequestHint As label:
         Align: =Align.Center
         Color: =RGBA(140, 148, 160, 1)
         Size: =13
-        Text: ="Save the project first to start adding archives."
-        Visible: =IsBlank(varCurrentProject) Or varCurrentProject.ID = 0
+        Text: ="Save the request first to start adding archives."
+        Visible: =IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0
         Width: =1302
         X: =32
-        Y: =700
-        ZIndex: =33
+        Y: =752
+        ZIndex: =35
 
-    PS_BottomBar As rectangle:
+    RS_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
         Height: =56
         Width: =1366
         X: =0
-        Y: =886
-        ZIndex: =34
+        Y: =938
+        ZIndex: =36
 
-    PS_BtnSubmitProject As button:
+    RS_BtnSubmitRequest As button:
         Color: =RGBA(255, 255, 255, 1)
         DisabledColor: =RGBA(255, 255, 255, 1)
         DisabledFill: =RGBA(186, 196, 214, 1)
         DisplayMode: |-
             =If(
-                Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0
-                And CountRows(PS_ChildrenGallery.AllItems) > 0
-                And CountIf(PS_ChildrenGallery.AllItems,
+                Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+                And CountRows(RS_ChildrenGallery.AllItems) > 0
+                And CountIf(RS_ChildrenGallery.AllItems,
                     IsBlank(Project) Or Project = "New archive"
                     Or IsBlank(MediaType.Value)
                     Or IsBlank(ContractCase.Value)
@@ -621,32 +647,32 @@ ProjectScreen As screen:
         Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
-            =Set(varCurrentProject,
+            =Set(varCurrentRequest,
                 Patch(AVCentralDepositProjects,
-                    LookUp(AVCentralDepositProjects, ID = varCurrentProject.ID),
+                    LookUp(AVCentralDepositProjects, ID = varCurrentRequest.ID),
                     { Status: {Value: "Submitted"} }
                 )
             );
-            Notify("Project submitted successfully.", NotificationType.Success);
+            Notify("Request submitted successfully.", NotificationType.Success);
             Navigate(HomeScreen)
         Size: =14
-        Text: ="Submit project  →"
+        Text: ="Submit request  →"
         Visible: |-
-            =Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0
-            And (IsBlank(varCurrentProject.Status.Value) Or varCurrentProject.Status.Value = "Draft")
+            =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+            And (IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft")
         Width: =200
         X: =1142
-        Y: =894
-        ZIndex: =35
+        Y: =946
+        ZIndex: =37
 
-    PS_BtnResubmitProject As button:
+    RS_BtnResubmitRequest As button:
         Color: =RGBA(255, 255, 255, 1)
         DisabledColor: =RGBA(255, 255, 255, 1)
         DisabledFill: =RGBA(186, 196, 214, 1)
         DisplayMode: |-
             =If(
-                CountRows(PS_ChildrenGallery.AllItems) > 0
-                And CountIf(PS_ChildrenGallery.AllItems,
+                CountRows(RS_ChildrenGallery.AllItems) > 0
+                And CountIf(RS_ChildrenGallery.AllItems,
                     IsBlank(Project) Or Project = "New archive"
                     Or IsBlank(MediaType.Value)
                     Or IsBlank(ContractCase.Value)
@@ -660,20 +686,20 @@ ProjectScreen As screen:
         Height: =40
         HoverFill: =RGBA(120, 60, 0, 1)
         OnSelect: |-
-            =Set(varCurrentProject,
+            =Set(varCurrentRequest,
                 Patch(AVCentralDepositProjects,
-                    LookUp(AVCentralDepositProjects, ID = varCurrentProject.ID),
+                    LookUp(AVCentralDepositProjects, ID = varCurrentRequest.ID),
                     { Status: {Value: "Submitted"} }
                 )
             );
-            Notify("Project resubmitted for review.", NotificationType.Success);
+            Notify("Request resubmitted for review.", NotificationType.Success);
             Navigate(HomeScreen)
         Size: =14
         Text: ="Resubmit for review  →"
         Visible: |-
-            =Not(IsBlank(varCurrentProject)) And varCurrentProject.ID > 0
-            And varCurrentProject.Status.Value = "Rejected"
+            =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+            And varCurrentRequest.Status.Value = "Rejected"
         Width: =220
         X: =1122
-        Y: =894
-        ZIndex: =36
+        Y: =946
+        ZIndex: =38

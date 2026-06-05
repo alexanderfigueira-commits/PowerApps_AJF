@@ -15,9 +15,9 @@ ChildLegalScreen As screen:
         Fill: =RGBA(0, 18, 107, 1)
         HoverColor: =RGBA(255, 255, 255, 1)
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(ProjectScreen)
+        OnSelect: =Navigate(RequestScreen)
         Size: =13
-        Text: ="←  Back to project"
+        Text: ="←  Back to request"
         Width: =180
         X: =16
         Y: =10
@@ -27,7 +27,7 @@ ChildLegalScreen As screen:
         Color: =RGBA(186, 202, 226, 1)
         Height: =52
         Size: =13
-        Text: =" /  " & Coalesce(varParentTitle, "Project") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+        Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
         VerticalAlign: =VerticalAlign.Middle
         Width: =700
         X: =200

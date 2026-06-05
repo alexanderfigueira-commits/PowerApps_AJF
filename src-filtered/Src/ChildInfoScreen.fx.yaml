@@ -15,9 +15,9 @@ ChildInfoScreen As screen:
         Fill: =RGBA(0, 18, 107, 1)
         HoverColor: =RGBA(255, 255, 255, 1)
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(ProjectScreen)
+        OnSelect: =Navigate(RequestScreen)
         Size: =13
-        Text: ="←  Back to project"
+        Text: ="←  Back to request"
         Width: =180
         X: =16
         Y: =10
@@ -27,7 +27,7 @@ ChildInfoScreen As screen:
         Color: =RGBA(186, 202, 226, 1)
         Height: =52
         Size: =13
-        Text: =" /  " & Coalesce(varParentTitle, "Project") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+        Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
         VerticalAlign: =VerticalAlign.Middle
         Width: =700
         X: =200
@@ -108,7 +108,7 @@ ChildInfoScreen As screen:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =800 + Switch(varChildMediaType, "Video", 160, "Podcast", 320, 0)
+        Height: =880 + Switch(varChildMediaType, "Video", 160, "Podcast", 320, 0)
         Width: =1302
         X: =32
         Y: =108
@@ -530,6 +530,27 @@ ChildInfoScreen As screen:
         Y: =740
         ZIndex: =47
 
+    CI_LblFTPPath As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="FTP delivery path"
+        Width: =800
+        X: =56
+        Y: =818 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =47
+
+    CI_FTPPath As text:
+        Default: =varChildFTPPath
+        Height: =40
+        HintText: ="ftp://avdeposit.ec.europa.eu/incoming/2026/…"
+        OnChange: =Set(varChildFTPPath, Self.Value)
+        Width: =900
+        X: =56
+        Y: =844 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =48
+
     CI_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
@@ -537,8 +558,8 @@ ChildInfoScreen As screen:
         Height: =56
         Width: =1366
         X: =0
-        Y: =820 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
-        ZIndex: =48
+        Y: =900 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =49
 
     CI_BtnSave As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -554,19 +575,20 @@ ChildInfoScreen As screen:
                     Project: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
                     MediaType: {Value: varChildMediaType},
                     Description: varChildDescription,
-                    Capture_x0020_Date: varChildCaptureDate,
-                    Production_x0020_Place: varChildProductionPlace,
+                    CaptureDate: varChildCaptureDate,
+                    ProductionPlace: varChildProductionPlace,
                     ProductType: If(varChildMediaType = "Video", varChildProductType, ""),
                     SeriesTitle: If(varChildMediaType = "Podcast", varChildSeriesTitle, ""),
-                    Episode_x0020_Title: If(varChildMediaType = "Podcast", varChildEpisodeTitle, ""),
-                    Episode_x0020_Summary: If(varChildMediaType = "Podcast", varChildEpisodeSummary, ""),
-                    Season_x0020_Number: If(varChildMediaType = "Podcast", varChildSeasonNumber, 0),
-                    Episode_x0020_Number: If(varChildMediaType = "Podcast", varChildEpisodeNumber, 0),
-                    Production_x0020_End_x0020_Date: If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", varChildProductionEndDate, Blank()),
-                    Publication_x0020_Start_x0020_Da: varChildPublicationStartDate,
-                    Publication_x0020_End_x0020_Date: varChildPublicationEndDate,
-                    Links_x0020_Ref: varChildLinks,
-                    Tags: varChildTags
+                    EpisodeTitle: If(varChildMediaType = "Podcast", varChildEpisodeTitle, ""),
+                    EpisodeSummary: If(varChildMediaType = "Podcast", varChildEpisodeSummary, ""),
+                    SeasonNumber: If(varChildMediaType = "Podcast", varChildSeasonNumber, 0),
+                    EpisodeNumber: If(varChildMediaType = "Podcast", varChildEpisodeNumber, 0),
+                    PublicationEndDate: If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", varChildProductionEndDate, Blank()),
+                    PublicationStartDate: varChildPublicationStartDate,
+                    ProductionEndDate: varChildPublicationEndDate,
+                    ReferenceLinks: varChildLinks,
+                    Tags: varChildTags,
+                    FTPPath: varChildFTPPath
                 }
             );
             Notify("Info saved.", NotificationType.Success)
@@ -574,8 +596,8 @@ ChildInfoScreen As screen:
         Text: ="Save"
         Width: =100
         X: =32
-        Y: =828 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
-        ZIndex: =49
+        Y: =908 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =50
 
     CI_BtnNext As button:
         Color: =RGBA(255, 255, 255, 1)
@@ -590,19 +612,20 @@ ChildInfoScreen As screen:
                     Project: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
                     MediaType: {Value: varChildMediaType},
                     Description: varChildDescription,
-                    Capture_x0020_Date: varChildCaptureDate,
-                    Production_x0020_Place: varChildProductionPlace,
+                    CaptureDate: varChildCaptureDate,
+                    ProductionPlace: varChildProductionPlace,
                     ProductType: If(varChildMediaType = "Video", varChildProductType, ""),
                     SeriesTitle: If(varChildMediaType = "Podcast", varChildSeriesTitle, ""),
-                    Episode_x0020_Title: If(varChildMediaType = "Podcast", varChildEpisodeTitle, ""),
-                    Episode_x0020_Summary: If(varChildMediaType = "Podcast", varChildEpisodeSummary, ""),
-                    Season_x0020_Number: If(varChildMediaType = "Podcast", varChildSeasonNumber, 0),
-                    Episode_x0020_Number: If(varChildMediaType = "Podcast", varChildEpisodeNumber, 0),
-                    Production_x0020_End_x0020_Date: If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", varChildProductionEndDate, Blank()),
-                    Publication_x0020_Start_x0020_Da: varChildPublicationStartDate,
-                    Publication_x0020_End_x0020_Date: varChildPublicationEndDate,
-                    Links_x0020_Ref: varChildLinks,
-                    Tags: varChildTags
+                    EpisodeTitle: If(varChildMediaType = "Podcast", varChildEpisodeTitle, ""),
+                    EpisodeSummary: If(varChildMediaType = "Podcast", varChildEpisodeSummary, ""),
+                    SeasonNumber: If(varChildMediaType = "Podcast", varChildSeasonNumber, 0),
+                    EpisodeNumber: If(varChildMediaType = "Podcast", varChildEpisodeNumber, 0),
+                    PublicationEndDate: If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", varChildProductionEndDate, Blank()),
+                    PublicationStartDate: varChildPublicationStartDate,
+                    ProductionEndDate: varChildPublicationEndDate,
+                    ReferenceLinks: varChildLinks,
+                    Tags: varChildTags,
+                    FTPPath: varChildFTPPath
                 }
             );
             Navigate(ChildMetaScreen)
@@ -610,5 +633,5 @@ ChildInfoScreen As screen:
         Text: ="Next: Metadata  →"
         Width: =200
         X: =1142
-        Y: =828 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
-        ZIndex: =50
+        Y: =908 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+        ZIndex: =51

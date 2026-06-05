@@ -52,14 +52,14 @@ ChildValidScreen As screen:
             {Check: "Pre-existing rights: if declared → annex provided",
              Pass: Not(varChildPreexisting) Or varChildPreexistingProvided,
              Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
-            // 13. Parent FTP path (project-level)
-            {Check: "FTP delivery path set on the project",
-             Pass: Not(IsBlank(varParentFTPPath)) And varParentFTPPath <> "",
-             Note: "Enter the FTP path on the Project screen."},
+            // 13. Archive FTP path
+            {Check: "FTP delivery path set on this archive",
+             Pass: Not(IsBlank(varChildFTPPath)) And varChildFTPPath <> "",
+             Note: "Enter the FTP path on the Info tab."},
             // 14. Parent owner/contact
-            {Check: "Owner / point of contact set on the project",
-             Pass: Not(IsBlank(varParentOwnerContact)) And varParentOwnerContact <> "",
-             Note: "Set the owner on the Project screen."}
+            {Check: "Owner / point of contact set on the request",
+             Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "",
+             Note: "Set the owner on the Request screen."}
         )
 
     CV_TopBar As rectangle:
@@ -76,9 +76,9 @@ ChildValidScreen As screen:
         Fill: =RGBA(0, 18, 107, 1)
         HoverColor: =RGBA(255, 255, 255, 1)
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(ProjectScreen)
+        OnSelect: =Navigate(RequestScreen)
         Size: =13
-        Text: ="←  Back to project"
+        Text: ="←  Back to request"
         Width: =180
         X: =16
         Y: =10
@@ -88,7 +88,7 @@ ChildValidScreen As screen:
         Color: =RGBA(186, 202, 226, 1)
         Height: =52
         Size: =13
-        Text: =" /  " & Coalesce(varParentTitle, "Project") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+        Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
         VerticalAlign: =VerticalAlign.Middle
         Width: =700
         X: =200
@@ -232,8 +232,8 @@ ChildValidScreen As screen:
                 {Check: "Model release: if persons appear → forms provided", Pass: Not(varChildModelRelease) Or varChildModelReleaseProvided, Note: "Recognisable persons declared but model release not confirmed. Attach forms on Legal & Docs."},
                 {Check: "Music licence: if music used → documentation provided", Pass: Not(varChildMusicUsed) Or varChildMusicLicenceProvided, Note: "Music declared but licence/annex not confirmed. Attach on Legal & Docs."},
                 {Check: "Pre-existing rights: if declared → annex provided", Pass: Not(varChildPreexisting) Or varChildPreexistingProvided, Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
-                {Check: "FTP delivery path set on the project", Pass: Not(IsBlank(varParentFTPPath)) And varParentFTPPath <> "", Note: "Enter the FTP path on the Project screen."},
-                {Check: "Owner / point of contact set on the project", Pass: Not(IsBlank(varParentOwnerContact)) And varParentOwnerContact <> "", Note: "Set the owner on the Project screen."}
+                {Check: "FTP delivery path set on this archive", Pass: Not(IsBlank(varChildFTPPath)) And varChildFTPPath <> "", Note: "Enter the FTP path on the Info tab."},
+                {Check: "Owner / point of contact set on the request", Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "", Note: "Set the owner on the Request screen."}
             )
         Size: =12
         Text: ="↻  Re-check"
@@ -367,14 +367,14 @@ ChildValidScreen As screen:
                         MusicLicenseProvided: varChildMusicLicenceProvided,
                         PreexistingRightsProvided: varChildPreexistingProvided,
                         DepositStatus: {Value: "Pending Approval"},
-                        ParentProject: {Id: varCurrentProject.ID, Value: varCurrentProject.Title}
+                        ParentProject: {Id: varCurrentRequest.ID, Value: varCurrentRequest.Title}
                     }
                 )
             );
             If(IsError(varCurrentChild),
                 Notify("Error saving archive. Please try again.", NotificationType.Error),
                 Notify("Archive saved and marked Pending Approval.", NotificationType.Success);
-                Navigate(ProjectScreen)
+                Navigate(RequestScreen)
             )
         Size: =14
         Text: ="Save archive  ✓"

@@ -135,13 +135,14 @@
   },
   "ScreenOrder": [
     "HomeScreen",
-    "ProjectScreen",
+    "RequestScreen",
     "ChildInfoScreen",
     "ChildMetaScreen",
     "ChildLegalScreen",
     "ChildValidScreen",
     "ReviewScreen",
     "NewRequestScreen",
-    "ConfirmationScreen"
+    "ConfirmationScreen",
+    "HelpScreen"
   ]
 }

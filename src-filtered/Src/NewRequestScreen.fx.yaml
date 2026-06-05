@@ -25,7 +25,7 @@ NewRequestScreen As screen:
     NR_Breadcrumb As label:
         Color: =RGBA(186, 202, 226, 1)
         Height: =52
-        Text: =" /  " & If(IsBlank(varProjectName), "New request", varProjectName)
+        Text: =" /  " & If(IsBlank(varRequestName), "New request", varRequestName)
         Width: =500
         X: =184
         ZIndex: =3
@@ -99,8 +99,8 @@ NewRequestScreen As screen:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =560
-        Width: =892
+        Height: =620
+        Width: =1302
         X: =32
         Y: =122
         ZIndex: =10
@@ -111,7 +111,7 @@ NewRequestScreen As screen:
         Height: =30
         Size: =18
         Text: ="Identification"
-        Width: =840
+        Width: =1240
         X: =56
         Y: =142
         ZIndex: =11
@@ -137,21 +137,21 @@ NewRequestScreen As screen:
         Y: =210
         ZIndex: =13
 
-    NR_LblProject As label:
+    NR_LblRequest As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
-        Text: ="Project / production title *"
-        Width: =836
+        Text: ="Request / production title *"
+        Width: =1240
         X: =56
         Y: =262
         ZIndex: =14
 
-    NR_Project As text:
-        Default: =varProjectName
+    NR_Request As text:
+        Default: =varRequestName
         HintText: ="e.g. EU Climate Summit 2026 — opening session"
-        OnChange: =Set(varProjectName, Self.Value)
-        Width: =836
+        OnChange: =Set(varRequestName, Self.Value)
+        Width: =1240
         X: =56
         Y: =288
         ZIndex: =15
@@ -194,13 +194,34 @@ NewRequestScreen As screen:
         Y: =366
         ZIndex: =19
 
+    NR_LblDescription As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: ="Request description"
+        Width: =1240
+        X: =56
+        Y: =420
+        ZIndex: =20
+
+    NR_Description As text:
+        Default: =varRequestDescription
+        Height: =100
+        HintText: ="Describe the purpose, context and scope of this request"
+        Mode: =TextMode.MultiLine
+        OnChange: =Set(varRequestDescription, Self.Value)
+        Width: =1240
+        X: =56
+        Y: =446
+        ZIndex: =21
+
     NR_Divider As rectangle:
         Fill: =RGBA(230, 232, 238, 1)
         Height: =1
-        Width: =836
+        Width: =1240
         X: =56
-        Y: =430
-        ZIndex: =20
+        Y: =560
+        ZIndex: =22
 
     NR_LblMediaType As label:
         Color: =RGBA(0, 18, 107, 1)
@@ -208,20 +229,20 @@ NewRequestScreen As screen:
         Height: =30
         Size: =18
         Text: ="Production type"
-        Width: =836
+        Width: =1240
         X: =56
-        Y: =444
-        ZIndex: =21
+        Y: =574
+        ZIndex: =23
 
     NR_MediaHint As label:
         Color: =RGBA(96, 104, 120, 1)
         Height: =22
         Size: =12
         Text: ="One ticket is dedicated to a single production type. This drives the metadata and legal sections."
-        Width: =836
+        Width: =1240
         X: =56
-        Y: =476
-        ZIndex: =22
+        Y: =606
+        ZIndex: =24
 
     NR_CardPhoto As button:
         BorderColor: =If(varMediaType="Photo", RGBA(56,96,178,1), RGBA(220,224,230,1))
@@ -235,8 +256,8 @@ NewRequestScreen As screen:
         Text: ="📷  Photo"
         Width: =200
         X: =56
-        Y: =508
-        ZIndex: =23
+        Y: =638
+        ZIndex: =25
 
     NR_CardVideo As button:
         BorderColor: =If(varMediaType="Video", RGBA(56,96,178,1), RGBA(220,224,230,1))
@@ -250,8 +271,8 @@ NewRequestScreen As screen:
         Text: ="🎬  Video"
         Width: =200
         X: =274
-        Y: =508
-        ZIndex: =24
+        Y: =638
+        ZIndex: =26
 
     NR_CardPodcast As button:
         BorderColor: =If(varMediaType="Podcast", RGBA(56,96,178,1), RGBA(220,224,230,1))
@@ -265,8 +286,8 @@ NewRequestScreen As screen:
         Text: ="🎧  Podcast"
         Width: =200
         X: =490
-        Y: =508
-        ZIndex: =26
+        Y: =638
+        ZIndex: =27
 
     NR_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -274,8 +295,8 @@ NewRequestScreen As screen:
         Fill: =RGBA(255, 255, 255, 1)
         Height: =56
         Width: =1366
-        Y: =712
-        ZIndex: =27
+        Y: =780
+        ZIndex: =28
 
     NR_BtnNext As button:
         HoverFill: =RGBA(0, 18, 107, 1)
@@ -285,75 +306,8 @@ NewRequestScreen As screen:
             ="Next: Metadata  →"
         Width: =200
         X: =1142
-        Y: =720
-        ZIndex: =28
-
-    NR_SideCard As rectangle:
-        BorderColor: =RGBA(220, 224, 230, 1)
-        BorderThickness: =1
-        Fill: =RGBA(255, 255, 255, 1)
-        Height: =220
-        Width: =380
-        X: =948
-        Y: =122
+        Y: =788
         ZIndex: =29
-
-    NR_SideTitle As label:
-        Color: =RGBA(96, 104, 120, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =11
-        Text: ="USEFUL LINKS"
-        Width: =340
-        X: =968
-        Y: =140
-        ZIndex: =30
-
-    NR_Link1 As label:
-        Color: =RGBA(56, 96, 178, 1)
-        Height: =28
-        HoverFill: =RGBA(227, 234, 243, 1)
-        Text: ="→  Central deposit guidelines"
-        Width: =340
-        X: =968
-        Y: =168
-        ZIndex: =31
-
-    NR_Link2 As label:
-        Color: =RGBA(56, 96, 178, 1)
-        Height: =28
-        HoverFill: =RGBA(227, 234, 243, 1)
-        OnSelect: |-
-            =Launch("https://audiovisual.ec.europa.eu/en")
-        Text: ="→  AV Portal"
-        Tooltip: ="Click me!"
-        Width: =340
-        X: =968
-        Y: =200
-        ZIndex: =32
-
-    NR_Link3 As label:
-        Color: =RGBA(56, 96, 178, 1)
-        Height: =28
-        HoverFill: =RGBA(227, 234, 243, 1)
-        OnSelect: |-
-            =Launch("mailto:recipient@example.com")
-        Text: ="→  Contact the AV Library team"
-        Width: =340
-        X: =968
-        Y: =232
-        ZIndex: =33
-
-    NR_SideNote As label:
-        Color: =RGBA(96, 104, 120, 1)
-        Height: =80
-        Size: =12
-        Text: |-
-            ="Selected type: " & varMediaType & ". The next steps adapt their fields to this production type."
-        Width: =340
-        X: =968
-        Y: =272
-        ZIndex: =34
 
     Logo_EC_Form_4 As image:
         Height: =50
@@ -361,7 +315,7 @@ NewRequestScreen As screen:
         PaddingLeft: =15
         Width: =183
         X: =538
-        ZIndex: =35
+        ZIndex: =30
 
     Image1_4 As image:
         Height: =52
@@ -375,7 +329,7 @@ NewRequestScreen As screen:
             Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
         Width: =31
         X: =1308
-        ZIndex: =36
+        ZIndex: =31
 
     NoInternetIcon_2 As icon:
         Color: =RGBA(255, 0, 0, 1)
@@ -390,8 +344,8 @@ NewRequestScreen As screen:
         Tooltip: ="No Connection"
         Visible: =!Connection.Connected || !Office365Connected
         X: =16
-        Y: =719
-        ZIndex: =37
+        Y: =788
+        ZIndex: =32
 
     Label12_2 As label:
         Align: =Align.Center
@@ -404,8 +358,8 @@ NewRequestScreen As screen:
             This site is managed by the Directorate-General for Communication"
         Width: =691
         X: =265
-        Y: =717
-        ZIndex: =38
+        Y: =786
+        ZIndex: =33
 
     HomeUserName_1 As label:
         Color: =RGBA(186, 202, 226, 1)
@@ -414,7 +368,7 @@ NewRequestScreen As screen:
         Width: =194
         X: =1134
         Y: =16
-        ZIndex: =39
+        ZIndex: =34
 
     Image1 As image:
         Height: =41
@@ -422,5 +376,4 @@ NewRequestScreen As screen:
         Width: =32
         X: =16
         Y: =11
-        ZIndex: =40
-
+        ZIndex: =35

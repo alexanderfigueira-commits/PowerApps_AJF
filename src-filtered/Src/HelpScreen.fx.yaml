@@ -1,0 +1,195 @@
+HelpScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+
+    HL_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =52
+        Width: =1366
+        X: =0
+        Y: =0
+        ZIndex: =1
+
+    HL_Back As button:
+        BorderThickness: =0
+        Color: =RGBA(186, 202, 226, 1)
+        Fill: =RGBA(0, 18, 107, 1)
+        HoverColor: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Back()
+        Size: =13
+        Text: ="←  Back"
+        Width: =120
+        X: =16
+        Y: =10
+        ZIndex: =2
+
+    HL_AppTitle As label:
+        Color: =RGBA(186, 202, 226, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =52
+        Size: =14
+        Text: ="AV Central Deposit — Help & Resources"
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =500
+        X: =156
+        Y: =0
+        ZIndex: =3
+
+    HL_Card As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =560
+        Width: =900
+        X: =48
+        Y: =72
+        ZIndex: =4
+
+    HL_Title As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =36
+        Size: =22
+        Text: ="Help & Useful Resources"
+        Width: =840
+        X: =72
+        Y: =96
+        ZIndex: =5
+
+    HL_Subtitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =24
+        Size: =13
+        Text: ="Quick access to guidelines, portals and contacts for the AV Central Deposit process."
+        Width: =840
+        X: =72
+        Y: =136
+        ZIndex: =6
+
+    HL_Divider1 As rectangle:
+        Fill: =RGBA(220, 224, 230, 1)
+        Height: =1
+        Width: =840
+        X: =72
+        Y: =168
+        ZIndex: =7
+
+    HL_SectionLinks As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =28
+        Size: =15
+        Text: ="Links"
+        Width: =840
+        X: =72
+        Y: =180
+        ZIndex: =8
+
+    HL_Link1 As label:
+        Color: =RGBA(56, 96, 178, 1)
+        Height: =44
+        Size: =14
+        Text: ="→  Central deposit guidelines"
+        Width: =840
+        X: =72
+        Y: =216
+        ZIndex: =9
+
+    HL_Link1Sub As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =20
+        Size: =12
+        Text: ="Official documentation for submitting AV productions to the Central Deposit."
+        Width: =840
+        X: =72
+        Y: =258
+        ZIndex: =10
+
+    HL_Link2 As label:
+        Color: =RGBA(56, 96, 178, 1)
+        Height: =44
+        HoverFill: =RGBA(227, 234, 243, 1)
+        OnSelect: =Launch("https://audiovisual.ec.europa.eu/en")
+        Size: =14
+        Text: ="→  AV Portal"
+        Tooltip: ="Open the EU Audiovisual Portal"
+        Width: =840
+        X: =72
+        Y: =290
+        ZIndex: =11
+
+    HL_Link2Sub As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =20
+        Size: =12
+        Text: ="Browse and search published AV content on the EU Audiovisual Portal."
+        Width: =840
+        X: =72
+        Y: =332
+        ZIndex: =12
+
+    HL_Link3 As label:
+        Color: =RGBA(56, 96, 178, 1)
+        Height: =44
+        HoverFill: =RGBA(227, 234, 243, 1)
+        OnSelect: =Launch("mailto:recipient@example.com")
+        Size: =14
+        Text: ="→  Contact the AV Library team"
+        Tooltip: ="Send an email to the AV Library team"
+        Width: =840
+        X: =72
+        Y: =364
+        ZIndex: =13
+
+    HL_Link3Sub As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =20
+        Size: =12
+        Text: ="For questions about submissions, rights, contracts or technical issues."
+        Width: =840
+        X: =72
+        Y: =406
+        ZIndex: =14
+
+    HL_Divider2 As rectangle:
+        Fill: =RGBA(220, 224, 230, 1)
+        Height: =1
+        Width: =840
+        X: =72
+        Y: =438
+        ZIndex: =15
+
+    HL_SectionAbout As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =28
+        Size: =15
+        Text: ="About this app"
+        Width: =840
+        X: =72
+        Y: =450
+        ZIndex: =16
+
+    HL_About As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =88
+        Size: =13
+        Text: ="AV Central Deposit is a ticket system for DG COMM and associated services to submit audiovisual productions for archiving. Each request groups one or more archives by production type (Photo, Video or Podcast) and goes through a review workflow before being approved for deposit."
+        Width: =840
+        X: =72
+        Y: =480
+        ZIndex: =17
+
+    HL_BtnHome As button:
+        Color: =RGBA(255, 255, 255, 1)
+        Fill: =RGBA(56, 96, 178, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(HomeScreen)
+        Size: =13
+        Text: ="Back to My requests"
+        Width: =200
+        X: =72
+        Y: =648
+        ZIndex: =18

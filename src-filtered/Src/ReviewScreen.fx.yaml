@@ -53,7 +53,7 @@ ReviewScreen As screen:
         FontWeight: =FontWeight.Bold
         Height: =44
         Size: =14
-        Text: ="Submitted projects  (" & Text(CountRows(RV_QueueGallery.AllItems)) & ")"
+        Text: ="Submitted requests  (" & Text(CountRows(RV_QueueGallery.AllItems)) & ")"
         VerticalAlign: =VerticalAlign.Middle
         Width: =400
         X: =16
@@ -136,7 +136,7 @@ ReviewScreen As screen:
         Align: =Align.Center
         Color: =RGBA(140, 148, 160, 1)
         Size: =14
-        Text: ="Select a project from the queue on the left to review it."
+        Text: ="Select a request from the queue on the left to review it."
         Visible: =IsBlank(varReviewProject)
         Width: =880
         X: =461
@@ -159,7 +159,7 @@ ReviewScreen As screen:
         Color: =RGBA(96, 104, 120, 1)
         Height: =24
         Size: =13
-        Text: =Coalesce(varReviewProject.DG, "—") & "   ·   Owner: " & Coalesce(varReviewProject.OwnerContact, "—") & "   ·   FTP: " & Coalesce(varReviewProject.FTPPath, "—")
+        Text: =Coalesce(varReviewProject.DG, "—") & "   ·   Owner: " & Coalesce(varReviewProject.OwnerContact, "—")
         Visible: =Not(IsBlank(varReviewProject))
         Width: =860
         X: =460
@@ -180,7 +180,7 @@ ReviewScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =28
         Size: =13
-        Text: ="Archives in this project"
+        Text: ="Archives in this request"
         Visible: =Not(IsBlank(varReviewProject))
         Width: =400
         X: =460
@@ -413,7 +413,7 @@ ReviewScreen As screen:
                     ReviewedDate: Now()
                 }
             );
-            Notify("Project approved.", NotificationType.Success);
+            Notify("Request approved.", NotificationType.Success);
             Set(varReviewProject, Blank());
             Set(varReviewComment, "")
         Size: =14
@@ -453,7 +453,7 @@ ReviewScreen As screen:
                     ReviewedDate: Now()
                 }
             );
-            Notify("Project rejected. The owner will be notified on their next visit.", NotificationType.Warning);
+            Notify("Request rejected. The owner will be notified on their next visit.", NotificationType.Warning);
             Set(varReviewProject, Blank());
             Set(varReviewComment, "")
         Size: =14

@@ -1,10 +1,9 @@
 {
   "ControlStates": {
-    "ProjectScreen": {
+    "HelpScreen": {
       "AllowAccessToGlobals": true,
       "ControlPropertyState": [
         "Fill",
-        "OnVisible",
         "Height",
         "Width",
         "Size",
@@ -21,13 +20,12 @@
       "IsLocked": false,
       "LayoutName": "",
       "MetaDataIDKey": "",
-      "Name": "ProjectScreen",
+      "Name": "HelpScreen",
       "OptimizeForDevices": "Off",
       "ParentIndex": 0,
       "PersistMetaDataIDKey": false,
       "Properties": [
-        {"Category": "Design", "PropertyName": "Fill", "RuleProviderType": "Unknown"},
-        {"Category": "Behavior", "PropertyName": "OnVisible", "RuleProviderType": "Unknown"}
+        {"Category": "Design", "PropertyName": "Fill", "RuleProviderType": "Unknown"}
       ],
       "StyleName": "defaultScreenStyle",
       "Type": "ControlInfo"
