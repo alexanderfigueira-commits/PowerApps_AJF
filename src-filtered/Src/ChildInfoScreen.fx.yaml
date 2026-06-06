@@ -571,33 +571,10 @@ ChildInfoScreen As screen:
         Fill: =RGBA(255, 255, 255, 1)
         Height: =40
         HoverFill: =RGBA(247, 248, 250, 1)
-        OnSelect: |-
-            =Patch(CentralDepositMainList,
-                LookUp(CentralDepositMainList, ID = varCurrentChild.ID),
-                {
-                    Project: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
-                    MediaType: {Value: varChildMediaType},
-                    Description: varChildDescription,
-                    CaptureDate: varChildCaptureDate,
-                    ProductionPlace: varChildProductionPlace,
-                    ProductType: If(varChildMediaType = "Video", varChildProductType, ""),
-                    SeriesTitle: If(varChildMediaType = "Podcast", varChildSeriesTitle, ""),
-                    EpisodeTitle: If(varChildMediaType = "Podcast", varChildEpisodeTitle, ""),
-                    EpisodeSummary: If(varChildMediaType = "Podcast", varChildEpisodeSummary, ""),
-                    SeasonNumber: If(varChildMediaType = "Podcast", varChildSeasonNumber, 0),
-                    EpisodeNumber: If(varChildMediaType = "Podcast", varChildEpisodeNumber, 0),
-                    PublicationEndDate: If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", varChildProductionEndDate, Blank()),
-                    PublicationStartDate: varChildPublicationStartDate,
-                    ProductionEndDate: varChildPublicationEndDate,
-                    ReferenceLinks: varChildLinks,
-                    Tags: varChildTags,
-                    FTPPath: varChildFTPPath
-                }
-            );
-            Notify("Info saved.", NotificationType.Success)
+        OnSelect: =Notify("Fields saved — complete all tabs then press Save archive on the Validations tab.", NotificationType.Information)
         Size: =13
-        Text: ="Save"
-        Width: =100
+        Text: ="ⓘ  Note"
+        Width: =140
         X: =32
         Y: =720
         ZIndex: =12
@@ -608,30 +585,7 @@ ChildInfoScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: |-
-            =Patch(CentralDepositMainList,
-                LookUp(CentralDepositMainList, ID = varCurrentChild.ID),
-                {
-                    Project: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
-                    MediaType: {Value: varChildMediaType},
-                    Description: varChildDescription,
-                    CaptureDate: varChildCaptureDate,
-                    ProductionPlace: varChildProductionPlace,
-                    ProductType: If(varChildMediaType = "Video", varChildProductType, ""),
-                    SeriesTitle: If(varChildMediaType = "Podcast", varChildSeriesTitle, ""),
-                    EpisodeTitle: If(varChildMediaType = "Podcast", varChildEpisodeTitle, ""),
-                    EpisodeSummary: If(varChildMediaType = "Podcast", varChildEpisodeSummary, ""),
-                    SeasonNumber: If(varChildMediaType = "Podcast", varChildSeasonNumber, 0),
-                    EpisodeNumber: If(varChildMediaType = "Podcast", varChildEpisodeNumber, 0),
-                    PublicationEndDate: If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", varChildProductionEndDate, Blank()),
-                    PublicationStartDate: varChildPublicationStartDate,
-                    ProductionEndDate: varChildPublicationEndDate,
-                    ReferenceLinks: varChildLinks,
-                    Tags: varChildTags,
-                    FTPPath: varChildFTPPath
-                }
-            );
-            Navigate(ChildMetaScreen)
+        OnSelect: =Navigate(ChildMetaScreen)
         Size: =14
         Text: ="Next: Metadata  →"
         Width: =200

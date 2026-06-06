@@ -104,156 +104,169 @@ ChildMetaScreen As screen:
         Y: =52
         ZIndex: =9
 
-    CM_Card As rectangle:
-        BorderColor: =RGBA(220, 224, 230, 1)
-        BorderThickness: =1
-        Fill: =RGBA(255, 255, 255, 1)
-        Height: =560
-        Width: =1302
-        X: =32
-        Y: =118
+    CM_Gallery As gallery:
+        Fill: =RGBA(247, 248, 250, 1)
+        Height: =610
+        Items: =[{id: 1}]
+        Layout: =Layout.Vertical
+        ShowScrollbar: =true
+        TemplatePadding: =0
+        TemplateSize: =580
+        Width: =1366
+        X: =0
+        Y: =102
         ZIndex: =10
 
-    CM_TypeBadge As button:
-        BorderThickness: =0
-        Color: =RGBA(0, 18, 107, 1)
-        DisplayMode: =DisplayMode.View
-        Fill: =RGBA(230, 236, 245, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =32
-        Size: =12
-        Text: =varChildMediaType
-        Width: =140
-        X: =56
-        Y: =138
-        ZIndex: =11
+        CM_Card As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =560
+            Width: =1302
+            X: =32
+            Y: =16
+            ZIndex: =1
 
-    CM_SectionHeader As label:
-        Color: =RGBA(0, 18, 107, 1)
-        FontWeight: =FontWeight.Bold
-        Height: =30
-        Size: =18
-        Text: ="Metadata"
-        Width: =840
-        X: =56
-        Y: =182
-        ZIndex: =12
+        CM_TypeBadge As button:
+            BorderThickness: =0
+            Color: =RGBA(0, 18, 107, 1)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(230, 236, 245, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =12
+            Text: =varChildMediaType
+            Width: =140
+            X: =56
+            Y: =36
+            ZIndex: =2
 
-    CM_LblLanguage As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =13
-        Text: ="Language version(s) *"
-        Width: =400
-        X: =56
-        Y: =224
-        ZIndex: =13
+        CM_SectionHeader As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =18
+            Text: ="Metadata"
+            Width: =840
+            X: =56
+            Y: =80
+            ZIndex: =3
 
-    CM_Language As combobox:
-        DefaultSelectedItems: =If(IsBlank(varChildLanguageVersions) Or varChildLanguageVersions = "", Table(), Table({Value: varChildLanguageVersions}))
-        Height: =40
-        Items: =["EN", "FR", "DE", "ES", "IT", "PL", "NL", "PT", "RO", "Multilingual"]
-        OnChange: =Set(varChildLanguageVersions, Concat(Self.SelectedItems, Value, ", "))
-        SelectMultiple: =true
-        Width: =400
-        X: =56
-        Y: =250
-        ZIndex: =14
+        CM_LblLanguage As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =13
+            Text: ="Language version(s) *"
+            Width: =400
+            X: =56
+            Y: =122
+            ZIndex: =4
 
-    CM_LblCredits As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =13
-        Text: |-
-            =If(varChildMediaType = "Photo", "Photographer / agency *",
-               If(varChildMediaType = "Audio" Or varChildMediaType = "Podcast",
-                  "Presenter / producer *", "Director / producer *"))
-        Width: =500
-        X: =500
-        Y: =224
-        ZIndex: =15
+        CM_Language As combobox:
+            DefaultSelectedItems: =If(IsBlank(varChildLanguageVersions) Or varChildLanguageVersions = "", Table(), Table({Value: varChildLanguageVersions}))
+            Height: =40
+            Items: =["EN", "FR", "DE", "ES", "IT", "PL", "NL", "PT", "RO", "Multilingual"]
+            OnChange: =Set(varChildLanguageVersions, Concat(Self.SelectedItems, Value, ", "))
+            SelectMultiple: =true
+            Width: =400
+            X: =56
+            Y: =148
+            ZIndex: =5
 
-    CM_Credits As text:
-        Default: =varChildCredits
-        HintText: |-
-            =If(varChildMediaType = "Photo", "Photographer name and/or agency",
-               If(varChildMediaType = "Audio" Or varChildMediaType = "Podcast",
-                  "Presenter and/or producer name", "Director and/or producer name"))
-        Height: =40
-        OnChange: =Set(varChildCredits, Self.Value)
-        Width: =500
-        X: =500
-        Y: =250
-        ZIndex: =16
+        CM_LblCredits As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =13
+            Text: |-
+                =If(varChildMediaType = "Photo", "Photographer / agency *",
+                   If(varChildMediaType = "Podcast",
+                      "Presenter / producer *", "Director / producer *"))
+            Width: =500
+            X: =500
+            Y: =122
+            ZIndex: =6
 
-    CM_LblDesc As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =13
-        Text: ="Editorial description (max 500 characters)"
-        Width: =700
-        X: =56
-        Y: =308
-        ZIndex: =17
+        CM_Credits As text:
+            Default: =varChildCredits
+            HintText: |-
+                =If(varChildMediaType = "Photo", "Photographer name and/or agency",
+                   If(varChildMediaType = "Podcast",
+                      "Presenter and/or producer name", "Director and/or producer name"))
+            Height: =40
+            OnChange: =Set(varChildCredits, Self.Value)
+            Width: =500
+            X: =500
+            Y: =148
+            ZIndex: =7
 
-    CM_Desc As text:
-        Default: =varChildDescription
-        HintText: ="Editorial description, context and keywords"
-        Height: =88
-        Mode: =TextMode.MultiLine
-        OnChange: =Set(varChildDescription, Self.Value)
-        Width: =1230
-        X: =56
-        Y: =334
-        ZIndex: =18
+        CM_LblDesc As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =13
+            Text: ="Editorial description (max 500 characters)"
+            Width: =700
+            X: =56
+            Y: =206
+            ZIndex: =8
 
-    CM_AIVoiceoverLbl As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =13
-        Text: ="AI-generated voice-over"
-        Width: =400
-        X: =56
-        Y: =440
-        ZIndex: =19
+        CM_Desc As text:
+            Default: =varChildDescription
+            HintText: ="Editorial description, context and keywords"
+            Height: =88
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varChildDescription, Self.Value)
+            Width: =1230
+            X: =56
+            Y: =232
+            ZIndex: =9
 
-    CM_AICheck As checkbox.'Checkbox':
-        Height: =40
-        OnCheck: =Set(varChildAIVoiceover, true)
-        OnUncheck: =Set(varChildAIVoiceover, false)
-        Text: ="This production uses an AI-generated voice-over"
-        Width: =700
-        X: =52
-        Y: =462
-        ZIndex: =20
+        CM_AIVoiceoverLbl As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =13
+            Text: ="AI-generated voice-over"
+            Width: =400
+            X: =56
+            Y: =338
+            ZIndex: =10
 
-    CM_AIWarning As rectangle:
-        BorderColor: =RGBA(254, 202, 202, 1)
-        BorderThickness: =1
-        Fill: =RGBA(254, 242, 242, 1)
-        Height: =44
-        Visible: =varChildAIVoiceover
-        Width: =900
-        X: =56
-        Y: =510
-        ZIndex: =21
+        CM_AICheck As checkbox.'Checkbox':
+            Height: =40
+            OnCheck: =Set(varChildAIVoiceover, true)
+            OnUncheck: =Set(varChildAIVoiceover, false)
+            Text: ="This production uses an AI-generated voice-over"
+            Width: =700
+            X: =52
+            Y: =360
+            ZIndex: =11
 
-    CM_AIWarningText As label:
-        Color: =RGBA(193, 40, 40, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =44
-        Size: =13
-        Text: ="⛔  AI voice-over is NOT accepted. This archive will fail validation and cannot be submitted."
-        VerticalAlign: =VerticalAlign.Middle
-        Visible: =varChildAIVoiceover
-        Width: =880
-        X: =66
-        Y: =510
-        ZIndex: =22
+        CM_AIWarning As rectangle:
+            BorderColor: =RGBA(254, 202, 202, 1)
+            BorderThickness: =1
+            Fill: =RGBA(254, 242, 242, 1)
+            Height: =44
+            Visible: =varChildAIVoiceover
+            Width: =900
+            X: =56
+            Y: =408
+            ZIndex: =12
+
+        CM_AIWarningText As label:
+            Color: =RGBA(193, 40, 40, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =13
+            Text: ="⛔  AI voice-over is NOT accepted. This archive will fail validation and cannot be submitted."
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =varChildAIVoiceover
+            Width: =880
+            X: =66
+            Y: =408
+            ZIndex: =13
 
     CM_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -263,7 +276,7 @@ ChildMetaScreen As screen:
         Width: =1366
         X: =0
         Y: =712
-        ZIndex: =23
+        ZIndex: =14
 
     CM_BtnPrev As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -278,7 +291,7 @@ ChildMetaScreen As screen:
         Width: =140
         X: =32
         Y: =720
-        ZIndex: =24
+        ZIndex: =15
 
     CM_BtnNext As button:
         Color: =RGBA(255, 255, 255, 1)
@@ -286,23 +299,10 @@ ChildMetaScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: |-
-            =// Auto-save metadata before moving on
-            Patch(CentralDepositMainList,
-                LookUp(CentralDepositMainList, ID = varCurrentChild.ID),
-                {
-                    LanguageVersions: {Value: varChildLanguageVersions},
-                    Photographer: If(varChildMediaType = "Photo", varChildCredits, ""),
-                    Director: If(varChildMediaType = "Video", varChildCredits, ""),
-                    Producer: If(varChildMediaType = "Audio" Or varChildMediaType = "Podcast", varChildCredits, ""),
-                    Description: varChildDescription,
-                    AIVoiceover: varChildAIVoiceover
-                }
-            );
-            Navigate(ChildLegalScreen)
+        OnSelect: =Navigate(ChildLegalScreen)
         Size: =14
         Text: ="Next: Legal & Docs  →"
         Width: =220
         X: =1122
         Y: =720
-        ZIndex: =25
+        ZIndex: =16

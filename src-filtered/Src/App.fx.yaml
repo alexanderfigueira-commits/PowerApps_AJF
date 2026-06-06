@@ -92,6 +92,8 @@ App As appinfo:
         Set(varFilterEndDate, Blank());
         Set(varReviewComment, "");
         Set(varReviewProject, Blank());
+        Set(varCurrentChildId, "");
+        Clear(colArchives);
     StartScreen: =HomeScreen
     Theme: =PowerAppsTheme
 

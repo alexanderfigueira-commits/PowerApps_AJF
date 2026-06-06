@@ -104,219 +104,232 @@ ChildLegalScreen As screen:
         Y: =52
         ZIndex: =9
 
-    CL_Banner As rectangle:
-        BorderColor: =RGBA(147, 197, 253, 1)
-        BorderThickness: =1
-        Fill: =RGBA(239, 246, 255, 1)
-        Height: =40
-        Width: =1302
-        X: =32
-        Y: =108
+    CL_Gallery As gallery:
+        Fill: =RGBA(247, 248, 250, 1)
+        Height: =468
+        Items: =[{id: 1}]
+        Layout: =Layout.Vertical
+        ShowScrollbar: =true
+        TemplatePadding: =0
+        TemplateSize: =560
+        Width: =1366
+        X: =0
+        Y: =102
         ZIndex: =10
 
-    CL_BannerText As label:
-        Color: =RGBA(30, 64, 175, 1)
-        Height: =40
-        Size: =13
-        Text: ="Select the contract case for this archive, confirm rights flags and upload required legal documents below."
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =1260
-        X: =52
-        Y: =108
-        ZIndex: =11
+        CL_Banner As rectangle:
+            BorderColor: =RGBA(147, 197, 253, 1)
+            BorderThickness: =1
+            Fill: =RGBA(239, 246, 255, 1)
+            Height: =40
+            Width: =1302
+            X: =32
+            Y: =6
+            ZIndex: =1
 
-    CL_LblCase As label:
-        Color: =RGBA(0, 18, 107, 1)
-        FontWeight: =FontWeight.Bold
-        Height: =28
-        Size: =16
-        Text: ="Contract case *"
-        Width: =600
-        X: =32
-        Y: =160
-        ZIndex: =12
+        CL_BannerText As label:
+            Color: =RGBA(30, 64, 175, 1)
+            Height: =40
+            Size: =13
+            Text: ="Select the contract case for this archive, confirm rights flags and upload required legal documents below."
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =1260
+            X: =52
+            Y: =6
+            ZIndex: =2
 
-    CL_Case As dropdown:
-        Height: =44
-        Items: |-
-            =[
-                "Case 1 — framework / direct service contract",
-                "Case 2 — specific service contract",
-                "Case 3 — co-production agreement",
-                "Case 4 — acquisition of existing material",
-                "Case 5 — internal EU production",
-                "Case 6 — donation / free licence"
-            ]
-        OnChange: =Set(varChildContractCase, Self.Selected.Value)
-        Width: =900
-        X: =32
-        Y: =192
-        ZIndex: =13
+        CL_LblCase As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =16
+            Text: ="Contract case *"
+            Width: =600
+            X: =32
+            Y: =58
+            ZIndex: =3
 
-    CL_LblCase1Sub As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =13
-        Text: ="Case 1 sub-type *"
-        Visible: =Left(varChildContractCase, 6) = "Case 1"
-        Width: =400
-        X: =32
-        Y: =250
-        ZIndex: =14
+        CL_Case As dropdown:
+            Height: =44
+            Items: |-
+                =[
+                    "Case 1 — framework / direct service contract",
+                    "Case 2 — specific service contract",
+                    "Case 3 — co-production agreement",
+                    "Case 4 — acquisition of existing material",
+                    "Case 5 — internal EU production",
+                    "Case 6 — donation / free licence"
+                ]
+            OnChange: =Set(varChildContractCase, Self.Selected.Value)
+            Width: =900
+            X: =32
+            Y: =90
+            ZIndex: =4
 
-    CL_Case1Sub As dropdown:
-        Height: =40
-        Items: =["Framework contract", "Specific contract", "Offer / quote"]
-        OnChange: =Set(varChildContractCase1Sub, Self.Selected.Value)
-        Visible: =Left(varChildContractCase, 6) = "Case 1"
-        Width: =400
-        X: =32
-        Y: =276
-        ZIndex: =15
+        CL_LblCase1Sub As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =13
+            Text: ="Case 1 sub-type *"
+            Visible: =Left(varChildContractCase, 6) = "Case 1"
+            Width: =400
+            X: =32
+            Y: =148
+            ZIndex: =5
 
-    CL_LblRef As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =13
-        Text: ="Contract reference number *"
-        Visible: =Not(IsBlank(varChildContractCase))
-        Width: =500
-        X: =500
-        Y: =250
-        ZIndex: =16
+        CL_Case1Sub As dropdown:
+            Height: =40
+            Items: =["Framework contract", "Specific contract", "Offer / quote"]
+            OnChange: =Set(varChildContractCase1Sub, Self.Selected.Value)
+            Visible: =Left(varChildContractCase, 6) = "Case 1"
+            Width: =400
+            X: =32
+            Y: =174
+            ZIndex: =6
 
-    CL_Ref As text:
-        Default: =varChildContractRef
-        HintText: ="e.g. COMM-2026-PHOTO-0142"
-        Height: =40
-        OnChange: =Set(varChildContractRef, Self.Value)
-        Visible: =Not(IsBlank(varChildContractCase))
-        Width: =500
-        X: =500
-        Y: =276
-        ZIndex: =17
+        CL_LblRef As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =13
+            Text: ="Contract reference number *"
+            Visible: =Not(IsBlank(varChildContractCase))
+            Width: =500
+            X: =500
+            Y: =148
+            ZIndex: =7
 
-    CL_Divider1 As rectangle:
-        Fill: =RGBA(230, 232, 238, 1)
-        Height: =1
-        Width: =1302
-        X: =32
-        Y: =332
-        ZIndex: =18
+        CL_Ref As text:
+            Default: =varChildContractRef
+            HintText: ="e.g. COMM-2026-PHOTO-0142"
+            Height: =40
+            OnChange: =Set(varChildContractRef, Self.Value)
+            Visible: =Not(IsBlank(varChildContractCase))
+            Width: =500
+            X: =500
+            Y: =174
+            ZIndex: =8
 
-    CL_LblRights As label:
-        Color: =RGBA(0, 18, 107, 1)
-        FontWeight: =FontWeight.Bold
-        Height: =28
-        Size: =16
-        Text: ="Rights & declarations"
-        Width: =600
-        X: =32
-        Y: =344
-        ZIndex: =19
+        CL_Divider1 As rectangle:
+            Fill: =RGBA(230, 232, 238, 1)
+            Height: =1
+            Width: =1302
+            X: =32
+            Y: =230
+            ZIndex: =9
 
-    CL_ChkModel As checkbox.'Checkbox':
-        Height: =36
-        OnCheck: =Set(varChildModelRelease, true)
-        OnUncheck: =Set(varChildModelRelease, false); Set(varChildModelReleaseProvided, false)
-        Text: ="Recognisable private persons appear in this production"
-        Width: =900
-        X: =28
-        Y: =378
-        ZIndex: =20
+        CL_LblRights As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =16
+            Text: ="Rights & declarations"
+            Width: =600
+            X: =32
+            Y: =242
+            ZIndex: =10
 
-    CL_ChkModelProvided As checkbox.'Checkbox':
-        Height: =32
-        OnCheck: =Set(varChildModelReleaseProvided, true)
-        OnUncheck: =Set(varChildModelReleaseProvided, false)
-        Text: ="  ↳  Model release form(s) provided (attach below)"
-        Visible: =varChildModelRelease
-        Width: =700
-        X: =52
-        Y: =416
-        ZIndex: =21
+        CL_ChkModel As checkbox.'Checkbox':
+            Height: =36
+            OnCheck: =Set(varChildModelRelease, true)
+            OnUncheck: =Set(varChildModelRelease, false); Set(varChildModelReleaseProvided, false)
+            Text: ="Recognisable private persons appear in this production"
+            Width: =900
+            X: =28
+            Y: =276
+            ZIndex: =11
 
-    CL_ChkMusic As checkbox.'Checkbox':
-        Height: =36
-        OnCheck: =Set(varChildMusicUsed, true)
-        OnUncheck: =Set(varChildMusicUsed, false); Set(varChildMusicLicenceProvided, false)
-        Text: ="This production contains music (original or licensed)"
-        Width: =900
-        X: =28
-        Y: =454
-        ZIndex: =22
+        CL_ChkModelProvided As checkbox.'Checkbox':
+            Height: =32
+            OnCheck: =Set(varChildModelReleaseProvided, true)
+            OnUncheck: =Set(varChildModelReleaseProvided, false)
+            Text: ="  ↳  Model release form(s) provided (attach below)"
+            Visible: =varChildModelRelease
+            Width: =700
+            X: =52
+            Y: =314
+            ZIndex: =12
 
-    CL_ChkMusicProvided As checkbox.'Checkbox':
-        Height: =32
-        OnCheck: =Set(varChildMusicLicenceProvided, true)
-        OnUncheck: =Set(varChildMusicLicenceProvided, false)
-        Text: ="  ↳  Music licence / annex provided (attach below)"
-        Visible: =varChildMusicUsed
-        Width: =700
-        X: =52
-        Y: =492
-        ZIndex: =23
+        CL_ChkMusic As checkbox.'Checkbox':
+            Height: =36
+            OnCheck: =Set(varChildMusicUsed, true)
+            OnUncheck: =Set(varChildMusicUsed, false); Set(varChildMusicLicenceProvided, false)
+            Text: ="This production contains music (original or licensed)"
+            Width: =900
+            X: =28
+            Y: =352
+            ZIndex: =13
 
-    CL_ChkPreexisting As checkbox.'Checkbox':
-        Height: =36
-        OnCheck: =Set(varChildPreexisting, true)
-        OnUncheck: =Set(varChildPreexisting, false); Set(varChildPreexistingProvided, false)
-        Text: ="Production contains pre-existing rights material"
-        Width: =900
-        X: =28
-        Y: =530
-        ZIndex: =24
+        CL_ChkMusicProvided As checkbox.'Checkbox':
+            Height: =32
+            OnCheck: =Set(varChildMusicLicenceProvided, true)
+            OnUncheck: =Set(varChildMusicLicenceProvided, false)
+            Text: ="  ↳  Music licence / annex provided (attach below)"
+            Visible: =varChildMusicUsed
+            Width: =700
+            X: =52
+            Y: =390
+            ZIndex: =14
 
-    CL_ChkPreexistingProvided As checkbox.'Checkbox':
-        Height: =32
-        OnCheck: =Set(varChildPreexistingProvided, true)
-        OnUncheck: =Set(varChildPreexistingProvided, false)
-        Text: ="  ↳  Pre-existing rights annex(es) provided (attach below)"
-        Visible: =varChildPreexisting
-        Width: =700
-        X: =52
-        Y: =568
-        ZIndex: =25
+        CL_ChkPreexisting As checkbox.'Checkbox':
+            Height: =36
+            OnCheck: =Set(varChildPreexisting, true)
+            OnUncheck: =Set(varChildPreexisting, false); Set(varChildPreexistingProvided, false)
+            Text: ="Production contains pre-existing rights material"
+            Width: =900
+            X: =28
+            Y: =428
+            ZIndex: =15
 
-    CL_Divider2 As rectangle:
-        Fill: =RGBA(230, 232, 238, 1)
-        Height: =1
-        Width: =1302
-        X: =32
-        Y: =612
-        ZIndex: =26
+        CL_ChkPreexistingProvided As checkbox.'Checkbox':
+            Height: =32
+            OnCheck: =Set(varChildPreexistingProvided, true)
+            OnUncheck: =Set(varChildPreexistingProvided, false)
+            Text: ="  ↳  Pre-existing rights annex(es) provided (attach below)"
+            Visible: =varChildPreexisting
+            Width: =700
+            X: =52
+            Y: =466
+            ZIndex: =16
 
-    CL_LblAttachments As label:
-        Color: =RGBA(0, 18, 107, 1)
-        FontWeight: =FontWeight.Bold
-        Height: =28
-        Size: =16
-        Text: ="Legal annexes & supporting documents"
-        Width: =800
-        X: =32
-        Y: =622
-        ZIndex: =27
+        CL_Divider2 As rectangle:
+            Fill: =RGBA(230, 232, 238, 1)
+            Height: =1
+            Width: =1302
+            X: =32
+            Y: =510
+            ZIndex: =17
+
+        CL_LblAttachments As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =16
+            Text: ="Legal annexes & supporting documents"
+            Width: =800
+            X: =32
+            Y: =520
+            ZIndex: =18
 
     CL_AttachHint As label:
         Color: =RGBA(96, 104, 120, 1)
         Height: =22
         Size: =12
         Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes, SRT/VTT subtitles, scripts."
-        Width: =1260
+        Width: =1302
         X: =32
-        Y: =652
-        ZIndex: =28
+        Y: =572
+        ZIndex: =11
 
     CL_Annex As attachments:
         BorderColor: =RGBA(220, 224, 230, 1)
-        Height: =200
+        Height: =96
         MaxAttachments: =20
         Width: =1302
         X: =32
-        Y: =678
-        ZIndex: =29
+        Y: =596
+        ZIndex: =12
 
     CL_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -325,8 +338,8 @@ ChildLegalScreen As screen:
         Height: =56
         Width: =1366
         X: =0
-        Y: =890
-        ZIndex: =30
+        Y: =712
+        ZIndex: =13
 
     CL_BtnPrev As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -340,8 +353,8 @@ ChildLegalScreen As screen:
         Text: ="←  Previous"
         Width: =140
         X: =32
-        Y: =898
-        ZIndex: =31
+        Y: =720
+        ZIndex: =14
 
     CL_BtnNext As button:
         Color: =RGBA(255, 255, 255, 1)
@@ -349,22 +362,10 @@ ChildLegalScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: |-
-            =// Save legal fields before moving to Validations
-            Patch(CentralDepositMainList,
-                LookUp(CentralDepositMainList, ID = varCurrentChild.ID),
-                {
-                    ContractCase: {Value: varChildContractCase},
-                    ContractReference: varChildContractRef,
-                    MusicUsed: varChildMusicUsed,
-                    MusicLicenseProvided: varChildMusicLicenceProvided,
-                    PreexistingRightsProvided: varChildPreexistingProvided
-                }
-            );
-            Navigate(ChildValidScreen)
+        OnSelect: =Navigate(ChildValidScreen)
         Size: =14
         Text: ="Next: Validations  →"
         Width: =220
         X: =1110
-        Y: =898
-        ZIndex: =32
+        Y: =720
+        ZIndex: =15

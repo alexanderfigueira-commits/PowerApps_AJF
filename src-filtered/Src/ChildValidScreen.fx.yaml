@@ -1,62 +1,46 @@
 ChildValidScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: |-
-        =// Build the validation results collection each time this screen loads.
-        // Each row: {Check (text), Pass (boolean), Note (text)}
-        ClearCollect(colValidations,
-            // 1. MediaType
+        =ClearCollect(colValidations,
             {Check: "Media type is set",
              Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "",
              Note: "Select a production type on the Info tab."},
-            // 2. Archive title
             {Check: "Archive title is provided",
              Pass: Not(IsBlank(varChildTitle)) And varChildTitle <> "" And varChildTitle <> "New archive",
              Note: "Enter a descriptive title on the Info tab."},
-            // 3. Capture date
             {Check: "Capture / production date is set",
              Pass: Not(IsBlank(varChildCaptureDate)),
              Note: "Set the production date on the Info tab."},
-            // 4. Language versions
             {Check: "Language version(s) selected",
              Pass: Not(IsBlank(varChildLanguageVersions)) And varChildLanguageVersions <> "",
              Note: "Select at least one language on the Metadata tab."},
-            // 5. AI voiceover — YES is a hard block
             {Check: "No AI-generated voice-over (not accepted)",
              Pass: Not(varChildAIVoiceover),
              Note: "⛔ AI voice-over detected. This archive cannot be submitted."},
-            // 6. Contract case selected
             {Check: "Contract case (1–6) is selected",
              Pass: Not(IsBlank(varChildContractCase)) And varChildContractCase <> "",
              Note: "Select a contract case on the Legal & Docs tab."},
-            // 7. Case 1 sub-type (only required when Case 1 chosen)
             {Check: "Case 1 sub-type selected (if Case 1)",
              Pass: Left(varChildContractCase, 6) <> "Case 1" Or (Not(IsBlank(varChildContractCase1Sub)) And varChildContractCase1Sub <> ""),
              Note: "Select the framework / specific / offer sub-type on the Legal & Docs tab."},
-            // 8. Contract reference
             {Check: "Contract reference number provided",
              Pass: Not(IsBlank(varChildContractRef)) And varChildContractRef <> "",
              Note: "Enter the contract reference on the Legal & Docs tab."},
-            // 9. Photographer (Photo type only)
             {Check: "Photographer / agency provided (Photo only)",
              Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildCredits)) And varChildCredits <> ""),
              Note: "Enter the photographer / agency on the Metadata tab."},
-            // 10. Model release — if persons appear, documents must be provided
             {Check: "Model release: if persons appear → forms provided",
              Pass: Not(varChildModelRelease) Or varChildModelReleaseProvided,
              Note: "Recognisable persons declared but model release not confirmed. Attach forms on Legal & Docs."},
-            // 11. Music licence — if music used, licence must be provided
             {Check: "Music licence: if music used → documentation provided",
              Pass: Not(varChildMusicUsed) Or varChildMusicLicenceProvided,
              Note: "Music declared but licence/annex not confirmed. Attach on Legal & Docs."},
-            // 12. Pre-existing rights — if declared, annexes must be provided
             {Check: "Pre-existing rights: if declared → annex provided",
              Pass: Not(varChildPreexisting) Or varChildPreexistingProvided,
              Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
-            // 13. Archive FTP path
             {Check: "FTP delivery path set on this archive",
              Pass: Not(IsBlank(varChildFTPPath)) And varChildFTPPath <> "",
              Note: "Enter the FTP path on the Info tab."},
-            // 14. Parent owner/contact
             {Check: "Owner / point of contact set on the request",
              Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "",
              Note: "Set the owner on the Request screen."}
@@ -203,8 +187,8 @@ ChildValidScreen As screen:
         Size: =16
         Text: |-
             =If(CountIf(colValidations, Not(Pass)) = 0,
-                "Ready to submit — all checks passed",
-                Text(CountIf(colValidations, Not(Pass))) & " point(s) missing — resolve before submitting")
+                "Ready — all checks passed. Press Save archive to add to your request.",
+                Text(CountIf(colValidations, Not(Pass))) & " point(s) missing — resolve before saving")
         VerticalAlign: =VerticalAlign.Middle
         Width: =900
         X: =116
@@ -344,38 +328,44 @@ ChildValidScreen As screen:
         Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
-            =// Persist all child data in one final Patch and mark as Pending Approval
-            Set(varCurrentChild,
-                Patch(CentralDepositMainList,
-                    LookUp(CentralDepositMainList, ID = varCurrentChild.ID),
-                    {
-                        Project: varChildTitle,
-                        MediaType: {Value: varChildMediaType},
-                        CaptureDate: varChildCaptureDate,
-                        ProductionPlace: varChildProductionPlace,
-                        EpisodeTitle: varChildEpisodeTitle,
-                        EpisodeSummary: varChildEpisodeSummary,
-                        LanguageVersions: {Value: varChildLanguageVersions},
-                        Photographer: If(varChildMediaType = "Photo", varChildCredits, ""),
-                        Director: If(varChildMediaType = "Video", varChildCredits, ""),
-                        Producer: If(varChildMediaType = "Audio" Or varChildMediaType = "Podcast", varChildCredits, ""),
-                        Description: varChildDescription,
-                        AIVoiceover: varChildAIVoiceover,
-                        ContractCase: {Value: varChildContractCase},
-                        ContractReference: varChildContractRef,
-                        MusicUsed: varChildMusicUsed,
-                        MusicLicenseProvided: varChildMusicLicenceProvided,
-                        PreexistingRightsProvided: varChildPreexistingProvided,
-                        DepositStatus: {Value: "Pending Approval"},
-                        ParentProject: {Id: varCurrentRequest.ID, Value: varCurrentRequest.Title}
-                    }
-                )
+            =With({existingRec: LookUp(colArchives, ArchiveId = varCurrentChildId)},
+                RemoveIf(colArchives, ArchiveId = varCurrentChildId);
+                Collect(colArchives, {
+                    ArchiveId: varCurrentChildId,
+                    SPId: If(IsBlank(existingRec), 0, existingRec.SPId),
+                    Title: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
+                    MediaType: varChildMediaType,
+                    Description: varChildDescription,
+                    CaptureDate: varChildCaptureDate,
+                    ProductionPlace: varChildProductionPlace,
+                    ProductType: varChildProductType,
+                    SeriesTitle: varChildSeriesTitle,
+                    EpisodeTitle: varChildEpisodeTitle,
+                    EpisodeSummary: varChildEpisodeSummary,
+                    SeasonNumber: varChildSeasonNumber,
+                    EpisodeNumber: varChildEpisodeNumber,
+                    ProductionEndDate: varChildProductionEndDate,
+                    PublicationStartDate: varChildPublicationStartDate,
+                    PublicationEndDate: varChildPublicationEndDate,
+                    ReferenceLinks: varChildLinks,
+                    Tags: varChildTags,
+                    FTPPath: varChildFTPPath,
+                    LanguageVersions: varChildLanguageVersions,
+                    Credits: varChildCredits,
+                    AIVoiceover: varChildAIVoiceover,
+                    ContractCase: varChildContractCase,
+                    ContractCase1Sub: varChildContractCase1Sub,
+                    ContractRef: varChildContractRef,
+                    ModelRelease: varChildModelRelease,
+                    ModelReleaseProvided: varChildModelReleaseProvided,
+                    MusicUsed: varChildMusicUsed,
+                    MusicLicenceProvided: varChildMusicLicenceProvided,
+                    Preexisting: varChildPreexisting,
+                    PreexistingProvided: varChildPreexistingProvided
+                })
             );
-            If(IsError(varCurrentChild),
-                Notify("Error saving archive. Please try again.", NotificationType.Error),
-                Notify("Archive saved and marked Pending Approval.", NotificationType.Success);
-                Navigate(RequestScreen)
-            )
+            Notify("Archive added to request. Press Submit request when all archives are ready.", NotificationType.Success);
+            Navigate(RequestScreen)
         Size: =14
         Text: ="Save archive  ✓"
         Width: =200
