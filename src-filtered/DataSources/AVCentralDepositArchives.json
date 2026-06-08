@@ -83,7 +83,7 @@
     "EncodeDataset": true,
     "IsSampleData": false,
     "IsWritable": true,
-    "Name": "CentralDepositMainList",
+    "Name": "AVCentralDepositArchives",
     "Type": "ConnectedDataSourceInfo"
   }
 ]

@@ -54,7 +54,7 @@
     "EncodeDataset": true,
     "IsSampleData": false,
     "IsWritable": true,
-    "Name": "AVCentralDepositProjects",
+    "Name": "AVCentralDepositTickets",
     "Type": "ConnectedDataSourceInfo"
   }
 ]

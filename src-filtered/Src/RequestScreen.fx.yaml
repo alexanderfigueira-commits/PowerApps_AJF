@@ -5,9 +5,9 @@ RequestScreen As screen:
         Clear(colArchives);
         If(
             Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
-            Refresh(CentralDepositMainList);
+            Refresh(AVCentralDepositArchives);
             ForAll(
-                Sort(Filter(CentralDepositMainList, ParentProject.Id = varCurrentRequest.ID), Modified, SortOrder.Descending),
+                Sort(Filter(AVCentralDepositArchives, ParentProject.Id = varCurrentRequest.ID), Modified, SortOrder.Descending),
                 Collect(colArchives, {
                     ArchiveId: Text(ID),
                     SPId: ID,
@@ -255,11 +255,11 @@ RequestScreen As screen:
         HoverFill: =RGBA(230, 236, 245, 1)
         OnSelect: |-
             =Set(varCurrentRequest,
-                Patch(AVCentralDepositProjects,
+                Patch(AVCentralDepositTickets,
                     If(
                         IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
-                        Defaults(AVCentralDepositProjects),
-                        LookUp(AVCentralDepositProjects, ID = varCurrentRequest.ID)
+                        Defaults(AVCentralDepositTickets),
+                        LookUp(AVCentralDepositTickets, ID = varCurrentRequest.ID)
                     ),
                     {
                         Title: varRequestTitle,
@@ -340,7 +340,7 @@ RequestScreen As screen:
             =If(
                 IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
                 Set(varCurrentRequest,
-                    Patch(AVCentralDepositProjects, Defaults(AVCentralDepositProjects),
+                    Patch(AVCentralDepositTickets, Defaults(AVCentralDepositTickets),
                         {
                             Title: varRequestTitle,
                             DG: varRequestDG,
@@ -604,7 +604,7 @@ RequestScreen As screen:
             OnSelect: |-
                 =If(
                     Coalesce(ThisItem.SPId, 0) > 0,
-                    Remove(CentralDepositMainList, LookUp(CentralDepositMainList, ID = ThisItem.SPId))
+                    Remove(AVCentralDepositArchives, LookUp(AVCentralDepositArchives, ID = ThisItem.SPId))
                 );
                 RemoveIf(colArchives, ArchiveId = ThisItem.ArchiveId)
             Size: =11
@@ -669,8 +669,8 @@ RequestScreen As screen:
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
             =Set(varCurrentRequest,
-                Patch(AVCentralDepositProjects,
-                    LookUp(AVCentralDepositProjects, ID = varCurrentRequest.ID),
+                Patch(AVCentralDepositTickets,
+                    LookUp(AVCentralDepositTickets, ID = varCurrentRequest.ID),
                     {
                         Title: varRequestTitle,
                         DG: varRequestDG,
@@ -686,7 +686,7 @@ RequestScreen As screen:
                 ForAll(colArchives,
                     If(
                         Coalesce(SPId, 0) > 0,
-                        Patch(CentralDepositMainList, LookUp(CentralDepositMainList, ID = SPId),
+                        Patch(AVCentralDepositArchives, LookUp(AVCentralDepositArchives, ID = SPId),
                             {
                                 Project: Title,
                                 MediaType: {Value: MediaType},
@@ -718,7 +718,7 @@ RequestScreen As screen:
                                 DepositStatus: {Value: "Pending Approval"}
                             }
                         ),
-                        Patch(CentralDepositMainList, Defaults(CentralDepositMainList),
+                        Patch(AVCentralDepositArchives, Defaults(AVCentralDepositArchives),
                             {
                                 Project: Title,
                                 MediaType: {Value: MediaType},
@@ -789,8 +789,8 @@ RequestScreen As screen:
         HoverFill: =RGBA(120, 60, 0, 1)
         OnSelect: |-
             =Set(varCurrentRequest,
-                Patch(AVCentralDepositProjects,
-                    LookUp(AVCentralDepositProjects, ID = varCurrentRequest.ID),
+                Patch(AVCentralDepositTickets,
+                    LookUp(AVCentralDepositTickets, ID = varCurrentRequest.ID),
                     {
                         Title: varRequestTitle,
                         DG: varRequestDG,
@@ -806,7 +806,7 @@ RequestScreen As screen:
                 ForAll(colArchives,
                     If(
                         Coalesce(SPId, 0) > 0,
-                        Patch(CentralDepositMainList, LookUp(CentralDepositMainList, ID = SPId),
+                        Patch(AVCentralDepositArchives, LookUp(AVCentralDepositArchives, ID = SPId),
                             {
                                 Project: Title,
                                 MediaType: {Value: MediaType},
@@ -826,7 +826,7 @@ RequestScreen As screen:
                                 DepositStatus: {Value: "Pending Approval"}
                             }
                         ),
-                        Patch(CentralDepositMainList, Defaults(CentralDepositMainList),
+                        Patch(AVCentralDepositArchives, Defaults(AVCentralDepositArchives),
                             {
                                 Project: Title,
                                 MediaType: {Value: MediaType},

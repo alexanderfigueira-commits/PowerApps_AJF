@@ -72,7 +72,7 @@ ReviewScreen As screen:
         BorderColor: =RGBA(0, 0, 0, 0)
         DelayItemLoading: =true
         Height: =786
-        Items: =Sort(Filter(AVCentralDepositProjects, Status.Value = "Submitted"), Modified, SortOrder.Descending)
+        Items: =Sort(Filter(AVCentralDepositTickets, Status.Value = "Submitted"), Modified, SortOrder.Descending)
         Layout: =Layout.Vertical
         LoadingSpinner: =LoadingSpinner.Data
         TemplatePadding: =0
@@ -230,9 +230,9 @@ ReviewScreen As screen:
         Items: |-
             =If(
                 IsBlank(varReviewProject),
-                Filter(CentralDepositMainList, 1 = 2),
+                Filter(AVCentralDepositArchives, 1 = 2),
                 Sort(
-                    Filter(CentralDepositMainList, ParentProject.Id = varReviewProject.ID),
+                    Filter(AVCentralDepositArchives, ParentProject.Id = varReviewProject.ID),
                     Modified, SortOrder.Descending
                 )
             )
@@ -402,8 +402,8 @@ ReviewScreen As screen:
         Height: =44
         HoverFill: =RGBA(15, 90, 55, 1)
         OnSelect: |-
-            =Patch(AVCentralDepositProjects,
-                LookUp(AVCentralDepositProjects, ID = varReviewProject.ID),
+            =Patch(AVCentralDepositTickets,
+                LookUp(AVCentralDepositTickets, ID = varReviewProject.ID),
                 {
                     Status: {Value: "Approved"},
                     OwnerContact: varReviewProject.OwnerContact,
@@ -441,8 +441,8 @@ ReviewScreen As screen:
         Height: =44
         HoverFill: =RGBA(253, 235, 235, 1)
         OnSelect: |-
-            =Patch(AVCentralDepositProjects,
-                LookUp(AVCentralDepositProjects, ID = varReviewProject.ID),
+            =Patch(AVCentralDepositTickets,
+                LookUp(AVCentralDepositTickets, ID = varReviewProject.ID),
                 {
                     Status: {Value: "Rejected"},
                     OwnerContact: varReviewProject.OwnerContact,

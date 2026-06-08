@@ -442,13 +442,13 @@ HomeScreen As screen:
         Height: =330
         Items: |-
             =Filter(
-                AVCentralDepositProjects,
+                AVCentralDepositTickets,
                 'Created By'.Email = User().Email,
                 varFilter = "All" Or Status.Value = varFilter,
                 varFilterDG = "" Or IsBlank(varFilterDG) Or StartsWith(DG, varFilterDG),
                 varFilterRequest = "" Or IsBlank(varFilterRequest) Or StartsWith(Title, varFilterRequest),
                 varFilterArchive = "" Or IsBlank(varFilterArchive) Or
-                    CountRows(Filter(CentralDepositMainList, ParentProject.Id = ID And StartsWith(Project, varFilterArchive))) > 0,
+                    CountRows(Filter(AVCentralDepositArchives, ParentProject.Id = ID And StartsWith(Project, varFilterArchive))) > 0,
                 IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                 IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate
             )
@@ -505,7 +505,7 @@ HomeScreen As screen:
             Color: =RGBA(96, 104, 120, 1)
             Height: =59
             OnSelect: =Select(Parent)
-            Text: =Text(CountRows(Filter(CentralDepositMainList, ParentProject.Id = ThisItem.ID)))
+            Text: =Text(CountRows(Filter(AVCentralDepositArchives, ParentProject.Id = ThisItem.ID)))
             Width: =120
             X: =600
             ZIndex: =5
