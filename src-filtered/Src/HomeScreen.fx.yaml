@@ -111,11 +111,13 @@ HomeScreen As screen:
         Fill: =RGBA(255, 255, 255, 1)
         Height: =44
         HoverFill: =RGBA(230, 236, 245, 1)
-        OnSelect: =Print()
+        OnSelect: |-
+            =ClearCollect(colPrintData, HomeGallery.AllItems);
+            Navigate(HomePrintScreen)
         Size: =13
-        Text: ="🖨  Print"
-        Width: =110
-        X: =1228
+        Text: ="📄  Export PDF"
+        Width: =140
+        X: =1198
         Y: =92
         ZIndex: =38
 
