@@ -108,7 +108,7 @@ RequestScreen As screen:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =390
+        Height: =350
         Width: =1302
         X: =32
         Y: =68
@@ -188,26 +188,38 @@ RequestScreen As screen:
         Y: =226
         ZIndex: =12
 
+    RS_ChkShowEmail As checkbox.'Checkbox':
+        Height: =28
+        OnCheck: =Set(varShowContactEmail, true)
+        OnUncheck: =Set(varShowContactEmail, false)
+        Text: ="Contact email?"
+        Width: =200
+        X: =456
+        Y: =200
+        ZIndex: =13
+
     RS_LblOwnerEmail As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
         Size: =13
         Text: ="Contact email *"
+        Visible: =varShowContactEmail
         Width: =380
         X: =460
-        Y: =200
-        ZIndex: =13
+        Y: =230
+        ZIndex: =14
 
     RS_OwnerEmail As text:
         Default: =Coalesce(varRequestOwnerEmail, User().Email)
         HintText: ="email@ec.europa.eu"
         Height: =40
         OnChange: =Set(varRequestOwnerEmail, Self.Value)
+        Visible: =varShowContactEmail
         Width: =380
         X: =460
-        Y: =226
-        ZIndex: =14
+        Y: =256
+        ZIndex: =15
 
     RS_LblDescription As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -218,7 +230,7 @@ RequestScreen As screen:
         Width: =1230
         X: =56
         Y: =280
-        ZIndex: =15
+        ZIndex: =16
 
     RS_Description As text:
         Default: =varRequestDescription
@@ -229,7 +241,7 @@ RequestScreen As screen:
         Width: =1230
         X: =56
         Y: =306
-        ZIndex: =16
+        ZIndex: =17
 
     RS_BtnSaveRequest As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -267,8 +279,8 @@ RequestScreen As screen:
         Text: =If(IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0, "Save request", "Update request")
         Width: =160
         X: =56
-        Y: =404
-        ZIndex: =17
+        Y: =428
+        ZIndex: =18
 
     RS_RejectionBanner As rectangle:
         BorderColor: =RGBA(254, 202, 202, 1)
@@ -278,8 +290,8 @@ RequestScreen As screen:
         Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
         Width: =1302
         X: =32
-        Y: =466
-        ZIndex: =18
+        Y: =470
+        ZIndex: =19
 
     RS_RejectionTitle As label:
         Color: =RGBA(153, 27, 27, 1)
@@ -290,8 +302,8 @@ RequestScreen As screen:
         Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
         Width: =1260
         X: =52
-        Y: =470
-        ZIndex: =19
+        Y: =474
+        ZIndex: =20
 
     RS_RejectionComment As label:
         Color: =RGBA(153, 27, 27, 1)
@@ -301,8 +313,8 @@ RequestScreen As screen:
         Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
         Width: =1260
         X: =52
-        Y: =494
-        ZIndex: =20
+        Y: =498
+        ZIndex: =21
 
     RS_ArchivesSection As label:
         Color: =RGBA(0, 18, 107, 1)
@@ -312,8 +324,8 @@ RequestScreen As screen:
         Text: ="Archives  (" & Text(CountRows(colArchives)) & ")"
         Width: =600
         X: =32
-        Y: =526
-        ZIndex: =21
+        Y: =472
+        ZIndex: =22
 
     RS_BtnAddArchive As button:
         Color: =RGBA(255, 255, 255, 1)
@@ -379,8 +391,8 @@ RequestScreen As screen:
         Text: ="+  Add archive"
         Width: =160
         X: =1160
-        Y: =526
-        ZIndex: =22
+        Y: =472
+        ZIndex: =23
 
     RS_ChildrenCard As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -389,16 +401,16 @@ RequestScreen As screen:
         Height: =350
         Width: =1302
         X: =32
-        Y: =564
-        ZIndex: =23
+        Y: =510
+        ZIndex: =24
 
     RS_ChildrenHeader As rectangle:
         Fill: =RGBA(240, 242, 246, 1)
         Height: =40
         Width: =1302
         X: =32
-        Y: =564
-        ZIndex: =24
+        Y: =510
+        ZIndex: =25
 
     RS_ThTitle As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -408,8 +420,8 @@ RequestScreen As screen:
         Text: ="ARCHIVE TITLE"
         Width: =420
         X: =56
-        Y: =564
-        ZIndex: =25
+        Y: =510
+        ZIndex: =26
 
     RS_ThType As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -419,8 +431,8 @@ RequestScreen As screen:
         Text: ="TYPE"
         Width: =160
         X: =500
-        Y: =564
-        ZIndex: =26
+        Y: =510
+        ZIndex: =27
 
     RS_ThValidation As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -430,8 +442,8 @@ RequestScreen As screen:
         Text: ="VALIDATION"
         Width: =200
         X: =680
-        Y: =564
-        ZIndex: =27
+        Y: =510
+        ZIndex: =28
 
     RS_ThStatus As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -441,13 +453,13 @@ RequestScreen As screen:
         Text: ="STATUS"
         Width: =180
         X: =900
-        Y: =564
-        ZIndex: =28
+        Y: =510
+        ZIndex: =29
 
     "RS_ChildrenGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
         BorderColor: =RGBA(220, 224, 230, 1)
         DelayItemLoading: =true
-        Height: =306
+        Height: =308
         Items: =colArchives
         Layout: =Layout.Vertical
         LoadingSpinner: =LoadingSpinner.Data
@@ -456,8 +468,8 @@ RequestScreen As screen:
         TemplateSize: =56
         Width: =1302
         X: =32
-        Y: =604
-        ZIndex: =29
+        Y: =550
+        ZIndex: =30
 
         RS_CRowSelect As rectangle:
             Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
@@ -610,8 +622,8 @@ RequestScreen As screen:
         Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0 And CountRows(colArchives) = 0
         Width: =1302
         X: =32
-        Y: =700
-        ZIndex: =30
+        Y: =650
+        ZIndex: =31
 
     RS_NewRequestHint As label:
         Align: =Align.Center
@@ -621,8 +633,8 @@ RequestScreen As screen:
         Visible: =IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0
         Width: =1302
         X: =32
-        Y: =700
-        ZIndex: =31
+        Y: =650
+        ZIndex: =32
 
     RS_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -631,8 +643,8 @@ RequestScreen As screen:
         Height: =56
         Width: =1366
         X: =0
-        Y: =938
-        ZIndex: =32
+        Y: =872
+        ZIndex: =33
 
     RS_BtnSubmitRequest As button:
         Color: =RGBA(255, 255, 255, 1)
@@ -752,8 +764,8 @@ RequestScreen As screen:
             And (IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft")
         Width: =200
         X: =1142
-        Y: =946
-        ZIndex: =33
+        Y: =880
+        ZIndex: =34
 
     RS_BtnResubmitRequest As button:
         Color: =RGBA(255, 255, 255, 1)
@@ -790,7 +802,7 @@ RequestScreen As screen:
                 )
             );
             If(IsError(varCurrentRequest),
-                Notify("Error resubmitting request. Please try again.", NotificationType.Error),
+                Notify("Error resubmitting. Please try again.", NotificationType.Error),
                 ForAll(colArchives,
                     If(
                         Coalesce(SPId, 0) > 0,
@@ -848,5 +860,5 @@ RequestScreen As screen:
             And varCurrentRequest.Status.Value = "Rejected"
         Width: =220
         X: =1122
-        Y: =946
-        ZIndex: =34
+        Y: =880
+        ZIndex: =35

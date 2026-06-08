@@ -93,6 +93,7 @@ App As appinfo:
         Set(varReviewComment, "");
         Set(varReviewProject, Blank());
         Set(varCurrentChildId, "");
+        Set(varShowContactEmail, false);
         Clear(colArchives);
     StartScreen: =HomeScreen
     Theme: =PowerAppsTheme
