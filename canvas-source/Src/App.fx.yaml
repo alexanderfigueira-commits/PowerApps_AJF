@@ -78,7 +78,7 @@ App As appinfo:
         Set(varRating, 0);
         Set(varFeedbackText, "");
         Set(varFeedbackSent, false);
-    StartScreen: =HomeScreen
+    StartScreen: =DashboardScreen
     Theme: =PowerAppsTheme
 
     Host As hostControl.DefaultHostControlVariant:

@@ -134,6 +134,7 @@
     "UserLocale": "en-US"
   },
   "ScreenOrder": [
+    "DashboardScreen",
     "HomeScreen",
     "ProjectScreen",
     "ChildInfoScreen",
