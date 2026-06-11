@@ -75,6 +75,9 @@ App As appinfo:
         Set(varShowTplConfirm, false);
         Set(varTplSearch, "");
         Set(varTplCandidate, Blank());
+        Set(varRating, 0);
+        Set(varFeedbackText, "");
+        Set(varFeedbackSent, false);
     StartScreen: =HomeScreen
     Theme: =PowerAppsTheme
 

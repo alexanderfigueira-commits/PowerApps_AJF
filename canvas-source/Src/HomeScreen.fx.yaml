@@ -609,3 +609,17 @@ HomeScreen As screen:
         X: =60
         Y: =32
         ZIndex: =33
+
+    HomeBtnHelp As button:
+        BorderThickness: =0
+        Color: =RGBA(186, 202, 226, 1)
+        Fill: =RGBA(0, 18, 107, 1)
+        HoverColor: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(HelpScreen)
+        Size: =13
+        Text: ="?  Help"
+        Width: =90
+        X: =1012
+        Y: =10
+        ZIndex: =34

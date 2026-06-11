@@ -11,7 +11,7 @@
   },
   "Properties": {
     "AppCreationSource": "AppFromScratch",
-    "AppDescription": "AV Central Deposit — parent/child media management",
+    "AppDescription": "AV Central Deposit \u2014 parent/child media management",
     "AppPreviewFlagsMap": {
       "adaptivepaging": false,
       "aibuilderserviceenrollment": false,
@@ -148,6 +148,7 @@
     "FormScreen",
     "Success Screen",
     "Future Coverages",
-    "SuspensionScreen"
+    "SuspensionScreen",
+    "HelpScreen"
   ]
 }

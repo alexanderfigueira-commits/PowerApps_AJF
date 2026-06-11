@@ -23,6 +23,9 @@
           },
           "AV Central Deposit Projects": {
             "tableName": "av-central-deposit-projects-placeholder"
+          },
+          "AV App Feedback": {
+            "tableName": "av-app-feedback-placeholder"
           }
         }
       }
@@ -30,7 +33,8 @@
     "dataSources": [
       "Coverage Request (Belgium)",
       "SuspensionDates",
-      "AV Central Deposit Projects"
+      "AV Central Deposit Projects",
+      "AV App Feedback"
     ],
     "dependencies": {},
     "dependents": [],
