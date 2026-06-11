@@ -99,7 +99,7 @@ NewRequestScreen As screen:
         Color: =RGBA(96, 104, 120, 1)
         Fill: =RGBA(255, 255, 255, 1)
         HoverFill: =RGBA(247, 248, 250, 1)
-        OnSelect: =Navigate(AttachmentsScreen)
+        OnSelect: =Navigate(AttachmentsScreen2)
         Size: =13
         Text: ="4.  Attachments"
         Width: =170
@@ -111,7 +111,7 @@ NewRequestScreen As screen:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =560
+        Height: =604
         Width: =892
         X: =32
         Y: =122
@@ -171,46 +171,46 @@ NewRequestScreen As screen:
         Y: =288
         ZIndex: =15
 
-    NR_LblContact As label:
+    NR_LblContactOfficialDG As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
         Size: =13
-        Text: ="Point of contact (responsible owner) *"
+        Text: ="Point of contact (Official DG) *"
         Width: =400
         X: =56
         Y: =340
         ZIndex: =16
 
-    NR_Contact As text:
-        Default: =varContact
-        HintText: ="Name of person responsible for this submission"
+    NR_ContactOfficialDG As text:
+        Default: =varContactOfficialDG
+        HintText: ="Name and email of the DG official responsible"
         Height: =40
-        OnChange: =Set(varContact, Self.Value)
+        OnChange: =Set(varContactOfficialDG, Self.Value)
         Width: =400
         X: =56
         Y: =366
         ZIndex: =17
 
-    NR_LblContactEmail As label:
+    NR_LblContactContractor As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
         Size: =13
-        Text: ="Contact email *"
+        Text: ="Point of contact (Contractor)"
         Width: =400
-        X: =488
-        Y: =340
+        X: =56
+        Y: =416
         ZIndex: =18
 
-    NR_ContactEmail As text:
-        Default: =Coalesce(varContactEmail, User().Email)
-        HintText: ="email@ec.europa.eu"
+    NR_ContactContractor As text:
+        Default: =varContactContractor
+        HintText: ="Name and email of the contractor or production company"
         Height: =40
-        OnChange: =Set(varContactEmail, Self.Value)
+        OnChange: =Set(varContactContractor, Self.Value)
         Width: =400
-        X: =488
-        Y: =366
+        X: =56
+        Y: =442
         ZIndex: =19
 
     NR_Divider As rectangle:
@@ -218,7 +218,7 @@ NewRequestScreen As screen:
         Height: =1
         Width: =836
         X: =56
-        Y: =430
+        Y: =494
         ZIndex: =20
 
     NR_LblMediaType As label:
@@ -227,41 +227,54 @@ NewRequestScreen As screen:
         Height: =30
         Size: =18
         Text: ="Production type"
-        Width: =836
+        Width: =700
         X: =56
-        Y: =444
+        Y: =508
         ZIndex: =21
+
+    NR_MediaLocked As label:
+        Color: =RGBA(193, 40, 40, 1)
+        Height: =30
+        Size: =12
+        Text: ="🔒  Type locked — start a new request to change"
+        Visible: =varMediaTypeLocked
+        Width: =340
+        X: =516
+        Y: =508
+        ZIndex: =22
 
     NR_MediaHint As label:
         Color: =RGBA(96, 104, 120, 1)
         Height: =22
         Size: =12
-        Text: ="One ticket is dedicated to a single production type. This drives the metadata and legal sections."
+        Text: ="One ticket covers a single production type. This setting is locked when you proceed to step 2."
         Width: =836
         X: =56
-        Y: =476
-        ZIndex: =22
+        Y: =540
+        ZIndex: =23
 
     NR_CardPhoto As button:
         BorderColor: =If(varMediaType="Photo", RGBA(56,96,178,1), RGBA(220,224,230,1))
         BorderThickness: =If(varMediaType="Photo", 2, 1)
         Color: =If(varMediaType="Photo", RGBA(0,18,107,1), RGBA(60,66,80,1))
+        DisplayMode: =If(varMediaTypeLocked, DisplayMode.Disabled, DisplayMode.Edit)
         Fill: =If(varMediaType="Photo", RGBA(230,236,245,1), RGBA(255,255,255,1))
         FontWeight: =FontWeight.Semibold
         Height: =72
         HoverFill: =RGBA(240, 242, 246, 1)
         OnSelect: =Set(varMediaType, "Photo")
         Size: =14
-        Text: ="📷  Photo"
+        Text: ="📷  Photo/Reportage"
         Width: =200
         X: =56
-        Y: =508
-        ZIndex: =23
+        Y: =572
+        ZIndex: =24
 
     NR_CardVideo As button:
         BorderColor: =If(varMediaType="Video", RGBA(56,96,178,1), RGBA(220,224,230,1))
         BorderThickness: =If(varMediaType="Video", 2, 1)
         Color: =If(varMediaType="Video", RGBA(0,18,107,1), RGBA(60,66,80,1))
+        DisplayMode: =If(varMediaTypeLocked, DisplayMode.Disabled, DisplayMode.Edit)
         Fill: =If(varMediaType="Video", RGBA(230,236,245,1), RGBA(255,255,255,1))
         FontWeight: =FontWeight.Semibold
         Height: =72
@@ -271,13 +284,14 @@ NewRequestScreen As screen:
         Text: ="🎬  Video"
         Width: =200
         X: =268
-        Y: =508
-        ZIndex: =24
+        Y: =572
+        ZIndex: =25
 
     NR_CardAudio As button:
         BorderColor: =If(varMediaType="Audio", RGBA(56,96,178,1), RGBA(220,224,230,1))
         BorderThickness: =If(varMediaType="Audio", 2, 1)
         Color: =If(varMediaType="Audio", RGBA(0,18,107,1), RGBA(60,66,80,1))
+        DisplayMode: =If(varMediaTypeLocked, DisplayMode.Disabled, DisplayMode.Edit)
         Fill: =If(varMediaType="Audio", RGBA(230,236,245,1), RGBA(255,255,255,1))
         FontWeight: =FontWeight.Semibold
         Height: =72
@@ -287,13 +301,14 @@ NewRequestScreen As screen:
         Text: ="🎙  Audio"
         Width: =200
         X: =480
-        Y: =508
-        ZIndex: =25
+        Y: =572
+        ZIndex: =26
 
     NR_CardPodcast As button:
         BorderColor: =If(varMediaType="Podcast", RGBA(56,96,178,1), RGBA(220,224,230,1))
         BorderThickness: =If(varMediaType="Podcast", 2, 1)
         Color: =If(varMediaType="Podcast", RGBA(0,18,107,1), RGBA(60,66,80,1))
+        DisplayMode: =If(varMediaTypeLocked, DisplayMode.Disabled, DisplayMode.Edit)
         Fill: =If(varMediaType="Podcast", RGBA(230,236,245,1), RGBA(255,255,255,1))
         FontWeight: =FontWeight.Semibold
         Height: =72
@@ -303,8 +318,31 @@ NewRequestScreen As screen:
         Text: ="🎧  Podcast"
         Width: =200
         X: =692
-        Y: =508
-        ZIndex: =26
+        Y: =572
+        ZIndex: =27
+
+    NR_LblAI As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =13
+        Text: ="AI declaration"
+        Visible: =varMediaType = "Photo" Or varMediaType = "Video" Or varMediaType = "Podcast"
+        Width: =836
+        X: =56
+        Y: =656
+        ZIndex: =28
+
+    NR_AICheck As checkbox.'Checkbox':
+        Height: =36
+        OnCheck: =Set(varAIVoiceover, true)
+        OnUncheck: =Set(varAIVoiceover, false)
+        Text: =Switch(varMediaType, "Photo", "This production uses AI-generated images", "Video", "This production uses AI-generated content", "Podcast", "This production uses an AI-generated voice-over", "")
+        Visible: =varMediaType = "Photo" Or varMediaType = "Video" Or varMediaType = "Podcast"
+        Width: =836
+        X: =52
+        Y: =680
+        ZIndex: =29
 
     NR_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -314,7 +352,7 @@ NewRequestScreen As screen:
         Width: =1366
         X: =0
         Y: =712
-        ZIndex: =27
+        ZIndex: =30
 
     NR_BtnNext As button:
         Color: =RGBA(255, 255, 255, 1)
@@ -322,13 +360,15 @@ NewRequestScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(MediaInfoScreen)
+        OnSelect: |-
+            =Set(varMediaTypeLocked, true);
+            Navigate(MediaInfoScreen)
         Size: =14
         Text: ="Next: Metadata  →"
         Width: =200
         X: =1142
         Y: =720
-        ZIndex: =28
+        ZIndex: =31
 
     NR_SideCard As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -338,7 +378,7 @@ NewRequestScreen As screen:
         Width: =380
         X: =948
         Y: =122
-        ZIndex: =29
+        ZIndex: =32
 
     NR_SideTitle As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -349,7 +389,7 @@ NewRequestScreen As screen:
         Width: =340
         X: =968
         Y: =140
-        ZIndex: =30
+        ZIndex: =33
 
     NR_Link1 As label:
         Color: =RGBA(56, 96, 178, 1)
@@ -359,7 +399,7 @@ NewRequestScreen As screen:
         Width: =340
         X: =968
         Y: =168
-        ZIndex: =31
+        ZIndex: =34
 
     NR_Link2 As label:
         Color: =RGBA(56, 96, 178, 1)
@@ -369,7 +409,7 @@ NewRequestScreen As screen:
         Width: =340
         X: =968
         Y: =200
-        ZIndex: =32
+        ZIndex: =35
 
     NR_Link3 As label:
         Color: =RGBA(56, 96, 178, 1)
@@ -379,14 +419,14 @@ NewRequestScreen As screen:
         Width: =340
         X: =968
         Y: =232
-        ZIndex: =33
+        ZIndex: =36
 
     NR_SideNote As label:
         Color: =RGBA(96, 104, 120, 1)
         Height: =80
         Size: =12
-        Text: ="Selected type: " & varMediaType & ". The next steps adapt their fields to this production type."
+        Text: ="Selected type: " & If(varMediaType="Photo", "Photo/Reportage", varMediaType) & ". The next steps adapt their fields to this production type."
         Width: =340
         X: =968
         Y: =272
-        ZIndex: =34
+        ZIndex: =37

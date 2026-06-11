@@ -177,10 +177,10 @@ AttachmentsScreen2 As screen:
         ZIndex: =16
 
     AT_Chk2 As label:
-        Color: =If(Not(IsBlank(varContact)), RGBA(22,128,80,1), RGBA(193,40,40,1))
+        Color: =If(Not(IsBlank(varContactOfficialDG)), RGBA(22,128,80,1), RGBA(193,40,40,1))
         Height: =26
         Size: =13
-        Text: =If(Not(IsBlank(varContact)), "✓  Point of contact provided", "✗  Point of contact missing (Info tab)")
+        Text: =If(Not(IsBlank(varContactOfficialDG)), "✓  Point of contact (Official DG) provided", "✗  Point of contact (Official DG) missing (Info tab)")
         Width: =600
         X: =56
         Y: =478
@@ -256,7 +256,7 @@ AttachmentsScreen2 As screen:
         Color: =RGBA(193, 40, 40, 1)
         Height: =40
         Size: =12
-        Text: =If((Not(IsBlank(varProjectName)) And Not(IsBlank(varContact)) And Not(IsBlank(varFTPPath)) And Not(IsBlank(varContractCase))), "", "Complete the required fields to submit")
+        Text: =If((Not(IsBlank(varProjectName)) And Not(IsBlank(varContactOfficialDG)) And Not(IsBlank(varFTPPath)) And Not(IsBlank(varContractCase))), "", "Complete the required fields to submit")
         VerticalAlign: =VerticalAlign.Middle
         Width: =360
         X: =770
@@ -267,7 +267,7 @@ AttachmentsScreen2 As screen:
         Color: =RGBA(255, 255, 255, 1)
         DisabledColor: =RGBA(255, 255, 255, 1)
         DisabledFill: =RGBA(186, 196, 214, 1)
-        DisplayMode: =If((Not(IsBlank(varProjectName)) And Not(IsBlank(varContact)) And Not(IsBlank(varFTPPath)) And Not(IsBlank(varContractCase))), DisplayMode.Edit, DisplayMode.Disabled)
+        DisplayMode: =If((Not(IsBlank(varProjectName)) And Not(IsBlank(varContactOfficialDG)) And Not(IsBlank(varFTPPath)) And Not(IsBlank(varContractCase))), DisplayMode.Edit, DisplayMode.Disabled)
         Fill: =RGBA(56, 96, 178, 1)
         FontWeight: =FontWeight.Semibold
         Height: =40
@@ -280,13 +280,13 @@ AttachmentsScreen2 As screen:
                 )
             );
             // TODO: extend the Patch with the new columns once added to the SharePoint list:
-            // PointOfContact: varContact, ContactEmail: varContactEmail, MediaType: {Value: varMediaType},
+            // PointOfContactDG: varContactOfficialDG, PointOfContactContractor: varContactContractor, MediaType: {Value: varMediaType},
             // FTPPath: varFTPPath, ContractCase: {Value: varContractCase}, ContractRef: varContractRef,
             // AIVoiceover: varAIVoiceover, MusicLicence: varMusicLicence, PreexistingRights: varPreexisting
             Set(varTicketRef, "CD-" & Text(Year(Now())) & "-" & Text(varNewTicket.ID));
             Navigate(ConfirmationScreen)
         Size: =14
-        Text: =If((Not(IsBlank(varProjectName)) And Not(IsBlank(varContact)) And Not(IsBlank(varFTPPath)) And Not(IsBlank(varContractCase))), "Submit request", "Submit request (incomplete)")
+        Text: =If((Not(IsBlank(varProjectName)) And Not(IsBlank(varContactOfficialDG)) And Not(IsBlank(varFTPPath)) And Not(IsBlank(varContractCase))), "Submit request", "Submit request (incomplete)")
         Width: =240
         X: =1142
         Y: =720

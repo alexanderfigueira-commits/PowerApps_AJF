@@ -37,10 +37,11 @@ App As appinfo:
         NewForm(CoverageFormRequest);
         Set(varFilter, "All");
         Set(varMediaType, "Photo");
+        Set(varMediaTypeLocked, false);
         Set(varDG, "DG COMM");
         Set(varProjectName, Blank());
-        Set(varContact, Blank());
-        Set(varContactEmail, User().Email);
+        Set(varContactOfficialDG, Blank());
+        Set(varContactContractor, Blank());
         Set(varFTPPath, Blank());
         Set(varContractCase, Blank());
         Set(varContractRef, Blank());

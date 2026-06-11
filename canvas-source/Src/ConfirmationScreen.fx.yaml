@@ -116,14 +116,17 @@ ConfirmationScreen As screen:
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
             =Set(varProjectName, Blank());
-            Set(varContact, Blank());
+            Set(varContactOfficialDG, Blank());
+            Set(varContactContractor, Blank());
+            Set(varMediaType, "Photo");
+            Set(varMediaTypeLocked, false);
             Set(varFTPPath, Blank());
             Set(varContractCase, Blank());
             Set(varContractRef, Blank());
             Set(varModelRelease, false);
             Set(varMusicLicence, false);
             Set(varPreexisting, false);
-            Set(varMediaType, "Photo");
+            Set(varAIVoiceover, false);
             Navigate(HomeScreen)
         Size: =14
         Text: ="Back to My requests"

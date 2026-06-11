@@ -122,8 +122,8 @@ MediaInfoScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =32
         Size: =12
-        Text: =varMediaType
-        Width: =140
+        Text: =If(varMediaType="Photo", "Photo/Reportage", varMediaType)
+        Width: =160
         X: =56
         Y: =142
         ZIndex: =11
@@ -224,7 +224,7 @@ MediaInfoScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =22
         Size: =13
-        Text: =If(varMediaType="Photo", "Photographer / agency", If(varMediaType="Audio" Or varMediaType="Podcast", "Presenter / producer", "Director / producer"))
+        Text: =If(varMediaType="Photo", "Photographer / agency (Photo/Reportage)", If(varMediaType="Audio" Or varMediaType="Podcast", "Presenter / producer", "Director / producer"))
         Width: =500
         X: =720
         Y: =414
@@ -260,16 +260,6 @@ MediaInfoScreen As screen:
         Y: =530
         ZIndex: =24
 
-    MI_AICheck As checkbox.'Checkbox':
-        Height: =40
-        OnCheck: =Set(varAIVoiceover, true)
-        OnUncheck: =Set(varAIVoiceover, false)
-        Text: ="This production uses an AI-generated voice-over"
-        Width: =700
-        X: =52
-        Y: =588
-        ZIndex: =25
-
     MI_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
@@ -278,7 +268,7 @@ MediaInfoScreen As screen:
         Width: =1366
         X: =0
         Y: =712
-        ZIndex: =26
+        ZIndex: =25
 
     MI_BtnPrev As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -293,7 +283,7 @@ MediaInfoScreen As screen:
         Width: =140
         X: =32
         Y: =720
-        ZIndex: =27
+        ZIndex: =26
 
     MI_BtnNext As button:
         Color: =RGBA(255, 255, 255, 1)
@@ -307,4 +297,4 @@ MediaInfoScreen As screen:
         Width: =200
         X: =1142
         Y: =720
-        ZIndex: =28
+        ZIndex: =27
