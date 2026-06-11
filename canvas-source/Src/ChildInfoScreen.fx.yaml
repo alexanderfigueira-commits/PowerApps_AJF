@@ -130,7 +130,7 @@ ChildInfoScreen As screen:
         Color: =RGBA(96, 104, 120, 1)
         Height: =20
         Size: =12
-        Text: ="Select the media type for this child item."
+        Text: ="Inherited from the parent request — every media item in a request shares its media type."
         Width: =700
         X: =56
         Y: =140
@@ -140,13 +140,13 @@ ChildInfoScreen As screen:
         BorderColor: =If(varMediaType="Photo", RGBA(56,96,178,1), RGBA(220,224,230,1))
         BorderThickness: =If(varMediaType="Photo", 2, 1)
         Color: =If(varMediaType="Photo", RGBA(0,18,107,1), RGBA(60,66,80,1))
+        DisplayMode: =DisplayMode.View
         Fill: =If(varMediaType="Photo", RGBA(230,236,245,1), RGBA(255,255,255,1))
         FontWeight: =FontWeight.Semibold
         Height: =60
         HoverFill: =RGBA(240, 242, 246, 1)
-        OnSelect: =Set(varMediaType, "Photo")
         Size: =13
-        Text: ="Photo"
+        Text: ="Photo/Reportage"
         Width: =180
         X: =56
         Y: =166
@@ -159,8 +159,8 @@ ChildInfoScreen As screen:
         Fill: =If(varMediaType="Video", RGBA(230,236,245,1), RGBA(255,255,255,1))
         FontWeight: =FontWeight.Semibold
         Height: =60
+        DisplayMode: =DisplayMode.View
         HoverFill: =RGBA(240, 242, 246, 1)
-        OnSelect: =Set(varMediaType, "Video")
         Size: =13
         Text: ="Video"
         Width: =180
@@ -175,8 +175,8 @@ ChildInfoScreen As screen:
         Fill: =If(varMediaType="Audio", RGBA(230,236,245,1), RGBA(255,255,255,1))
         FontWeight: =FontWeight.Semibold
         Height: =60
+        DisplayMode: =DisplayMode.View
         HoverFill: =RGBA(240, 242, 246, 1)
-        OnSelect: =Set(varMediaType, "Audio")
         Size: =13
         Text: ="Audio"
         Width: =180
@@ -191,8 +191,8 @@ ChildInfoScreen As screen:
         Fill: =If(varMediaType="Podcast", RGBA(230,236,245,1), RGBA(255,255,255,1))
         FontWeight: =FontWeight.Semibold
         Height: =60
+        DisplayMode: =DisplayMode.View
         HoverFill: =RGBA(240, 242, 246, 1)
-        OnSelect: =Set(varMediaType, "Podcast")
         Size: =13
         Text: ="Podcast"
         Width: =180
@@ -389,3 +389,278 @@ ChildInfoScreen As screen:
         X: =1134
         Y: =720
         ZIndex: =34
+
+    CI_BtnTemplate As button:
+        BorderColor: =RGBA(56, 96, 178, 1)
+        BorderThickness: =1
+        Color: =RGBA(56, 96, 178, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =34
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: |-
+            =Set(varTplSearch, "");
+            Set(varTplCandidate, Blank());
+            Set(varShowTplConfirm, false);
+            Set(varShowTemplatePicker, true)
+        Size: =12
+        Text: ="⧉  Use previous media as template"
+        Width: =300
+        X: =1002
+        Y: =112
+        ZIndex: =35
+
+    CI_TplOverlay As rectangle:
+        Fill: =RGBA(0, 18, 107, 0.45)
+        Height: =768
+        OnSelect: =Set(varShowTemplatePicker, false)
+        Visible: =varShowTemplatePicker
+        Width: =1366
+        X: =0
+        Y: =0
+        ZIndex: =36
+
+    CI_TplPanel As rectangle:
+        BorderColor: =RGBA(186, 202, 226, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =540
+        Visible: =varShowTemplatePicker
+        Width: =760
+        X: =303
+        Y: =114
+        ZIndex: =37
+
+    CI_TplTitle As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =30
+        Size: =16
+        Text: ="Use previous media as template"
+        Visible: =varShowTemplatePicker
+        Width: =600
+        X: =327
+        Y: =130
+        ZIndex: =38
+
+    CI_TplSubtitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =22
+        Size: =12
+        Text: ="Showing only " & If(varMediaType="Photo", "Photo/Reportage", varMediaType) & " items, newest first. Selecting one pre-fills this form — it never modifies the original."
+        Visible: =varShowTemplatePicker
+        Width: =712
+        X: =327
+        Y: =160
+        ZIndex: =39
+
+    CI_TplClose As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverColor: =RGBA(0, 18, 107, 1)
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varShowTemplatePicker, false)
+        Size: =16
+        Text: ="✕"
+        Visible: =varShowTemplatePicker
+        Width: =40
+        X: =1011
+        Y: =122
+        ZIndex: =40
+
+    CI_TplSearch As text:
+        Default: =varTplSearch
+        HintText: ="Search by title or item reference…"
+        Height: =36
+        OnChange: =Set(varTplSearch, Self.Value)
+        Visible: =varShowTemplatePicker
+        Width: =712
+        X: =327
+        Y: =190
+        ZIndex: =41
+
+    CI_TplGallery As gallery.galleryVertical:
+        DelayItemLoading: =true
+        Fill: =RGBA(0, 0, 0, 0)
+        Height: =356
+        Items: |-
+            =SortByColumns(
+                Filter(
+                    'Coverage Request (Belgium)',
+                    MediaType.Value = varMediaType,
+                    IsBlank(varTplSearch)
+                        Or varTplSearch in 'Event Title'
+                        Or varTplSearch in Text(ID)
+                ),
+                "ID", SortOrder.Descending
+            )
+        Layout: =Layout.Vertical
+        LoadingSpinner: =LoadingSpinner.Data
+        TemplatePadding: =0
+        TemplateSize: =56
+        Visible: =varShowTemplatePicker
+        Width: =712
+        X: =327
+        Y: =238
+        ZIndex: =42
+
+        CI_TplRowBg As rectangle:
+            Fill: =RGBA(0, 0, 0, 0)
+            Height: =55
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+                =Set(varTplCandidate, ThisItem);
+                If(
+                    Not(IsBlank(varChildTitle)) Or Not(IsBlank(varDescription)) Or Not(IsBlank(varChildLocation)) Or Not(IsBlank(varChildTags)) Or Not(IsBlank(varCredits)),
+                    Set(varShowTplConfirm, true),
+                    Set(varChildTitle, varTplCandidate.'Event Title');
+                    Set(varDescription, varTplCandidate.Description);
+                    Set(varCredits, Coalesce(varTplCandidate.Credits, ""));
+                    Set(varLanguages, Coalesce(varTplCandidate.LanguageVersions, ""));
+                    Set(varContractCase, varTplCandidate.ContractCase.Value);
+                    Set(varContractRef, Coalesce(varTplCandidate.ContractRef, ""));
+                    Set(varModelRelease, Coalesce(varTplCandidate.ModelRelease, false));
+                    Set(varMusicLicence, Coalesce(varTplCandidate.MusicLicence, false));
+                    Set(varPreexisting, Coalesce(varTplCandidate.PreexistingRights, false));
+                    Set(varAIVoiceover, Coalesce(varTplCandidate.AIVoiceover, false));
+                    Set(varShowTemplatePicker, false)
+                )
+            Width: =712
+            X: =0
+            Y: =0
+            ZIndex: =1
+
+        CI_TplRowTitle As label:
+            Color: =RGBA(32, 31, 30, 1)
+            Height: =28
+            OnSelect: =Select(Parent)
+            Size: =13
+            Text: =If(IsBlank(ThisItem.'Event Title'), "Untitled media", ThisItem.'Event Title')
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =480
+            X: =12
+            Y: =4
+            ZIndex: =2
+
+        CI_TplRowMeta As label:
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =22
+            OnSelect: =Select(Parent)
+            Size: =11
+            Text: ="Ref " & Text(ThisItem.ID) & If(IsBlank(ThisItem.ContractCase.Value), "", "   |   " & Left(ThisItem.ContractCase.Value, 30))
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =560
+            X: =12
+            Y: =30
+            ZIndex: =3
+
+        CI_TplRowUse As label:
+            Align: =Align.Right
+            Color: =RGBA(56, 96, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =55
+            OnSelect: =Select(Parent)
+            Size: =12
+            Text: ="Use →"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =100
+            X: =600
+            Y: =0
+            ZIndex: =4
+
+        CI_TplRowDivider As rectangle:
+            Fill: =RGBA(230, 232, 238, 1)
+            Height: =1
+            Width: =712
+            X: =0
+            Y: =55
+            ZIndex: =5
+
+    CI_TplEmpty As label:
+        Align: =Align.Center
+        Color: =RGBA(140, 148, 160, 1)
+        Height: =60
+        Size: =13
+        Text: ="No previous " & If(varMediaType="Photo", "Photo/Reportage", varMediaType) & " items yet. Once you have created some, they will appear here as templates."
+        VerticalAlign: =VerticalAlign.Middle
+        Visible: =varShowTemplatePicker And CountRows(CI_TplGallery.AllItems) = 0
+        Width: =712
+        X: =327
+        Y: =380
+        ZIndex: =43
+
+    CI_TplConfirmShade As rectangle:
+        Fill: =RGBA(0, 18, 107, 0.35)
+        Height: =768
+        Visible: =varShowTplConfirm
+        Width: =1366
+        X: =0
+        Y: =0
+        ZIndex: =44
+
+    CI_TplConfirmPanel As rectangle:
+        BorderColor: =RGBA(186, 202, 226, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =170
+        Visible: =varShowTplConfirm
+        Width: =520
+        X: =423
+        Y: =290
+        ZIndex: =45
+
+    CI_TplConfirmText As label:
+        Color: =RGBA(32, 31, 30, 1)
+        Height: =60
+        Size: =13
+        Text: ="You already started filling this form. Pre-filling from the selected template will overwrite your current entries. Continue?"
+        VerticalAlign: =VerticalAlign.Middle
+        Visible: =varShowTplConfirm
+        Width: =472
+        X: =447
+        Y: =306
+        ZIndex: =46
+
+    CI_TplConfirmCancel As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =38
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Set(varShowTplConfirm, false)
+        Size: =13
+        Text: ="Keep my entries"
+        Visible: =varShowTplConfirm
+        Width: =160
+        X: =587
+        Y: =396
+        ZIndex: =47
+
+    CI_TplConfirmOK As button:
+        Color: =RGBA(255, 255, 255, 1)
+        Fill: =RGBA(56, 96, 178, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =38
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: |-
+            =Set(varChildTitle, varTplCandidate.'Event Title');
+            Set(varDescription, varTplCandidate.Description);
+            Set(varCredits, Coalesce(varTplCandidate.Credits, ""));
+            Set(varLanguages, Coalesce(varTplCandidate.LanguageVersions, ""));
+            Set(varContractCase, varTplCandidate.ContractCase.Value);
+            Set(varContractRef, Coalesce(varTplCandidate.ContractRef, ""));
+            Set(varModelRelease, Coalesce(varTplCandidate.ModelRelease, false));
+            Set(varMusicLicence, Coalesce(varTplCandidate.MusicLicence, false));
+            Set(varPreexisting, Coalesce(varTplCandidate.PreexistingRights, false));
+            Set(varAIVoiceover, Coalesce(varTplCandidate.AIVoiceover, false));
+            Set(varShowTplConfirm, false);
+            Set(varShowTemplatePicker, false)
+        Size: =13
+        Text: ="Overwrite & pre-fill"
+        Visible: =varShowTplConfirm
+        Width: =168
+        X: =759
+        Y: =396
+        ZIndex: =48

@@ -71,6 +71,10 @@ App As appinfo:
         Set(varProjectStartDate, Blank());
         Set(varProjectEndDate, Blank());
         Set(varProjectStatus, "Draft");
+        Set(varShowTemplatePicker, false);
+        Set(varShowTplConfirm, false);
+        Set(varTplSearch, "");
+        Set(varTplCandidate, Blank());
     StartScreen: =HomeScreen
     Theme: =PowerAppsTheme
 

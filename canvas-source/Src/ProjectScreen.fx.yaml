@@ -42,14 +42,15 @@ ProjectScreen As screen:
 
     PS_AppTitle As label:
         Align: =Align.Right
-        Color: =RGBA(186, 202, 226, 1)
-        Height: =52
-        Size: =13
-        Text: ="AV Central Deposit"
-        VerticalAlign: =VerticalAlign.Middle
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =26
+        Size: =14
+        Text: ="Central Deposit"
+        VerticalAlign: =VerticalAlign.Bottom
         Width: =280
         X: =1070
-        Y: =0
+        Y: =4
         ZIndex: =4
 
     PS_ProjectCard As rectangle:
@@ -490,3 +491,15 @@ ProjectScreen As screen:
         X: =32
         Y: =510
         ZIndex: =28
+
+    PS_AppSubtitle As label:
+        Align: =Align.Right
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =16
+        Size: =7
+        Text: ="Ticket System"
+        VerticalAlign: =VerticalAlign.Top
+        Width: =280
+        X: =1070
+        Y: =30
+        ZIndex: =29

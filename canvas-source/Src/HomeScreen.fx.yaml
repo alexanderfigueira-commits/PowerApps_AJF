@@ -39,13 +39,13 @@ HomeScreen As screen:
     HomeAppTitle As label:
         Color: =RGBA(255, 255, 255, 1)
         FontWeight: =FontWeight.Semibold
-        Height: =52
-        Size: =15
-        Text: ="AV Central Deposit"
-        VerticalAlign: =VerticalAlign.Middle
+        Height: =28
+        Size: =16
+        Text: ="Central Deposit"
+        VerticalAlign: =VerticalAlign.Bottom
         Width: =300
         X: =60
-        Y: =0
+        Y: =4
         ZIndex: =4
 
     HomeUserName As label:
@@ -598,3 +598,14 @@ HomeScreen As screen:
         X: =48
         Y: =460
         ZIndex: =32
+
+    HomeAppSubtitle As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =16
+        Size: =8
+        Text: ="Ticket System"
+        VerticalAlign: =VerticalAlign.Top
+        Width: =300
+        X: =60
+        Y: =32
+        ZIndex: =33

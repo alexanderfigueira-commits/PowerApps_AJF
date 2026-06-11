@@ -12,13 +12,13 @@ ConfirmationScreen As screen:
     CF_AppTitle As label:
         Color: =RGBA(255, 255, 255, 1)
         FontWeight: =FontWeight.Semibold
-        Height: =64
+        Height: =32
         Size: =16
-        Text: ="AV Central Deposit"
-        VerticalAlign: =VerticalAlign.Middle
+        Text: ="Central Deposit"
+        VerticalAlign: =VerticalAlign.Bottom
         Width: =400
         X: =24
-        Y: =0
+        Y: =6
         ZIndex: =2
 
     CF_Circle As circle.Circle:
@@ -134,3 +134,14 @@ ConfirmationScreen As screen:
         X: =(Parent.Width - Self.Width) / 2
         Y: =560
         ZIndex: =11
+
+    CF_AppSubtitle As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =18
+        Size: =8
+        Text: ="Ticket System"
+        VerticalAlign: =VerticalAlign.Top
+        Width: =400
+        X: =24
+        Y: =38
+        ZIndex: =12
