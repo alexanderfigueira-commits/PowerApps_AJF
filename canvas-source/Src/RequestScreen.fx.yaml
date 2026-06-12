@@ -43,7 +43,8 @@ RequestScreen As screen:
                 })
             )
         );
-        If(CountRows(colArchives) > 0, Set(varRequestMediaType, First(colArchives).MediaType))
+        If(CountRows(colArchives) > 0, Set(varRequestMediaType, First(colArchives).MediaType));
+        Set(varConfirmed, false)
 
     RS_TopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
@@ -240,7 +241,7 @@ RequestScreen As screen:
         BorderColor: =If(varRequestMediaType = "Photo", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
         BorderThickness: =If(varRequestMediaType = "Photo", 2, 1)
         Color: =If(varRequestMediaType = "Photo", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
-        DisplayMode: =If(CountRows(colArchives) > 0, DisplayMode.View, DisplayMode.Edit)
+        DisplayMode: =If(varConfirmed And varRequestMediaType <> "Photo", DisplayMode.Disabled, If(CountRows(colArchives) > 0, DisplayMode.View, DisplayMode.Edit))
         Fill: =If(varRequestMediaType = "Photo", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
         FontWeight: =FontWeight.Semibold
         Height: =40
@@ -257,7 +258,7 @@ RequestScreen As screen:
         BorderColor: =If(varRequestMediaType = "Video", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
         BorderThickness: =If(varRequestMediaType = "Video", 2, 1)
         Color: =If(varRequestMediaType = "Video", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
-        DisplayMode: =If(CountRows(colArchives) > 0, DisplayMode.View, DisplayMode.Edit)
+        DisplayMode: =If(varConfirmed And varRequestMediaType <> "Video", DisplayMode.Disabled, If(CountRows(colArchives) > 0, DisplayMode.View, DisplayMode.Edit))
         Fill: =If(varRequestMediaType = "Video", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
         FontWeight: =FontWeight.Semibold
         Height: =40
@@ -276,7 +277,7 @@ RequestScreen As screen:
         BorderColor: =If(varRequestMediaType = "Podcast", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
         BorderThickness: =If(varRequestMediaType = "Podcast", 2, 1)
         Color: =If(varRequestMediaType = "Podcast", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
-        DisplayMode: =If(CountRows(colArchives) > 0, DisplayMode.View, DisplayMode.Edit)
+        DisplayMode: =If(varConfirmed And varRequestMediaType <> "Podcast", DisplayMode.Disabled, If(CountRows(colArchives) > 0, DisplayMode.View, DisplayMode.Edit))
         Fill: =If(varRequestMediaType = "Podcast", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
         FontWeight: =FontWeight.Semibold
         Height: =40
@@ -911,6 +912,7 @@ RequestScreen As screen:
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
             =Set(varRequestMediaType, varPendingMediaType);
+            Set(varConfirmed, true);
             Set(varShowTypeConfirm, false);
             Set(varPendingMediaType, "")
         Size: =13

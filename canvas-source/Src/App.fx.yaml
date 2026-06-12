@@ -104,6 +104,7 @@ App As appinfo:
         Set(varTplCandidate, Blank());
         Set(varShowTypeConfirm, false);
         Set(varPendingMediaType, "");
+        Set(varConfirmed, false);
         Set(varRating, 0);
         Set(varFeedbackText, "");
         Set(varFeedbackSent, false);
