@@ -8,33 +8,26 @@ NewRequestScreen As screen:
         Fill: =RGBA(0, 18, 107, 1)
         Height: =52
         Width: =1366
-        X: =0
-        Y: =0
         ZIndex: =1
 
     NR_Back As button:
         BorderThickness: =0
         Color: =RGBA(186, 202, 226, 1)
         Fill: =RGBA(0, 18, 107, 1)
-        HoverColor: =RGBA(255, 255, 255, 1)
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: =Navigate(HomeScreen)
         Size: =13
         Text: ="←  My requests"
-        Width: =160
-        X: =16
-        Y: =10
+        X: =48
+        Y: =11
         ZIndex: =2
 
     NR_Breadcrumb As label:
         Color: =RGBA(186, 202, 226, 1)
         Height: =52
-        Size: =13
-        Text: =" /  " & If(IsBlank(varProjectName), "New request", varProjectName)
-        VerticalAlign: =VerticalAlign.Middle
+        Text: =" /  " & If(IsBlank(varRequestName), "New request", varRequestName)
         Width: =500
         X: =184
-        Y: =0
         ZIndex: =3
 
     NR_TabsBg As rectangle:
@@ -43,7 +36,6 @@ NewRequestScreen As screen:
         Fill: =RGBA(255, 255, 255, 1)
         Height: =50
         Width: =1366
-        X: =0
         Y: =52
         ZIndex: =4
 
@@ -51,7 +43,6 @@ NewRequestScreen As screen:
         BorderThickness: =0
         Color: =RGBA(0, 18, 107, 1)
         Fill: =RGBA(255, 255, 255, 1)
-        FontWeight: =FontWeight.Semibold
         HoverFill: =RGBA(255, 255, 255, 1)
         Size: =13
         Text: ="1.  Info"
@@ -61,9 +52,7 @@ NewRequestScreen As screen:
         ZIndex: =5
 
     NR_Tab1Line As rectangle:
-        Fill: =RGBA(56, 96, 178, 1)
         Height: =3
-        Width: =150
         X: =16
         Y: =99
         ZIndex: =6
@@ -89,7 +78,6 @@ NewRequestScreen As screen:
         OnSelect: =Navigate(DocumentationScreen)
         Size: =13
         Text: ="3.  Legal docs"
-        Width: =160
         X: =356
         Y: =52
         ZIndex: =8
@@ -111,8 +99,8 @@ NewRequestScreen As screen:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =604
-        Width: =892
+        Height: =620
+        Width: =1302
         X: =32
         Y: =122
         ZIndex: =10
@@ -123,7 +111,7 @@ NewRequestScreen As screen:
         Height: =30
         Size: =18
         Text: ="Identification"
-        Width: =840
+        Width: =1240
         X: =56
         Y: =142
         ZIndex: =11
@@ -132,7 +120,6 @@ NewRequestScreen As screen:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
-        Size: =13
         Text: ="DG / Agency requesting *"
         Width: =400
         X: =56
@@ -140,8 +127,8 @@ NewRequestScreen As screen:
         ZIndex: =12
 
     NR_DG As combobox:
-        DefaultSelectedItems: =Table({Value: varDG})
-        Height: =40
+        DefaultSelectedItems: |-
+            =Table({Value: varDG})
         Items: =["DG COMM", "DG EAC", "DG GROW", "DG HOME", "DG MARE", "DG REGIO", "SG", "EU Agency"]
         OnChange: =Set(varDG, Self.Selected.Value)
         SelectMultiple: =false
@@ -150,76 +137,91 @@ NewRequestScreen As screen:
         Y: =210
         ZIndex: =13
 
-    NR_LblProject As label:
+    NR_LblRequest As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
-        Size: =13
-        Text: ="Project / production title *"
-        Width: =836
+        Text: ="Request / production title *"
+        Width: =1240
         X: =56
         Y: =262
         ZIndex: =14
 
-    NR_Project As text:
-        Default: =varProjectName
+    NR_Request As text:
+        Default: =varRequestName
         HintText: ="e.g. EU Climate Summit 2026 — opening session"
-        Height: =40
-        OnChange: =Set(varProjectName, Self.Value)
-        Width: =836
+        OnChange: =Set(varRequestName, Self.Value)
+        Width: =1240
         X: =56
         Y: =288
         ZIndex: =15
 
-    NR_LblContactOfficialDG As label:
+    NR_LblContact As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
-        Size: =13
-        Text: ="Point of contact (Official DG) *"
+        Text: ="Point of contact (responsible owner) *"
         Width: =400
         X: =56
         Y: =340
         ZIndex: =16
 
-    NR_ContactOfficialDG As text:
-        Default: =varContactOfficialDG
-        HintText: ="Name and email of the DG official responsible"
-        Height: =40
-        OnChange: =Set(varContactOfficialDG, Self.Value)
+    NR_Contact As text:
+        Default: =varContact
+        HintText: ="Name of person responsible for this submission"
+        OnChange: =Set(varContact, Self.Value)
         Width: =400
         X: =56
         Y: =366
         ZIndex: =17
 
-    NR_LblContactContractor As label:
+    NR_LblContactEmail As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
-        Size: =13
-        Text: ="Point of contact (Contractor)"
+        Text: ="Contact email *"
         Width: =400
-        X: =56
-        Y: =416
+        X: =488
+        Y: =340
         ZIndex: =18
 
-    NR_ContactContractor As text:
-        Default: =varContactContractor
-        HintText: ="Name and email of the contractor or production company"
-        Height: =40
-        OnChange: =Set(varContactContractor, Self.Value)
+    NR_ContactEmail As text:
+        Default: =Coalesce(varContactEmail, User().Email)
+        HintText: ="email@ec.europa.eu"
+        OnChange: =Set(varContactEmail, Self.Value)
         Width: =400
-        X: =56
-        Y: =442
+        X: =488
+        Y: =366
         ZIndex: =19
+
+    NR_LblDescription As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: ="Request description"
+        Width: =1240
+        X: =56
+        Y: =420
+        ZIndex: =20
+
+    NR_Description As text:
+        Default: =varRequestDescription
+        Height: =100
+        HintText: ="Describe the purpose, context and scope of this request"
+        Mode: =TextMode.MultiLine
+        OnChange: =Set(varRequestDescription, Self.Value)
+        Width: =1240
+        X: =56
+        Y: =446
+        ZIndex: =21
 
     NR_Divider As rectangle:
         Fill: =RGBA(230, 232, 238, 1)
         Height: =1
-        Width: =836
+        Width: =1240
         X: =56
-        Y: =494
-        ZIndex: =20
+        Y: =560
+        ZIndex: =22
 
     NR_LblMediaType As label:
         Color: =RGBA(0, 18, 107, 1)
@@ -227,39 +229,26 @@ NewRequestScreen As screen:
         Height: =30
         Size: =18
         Text: ="Production type"
-        Width: =700
+        Width: =1240
         X: =56
-        Y: =508
-        ZIndex: =21
-
-    NR_MediaLocked As label:
-        Color: =RGBA(193, 40, 40, 1)
-        Height: =30
-        Size: =12
-        Text: ="🔒  Type locked — start a new request to change"
-        Visible: =varMediaTypeLocked
-        Width: =340
-        X: =516
-        Y: =508
-        ZIndex: =22
+        Y: =574
+        ZIndex: =23
 
     NR_MediaHint As label:
         Color: =RGBA(96, 104, 120, 1)
         Height: =22
         Size: =12
-        Text: ="One ticket covers a single production type. This setting is locked when you proceed to step 2."
-        Width: =836
+        Text: ="One ticket is dedicated to a single production type. This drives the metadata and legal sections."
+        Width: =1240
         X: =56
-        Y: =540
-        ZIndex: =23
+        Y: =606
+        ZIndex: =24
 
     NR_CardPhoto As button:
         BorderColor: =If(varMediaType="Photo", RGBA(56,96,178,1), RGBA(220,224,230,1))
         BorderThickness: =If(varMediaType="Photo", 2, 1)
         Color: =If(varMediaType="Photo", RGBA(0,18,107,1), RGBA(60,66,80,1))
-        DisplayMode: =If(varMediaTypeLocked, DisplayMode.Disabled, DisplayMode.Edit)
         Fill: =If(varMediaType="Photo", RGBA(230,236,245,1), RGBA(255,255,255,1))
-        FontWeight: =FontWeight.Semibold
         Height: =72
         HoverFill: =RGBA(240, 242, 246, 1)
         OnSelect: =Set(varMediaType, "Photo")
@@ -267,82 +256,38 @@ NewRequestScreen As screen:
         Text: ="📷  Photo/Reportage"
         Width: =200
         X: =56
-        Y: =572
-        ZIndex: =24
+        Y: =638
+        ZIndex: =25
 
     NR_CardVideo As button:
         BorderColor: =If(varMediaType="Video", RGBA(56,96,178,1), RGBA(220,224,230,1))
         BorderThickness: =If(varMediaType="Video", 2, 1)
         Color: =If(varMediaType="Video", RGBA(0,18,107,1), RGBA(60,66,80,1))
-        DisplayMode: =If(varMediaTypeLocked, DisplayMode.Disabled, DisplayMode.Edit)
         Fill: =If(varMediaType="Video", RGBA(230,236,245,1), RGBA(255,255,255,1))
-        FontWeight: =FontWeight.Semibold
         Height: =72
         HoverFill: =RGBA(240, 242, 246, 1)
         OnSelect: =Set(varMediaType, "Video")
         Size: =14
         Text: ="🎬  Video"
         Width: =200
-        X: =268
-        Y: =572
-        ZIndex: =25
-
-    NR_CardAudio As button:
-        BorderColor: =If(varMediaType="Audio", RGBA(56,96,178,1), RGBA(220,224,230,1))
-        BorderThickness: =If(varMediaType="Audio", 2, 1)
-        Color: =If(varMediaType="Audio", RGBA(0,18,107,1), RGBA(60,66,80,1))
-        DisplayMode: =If(varMediaTypeLocked, DisplayMode.Disabled, DisplayMode.Edit)
-        Fill: =If(varMediaType="Audio", RGBA(230,236,245,1), RGBA(255,255,255,1))
-        FontWeight: =FontWeight.Semibold
-        Height: =72
-        HoverFill: =RGBA(240, 242, 246, 1)
-        OnSelect: =Set(varMediaType, "Audio")
-        Size: =14
-        Text: ="🎙  Audio"
-        Width: =200
-        X: =480
-        Y: =572
+        X: =274
+        Y: =638
         ZIndex: =26
 
     NR_CardPodcast As button:
         BorderColor: =If(varMediaType="Podcast", RGBA(56,96,178,1), RGBA(220,224,230,1))
         BorderThickness: =If(varMediaType="Podcast", 2, 1)
         Color: =If(varMediaType="Podcast", RGBA(0,18,107,1), RGBA(60,66,80,1))
-        DisplayMode: =If(varMediaTypeLocked, DisplayMode.Disabled, DisplayMode.Edit)
         Fill: =If(varMediaType="Podcast", RGBA(230,236,245,1), RGBA(255,255,255,1))
-        FontWeight: =FontWeight.Semibold
         Height: =72
         HoverFill: =RGBA(240, 242, 246, 1)
         OnSelect: =Set(varMediaType, "Podcast")
         Size: =14
         Text: ="🎧  Podcast"
         Width: =200
-        X: =692
-        Y: =572
+        X: =490
+        Y: =638
         ZIndex: =27
-
-    NR_LblAI As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =13
-        Text: ="AI declaration"
-        Visible: =varMediaType = "Photo" Or varMediaType = "Video" Or varMediaType = "Podcast"
-        Width: =836
-        X: =56
-        Y: =656
-        ZIndex: =28
-
-    NR_AICheck As checkbox.'Checkbox':
-        Height: =36
-        OnCheck: =Set(varAIVoiceover, true)
-        OnUncheck: =Set(varAIVoiceover, false)
-        Text: =Switch(varMediaType, "Photo", "This production uses AI-generated images", "Video", "This production uses AI-generated content", "Podcast", "This production uses an AI-generated voice-over", "")
-        Visible: =varMediaType = "Photo" Or varMediaType = "Video" Or varMediaType = "Podcast"
-        Width: =836
-        X: =52
-        Y: =680
-        ZIndex: =29
 
     NR_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -350,83 +295,86 @@ NewRequestScreen As screen:
         Fill: =RGBA(255, 255, 255, 1)
         Height: =56
         Width: =1366
-        X: =0
-        Y: =712
-        ZIndex: =30
+        Y: =780
+        ZIndex: =28
 
     NR_BtnNext As button:
-        Color: =RGBA(255, 255, 255, 1)
-        Fill: =RGBA(56, 96, 178, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: |-
-            =Set(varMediaTypeLocked, true);
-            Navigate(MediaInfoScreen)
+        OnSelect: =Navigate(MediaInfoScreen)
         Size: =14
-        Text: ="Next: Metadata  →"
+        Text: |-
+            ="Next: Metadata  →"
         Width: =200
         X: =1142
-        Y: =720
+        Y: =788
+        ZIndex: =29
+
+    Logo_EC_Form_4 As image:
+        Height: =50
+        Image: ='logo--en'
+        PaddingLeft: =15
+        Width: =183
+        X: =538
+        ZIndex: =30
+
+    Image1_4 As image:
+        Height: =52
+        Image: =User().Image
+        RadiusBottomLeft: =3
+        RadiusBottomRight: =3
+        RadiusTopLeft: =3
+        RadiusTopRight: =3
+        Tooltip: |-
+            =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+            Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+        Width: =31
+        X: =1308
         ZIndex: =31
 
-    NR_SideCard As rectangle:
-        BorderColor: =RGBA(220, 224, 230, 1)
-        BorderThickness: =1
-        Fill: =RGBA(255, 255, 255, 1)
-        Height: =220
-        Width: =380
-        X: =948
-        Y: =122
+    NoInternetIcon_2 As icon:
+        Color: =RGBA(255, 0, 0, 1)
+        DisplayMode: =DisplayMode.View
+        FocusedBorderThickness: =0
+        Height: =44
+        Icon: =Icon.GlobeNotConnected
+        PaddingBottom: =5
+        PaddingLeft: =5
+        PaddingRight: =5
+        PaddingTop: =5
+        Tooltip: ="No Connection"
+        Visible: =!Connection.Connected || !Office365Connected
+        X: =16
+        Y: =788
         ZIndex: =32
 
-    NR_SideTitle As label:
-        Color: =RGBA(96, 104, 120, 1)
+    Label12_2 As label:
+        Align: =Align.Center
+        AutoHeight: =true
+        Color: =RGBA(149, 149, 149, 1)
         FontWeight: =FontWeight.Semibold
-        Height: =22
         Size: =11
-        Text: ="USEFUL LINKS"
-        Width: =340
-        X: =968
-        Y: =140
+        Text: |-
+            ="Audiovisual Service - DG COMM
+            This site is managed by the Directorate-General for Communication"
+        Width: =691
+        X: =265
+        Y: =786
         ZIndex: =33
 
-    NR_Link1 As label:
-        Color: =RGBA(56, 96, 178, 1)
-        Height: =28
-        Size: =13
-        Text: ="→  Central deposit guidelines"
-        Width: =340
-        X: =968
-        Y: =168
+    HomeUserName_1 As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =30
+        Text: =User().FullName
+        Width: =194
+        X: =1134
+        Y: =16
         ZIndex: =34
 
-    NR_Link2 As label:
-        Color: =RGBA(56, 96, 178, 1)
-        Height: =28
-        Size: =13
-        Text: ="→  AV Portal"
-        Width: =340
-        X: =968
-        Y: =200
+    Image1 As image:
+        Height: =41
+        Image: =cd_badge_play
+        Width: =32
+        X: =16
+        Y: =11
         ZIndex: =35
 
-    NR_Link3 As label:
-        Color: =RGBA(56, 96, 178, 1)
-        Height: =28
-        Size: =13
-        Text: ="→  Contact the AV Library team"
-        Width: =340
-        X: =968
-        Y: =232
-        ZIndex: =36
-
-    NR_SideNote As label:
-        Color: =RGBA(96, 104, 120, 1)
-        Height: =80
-        Size: =12
-        Text: ="Selected type: " & If(varMediaType="Photo", "Photo/Reportage", varMediaType) & ". The next steps adapt their fields to this production type."
-        Width: =340
-        X: =968
-        Y: =272
-        ZIndex: =37

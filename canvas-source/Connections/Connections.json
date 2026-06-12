@@ -2,12 +2,13 @@
   "4ed94587-0999-4e35-b8f6-9906bb81d775": {
     "appActions": [
       "providers/PowerPlatform.Governance/Operations/Read",
-      "providers/PowerPlatform.Governance/Operations/Write"
+      "providers/PowerPlatform.Governance/Operations/Write",
+      "providers/PowerPlatform.Governance/Operations/Delete"
     ],
     "connectionRef": {
       "apiTier": "Standard",
       "displayName": "SharePoint",
-      "iconUri": "https://static.powerapps.com/resource/ppcr/releases/v1.0.1809/1.0.1809.4714/sharepointonline/icon.png",
+      "iconUri": "https://static.powerapps.com/resource/ppcr/releases/v1.0.1813/1.0.1813.4743/sharepointonline/icon.png",
       "id": "/providers/microsoft.powerapps/apis/shared_sharepointonline",
       "parameterHints": {},
       "parameterHintsV2": {}
@@ -15,26 +16,22 @@
     "datasets": {
       "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm": {
         "dataSources": {
-          "Coverage Request (Belgium)": {
-            "tableName": "91078aa6-4eb8-49a3-9dd3-e9aade8b3de9"
+          "AVCentralDepositProjects": {
+            "tableName": "11111111-2222-3333-4444-555555555555"
+          },
+          "CentralDepositMainList": {
+            "tableName": "53fddb2f-3219-4783-8dc1-df18406a5bbc"
           },
           "SuspensionDates": {
             "tableName": "5995c8f7-f1f9-49b3-a838-6409af0ffc2b"
-          },
-          "AV Central Deposit Projects": {
-            "tableName": "av-central-deposit-projects-placeholder"
-          },
-          "AV App Feedback": {
-            "tableName": "av-app-feedback-placeholder"
           }
         }
       }
     },
     "dataSources": [
-      "Coverage Request (Belgium)",
+      "AVCentralDepositProjects",
       "SuspensionDates",
-      "AV Central Deposit Projects",
-      "AV App Feedback"
+      "CentralDepositMainList"
     ],
     "dependencies": {},
     "dependents": [],
@@ -42,9 +39,7 @@
   },
   "5d475d4e-3f06-4b7c-8070-e7bb7330bb6c": {
     "appActions": [
-      "MyProfile",
-      "SearchUserV2",
-      "MyProfile_V2"
+      "MyProfile"
     ],
     "connectionRef": {
       "apiTier": "Standard",

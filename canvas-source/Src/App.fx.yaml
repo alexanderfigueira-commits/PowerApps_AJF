@@ -1,8 +1,7 @@
 App As appinfo:
     BackEnabled: =false
     OnStart: |-
-        =// Initialize the Office365Connected variable
-        Set(Office365Connected, true);
+        =Set(Office365Connected, true);
         Set(varShowPopup, false);
         IfError(
             Set(MyProfile, Office365Users.MyProfile()),
@@ -37,11 +36,10 @@ App As appinfo:
         NewForm(CoverageFormRequest);
         Set(varFilter, "All");
         Set(varMediaType, "Photo");
-        Set(varMediaTypeLocked, false);
         Set(varDG, "DG COMM");
-        Set(varProjectName, Blank());
-        Set(varContactOfficialDG, Blank());
-        Set(varContactContractor, Blank());
+        Set(varRequestName, Blank());
+        Set(varContact, Blank());
+        Set(varContactEmail, User().Email);
         Set(varFTPPath, Blank());
         Set(varContractCase, Blank());
         Set(varContractRef, Blank());
@@ -49,28 +47,57 @@ App As appinfo:
         Set(varMusicLicence, false);
         Set(varPreexisting, false);
         Set(varAIVoiceover, false);
-        Set(varSelectedProject, Blank());
-        Set(varSelectedChild, Blank());
+        Set(varCurrentRequest, Blank());
+        Set(varRequestTitle, "");
+        Set(varRequestDG, "");
+        Set(varRequestDescription, "");
+        Set(varRequestOwnerContact, "");
+        Set(varRequestOwnerEmail, User().Email);
         Set(varFilterStartDate, Blank());
         Set(varFilterEndDate, Blank());
-        Set(varFilterOwner, "");
-        Set(varIncludeChildren, false);
-        Set(varChildTitle, Blank());
-        Set(varCaptureDate, Blank());
-        Set(varChildLocation, "");
+        Set(varCurrentChild, Blank());
+        Set(varChildTitle, "");
+        Set(varChildMediaType, "Photo");
+        Set(varChildDescription, "");
+        Set(varChildCaptureDate, Blank());
+        Set(varChildProductionPlace, "");
+        Set(varChildCredits, "");
+        Set(varChildLanguageVersions, "");
+        Set(varChildEpisodeTitle, "");
+        Set(varChildEpisodeSummary, "");
+        Set(varChildSeasonNumber, 0);
+        Set(varChildEpisodeNumber, 0);
+        Set(varChildSeriesTitle, "");
+        Set(varChildProductType, "");
+        Set(varChildProductionEndDate, Blank());
+        Set(varChildPublicationStartDate, Blank());
+        Set(varChildPublicationEndDate, Blank());
+        Set(varChildLinks, "");
         Set(varChildTags, "");
-        Set(varChildStatus, "Draft");
-        Set(varLanguages, "");
-        Set(varDescription, Blank());
-        Set(varCredits, "");
-        Set(varModelReleaseProvided, false);
-        Set(varMusicProvided, false);
-        Set(varPreexistingProvided, false);
-        Set(varCase1SubType, Blank());
-        Set(varProjectOwner, User().FullName);
-        Set(varProjectStartDate, Blank());
-        Set(varProjectEndDate, Blank());
-        Set(varProjectStatus, "Draft");
+        Set(varChildFTPPath, "");
+        Set(varChildAIVoiceover, false);
+        Set(varChildContractCase, Blank());
+        Set(varChildContractCase1Sub, Blank());
+        Set(varChildContractRef, "");
+        Set(varChildModelRelease, false);
+        Set(varChildModelReleaseProvided, false);
+        Set(varChildMusicUsed, false);
+        Set(varChildMusicLicenceProvided, false);
+        Set(varChildPreexisting, false);
+        Set(varChildPreexistingProvided, false);
+        Set(varFilterDG, "");
+        Set(varFilterRequest, "");
+        Set(varFilterArchive, "");
+        Set(varFilterStartDate, Blank());
+        Set(varFilterEndDate, Blank());
+        Set(varReviewComment, "");
+        Set(varReviewProject, Blank());
+        Set(varCurrentChildId, "");
+        Set(varShowContactEmail, false);
+        Set(varRequestMediaType, "");
+        Set(varRequestAIDeclared, false);
+        Set(varRequestContractor, "");
+        Clear(colArchives);
         Set(varShowTemplatePicker, false);
         Set(varShowTplConfirm, false);
         Set(varTplSearch, "");
@@ -78,6 +105,14 @@ App As appinfo:
         Set(varRating, 0);
         Set(varFeedbackText, "");
         Set(varFeedbackSent, false);
+        Set(varMonthStart, Blank());
+        Set(varKpiRejectedAll, 0);
+        Set(varKpiRejectedMonth, 0);
+        Set(varKpiMyMonthTotal, 0);
+        Set(varKpiMyMonthSuccess, 0);
+        Set(varKpiAllMonthTotal, 0);
+        Set(varKpiAllMonthSuccess, 0);
+        Set(varKpiAvgPublishDays, Blank());
     StartScreen: =DashboardScreen
     Theme: =PowerAppsTheme
 
@@ -87,3 +122,4 @@ App As appinfo:
         OnNew: =false
         OnSave: =false
         OnView: =false
+

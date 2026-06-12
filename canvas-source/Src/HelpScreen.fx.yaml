@@ -1,262 +1,318 @@
 HelpScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
-    OnVisible: |-
-        =Set(varFeedbackSent, false)
+    OnVisible: =Set(varFeedbackSent, false)
 
-    HP_TopBar As rectangle:
+
+    HL_TopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
         Height: =52
         Width: =1366
-        X: =0
-        Y: =0
         ZIndex: =1
 
-    HP_Back As button:
+    HL_Back As button:
         BorderThickness: =0
         Color: =RGBA(186, 202, 226, 1)
         Fill: =RGBA(0, 18, 107, 1)
-        HoverColor: =RGBA(255, 255, 255, 1)
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(HomeScreen)
+        OnSelect: =Back()
         Size: =13
-        Text: ="←  My requests"
-        Width: =160
+        Text: ="←  Back"
+        Width: =120
         X: =16
         Y: =10
         ZIndex: =2
 
-    HP_AppTitle As label:
-        Align: =Align.Right
-        Color: =RGBA(255, 255, 255, 1)
+    HL_AppTitle As label:
+        Color: =RGBA(186, 202, 226, 1)
         FontWeight: =FontWeight.Semibold
-        Height: =26
-        Size: =14
+        Height: =28
+        Size: =16
         Text: ="Central Deposit"
         VerticalAlign: =VerticalAlign.Bottom
-        Width: =280
-        X: =1070
+        Width: =500
+        X: =156
         Y: =4
         ZIndex: =3
 
-    HP_AppSubtitle As label:
-        Align: =Align.Right
+    HL_AppSubtitle As label:
         Color: =RGBA(186, 202, 226, 1)
         Height: =16
-        Size: =7
+        Size: =8
         Text: ="Ticket System"
         VerticalAlign: =VerticalAlign.Top
-        Width: =280
-        X: =1070
-        Y: =30
-        ZIndex: =4
-
-    HP_PageTitle As label:
-        Color: =RGBA(0, 18, 107, 1)
-        FontWeight: =FontWeight.Bold
-        Height: =40
-        Size: =22
-        Text: ="Help & support"
         Width: =500
-        X: =48
-        Y: =76
-        ZIndex: =5
+        X: =156
+        Y: =32
+        ZIndex: =19
 
-    HP_LinksCard As rectangle:
+    HL_Card As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
         Height: =560
-        Width: =700
+        Width: =900
         X: =48
-        Y: =130
+        Y: =72
+        ZIndex: =4
+
+    HL_Title As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =36
+        Size: =22
+        Text: ="Help & Useful Resources"
+        Width: =840
+        X: =72
+        Y: =96
+        ZIndex: =5
+
+    HL_Subtitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =24
+        Text: ="Quick access to guidelines, portals and contacts for the AV Central Deposit process."
+        Width: =840
+        X: =72
+        Y: =136
         ZIndex: =6
 
-    HP_LinksTitle As label:
-        Color: =RGBA(96, 104, 120, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =24
-        Size: =11
-        Text: ="USEFUL LINKS"
-        Width: =600
+    HL_Divider1 As rectangle:
+        Fill: =RGBA(220, 224, 230, 1)
+        Height: =1
+        Width: =840
         X: =72
-        Y: =150
+        Y: =168
         ZIndex: =7
 
-    HP_Link1 As label:
-        Color: =RGBA(56, 96, 178, 1)
-        Height: =30
-        Size: =13
-        Text: ="→  Central deposit guidelines"
-        Width: =600
+    HL_SectionLinks As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =28
+        Size: =15
+        Text: ="Links"
+        Width: =840
         X: =72
         Y: =180
         ZIndex: =8
 
-    HP_Link2 As label:
+    HL_Link1 As label:
         Color: =RGBA(56, 96, 178, 1)
-        Height: =30
-        Size: =13
-        Text: ="→  AV Portal"
-        Width: =600
+        Height: =44
+        Size: =14
+        Text: ="→  Central deposit guidelines"
+        Width: =840
         X: =72
-        Y: =214
+        Y: =216
         ZIndex: =9
 
-    HP_Link3 As label:
-        Color: =RGBA(56, 96, 178, 1)
-        Height: =30
-        Size: =13
-        Text: ="→  Contact the AV Library team"
-        Width: =600
+    HL_Link1Sub As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =20
+        Size: =12
+        Text: ="Official documentation for submitting AV productions to the Central Deposit."
+        Width: =840
         X: =72
-        Y: =248
+        Y: =258
         ZIndex: =10
 
-    HP_FAQDivider As rectangle:
-        Fill: =RGBA(230, 232, 238, 1)
-        Height: =1
-        Width: =652
+    HL_Link2 As label:
+        Color: =RGBA(56, 96, 178, 1)
+        Height: =44
+        HoverFill: =RGBA(227, 234, 243, 1)
+        OnSelect: |-
+            =Launch("https://audiovisual.ec.europa.eu/en")
+        Size: =14
+        Text: ="→  AV Portal"
+        Tooltip: ="Open the EU Audiovisual Portal"
+        Width: =840
         X: =72
-        Y: =294
+        Y: =290
         ZIndex: =11
 
-    HP_FAQTitle As label:
+    HL_Link2Sub As label:
         Color: =RGBA(96, 104, 120, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =24
-        Size: =11
-        Text: ="HOW IT WORKS"
-        Width: =600
+        Height: =20
+        Size: =12
+        Text: ="Browse and search published AV content on the EU Audiovisual Portal."
+        Width: =840
         X: =72
-        Y: =310
+        Y: =332
         ZIndex: =12
 
-    HP_FAQText As label:
-        Color: =RGBA(60, 66, 80, 1)
-        Height: =320
-        Size: =13
-        Text: |-
-            ="1.  Create a project and choose its media type (Photo/Reportage, Video, Audio or Podcast). One request always covers a single media type." & Char(10) & Char(10) &
-            "2.  Add media items with their metadata, legal documents and rights declarations. You can pre-fill a new item from a previous one with the template button." & Char(10) & Char(10) &
-            "3.  Deliver master files via the FTP path recorded on the project; attach legal annexes in the app." & Char(10) & Char(10) &
-            "4.  Submit. You receive a unique ticket reference, and the Central Deposit team takes it from there (New → Pending Approval → Accepted / Not Accepted)."
-        Width: =652
+    HL_Link3 As label:
+        Color: =RGBA(56, 96, 178, 1)
+        Height: =44
+        HoverFill: =RGBA(227, 234, 243, 1)
+        OnSelect: |-
+            =Launch("mailto:recipient@example.com")
+        Size: =14
+        Text: ="→  Contact the AV Library team"
+        Tooltip: ="Send an email to the AV Library team"
+        Width: =840
         X: =72
-        Y: =338
+        Y: =364
         ZIndex: =13
 
-    HP_RateCard As rectangle:
+    HL_Link3Sub As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =20
+        Size: =12
+        Text: ="For questions about submissions, rights, contracts or technical issues."
+        Width: =840
+        X: =72
+        Y: =406
+        ZIndex: =14
+
+    HL_Divider2 As rectangle:
+        Fill: =RGBA(220, 224, 230, 1)
+        Height: =1
+        Width: =840
+        X: =72
+        Y: =438
+        ZIndex: =15
+
+    HL_SectionAbout As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =28
+        Size: =15
+        Text: ="About this app"
+        Width: =840
+        X: =72
+        Y: =450
+        ZIndex: =16
+
+    HL_About As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =88
+        Text: ="AV Central Deposit is a ticket system for DG COMM and associated services to submit audiovisual productions for archiving. Each request groups one or more archives by production type (Photo, Video or Podcast) and goes through a review workflow before being approved for deposit."
+        Width: =840
+        X: =72
+        Y: =480
+        ZIndex: =17
+
+    HL_BtnHome As button:
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(HomeScreen)
+        Size: =13
+        Text: ="Back to My requests"
+        Width: =200
+        X: =72
+        Y: =648
+        ZIndex: =18
+
+
+    HL_RateCard As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =560
-        Width: =546
-        X: =772
-        Y: =130
-        ZIndex: =14
+        Height: =400
+        Width: =400
+        X: =1000
+        Y: =72
+        ZIndex: =20
 
-    HP_RateTitle As label:
+    HL_RateTitle As label:
         Color: =RGBA(0, 18, 107, 1)
         FontWeight: =FontWeight.Bold
         Height: =30
         Size: =18
         Text: ="Rate this application"
-        Width: =480
-        X: =796
-        Y: =150
-        ZIndex: =15
+        Width: =360
+        X: =1024
+        Y: =92
+        ZIndex: =21
 
-    HP_RateSub As label:
+    HL_RateSub As label:
         Color: =RGBA(96, 104, 120, 1)
         Height: =40
-        Size: =13
-        Text: ="How satisfied are you with the Central Deposit Ticket System? Your feedback helps us improve."
-        Width: =498
-        X: =796
-        Y: =182
-        ZIndex: =16
+        Size: =12
+        Text: ="How satisfied are you? Your feedback helps us improve."
+        Width: =360
+        X: =1024
+        Y: =124
+        ZIndex: =22
 
-    HP_Star1 As button:
+    HL_Star1 As button:
         BorderThickness: =0
         Color: =If(varRating >= 1, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =56
+        Height: =52
         HoverFill: =RGBA(247, 248, 250, 1)
         OnSelect: |-
             =Set(varRating, 1);
             Set(varFeedbackSent, false)
-        Size: =30
+        Size: =28
         Text: =If(varRating >= 1, "★", "☆")
-        Width: =56
-        X: =796
-        Y: =232
-        ZIndex: =17
+        Width: =52
+        X: =1024
+        Y: =170
+        ZIndex: =23
 
-    HP_Star2 As button:
+    HL_Star2 As button:
         BorderThickness: =0
         Color: =If(varRating >= 2, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =56
+        Height: =52
         HoverFill: =RGBA(247, 248, 250, 1)
         OnSelect: |-
             =Set(varRating, 2);
             Set(varFeedbackSent, false)
-        Size: =30
+        Size: =28
         Text: =If(varRating >= 2, "★", "☆")
-        Width: =56
-        X: =856
-        Y: =232
-        ZIndex: =18
+        Width: =52
+        X: =1080
+        Y: =170
+        ZIndex: =24
 
-    HP_Star3 As button:
+    HL_Star3 As button:
         BorderThickness: =0
         Color: =If(varRating >= 3, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =56
+        Height: =52
         HoverFill: =RGBA(247, 248, 250, 1)
         OnSelect: |-
             =Set(varRating, 3);
             Set(varFeedbackSent, false)
-        Size: =30
+        Size: =28
         Text: =If(varRating >= 3, "★", "☆")
-        Width: =56
-        X: =916
-        Y: =232
-        ZIndex: =19
+        Width: =52
+        X: =1136
+        Y: =170
+        ZIndex: =25
 
-    HP_Star4 As button:
+    HL_Star4 As button:
         BorderThickness: =0
         Color: =If(varRating >= 4, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =56
+        Height: =52
         HoverFill: =RGBA(247, 248, 250, 1)
         OnSelect: |-
             =Set(varRating, 4);
             Set(varFeedbackSent, false)
-        Size: =30
+        Size: =28
         Text: =If(varRating >= 4, "★", "☆")
-        Width: =56
-        X: =976
-        Y: =232
-        ZIndex: =20
+        Width: =52
+        X: =1192
+        Y: =170
+        ZIndex: =26
 
-    HP_Star5 As button:
+    HL_Star5 As button:
         BorderThickness: =0
         Color: =If(varRating >= 5, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =56
+        Height: =52
         HoverFill: =RGBA(247, 248, 250, 1)
         OnSelect: |-
             =Set(varRating, 5);
             Set(varFeedbackSent, false)
-        Size: =30
+        Size: =28
         Text: =If(varRating >= 5, "★", "☆")
-        Width: =56
-        X: =1036
-        Y: =232
-        ZIndex: =21
+        Width: =52
+        X: =1248
+        Y: =170
+        ZIndex: =27
 
-    HP_RatingHint As label:
+    HL_RatingHint As label:
         Color: =If(varRating > 0, RGBA(22, 128, 80, 1), RGBA(96, 104, 120, 1))
         Height: =24
         Size: =12
@@ -268,34 +324,34 @@ HelpScreen As screen:
                 3, "3/5 — Neutral",
                 4, "4/5 — Satisfied",
                 5, "5/5 — Very satisfied")
-        Width: =400
-        X: =800
-        Y: =292
-        ZIndex: =22
+        Width: =360
+        X: =1024
+        Y: =228
+        ZIndex: =28
 
-    HP_FeedbackLbl As label:
+    HL_FeedbackLbl As label:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =22
-        Size: =13
+        Size: =12
         Text: ="Written feedback (optional)"
-        Width: =400
-        X: =796
-        Y: =328
-        ZIndex: =23
+        Width: =360
+        X: =1024
+        Y: =262
+        ZIndex: =29
 
-    HP_Feedback As text:
+    HL_Feedback As text:
         Default: =varFeedbackText
-        HintText: ="Tell us what works well and what could be improved…"
-        Height: =160
+        HintText: ="Tell us what works well and what could be improved..."
+        Height: =100
         Mode: =TextMode.MultiLine
         OnChange: =Set(varFeedbackText, Self.Value)
-        Width: =498
-        X: =796
-        Y: =354
-        ZIndex: =24
+        Width: =360
+        X: =1024
+        Y: =288
+        ZIndex: =30
 
-    HP_BtnSubmitRating As button:
+    HL_BtnSubmitRating As button:
         Color: =RGBA(255, 255, 255, 1)
         DisabledColor: =RGBA(255, 255, 255, 1)
         DisabledFill: =RGBA(186, 196, 214, 1)
@@ -305,43 +361,33 @@ HelpScreen As screen:
         Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
-            =Patch('AV App Feedback',
-                Defaults('AV App Feedback'),
+            =Patch(AVCentralDepositProjects,
+                Defaults(AVCentralDepositProjects),
                 {
-                    Title: "App feedback — " & User().FullName,
+                    Title: "Feedback — " & User().FullName,
                     Rating: varRating,
-                    Feedback: varFeedbackText
+                    Description: varFeedbackText
                 }
             );
             Set(varFeedbackSent, true);
             Set(varRating, 0);
             Set(varFeedbackText, "")
-        Size: =14
+        Size: =13
         Text: ="Submit feedback"
-        Width: =200
-        X: =796
-        Y: =534
-        ZIndex: =25
+        Width: =180
+        X: =1024
+        Y: =404
+        ZIndex: =31
 
-    HP_ThanksMsg As label:
+    HL_ThanksMsg As label:
         Color: =RGBA(22, 128, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =40
-        Size: =14
-        Text: ="✓  Thank you for your feedback!"
+        Size: =13
+        Text: ="Thank you for your feedback!"
         VerticalAlign: =VerticalAlign.Middle
         Visible: =varFeedbackSent
-        Width: =280
-        X: =1012
-        Y: =534
-        ZIndex: =26
-
-    HP_PrivacyNote As label:
-        Color: =RGBA(140, 148, 160, 1)
-        Height: =40
-        Size: =11
-        Text: ="Your name and the submission date are recorded with your rating so the team can follow up."
-        Width: =498
-        X: =796
-        Y: =590
-        ZIndex: =27
+        Width: =360
+        X: =1024
+        Y: =452
+        ZIndex: =32

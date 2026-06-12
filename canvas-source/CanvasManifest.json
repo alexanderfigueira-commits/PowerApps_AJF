@@ -11,7 +11,7 @@
   },
   "Properties": {
     "AppCreationSource": "AppFromScratch",
-    "AppDescription": "AV Central Deposit \u2014 parent/child media management",
+    "AppDescription": "AV Central Deposit Ticket System",
     "AppPreviewFlagsMap": {
       "adaptivepaging": false,
       "aibuilderserviceenrollment": false,
@@ -100,7 +100,7 @@
       "zeroalltabindexes": false
     },
     "Author": "",
-    "BindingErrorCount": 0,
+    "BindingErrorCount": 750,
     "ConnectionString": "",
     "ContainsThirdPartyPcfControls": false,
     "DefaultConnectedDataSourceMaxGetRowsCount": 2000,
@@ -117,13 +117,13 @@
     "Id": "823932f0-8907-4f30-91b0-a2da8a16dfdd",
     "LocalDatabaseReferences": "",
     "ManualOfflineProfileId": "",
-    "Name": "AV Central Deposit",
+    "Name": "Central_Deposit_APPFINAL",
     "OriginatingVersion": "1.324",
-    "ParserErrorCount": 0,
+    "ParserErrorCount": 8,
     "ShowStatusBar": false
   },
   "PublishInfo": {
-    "AppName": "AV Central Deposit",
+    "AppName": "Central_Deposit_APPFINAL",
     "BackgroundColor": "rgba(50, 86, 160, 1)",
     "IconColor": "RGBA(255,255,255,1)",
     "IconName": "CheckList",
@@ -135,21 +135,16 @@
   },
   "ScreenOrder": [
     "DashboardScreen",
-    "HomeScreen",
-    "ProjectScreen",
-    "ChildInfoScreen",
-    "ChildMetaScreen",
-    "ChildLegalScreen",
-    "ChildValidScreen",
-    "ConfirmationScreen",
+    "HelpScreen",
     "NewRequestScreen",
-    "MediaInfoScreen",
-    "DocumentationScreen",
-    "AttachmentsScreen2",
-    "FormScreen",
-    "Success Screen",
-    "Future Coverages",
-    "SuspensionScreen",
-    "HelpScreen"
+    "ReviewScreen",
+    "ChildMetaScreen",
+    "HomeScreen",
+    "ChildValidScreen",
+    "RequestScreen",
+    "ChildLegalScreen",
+    "ConfirmationScreen",
+    "HomePrintScreen",
+    "ChildInfoScreen"
   ]
 }

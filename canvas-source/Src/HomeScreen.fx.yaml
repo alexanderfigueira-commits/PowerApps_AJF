@@ -2,39 +2,17 @@ HomeScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: |-
         =Set(varFilter, "All");
+        Set(varFilterDG, "");
+        Set(varFilterRequest, "");
+        Set(varFilterArchive, "");
         Set(varFilterStartDate, Blank());
-        Set(varFilterEndDate, Blank());
-        Set(varFilterOwner, "");
-        Set(varIncludeChildren, false)
+        Set(varFilterEndDate, Blank())
 
     HomeTopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
-        Height: =52
+        Height: =56
         Width: =1366
-        X: =0
-        Y: =0
         ZIndex: =1
-
-    HomeBrandDot As circle.Circle:
-        Fill: =RGBA(56, 96, 178, 1)
-        Height: =32
-        Width: =32
-        X: =16
-        Y: =10
-        ZIndex: =2
-
-    HomeBrandLetter As label:
-        Align: =Align.Center
-        Color: =RGBA(255, 255, 255, 1)
-        FontWeight: =FontWeight.Bold
-        Height: =32
-        Size: =14
-        Text: ="AV"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =32
-        X: =16
-        Y: =10
-        ZIndex: =3
 
     HomeAppTitle As label:
         Color: =RGBA(255, 255, 255, 1)
@@ -43,561 +21,10 @@ HomeScreen As screen:
         Size: =16
         Text: ="Central Deposit"
         VerticalAlign: =VerticalAlign.Bottom
-        Width: =300
-        X: =60
+        Width: =377
+        X: =72
         Y: =4
         ZIndex: =4
-
-    HomeUserName As label:
-        Align: =Align.Right
-        Color: =RGBA(186, 202, 226, 1)
-        Height: =52
-        Size: =12
-        Text: =User().FullName
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =240
-        X: =1110
-        Y: =0
-        ZIndex: =5
-
-    HomeSearchBg As rectangle:
-        BorderColor: =RGBA(220, 224, 230, 1)
-        BorderThickness: =1
-        Fill: =RGBA(240, 242, 246, 1)
-        Height: =60
-        Width: =1366
-        X: =0
-        Y: =52
-        ZIndex: =6
-
-    HomeLblFrom As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =11
-        Text: ="FROM"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =48
-        X: =16
-        Y: =60
-        ZIndex: =7
-
-    HomeFilterStart As datepicker:
-        Height: =36
-        Width: =148
-        X: =16
-        Y: =78
-        ZIndex: =8
-
-    HomeLblTo As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =11
-        Text: ="TO"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =24
-        X: =172
-        Y: =60
-        ZIndex: =9
-
-    HomeFilterEnd As datepicker:
-        Height: =36
-        Width: =148
-        X: =172
-        Y: =78
-        ZIndex: =10
-
-    HomeLblOwner As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Size: =11
-        Text: ="OWNER"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =60
-        X: =328
-        Y: =60
-        ZIndex: =11
-
-    HomeFilterOwner As text:
-        Default: =varFilterOwner
-        HintText: ="Filter by owner name…"
-        Height: =36
-        OnChange: =Set(varFilterOwner, Self.Value)
-        Width: =220
-        X: =328
-        Y: =78
-        ZIndex: =12
-
-    HomeChkChildren As checkbox.'Checkbox':
-        Height: =36
-        OnCheck: =Set(varIncludeChildren, true)
-        OnUncheck: =Set(varIncludeChildren, false)
-        Text: ="Show media children"
-        Width: =200
-        X: =562
-        Y: =70
-        ZIndex: =13
-
-    HomeBtnExportPDF As button:
-        BorderColor: =RGBA(56, 96, 178, 1)
-        BorderThickness: =1
-        Color: =RGBA(56, 96, 178, 1)
-        Fill: =RGBA(255, 255, 255, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =36
-        HoverFill: =RGBA(230, 236, 245, 1)
-        OnSelect: |-
-            =// Export the current home screen view as PDF.
-            // Requires pdffunction preview flag enabled in CanvasManifest.
-            // ExpandContainers:true captures scrolling gallery rows fully.
-            Download(
-                PDF(
-                    HomeScreen,
-                    {
-                        Size: PaperSize.A4,
-                        Orientation: PaperOrientation.Landscape,
-                        ExpandContainers: true
-                    }
-                )
-            )
-        Size: =12
-        Text: ="Export to PDF"
-        Width: =148
-        X: =1202
-        Y: =70
-        ZIndex: =14
-
-    HomeTitleBar As rectangle:
-        BorderColor: =RGBA(220, 224, 230, 1)
-        BorderThickness: =1
-        Fill: =RGBA(255, 255, 255, 1)
-        Height: =56
-        Width: =1366
-        X: =0
-        Y: =112
-        ZIndex: =15
-
-    HomePageTitle As label:
-        Color: =RGBA(0, 18, 107, 1)
-        FontWeight: =FontWeight.Bold
-        Height: =36
-        Size: =22
-        Text: ="My requests"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =400
-        X: =48
-        Y: =122
-        ZIndex: =16
-
-    HomePageSubtitle As label:
-        Color: =RGBA(96, 104, 120, 1)
-        Height: =56
-        Size: =12
-        Text: ="Audiovisual productions deposited with the Central Deposit"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =500
-        X: =460
-        Y: =112
-        ZIndex: =17
-
-    HomeBtnNew As button:
-        Color: =RGBA(255, 255, 255, 1)
-        Fill: =RGBA(56, 96, 178, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =40
-        HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: |-
-            =Set(varSelectedProject, Blank());
-            Set(varProjectName, Blank());
-            Set(varContact, User().FullName);
-            Set(varContactEmail, User().Email);
-            Set(varFTPPath, Blank());
-            Set(varProjectStartDate, Blank());
-            Set(varProjectEndDate, Blank());
-            Set(varProjectStatus, "Draft");
-            Navigate(ProjectScreen)
-        Size: =13
-        Text: ="+  New project"
-        Width: =168
-        X: =1178
-        Y: =120
-        ZIndex: =18
-
-    HomeTableBg As rectangle:
-        BorderColor: =RGBA(220, 224, 230, 1)
-        BorderThickness: =1
-        Fill: =RGBA(255, 255, 255, 1)
-        Height: =600
-        Width: =If(varIncludeChildren, 846, 1270)
-        X: =48
-        Y: =168
-        ZIndex: =19
-
-    HomeTableHeader As rectangle:
-        Fill: =RGBA(240, 242, 246, 1)
-        Height: =40
-        Width: =If(varIncludeChildren, 846, 1270)
-        X: =48
-        Y: =168
-        ZIndex: =20
-
-    HomeThProject As label:
-        Color: =RGBA(96, 104, 120, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =40
-        Size: =11
-        Text: ="PROJECT"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =340
-        X: =68
-        Y: =168
-        ZIndex: =21
-
-    HomeThOwner As label:
-        Color: =RGBA(96, 104, 120, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =40
-        Size: =11
-        Text: ="OWNER"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =200
-        X: =420
-        Y: =168
-        ZIndex: =22
-
-    HomeThDates As label:
-        Color: =RGBA(96, 104, 120, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =40
-        Size: =11
-        Text: ="DATES"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =200
-        X: =630
-        Y: =168
-        ZIndex: =23
-
-    HomeThStatus As label:
-        Color: =RGBA(96, 104, 120, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =40
-        Size: =11
-        Text: ="STATUS"
-        VerticalAlign: =VerticalAlign.Middle
-        Width: =140
-        X: =848
-        Y: =168
-        ZIndex: =24
-
-    "HomeGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
-        BorderColor: =RGBA(220, 224, 230, 1)
-        DelayItemLoading: =true
-        Fill: =RGBA(0, 0, 0, 0)
-        Height: =556
-        Items: |-
-            =// Date filters are delegable against SharePoint (requires indexed date columns).
-            // Owner name filter (varFilterOwner) is NOT delegable — SharePoint does not
-            // support text search on Person field DisplayName. Applied locally after
-            // the delegable date filters. Limited to first 2000 parent records.
-            Filter(
-                Filter(
-                    'AV Central Deposit Projects',
-                    (IsBlank(varFilterStartDate) Or RequestStartDate >= varFilterStartDate),
-                    (IsBlank(varFilterEndDate) Or RequestEndDate <= varFilterEndDate)
-                ),
-                IsBlank(varFilterOwner) Or StartsWith(Owner.DisplayName, varFilterOwner)
-            )
-        Layout: =Layout.Vertical
-        LoadingSpinner: =LoadingSpinner.Data
-        TemplatePadding: =0
-        TemplateSize: =56
-        Width: =If(varIncludeChildren, 846, 1270)
-        X: =48
-        Y: =208
-        ZIndex: =25
-
-        HomeRowSelect As rectangle:
-            Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
-            Height: =55
-            HoverFill: =RGBA(240, 242, 246, 1)
-            OnSelect: |-
-                =Set(varSelectedProject, ThisItem);
-                If(
-                    varIncludeChildren,
-                    false,
-                    Navigate(ProjectScreen)
-                )
-            Width: =If(varIncludeChildren, 846, 1270)
-            X: =0
-            Y: =0
-            ZIndex: =1
-
-        HomeRowDivider As rectangle:
-            Fill: =RGBA(230, 232, 238, 1)
-            Height: =1
-            Width: =If(varIncludeChildren, 846, 1270)
-            X: =0
-            Y: =55
-            ZIndex: =2
-
-        HomeRowProject As label:
-            Color: =RGBA(32, 31, 30, 1)
-            Height: =55
-            OnSelect: =Select(Parent)
-            Size: =13
-            Text: =If(IsBlank(ThisItem.Title), "Untitled project", ThisItem.Title)
-            VerticalAlign: =VerticalAlign.Middle
-            Width: =340
-            X: =20
-            Y: =0
-            ZIndex: =3
-
-        HomeRowOwner As label:
-            Color: =RGBA(96, 104, 120, 1)
-            Height: =55
-            OnSelect: =Select(Parent)
-            Size: =12
-            Text: =Coalesce(ThisItem.Owner.DisplayName, "—")
-            VerticalAlign: =VerticalAlign.Middle
-            Width: =200
-            X: =372
-            Y: =0
-            ZIndex: =4
-
-        HomeRowDates As label:
-            Color: =RGBA(96, 104, 120, 1)
-            Height: =55
-            OnSelect: =Select(Parent)
-            Size: =12
-            Text: |-
-                =If(
-                    IsBlank(ThisItem.RequestStartDate),
-                    "—",
-                    Text(ThisItem.RequestStartDate, "dd mmm") & " – " & If(IsBlank(ThisItem.RequestEndDate), "…", Text(ThisItem.RequestEndDate, "dd mmm yyyy"))
-                )
-            VerticalAlign: =VerticalAlign.Middle
-            Width: =200
-            X: =582
-            Y: =0
-            ZIndex: =5
-
-        HomeRowBadge As button:
-            BorderThickness: =0
-            Color: |-
-                =Switch(ThisItem.Status.Value,
-                    "Approved", RGBA(22, 101, 52, 1),
-                    "Submitted", RGBA(30, 64, 175, 1),
-                    "In review", RGBA(146, 64, 14, 1),
-                    "Returned", RGBA(185, 28, 28, 1),
-                    "Draft", RGBA(75, 85, 99, 1),
-                    RGBA(96, 104, 120, 1))
-            DisabledBorderColor: =Self.BorderColor
-            DisplayMode: =DisplayMode.View
-            Fill: |-
-                =Switch(ThisItem.Status.Value,
-                    "Approved", RGBA(220, 252, 231, 1),
-                    "Submitted", RGBA(219, 234, 254, 1),
-                    "In review", RGBA(254, 243, 199, 1),
-                    "Returned", RGBA(254, 226, 226, 1),
-                    "Draft", RGBA(243, 244, 246, 1),
-                    RGBA(240, 242, 246, 1))
-            Height: =28
-            Size: =11
-            Text: =Coalesce(ThisItem.Status.Value, "Draft")
-            Width: =120
-            X: =793
-            Y: =13
-            ZIndex: =6
-
-    HomeChildPanel As rectangle:
-        BorderColor: =RGBA(220, 224, 230, 1)
-        BorderThickness: =1
-        Fill: =RGBA(255, 255, 255, 1)
-        Height: =600
-        Visible: =varIncludeChildren
-        Width: =412
-        X: =906
-        Y: =168
-        ZIndex: =26
-
-    HomeChildHeader As rectangle:
-        Fill: =RGBA(240, 242, 246, 1)
-        Height: =40
-        Visible: =varIncludeChildren
-        Width: =412
-        X: =906
-        Y: =168
-        ZIndex: =27
-
-    HomeChildHdrLabel As label:
-        Color: =RGBA(96, 104, 120, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =40
-        Size: =11
-        Text: ="MEDIA CHILDREN"
-        VerticalAlign: =VerticalAlign.Middle
-        Visible: =varIncludeChildren
-        Width: =280
-        X: =926
-        Y: =168
-        ZIndex: =28
-
-    HomeChildHdrCount As label:
-        Align: =Align.Right
-        Color: =RGBA(96, 104, 120, 1)
-        Height: =40
-        Size: =11
-        Text: =Text(CountRows(HomeChildGallery.AllItems)) & " item(s)"
-        VerticalAlign: =VerticalAlign.Middle
-        Visible: =varIncludeChildren
-        Width: =100
-        X: =1210
-        Y: =168
-        ZIndex: =29
-
-    "HomeChildGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
-        DelayItemLoading: =true
-        Fill: =RGBA(0, 0, 0, 0)
-        Height: =556
-        Items: |-
-            =// Delegable: Lookup ID filter against SharePoint.
-            If(
-                IsBlank(varSelectedProject),
-                Filter('Coverage Request (Belgium)', 1 = 0),
-                Filter(
-                    'Coverage Request (Belgium)',
-                    ParentProject.Id = varSelectedProject.ID
-                )
-            )
-        Layout: =Layout.Vertical
-        LoadingSpinner: =LoadingSpinner.Data
-        TemplatePadding: =0
-        TemplateSize: =64
-        Visible: =varIncludeChildren
-        Width: =412
-        X: =906
-        Y: =208
-        ZIndex: =30
-
-        HomeChildRowBg As rectangle:
-            Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
-            Height: =63
-            HoverFill: =RGBA(240, 242, 246, 1)
-            OnSelect: |-
-                =Set(varSelectedChild, ThisItem);
-                Set(varMediaType, Coalesce(ThisItem.MediaType.Value, "Photo"));
-                Set(varChildTitle, ThisItem.'Event Title');
-                Set(varContractCase, ThisItem.ContractCase.Value);
-                Set(varModelRelease, Coalesce(ThisItem.ModelRelease, false));
-                Set(varMusicLicence, Coalesce(ThisItem.MusicLicence, false));
-                Set(varPreexisting, Coalesce(ThisItem.PreexistingRights, false));
-                Set(varAIVoiceover, Coalesce(ThisItem.AIVoiceover, false));
-                Navigate(ChildInfoScreen)
-            Width: =412
-            X: =0
-            Y: =0
-            ZIndex: =1
-
-        HomeChildRowDivider As rectangle:
-            Fill: =RGBA(230, 232, 238, 1)
-            Height: =1
-            Width: =412
-            X: =0
-            Y: =63
-            ZIndex: =2
-
-        HomeChildRowType As button:
-            BorderThickness: =0
-            Color: =RGBA(0, 18, 107, 1)
-            DisplayMode: =DisplayMode.View
-            Fill: =RGBA(230, 236, 245, 1)
-            Height: =22
-            Size: =10
-            Text: =Coalesce(ThisItem.MediaType.Value, "—")
-            Width: =80
-            X: =8
-            Y: =8
-            ZIndex: =3
-
-        HomeChildRowTitle As label:
-            Color: =RGBA(32, 31, 30, 1)
-            Height: =28
-            OnSelect: =Select(Parent)
-            Size: =12
-            Text: =If(IsBlank(ThisItem.'Event Title'), "Untitled media", ThisItem.'Event Title')
-            VerticalAlign: =VerticalAlign.Middle
-            Width: =360
-            X: =8
-            Y: =28
-            ZIndex: =4
-
-        HomeChildRowStatus As label:
-            Align: =Align.Right
-            Color: |-
-                =If(
-                    CountRows(
-                        Filter(
-                            Table(
-                                {check: Not(IsBlank(ThisItem.MediaType.Value))},
-                                {check: Not(IsBlank(ThisItem.'Event Title'))},
-                                {check: Not(Coalesce(ThisItem.AIVoiceover, false))},
-                                {check: Not(IsBlank(ThisItem.ContractCase.Value))}
-                            ),
-                            Not(check)
-                        )
-                    ) = 0,
-                    RGBA(22, 101, 52, 1),
-                    RGBA(193, 40, 40, 1)
-                )
-            Height: =22
-            Size: =11
-            Text: |-
-                =If(
-                    CountRows(
-                        Filter(
-                            Table(
-                                {check: Not(IsBlank(ThisItem.MediaType.Value))},
-                                {check: Not(IsBlank(ThisItem.'Event Title'))},
-                                {check: Not(Coalesce(ThisItem.AIVoiceover, false))},
-                                {check: Not(IsBlank(ThisItem.ContractCase.Value))}
-                            ),
-                            Not(check)
-                        )
-                    ) = 0,
-                    "✓ Ready",
-                    "! Issues"
-                )
-            VerticalAlign: =VerticalAlign.Middle
-            Width: =80
-            X: =328
-            Y: =6
-            ZIndex: =5
-
-    HomeNoProjectNote As label:
-        Align: =Align.Center
-        Color: =RGBA(140, 148, 160, 1)
-        Height: =40
-        Size: =12
-        Text: ="Select a project on the left to see its media children."
-        Visible: =varIncludeChildren And IsBlank(varSelectedProject)
-        Width: =412
-        X: =906
-        Y: =380
-        ZIndex: =31
-
-    HomeEmptyState As label:
-        Align: =Align.Center
-        Color: =RGBA(140, 148, 160, 1)
-        Height: =40
-        Size: =14
-        Text: ="No projects found. Start one with \"+ New project\"."
-        Visible: =CountRows(HomeGallery.AllItems) = 0
-        Width: =If(varIncludeChildren, 846, 1270)
-        X: =48
-        Y: =460
-        ZIndex: =32
 
     HomeAppSubtitle As label:
         Color: =RGBA(186, 202, 226, 1)
@@ -605,21 +32,612 @@ HomeScreen As screen:
         Size: =8
         Text: ="Ticket System"
         VerticalAlign: =VerticalAlign.Top
-        Width: =300
-        X: =60
+        Width: =377
+        X: =72
         Y: =32
+        ZIndex: =47
+
+    HomeUserName As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =36
+        Text: =User().FullName
+        Width: =232
+        X: =1086
+        Y: =18
+        ZIndex: =5
+
+    HomePageTitle As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Size: =26
+        Text: ="My requests"
+        Width: =600
+        X: =48
+        Y: =92
+        ZIndex: =6
+
+    HomePageSubtitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =24
+        Text: ="Acquires Audiovisual Productions for Central Deposit Follow-Up."
+        Width: =700
+        X: =48
+        Y: =138
+        ZIndex: =7
+
+    HomeBtnNew As button:
+        Height: =44
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: |-
+            =/*Set(varCurrentRequest, Blank());
+            Set(varRequestTitle, "");
+            Set(varRequestDG, "");
+            Set(varRequestDescription, "");
+            Set(varRequestOwnerContact, "");
+            //Set(varRequestOwnerEmail, User().Email);*/
+            Set(varRequestMediaType, "");
+            Set(varRequestAIDeclared, false);
+            Set(varRequestContractor, "");
+            Navigate(RequestScreen)
+        Size: =14
+        Text: ="+  New request"
+        X: =780
+        Y: =92
+        ZIndex: =8
+
+    HomeChipAll As button:
+        BorderColor: =If(varFilter="All", RGBA(0,18,107,1), RGBA(220,224,230,1))
+        BorderThickness: =1
+        Color: =If(varFilter="All", RGBA(0,18,107,1), RGBA(96,104,120,1))
+        Fill: =If(varFilter="All", RGBA(255,255,255,1), RGBA(247,248,250,1))
+        Height: =34
+        OnSelect: =Set(varFilter, "All")
+        Size: =12
+        Text: ="All"
+        Width: =64
+        X: =48
+        Y: =180
+        ZIndex: =9
+
+    HomeChipDraft As button:
+        BorderColor: =If(varFilter="Draft", RGBA(0,18,107,1), RGBA(220,224,230,1))
+        BorderThickness: =1
+        Color: =If(varFilter="Draft", RGBA(0,18,107,1), RGBA(96,104,120,1))
+        Fill: =If(varFilter="Draft", RGBA(255,255,255,1), RGBA(247,248,250,1))
+        Height: =34
+        OnSelect: =Set(varFilter, "Draft")
+        Size: =12
+        Text: ="Draft"
+        Width: =80
+        X: =120
+        Y: =180
+        ZIndex: =10
+
+    HomeChipSubmitted As button:
+        BorderColor: =If(varFilter="Submitted", RGBA(0,18,107,1), RGBA(220,224,230,1))
+        BorderThickness: =1
+        Color: =If(varFilter="Submitted", RGBA(0,18,107,1), RGBA(96,104,120,1))
+        Fill: =If(varFilter="Submitted", RGBA(255,255,255,1), RGBA(247,248,250,1))
+        Height: =34
+        OnSelect: =Set(varFilter, "Submitted")
+        Size: =12
+        Text: ="Submitted"
+        Width: =110
+        X: =208
+        Y: =180
+        ZIndex: =11
+
+    HomeChipApproved As button:
+        BorderColor: =If(varFilter="Approved", RGBA(0,18,107,1), RGBA(220,224,230,1))
+        BorderThickness: =1
+        Color: =If(varFilter="Approved", RGBA(0,18,107,1), RGBA(96,104,120,1))
+        Fill: =If(varFilter="Approved", RGBA(255,255,255,1), RGBA(247,248,250,1))
+        Height: =34
+        OnSelect: =Set(varFilter, "Approved")
+        Size: =12
+        Text: ="Approved"
+        Width: =110
+        X: =326
+        Y: =180
+        ZIndex: =12
+
+    HomeChipRejected As button:
+        BorderColor: =If(varFilter="Rejected", RGBA(0,18,107,1), RGBA(220,224,230,1))
+        BorderThickness: =1
+        Color: =If(varFilter="Rejected", RGBA(0,18,107,1), RGBA(96,104,120,1))
+        Fill: =If(varFilter="Rejected", RGBA(255,255,255,1), RGBA(247,248,250,1))
+        Height: =34
+        OnSelect: =Set(varFilter, "Rejected")
+        Size: =12
+        Text: ="Rejected"
+        Width: =100
+        X: =444
+        Y: =180
+        ZIndex: =13
+
+    HomeTableCard As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =380
+        Width: =1270
+        X: =48
+        Y: =320
+        ZIndex: =14
+
+    HomeTableHeader As rectangle:
+        Fill: =RGBA(240, 242, 246, 1)
+        Height: =44
+        Width: =1270
+        X: =48
+        Y: =320
+        ZIndex: =15
+
+    HomeThRequest As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =44
+        Size: =11
+        Text: ="REQUEST"
+        Width: =400
+        X: =68
+        Y: =320
+        ZIndex: =16
+
+    HomeThDG As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =44
+        Size: =11
+        Text: ="DG"
+        Width: =140
+        X: =488
+        Y: =320
+        ZIndex: =17
+
+    HomeThArchives As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =44
+        Size: =11
+        Text: ="ARCHIVES"
+        Width: =120
+        X: =648
+        Y: =320
+        ZIndex: =18
+
+    HomeThStatus As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =44
+        Size: =11
+        Text: ="STATUS"
+        Width: =160
+        X: =790
+        Y: =320
+        ZIndex: =19
+
+    "HomeGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
+        BorderColor: =RGBA(220, 224, 230, 1)
+        DelayItemLoading: =true
+        Height: =330
+        Items: |-
+            =Filter(
+                AVCentralDepositProjects,
+                'Created By'.Email = User().Email,
+                varFilter = "All" Or Status.Value = varFilter,
+                varFilterDG = "" Or IsBlank(varFilterDG) Or StartsWith(DG, varFilterDG),
+                varFilterRequest = "" Or IsBlank(varFilterRequest) Or StartsWith(Title, varFilterRequest),
+                varFilterArchive = "" Or IsBlank(varFilterArchive) Or
+                    CountRows(Filter(CentralDepositMainList, ParentProject.Id = ID And StartsWith(Project, varFilterArchive))) > 0,
+                IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
+                IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate
+            )
+        Layout: =Layout.Vertical
+        LoadingSpinner: =LoadingSpinner.Data
+        TemplatePadding: =0
+        TemplateSize: =60
+        Width: =1270
+        X: =48
+        Y: =368
+        ZIndex: =20
+
+        HomeRowSelect As rectangle:
+            Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+            Height: =59
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+                =Set(varCurrentRequest, ThisItem);
+                Set(varRequestTitle, ThisItem.Title);
+                Set(varRequestDG, ThisItem.DG);
+                Set(varRequestDescription, Coalesce(ThisItem.Description, ""));
+                Set(varRequestOwnerContact, ThisItem.OwnerContact);
+                Set(varRequestOwnerEmail, ThisItem.OwnerEmail);
+                Navigate(RequestScreen)
+            Width: =1270
+            ZIndex: =1
+
+        HomeRowDivider As rectangle:
+            Fill: =RGBA(230, 232, 238, 1)
+            Height: =1
+            Width: =1270
+            Y: =59
+            ZIndex: =2
+
+        HomeRowRequest As label:
+            Color: =RGBA(32, 31, 30, 1)
+            Height: =59
+            OnSelect: =Select(Parent)
+            Text: =If(IsBlank(ThisItem.Title), "Untitled request", ThisItem.Title)
+            Width: =400
+            X: =20
+            ZIndex: =3
+
+        HomeRowDG As label:
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =59
+            OnSelect: =Select(Parent)
+            Text: =If(IsBlank(ThisItem.DG), "—", ThisItem.DG)
+            Width: =140
+            X: =440
+            ZIndex: =4
+
+        HomeRowArchives As label:
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =59
+            OnSelect: =Select(Parent)
+            Text: =Text(CountRows(Filter(CentralDepositMainList, ParentProject.Id = ThisItem.ID)))
+            Width: =120
+            X: =600
+            ZIndex: =5
+
+        HomeRowBadge As button:
+            BorderThickness: =0
+            Color: |-
+                =Switch(ThisItem.Status.Value,
+                    "Approved", RGBA(22, 128, 80, 1),
+                    "Submitted", RGBA(56, 96, 178, 1),
+                    "Draft", RGBA(96, 104, 120, 1),
+                    "Rejected", RGBA(193, 40, 40, 1),
+                    RGBA(96, 104, 120, 1))
+            DisabledBorderColor: =Self.BorderColor
+            DisplayMode: =DisplayMode.View
+            Fill: |-
+                =Switch(ThisItem.Status.Value,
+                    "Approved", RGBA(223, 245, 233, 1),
+                    "Submitted", RGBA(230, 236, 245, 1),
+                    "Draft", RGBA(240, 242, 246, 1),
+                    "Rejected", RGBA(253, 235, 235, 1),
+                    RGBA(240, 242, 246, 1))
+            Size: =11
+            Text: =If(IsBlank(ThisItem.Status.Value), "Draft", ThisItem.Status.Value)
+            Width: =150
+            X: =740
+            Y: =16
+            ZIndex: =6
+
+        HomeRowReview As button:
+            BorderColor: =RGBA(56, 96, 178, 1)
+            BorderThickness: =1
+            Color: =RGBA(56, 96, 178, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HoverFill: =RGBA(56, 96, 178, 1)
+            OnSelect: |-
+                =Set(varReviewProject, ThisItem);
+                Set(varReviewComment, "");
+                Navigate(ReviewScreen)
+            Size: =12
+            Text: ="Review  →"
+            Tooltip: ="Open in review queue to approve or reject"
+            Visible: =ThisItem.Status.Value = "Submitted"
+            Width: =120
+            X: =1100
+            Y: =14
+            ZIndex: =7
+
+    HomeEmptyState As label:
+        Align: =Align.Center
+        Color: =RGBA(140, 148, 160, 1)
+        Size: =14
+        Text: ="No requests yet — press \"+  New request\" to create your first one."
+        Visible: =CountRows(HomeGallery.AllItems) = 0
+        Width: =1270
+        X: =48
+        Y: =530
+        ZIndex: =21
+
+    Image1_5 As image:
+        Height: =52
+        Image: =User().Image
+        RadiusBottomLeft: =3
+        RadiusBottomRight: =3
+        RadiusTopLeft: =3
+        RadiusTopRight: =3
+        Tooltip: |-
+            =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+            Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+        Width: =31
+        X: =1318
+        Y: =6
+        ZIndex: =22
+
+    Logo_EC_Form_5 As image:
+        Height: =50
+        Image: ='logo--en'
+        PaddingLeft: =15
+        Width: =183
+        X: =562
+        Y: =6
+        ZIndex: =23
+
+    NoInternetIcon_3 As icon:
+        Color: =RGBA(255, 0, 0, 1)
+        DisplayMode: =DisplayMode.View
+        FocusedBorderThickness: =0
+        Height: =44
+        Icon: =Icon.GlobeNotConnected
+        PaddingBottom: =5
+        PaddingLeft: =5
+        PaddingRight: =5
+        PaddingTop: =5
+        Tooltip: ="No Connection"
+        Visible: =Connection.Connected || !Office365Connected
+        X: =16
+        Y: =719
+        ZIndex: =24
+
+    Label12_3 As label:
+        Align: =Align.Center
+        AutoHeight: =true
+        Color: =RGBA(149, 149, 149, 1)
+        FontWeight: =FontWeight.Semibold
+        Size: =11
+        Text: |-
+            ="Audiovisual Service - DG COMM
+            This site is managed by the Directorate-General for Communication"
+        Width: =691
+        X: =265
+        Y: =717
+        ZIndex: =25
+
+    CD_Logo As image:
+        Height: =41
+        Image: =cd_badge_play
+        Width: =32
+        X: =28
+        Y: =12
+        ZIndex: =27
+
+    HomeFilterBar As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =62
+        Width: =1270
+        X: =48
+        Y: =222
+        ZIndex: =28
+
+    HomeLblDG As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: ="DG / AGENCY"
+        Width: =180
+        X: =68
+        Y: =226
+        ZIndex: =29
+
+    HomeFilterDG As text:
+        Default: =varFilterDG
+        Height: =36
+        HintText: ="Filter by DG…"
+        OnChange: =Set(varFilterDG, Self.Value)
+        Width: =180
+        X: =68
+        Y: =244
+        ZIndex: =30
+
+    HomeLblRequest As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: ="REQUEST NAME"
+        Width: =220
+        X: =258
+        Y: =226
+        ZIndex: =31
+
+    HomeFilterRequest As text:
+        Default: =varFilterRequest
+        Height: =36
+        HintText: ="Search by request name…"
+        OnChange: =Set(varFilterRequest, Self.Value)
+        Width: =220
+        X: =258
+        Y: =244
+        ZIndex: =32
+
+    HomeBtnClear As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(247, 248, 250, 1)
+        Height: =36
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: |-
+            =Set(varFilterDG, "");
+            Set(varFilterRequest, "");
+            Set(varFilterArchive, "");
+            Set(varFilterStartDate, Blank());
+            Set(varFilterEndDate, Blank());
+            Reset(HomeFilterDG);
+            Reset(HomeFilterRequest);
+            Reset(HomeFilterArchive);
+            Reset(HomeFilterStart);
+            Reset(HomeFilterEnd)
+        Size: =12
+        Text: ="Clear"
+        Width: =80
+        X: =1210
+        Y: =244
         ZIndex: =33
 
+    HomeBtnReview As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =44
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: |-
+            =/*Set(varReviewProject, Blank());
+            Set(varReviewComment, "");*/
+            Navigate(ReviewScreen)
+        Size: =13
+        Text: ="👁  Review queue"
+        Width: =150
+        X: =951
+        Y: =92
+        ZIndex: =36
+
+    HomeThAction As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =44
+        Size: =11
+        Text: ="ACTION"
+        Width: =160
+        X: =1070
+        Y: =320
+        ZIndex: =37
+
+    HomeBtnPrint As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =44
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: |-
+            =ClearCollect(colPrintData, HomeGallery.AllItems);
+            Navigate(HomePrintScreen)
+        Size: =13
+        Text: ="📄  Export PDF"
+        Width: =140
+        X: =1203
+        Y: =92
+        ZIndex: =38
+
+    HomeCounterBar As label:
+        Color: |-
+            =If(
+                CountIf(HomeGallery.AllItems, Status.Value = "Rejected") > 0,
+                RGBA(193, 40, 40, 1),
+                If(
+                    CountRows(HomeGallery.AllItems) > 0
+                    And CountIf(HomeGallery.AllItems, Status.Value = "Approved") = CountRows(HomeGallery.AllItems),
+                    RGBA(22, 128, 80, 1),
+                    RGBA(96, 104, 120, 1)
+                )
+            )
+        Height: =28
+        Size: =12
+        Text: |-
+            =Text(CountRows(HomeGallery.AllItems)) & If(CountRows(HomeGallery.AllItems) = 1, "  request", "  requests") & "   " &
+            If(
+                CountIf(HomeGallery.AllItems, Status.Value = "Rejected") > 0,
+                "⚠  " & Text(CountIf(HomeGallery.AllItems, Status.Value = "Rejected")) & " rejected",
+                If(
+                    CountRows(HomeGallery.AllItems) > 0
+                    And CountIf(HomeGallery.AllItems, Status.Value = "Approved") = CountRows(HomeGallery.AllItems),
+                    "✓  all approved",
+                    If(
+                        CountIf(HomeGallery.AllItems, Status.Value = "Draft") > 0,
+                        "◌  " & Text(CountIf(HomeGallery.AllItems, Status.Value = "Draft")) & " in draft",
+                        ""
+                    )
+                )
+            )
+        Width: =900
+        X: =48
+        Y: =288
+        ZIndex: =39
+
     HomeBtnHelp As button:
-        BorderThickness: =0
-        Color: =RGBA(186, 202, 226, 1)
-        Fill: =RGBA(0, 18, 107, 1)
-        HoverColor: =RGBA(255, 255, 255, 1)
-        HoverFill: =RGBA(0, 18, 107, 1)
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =44
+        HoverFill: =RGBA(230, 236, 245, 1)
         OnSelect: =Navigate(HelpScreen)
         Size: =13
         Text: ="?  Help"
         Width: =90
-        X: =1012
-        Y: =10
-        ZIndex: =34
+        X: =1107
+        Y: =92
+        ZIndex: =40
+
+    HomeLblArchive As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: ="ARCHIVE NAME"
+        Width: =220
+        X: =488
+        Y: =226
+        ZIndex: =41
+
+    HomeFilterArchive As text:
+        Default: =varFilterArchive
+        Height: =36
+        HintText: ="Search by archive name…"
+        OnChange: =Set(varFilterArchive, Self.Value)
+        Width: =220
+        X: =488
+        Y: =244
+        ZIndex: =42
+
+    HomeLblFilterStart As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: ="SUBMISSION START DATE"
+        Width: =190
+        X: =718
+        Y: =226
+        ZIndex: =43
+
+    HomeFilterStart As datepicker:
+        DefaultDate: =varFilterStartDate
+        OnChange: =Set(varFilterStartDate, Self.SelectedDate)
+        Width: =190
+        X: =718
+        Y: =244
+        ZIndex: =44
+
+    HomeLblFilterEnd As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: ="SUBMISSION END DATE"
+        Width: =190
+        X: =918
+        Y: =226
+        ZIndex: =45
+
+    HomeFilterEnd As datepicker:
+        DefaultDate: =varFilterEndDate
+        OnChange: =Set(varFilterEndDate, Self.SelectedDate)
+        Width: =190
+        X: =918
+        Y: =244
+        ZIndex: =46
+

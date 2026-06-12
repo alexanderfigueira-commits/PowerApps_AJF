@@ -8,7 +8,14 @@
 # ************************************************************************************************
 EditorState:
   ScreensOrder:
-    - FormScreen
-    - Success Screen
-    - Future Coverages
-    - SuspensionScreen
+    - HelpScreen
+    - NewRequestScreen
+    - ReviewScreen
+    - ChildMetaScreen
+    - HomeScreen
+    - ChildValidScreen
+    - RequestScreen
+    - ChildLegalScreen
+    - ConfirmationScreen
+    - HomePrintScreen
+    - ChildInfoScreen
