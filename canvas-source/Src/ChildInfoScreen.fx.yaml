@@ -133,11 +133,10 @@ ChildInfoScreen As screen:
             Color: =RGBA(56, 96, 178, 1)
             Fill: =RGBA(230, 236, 245, 1)
             FontWeight: =FontWeight.Semibold
-            Height: =40
             PaddingLeft: =12
             Size: =14
-            Text: ="Product type:  " & If(varChildMediaType = "Photo", "Photo / Reportage", varChildMediaType)
-            VerticalAlign: =VerticalAlign.Middle
+            Text: |-
+                ="Product type:  " & If(varChildMediaType = "Photo", "Photo / Reportage", varChildMediaType)
             Width: =500
             X: =56
             Y: =66
@@ -495,13 +494,11 @@ ChildInfoScreen As screen:
         Y: =720
         ZIndex: =13
 
-
     CI_BtnTemplate As button:
         BorderColor: =RGBA(56, 96, 178, 1)
         BorderThickness: =1
         Color: =RGBA(56, 96, 178, 1)
         Fill: =RGBA(255, 255, 255, 1)
-        FontWeight: =FontWeight.Semibold
         Height: =34
         HoverFill: =RGBA(230, 236, 245, 1)
         OnSelect: |-
@@ -522,8 +519,6 @@ ChildInfoScreen As screen:
         OnSelect: =Set(varShowTemplatePicker, false)
         Visible: =varShowTemplatePicker
         Width: =1366
-        X: =0
-        Y: =0
         ZIndex: =41
 
     CI_TplPanel As rectangle:
@@ -551,7 +546,6 @@ ChildInfoScreen As screen:
 
     CI_TplSubtitle As label:
         Color: =RGBA(96, 104, 120, 1)
-        Height: =40
         Size: =12
         Text: ="Showing only " & If(varChildMediaType="Photo", "Photo/Reportage", varChildMediaType) & " archives, newest first. Selecting one pre-fills this form and never modifies the original."
         Visible: =varShowTemplatePicker
@@ -577,8 +571,8 @@ ChildInfoScreen As screen:
 
     CI_TplSearch As text:
         Default: =varTplSearch
-        HintText: ="Search by title or archive ID..."
         Height: =36
+        HintText: ="Search by title or archive ID..."
         OnChange: =Set(varTplSearch, Self.Value)
         Visible: =varShowTemplatePicker
         Width: =712
@@ -588,7 +582,6 @@ ChildInfoScreen As screen:
 
     CI_TplGallery As gallery.galleryVertical:
         DelayItemLoading: =true
-        Fill: =RGBA(0, 0, 0, 0)
         Height: =316
         Items: |-
             =SortByColumns(
@@ -633,17 +626,13 @@ ChildInfoScreen As screen:
                     Set(varShowTemplatePicker, false)
                 )
             Width: =712
-            X: =0
-            Y: =0
             ZIndex: =1
 
         CI_TplRowTitle As label:
             Color: =RGBA(32, 31, 30, 1)
             Height: =28
             OnSelect: =Select(Parent)
-            Size: =13
             Text: =If(IsBlank(ThisItem.Title), "Untitled archive", ThisItem.Title)
-            VerticalAlign: =VerticalAlign.Middle
             Width: =500
             X: =12
             Y: =4
@@ -655,7 +644,6 @@ ChildInfoScreen As screen:
             OnSelect: =Select(Parent)
             Size: =11
             Text: ="ID " & Text(ThisItem.ID) & If(IsBlank(ThisItem.ContractCase.Value), "", "   |   " & Left(ThisItem.ContractCase.Value, 30))
-            VerticalAlign: =VerticalAlign.Middle
             Width: =560
             X: =12
             Y: =30
@@ -669,17 +657,14 @@ ChildInfoScreen As screen:
             OnSelect: =Select(Parent)
             Size: =12
             Text: ="Use"
-            VerticalAlign: =VerticalAlign.Middle
             Width: =100
             X: =600
-            Y: =0
             ZIndex: =4
 
         CI_TplRowDivider As rectangle:
             Fill: =RGBA(230, 232, 238, 1)
             Height: =1
             Width: =712
-            X: =0
             Y: =55
             ZIndex: =5
 
@@ -687,9 +672,7 @@ ChildInfoScreen As screen:
         Align: =Align.Center
         Color: =RGBA(140, 148, 160, 1)
         Height: =60
-        Size: =13
         Text: ="No previous " & If(varChildMediaType="Photo", "Photo/Reportage", varChildMediaType) & " archives yet."
-        VerticalAlign: =VerticalAlign.Middle
         Visible: =varShowTemplatePicker And CountRows(CI_TplGallery.AllItems) = 0
         Width: =712
         X: =327
@@ -701,8 +684,6 @@ ChildInfoScreen As screen:
         Height: =768
         Visible: =varShowTplConfirm
         Width: =1366
-        X: =0
-        Y: =0
         ZIndex: =49
 
     CI_TplConfirmPanel As rectangle:
@@ -719,9 +700,7 @@ ChildInfoScreen As screen:
     CI_TplConfirmText As label:
         Color: =RGBA(32, 31, 30, 1)
         Height: =60
-        Size: =13
         Text: ="You already started filling this form. Pre-filling from the selected template will overwrite your current entries. Continue?"
-        VerticalAlign: =VerticalAlign.Middle
         Visible: =varShowTplConfirm
         Width: =472
         X: =447
@@ -739,15 +718,11 @@ ChildInfoScreen As screen:
         Size: =13
         Text: ="Keep my entries"
         Visible: =varShowTplConfirm
-        Width: =160
         X: =587
         Y: =396
         ZIndex: =52
 
     CI_TplConfirmOK As button:
-        Color: =RGBA(255, 255, 255, 1)
-        Fill: =RGBA(56, 96, 178, 1)
-        FontWeight: =FontWeight.Semibold
         Height: =38
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
@@ -770,3 +745,4 @@ ChildInfoScreen As screen:
         X: =759
         Y: =396
         ZIndex: =53
+

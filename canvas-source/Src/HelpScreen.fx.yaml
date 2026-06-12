@@ -2,7 +2,6 @@ HelpScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: =Set(varFeedbackSent, false)
 
-
     HL_TopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
         Height: =52
@@ -33,17 +32,6 @@ HelpScreen As screen:
         X: =156
         Y: =4
         ZIndex: =3
-
-    HL_AppSubtitle As label:
-        Color: =RGBA(186, 202, 226, 1)
-        Height: =16
-        Size: =8
-        Text: ="Ticket System"
-        VerticalAlign: =VerticalAlign.Top
-        Width: =500
-        X: =156
-        Y: =32
-        ZIndex: =19
 
     HL_Card As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -200,6 +188,16 @@ HelpScreen As screen:
         Y: =648
         ZIndex: =18
 
+    HL_AppSubtitle As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =16
+        Size: =8
+        Text: ="Ticket System"
+        VerticalAlign: =VerticalAlign.Top
+        Width: =500
+        X: =156
+        Y: =32
+        ZIndex: =19
 
     HL_RateCard As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -224,7 +222,6 @@ HelpScreen As screen:
 
     HL_RateSub As label:
         Color: =RGBA(96, 104, 120, 1)
-        Height: =40
         Size: =12
         Text: ="How satisfied are you? Your feedback helps us improve."
         Width: =360
@@ -342,8 +339,8 @@ HelpScreen As screen:
 
     HL_Feedback As text:
         Default: =varFeedbackText
-        HintText: ="Tell us what works well and what could be improved..."
         Height: =100
+        HintText: ="Tell us what works well and what could be improved..."
         Mode: =TextMode.MultiLine
         OnChange: =Set(varFeedbackText, Self.Value)
         Width: =360
@@ -352,13 +349,9 @@ HelpScreen As screen:
         ZIndex: =30
 
     HL_BtnSubmitRating As button:
-        Color: =RGBA(255, 255, 255, 1)
         DisabledColor: =RGBA(255, 255, 255, 1)
         DisabledFill: =RGBA(186, 196, 214, 1)
         DisplayMode: =If(varRating > 0, DisplayMode.Edit, DisplayMode.Disabled)
-        Fill: =RGBA(56, 96, 178, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =40
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
             =Patch(AVCentralDepositProjects,
@@ -382,12 +375,10 @@ HelpScreen As screen:
     HL_ThanksMsg As label:
         Color: =RGBA(22, 128, 80, 1)
         FontWeight: =FontWeight.Semibold
-        Height: =40
-        Size: =13
         Text: ="Thank you for your feedback!"
-        VerticalAlign: =VerticalAlign.Middle
         Visible: =varFeedbackSent
         Width: =360
         X: =1024
         Y: =452
         ZIndex: =32
+

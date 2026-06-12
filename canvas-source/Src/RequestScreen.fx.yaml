@@ -216,117 +216,6 @@ RequestScreen As screen:
         Y: =306
         ZIndex: =17
 
-    RS_LblMediaType As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Text: ="Production type *  (one request = one media type)"
-        Width: =500
-        X: =56
-        Y: =394
-        ZIndex: =36
-
-    RS_MediaLockHint As label:
-        Color: =RGBA(193, 40, 40, 1)
-        Height: =22
-        Size: =11
-        Text: ="Locked — remove all media items to change the type"
-        Visible: =CountRows(colArchives) > 0
-        Width: =400
-        X: =560
-        Y: =394
-        ZIndex: =37
-
-    RS_TypePhoto As button:
-        BorderColor: =If(varRequestMediaType = "Photo", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
-        BorderThickness: =If(varRequestMediaType = "Photo", 2, 1)
-        Color: =If(varRequestMediaType = "Photo", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
-        DisplayMode: =If(varConfirmed And varRequestMediaType <> "Photo", DisplayMode.Disabled, DisplayMode.Edit)
-        Fill: =If(varRequestMediaType = "Photo", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
-        FontWeight: =FontWeight.Semibold
-        Height: =40
-        HoverFill: =RGBA(240, 242, 246, 1)
-        OnSelect: |-
-            =Set(varRequestMediaType, "Photo");
-            Set(varConfirmed, true)
-        Size: =13
-        Text: ="Photo/Reportage"
-        Width: =180
-        X: =56
-        Y: =420
-        ZIndex: =38
-
-    RS_TypeVideo As button:
-        BorderColor: =If(varRequestMediaType = "Video", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
-        BorderThickness: =If(varRequestMediaType = "Video", 2, 1)
-        Color: =If(varRequestMediaType = "Video", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
-        DisplayMode: =If(varConfirmed And varRequestMediaType <> "Video", DisplayMode.Disabled, DisplayMode.Edit)
-        Fill: =If(varRequestMediaType = "Video", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
-        FontWeight: =FontWeight.Semibold
-        Height: =40
-        HoverFill: =RGBA(240, 242, 246, 1)
-        OnSelect: |-
-            =Set(varPendingMediaType, "Video");
-            Set(varShowTypeConfirm, true)
-        Size: =13
-        Text: ="Video"
-        Width: =180
-        X: =248
-        Y: =420
-        ZIndex: =39
-
-    RS_TypePodcast As button:
-        BorderColor: =If(varRequestMediaType = "Podcast", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
-        BorderThickness: =If(varRequestMediaType = "Podcast", 2, 1)
-        Color: =If(varRequestMediaType = "Podcast", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
-        DisplayMode: =If(varConfirmed And varRequestMediaType <> "Podcast", DisplayMode.Disabled, DisplayMode.Edit)
-        Fill: =If(varRequestMediaType = "Podcast", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
-        FontWeight: =FontWeight.Semibold
-        Height: =40
-        HoverFill: =RGBA(240, 242, 246, 1)
-        OnSelect: |-
-            =Set(varRequestMediaType, "Podcast");
-            Set(varConfirmed, true)
-        Size: =13
-        Text: ="Podcast"
-        Width: =180
-        X: =440
-        Y: =420
-        ZIndex: =40
-
-    RS_AITitle As label:
-        Color: =RGBA(60, 66, 80, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =22
-        Text: |-
-            =Switch(varRequestMediaType,
-                "Photo", "AI-generated images",
-                "Video", "AI-generated content",
-                "Podcast", "AI-generated voice-over",
-                "")
-        Visible: =varRequestMediaType = "Photo" Or varRequestMediaType = "Video" Or varRequestMediaType = "Podcast"
-        Width: =500
-        X: =56
-        Y: =472
-        ZIndex: =41
-
-    RS_AICheck As checkbox.Checkbox:
-        Default: =varRequestAIDeclared
-        Height: =28
-        OnCheck: =Set(varRequestAIDeclared, true)
-        OnUncheck: =Set(varRequestAIDeclared, false)
-        Text: |-
-            =Switch(varRequestMediaType,
-                "Photo", "This production uses AI-generated images",
-                "Video", "This production uses AI-generated content",
-                "Podcast", "This production uses an AI-generated voice-over",
-                "")
-        Visible: =varRequestMediaType = "Photo" Or varRequestMediaType = "Video" Or varRequestMediaType = "Podcast"
-        Width: =700
-        X: =52
-        Y: =496
-        ZIndex: =42
-
     RS_BtnSaveRequest As button:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
@@ -468,7 +357,7 @@ RequestScreen As screen:
                 Notify("Could not save request. Check required fields.", NotificationType.Error)
             )*/
              Set(varChildMediaType, varRequestMediaType);
-            Set(varChildAIVoiceover, varRequestAIDeclared);
+            
             Navigate(ChildInfoScreen)
         Size: =13
         Text: ="+  Add new media"
@@ -837,96 +726,6 @@ RequestScreen As screen:
         Y: =880
         ZIndex: =34
 
-    RS_TypeConfirmOverlay As rectangle:
-        Fill: =RGBA(0, 18, 107, 0.45)
-        Height: =928
-        OnSelect: =Set(varShowTypeConfirm, false)
-        Visible: =varShowTypeConfirm
-        Width: =1366
-        X: =0
-        Y: =0
-        ZIndex: =43
-
-    RS_TypeConfirmPanel As rectangle:
-        BorderColor: =RGBA(186, 202, 226, 1)
-        BorderThickness: =1
-        Fill: =RGBA(255, 255, 255, 1)
-        Height: =192
-        Visible: =varShowTypeConfirm
-        Width: =520
-        X: =423
-        Y: =330
-        ZIndex: =44
-
-    RS_TypeConfirmAccent As rectangle:
-        Fill: =RGBA(56, 96, 178, 1)
-        Height: =4
-        Visible: =varShowTypeConfirm
-        Width: =520
-        X: =423
-        Y: =330
-        ZIndex: =45
-
-    RS_TypeConfirmTitle As label:
-        Color: =RGBA(0, 18, 107, 1)
-        FontWeight: =FontWeight.Bold
-        Height: =28
-        Size: =15
-        Text: ="Confirm selection"
-        Visible: =varShowTypeConfirm
-        Width: =460
-        X: =447
-        Y: =346
-        ZIndex: =46
-
-    RS_TypeConfirmMsg As label:
-        Color: =RGBA(60, 66, 80, 1)
-        Height: =60
-        Size: =13
-        Text: ="Are you sure you want to select Video? All other media type options will be deactivated while this type is active."
-        Visible: =varShowTypeConfirm
-        Width: =460
-        X: =447
-        Y: =380
-        ZIndex: =47
-
-    RS_TypeConfirmCancel As button:
-        BorderColor: =RGBA(220, 224, 230, 1)
-        BorderThickness: =1
-        Color: =RGBA(60, 66, 80, 1)
-        Fill: =RGBA(255, 255, 255, 1)
-        Height: =38
-        HoverFill: =RGBA(247, 248, 250, 1)
-        OnSelect: |-
-            =Set(varPendingMediaType, "");
-            Set(varShowTypeConfirm, false)
-        Size: =13
-        Text: ="Cancel"
-        Visible: =varShowTypeConfirm
-        Width: =140
-        X: =627
-        Y: =458
-        ZIndex: =48
-
-    RS_TypeConfirmOK As button:
-        Color: =RGBA(255, 255, 255, 1)
-        Fill: =RGBA(56, 96, 178, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =38
-        HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: |-
-            =Set(varRequestMediaType, varPendingMediaType);
-            Set(varConfirmed, true);
-            Set(varShowTypeConfirm, false);
-            Set(varPendingMediaType, "")
-        Size: =13
-        Text: ="Confirm"
-        Visible: =varShowTypeConfirm
-        Width: =140
-        X: =779
-        Y: =458
-        ZIndex: =49
-
     RS_BtnResubmitRequest As button:
         DisabledColor: =RGBA(255, 255, 255, 1)
         DisabledFill: =RGBA(186, 196, 214, 1)
@@ -1019,4 +818,192 @@ RequestScreen As screen:
         X: =1122
         Y: =880
         ZIndex: =35
+
+    RS_LblMediaType As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: ="Production type *  (one request = one media type)"
+        Width: =500
+        X: =56
+        Y: =394
+        ZIndex: =36
+
+    RS_MediaLockHint As label:
+        Color: =RGBA(193, 40, 40, 1)
+        Height: =22
+        Size: =11
+        Text: ="Locked — remove all media items to change the type"
+        Visible: =CountRows(colArchives) > 0
+        Width: =400
+        X: =560
+        Y: =394
+        ZIndex: =37
+
+    RS_TypePhoto As button:
+        BorderColor: =If(varRequestMediaType = "Photo", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
+        BorderThickness: =If(varRequestMediaType = "Photo", 2, 1)
+        Color: =If(varRequestMediaType = "Photo", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        DisplayMode: =If(varConfirmed And varRequestMediaType <> "Photo", DisplayMode.Disabled, DisplayMode.Edit)
+        Fill: =If(varRequestMediaType = "Photo", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: |-
+            =Set(varRequestMediaType, "Photo");
+            Set(varConfirmed, true)
+        Size: =13
+        Text: ="Photo/Reportage"
+        Width: =180
+        X: =56
+        Y: =420
+        ZIndex: =38
+
+    RS_TypeVideo As button:
+        BorderColor: =If(varRequestMediaType = "Video", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
+        BorderThickness: =If(varRequestMediaType = "Video", 2, 1)
+        Color: =If(varRequestMediaType = "Video", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        DisplayMode: =If(varConfirmed And varRequestMediaType <> "Video", DisplayMode.Disabled, DisplayMode.Edit)
+        Fill: =If(varRequestMediaType = "Video", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: |-
+            =Set(varPendingMediaType, "Video");
+            Set(varShowTypeConfirm, true)
+        Size: =13
+        Text: ="Video"
+        Width: =180
+        X: =248
+        Y: =420
+        ZIndex: =39
+
+    RS_TypePodcast As button:
+        BorderColor: =If(varRequestMediaType = "Podcast", RGBA(56, 96, 178, 1), RGBA(220, 224, 230, 1))
+        BorderThickness: =If(varRequestMediaType = "Podcast", 2, 1)
+        Color: =If(varRequestMediaType = "Podcast", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        DisplayMode: =If(varConfirmed And varRequestMediaType <> "Podcast", DisplayMode.Disabled, DisplayMode.Edit)
+        Fill: =If(varRequestMediaType = "Podcast", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: |-
+            =Set(varRequestMediaType, "Podcast");
+            Set(varConfirmed, true)
+        Size: =13
+        Text: ="Podcast"
+        Width: =180
+        X: =440
+        Y: =420
+        ZIndex: =40
+
+    RS_AITitle As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Text: |-
+            =Switch(varRequestMediaType,
+                "Photo", "AI-generated images",
+                "Video", "AI-generated content",
+                "Podcast", "AI-generated voice-over",
+                "")
+        Visible: =varRequestMediaType = "Photo" Or varRequestMediaType = "Video" Or varRequestMediaType = "Podcast"
+        Width: =454
+        X: =880
+        Y: =210
+        ZIndex: =41
+
+    RS_AICheck As checkbox.Checkbox:
+        Default: =varRequestAIDeclared
+        Height: =30
+        OnCheck: =Set(varRequestAIDeclared, true)
+        OnUncheck: =Set(varRequestAIDeclared, false)
+        Text: |-
+            =Switch(varRequestMediaType,
+                "Photo", "This production uses AI-generated images",
+                "Video", "This production uses AI-generated content",
+                "Podcast", "This production uses an AI-generated voice-over",
+                "")
+        Visible: =varRequestMediaType = "Photo" Or varRequestMediaType = "Video" Or varRequestMediaType = "Podcast"
+        Width: =448
+        X: =880
+        Y: =236
+        ZIndex: =42
+
+    RS_TypeConfirmOverlay As rectangle:
+        Fill: =RGBA(0, 18, 107, 0.45)
+        Height: =928
+        OnSelect: =Set(varShowTypeConfirm, false)
+        Visible: =varShowTypeConfirm
+        Width: =1366
+        ZIndex: =43
+
+    RS_TypeConfirmPanel As rectangle:
+        BorderColor: =RGBA(186, 202, 226, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =192
+        Visible: =varShowTypeConfirm
+        Width: =520
+        X: =423
+        Y: =330
+        ZIndex: =44
+
+    RS_TypeConfirmAccent As rectangle:
+        Height: =4
+        Visible: =varShowTypeConfirm
+        Width: =520
+        X: =423
+        Y: =330
+        ZIndex: =45
+
+    RS_TypeConfirmTitle As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =28
+        Size: =15
+        Text: ="Confirm selection"
+        Visible: =varShowTypeConfirm
+        Width: =460
+        X: =447
+        Y: =346
+        ZIndex: =46
+
+    RS_TypeConfirmMsg As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =60
+        Text: ="Are you sure you want to select Video? All other media type options will be deactivated while this type is active."
+        Visible: =varShowTypeConfirm
+        Width: =460
+        X: =447
+        Y: =380
+        ZIndex: =47
+
+    RS_TypeConfirmCancel As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =38
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: |-
+            =Set(varPendingMediaType, "");
+            Set(varShowTypeConfirm, false)
+        Size: =13
+        Text: ="Cancel"
+        Visible: =varShowTypeConfirm
+        Width: =140
+        X: =627
+        Y: =458
+        ZIndex: =48
+
+    RS_TypeConfirmOK As button:
+        Height: =38
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: |-
+            =Set(varRequestMediaType, varPendingMediaType);
+            Set(varConfirmed, true);
+            Set(varShowTypeConfirm, false);
+            Set(varPendingMediaType, "")
+        Size: =13
+        Text: ="Confirm"
+        Visible: =varShowTypeConfirm
+        Width: =140
+        X: =779
+        Y: =458
+        ZIndex: =49
 
