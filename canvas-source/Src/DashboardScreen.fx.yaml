@@ -331,7 +331,7 @@ DashboardScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =48
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(HomeScreen)
+        OnSelect: =Navigate(MyRequestScreen)
         Size: =15
         Text: ="Enter the application"
         Width: =280

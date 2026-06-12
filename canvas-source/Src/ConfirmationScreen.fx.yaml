@@ -112,7 +112,7 @@ ConfirmationScreen As screen:
             Set(varMusicLicence, false);
             Set(varPreexisting, false);
             Set(varMediaType, "Photo");
-            Navigate(HomeScreen)
+            Navigate(MyRequestScreen)
         Size: =14
         Text: ="Back to My requests"
         Width: =260

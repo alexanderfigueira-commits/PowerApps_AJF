@@ -136,10 +136,9 @@
   "ScreenOrder": [
     "DashboardScreen",
     "HelpScreen",
-    "NewRequestScreen",
     "ReviewScreen",
     "ChildMetaScreen",
-    "HomeScreen",
+    "MyRequestScreen",
     "ChildValidScreen",
     "RequestScreen",
     "ChildLegalScreen",

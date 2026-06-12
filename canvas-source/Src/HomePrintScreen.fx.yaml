@@ -23,7 +23,7 @@ HomePrintScreen As screen:
         Color: =RGBA(60, 66, 80, 1)
         Fill: =RGBA(255, 255, 255, 1)
         HoverFill: =RGBA(247, 248, 250, 1)
-        OnSelect: =Navigate(HomeScreen)
+        OnSelect: =Navigate(MyRequestScreen)
         Size: =13
         Text: ="←  Back"
         Width: =100

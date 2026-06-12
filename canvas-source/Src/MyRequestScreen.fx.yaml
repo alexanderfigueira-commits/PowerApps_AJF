@@ -1,4 +1,4 @@
-HomeScreen As screen:
+MyRequestScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: |-
         =Set(varFilter, "All");
@@ -69,13 +69,7 @@ HomeScreen As screen:
         Height: =44
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
-            =/*Set(varCurrentRequest, Blank());
-            Set(varRequestTitle, "");
-            Set(varRequestDG, "");
-            Set(varRequestDescription, "");
-            Set(varRequestOwnerContact, "");
-            //Set(varRequestOwnerEmail, User().Email);*/
-            Set(varRequestMediaType, "");
+            =Set(varRequestMediaType, "");
             Set(varRequestAIDeclared, false);
             Set(varRequestContractor, "");
             Navigate(RequestScreen)
@@ -84,6 +78,21 @@ HomeScreen As screen:
         X: =780
         Y: =92
         ZIndex: =8
+
+    HomeBtnDashboard As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =44
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: =Navigate(DashboardScreen, ScreenTransition.Fade)
+        Size: =13
+        Text: ="📊  Dashboard"
+        Width: =130
+        X: =638
+        Y: =92
+        ZIndex: =48
 
     HomeChipAll As button:
         BorderColor: =If(varFilter="All", RGBA(0,18,107,1), RGBA(220,224,230,1))
@@ -493,10 +502,7 @@ HomeScreen As screen:
         Fill: =RGBA(255, 255, 255, 1)
         Height: =44
         HoverFill: =RGBA(230, 236, 245, 1)
-        OnSelect: |-
-            =/*Set(varReviewProject, Blank());
-            Set(varReviewComment, "");*/
-            Navigate(ReviewScreen)
+        OnSelect: =Navigate(ReviewScreen)
         Size: =13
         Text: ="👁  Review queue"
         Width: =150

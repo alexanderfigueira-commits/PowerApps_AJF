@@ -56,7 +56,7 @@ RequestScreen As screen:
         Color: =RGBA(186, 202, 226, 1)
         Fill: =RGBA(0, 18, 107, 1)
         HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(HomeScreen)
+        OnSelect: =Navigate(MyRequestScreen)
         Size: =13
         Text: ="←  My requests"
         X: =16
@@ -818,7 +818,7 @@ RequestScreen As screen:
                 );
                 Clear(colArchives);
                 Notify("Request submitted successfully.", NotificationType.Success);
-                Navigate(HomeScreen)
+                Navigate(MyRequestScreen)
             )
         Size: =14
         Text: ="Submit request  →"
@@ -911,7 +911,7 @@ RequestScreen As screen:
                 );
                 Clear(colArchives);
                 Notify("Request resubmitted for review.", NotificationType.Success);
-                Navigate(HomeScreen)
+                Navigate(MyRequestScreen)
             )
         Size: =14
         Text: ="Resubmit for review  →"
