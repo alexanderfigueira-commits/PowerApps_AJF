@@ -102,6 +102,8 @@ App As appinfo:
         Set(varShowTplConfirm, false);
         Set(varTplSearch, "");
         Set(varTplCandidate, Blank());
+        Set(varShowTypeConfirm, false);
+        Set(varPendingMediaType, "");
         Set(varRating, 0);
         Set(varFeedbackText, "");
         Set(varFeedbackSent, false);
