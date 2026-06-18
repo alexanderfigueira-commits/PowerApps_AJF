@@ -1,0 +1,976 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ChildInfoScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
+    Children:
+      - CI_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =52
+            Width: =1366
+      - CI_Back:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(186, 202, 226, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: =Navigate(RequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="←  Back to request"
+            Width: =180
+            X: =16
+            Y: =10
+      - CI_Breadcrumb:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =52
+            Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+            Width: =700
+            X: =200
+      - CI_TabsBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =50
+            Width: =1366
+            Y: =52
+      - CI_Tab1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 18, 107, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 1)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="1.  Info"
+            Width: =150
+            X: =16
+            Y: =52
+      - CI_Tab1Line:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =3
+            X: =16
+            Y: =99
+      - CI_Tab2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildMetaScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="2.  Metadata"
+            Width: =170
+            X: =176
+            Y: =52
+      - CI_Tab3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildLegalScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="3.  Legal & Docs"
+            Width: =180
+            X: =356
+            Y: =52
+      - CI_Tab4:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildValidScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="4.  Validations"
+            Width: =170
+            X: =546
+            Y: =52
+      - CI_Gallery:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DelayItemLoading: =false
+            Fill: =RGBA(247, 248, 250, 1)
+            Height: =610
+            Items: |-
+              =[{id: 1}]
+            LoadingSpinner: =LoadingSpinner.None
+            TemplatePadding: =0
+            TemplateSize: =816 + Switch(varChildMediaType, "Video", 160, "Podcast", 320, 0)
+            Width: =1366
+            Y: =102
+          Children:
+            - CI_Card:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(220, 224, 230, 1)
+                  BorderThickness: =1
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =796 + Switch(varChildMediaType, "Video", 160, "Podcast", 320, 0)
+                  Width: =1302
+                  X: =32
+                  Y: =6
+            - CI_SectionHeader:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =30
+                  Size: =18
+                  Text: ="Media details"
+                  Width: =840
+                  X: =56
+                  Y: =26
+            - CI_ProductTypeDisplay:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(186, 202, 226, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(56, 96, 178, 1)
+                  Fill: =RGBA(230, 236, 245, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  PaddingLeft: =12
+                  Size: =14
+                  Text: |-
+                    ="Product type:  " & If(varChildMediaType = "Photo", "Photo / Reportage", varChildMediaType)
+                  Width: =500
+                  X: =56
+                  Y: =66
+            - CI_LblTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Archive / production title *"
+                  Width: =800
+                  X: =56
+                  Y: =122
+            - CI_Title:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildTitle
+                  Font: =Font.'Open Sans'
+                  HintText: ="Descriptive name of this specific archive item"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildTitle, Self.Value)
+                  Width: =900
+                  X: =56
+                  Y: =148
+            - CI_LblDescription:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Description"
+                  Width: =800
+                  X: =56
+                  Y: =204
+            - CI_Description:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildDescription
+                  Font: =Font.'Open Sans'
+                  Height: =64
+                  HintText: ="Brief description of the content"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Mode: =TextMode.MultiLine
+                  OnChange: =Set(varChildDescription, Self.Value)
+                  Width: =900
+                  X: =56
+                  Y: =230
+            - CI_LblCaptureDate:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Capture / production date *"
+                  Width: =300
+                  X: =56
+                  Y: =310
+            - CI_CaptureDate:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DefaultDate: =varChildCaptureDate
+                  Font: =Font.'Open Sans'
+                  IconBackground: =RGBA(56, 96, 178, 1)
+                  IconFill: =RGBA(255, 255, 255, 1)
+                  OnChange: =Set(varChildCaptureDate, Self.SelectedDate)
+                  Width: =300
+                  X: =56
+                  Y: =336
+            - CI_LblPlace:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Production place"
+                  Width: =300
+                  X: =388
+                  Y: =310
+            - CI_Place:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildProductionPlace
+                  Font: =Font.'Open Sans'
+                  HintText: ="City, country or venue"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildProductionPlace, Self.Value)
+                  Width: =300
+                  X: =388
+                  Y: =336
+            - CI_LblProductType:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Product type"
+                  Visible: =varChildMediaType = "Video"
+                  Width: =600
+                  X: =56
+                  Y: =392
+            - CI_ProductType:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildProductType
+                  Font: =Font.'Open Sans'
+                  HintText: ="e.g. Documentary, News, Feature, Institutional..."
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildProductType, Self.Value)
+                  Visible: =varChildMediaType = "Video"
+                  Width: =600
+                  X: =56
+                  Y: =418
+            - CI_LblSeriesTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Series title"
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =600
+                  X: =56
+                  Y: =392
+            - CI_SeriesTitle:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildSeriesTitle
+                  Font: =Font.'Open Sans'
+                  HintText: ="Name of the podcast series"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildSeriesTitle, Self.Value)
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =600
+                  X: =56
+                  Y: =418
+            - CI_LblEpisodeTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Episode title"
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =390
+                  X: =56
+                  Y: =474
+            - CI_EpisodeTitle:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildEpisodeTitle
+                  Font: =Font.'Open Sans'
+                  HintText: ="Episode or segment title"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildEpisodeTitle, Self.Value)
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =390
+                  X: =56
+                  Y: =500
+            - CI_LblSeasonNumber:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Season nr."
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =160
+                  X: =464
+                  Y: =474
+            - CI_SeasonNumber:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =Text(varChildSeasonNumber)
+                  Font: =Font.'Open Sans'
+                  HintText: ="0"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildSeasonNumber, Value(Self.Text))
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =160
+                  X: =464
+                  Y: =500
+            - CI_LblEpisodeSummary:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Episode summary"
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =390
+                  X: =56
+                  Y: =556
+            - CI_EpisodeSummary:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildEpisodeSummary
+                  Font: =Font.'Open Sans'
+                  HintText: ="Short summary for this episode"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildEpisodeSummary, Self.Value)
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =390
+                  X: =56
+                  Y: =582
+            - CI_LblEpisodeNumber:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Episode nr."
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =160
+                  X: =464
+                  Y: =556
+            - CI_EpisodeNumber:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =Text(varChildEpisodeNumber)
+                  Font: =Font.'Open Sans'
+                  HintText: ="0"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildEpisodeNumber, Value(Self.Text))
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =160
+                  X: =464
+                  Y: =582
+            - CI_LblProductionEndDate:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Production end date"
+                  Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+                  Width: =300
+                  X: =56
+                  Y: =392 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0)
+            - CI_ProductionEndDate:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DefaultDate: =varChildProductionEndDate
+                  Font: =Font.'Open Sans'
+                  IconBackground: =RGBA(56, 96, 178, 1)
+                  IconFill: =RGBA(255, 255, 255, 1)
+                  OnChange: =Set(varChildProductionEndDate, Self.SelectedDate)
+                  Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+                  Width: =300
+                  X: =56
+                  Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0)
+            - CI_LblPubStartDate:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Publication start date"
+                  Width: =300
+                  X: =56
+                  Y: =392 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            - CI_PubStartDate:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DefaultDate: =varChildPublicationStartDate
+                  Font: =Font.'Open Sans'
+                  IconBackground: =RGBA(56, 96, 178, 1)
+                  IconFill: =RGBA(255, 255, 255, 1)
+                  OnChange: =Set(varChildPublicationStartDate, Self.SelectedDate)
+                  Width: =300
+                  X: =56
+                  Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            - CI_LblPubEndDate:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Publication end date"
+                  Width: =300
+                  X: =388
+                  Y: =392 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            - CI_PubEndDate:
+                Control: Classic/DatePicker@2.6.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DefaultDate: =varChildPublicationEndDate
+                  Font: =Font.'Open Sans'
+                  IconBackground: =RGBA(56, 96, 178, 1)
+                  IconFill: =RGBA(255, 255, 255, 1)
+                  OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
+                  Width: =300
+                  X: =388
+                  Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            - CI_LblLinks:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Reference links"
+                  Width: =800
+                  X: =56
+                  Y: =472 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            - CI_Links:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildLinks
+                  Font: =Font.'Open Sans'
+                  HintText: ="Relevant URLs or SharePoint references"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildLinks, Self.Value)
+                  Width: =900
+                  X: =56
+                  Y: =498 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            - CI_LblTags:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Pertinent tags"
+                  Width: =800
+                  X: =56
+                  Y: =552 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            - CI_Tags:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildTags
+                  Font: =Font.'Open Sans'
+                  HintText: ="Comma-separated keywords for discoverability"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildTags, Self.Value)
+                  Width: =900
+                  X: =56
+                  Y: =578 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            - CI_LblFTPPath:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="FTP delivery path"
+                  Width: =800
+                  X: =56
+                  Y: =632 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            - CI_FTPPath:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildFTPPath
+                  Font: =Font.'Open Sans'
+                  HintText: ="ftp://avdeposit.ec.europa.eu/incoming/2026/…"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildFTPPath, Self.Value)
+                  Width: =900
+                  X: =56
+                  Y: =658 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+      - CI_BottomBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =56
+            Width: =1366
+            Y: =712
+      - CI_BtnSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =Notify("Fields saved: complete all tabs then press Save archive on the Validations tab.", NotificationType.Information)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="ⓘ  Note"
+            Width: =140
+            X: =32
+            Y: =720
+      - CI_BtnNext:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: =Navigate(ChildMetaScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: |-
+              ="Next: Metadata  →"
+            Width: =200
+            X: =1142
+            Y: =720
+      - CI_BtnTemplate:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 96, 178, 1)
+            BorderThickness: =1
+            Color: =RGBA(56, 96, 178, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =Set(varTplSearch, "");
+              Set(varTplCandidate, Blank());
+              Set(varShowTplConfirm, false);
+              Set(varShowTemplatePicker, true)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="Use previous archive as template"
+            Width: =300
+            X: =1018
+            Y: =16
+      - CI_TplOverlay:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.45)
+            Height: =768
+            OnSelect: =Set(varShowTemplatePicker, false)
+            Visible: =varShowTemplatePicker
+            Width: =1366
+      - CI_TplPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(186, 202, 226, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =540
+            Visible: =varShowTemplatePicker
+            Width: =760
+            X: =303
+            Y: =114
+      - CI_TplTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =16
+            Text: ="Use previous archive as template"
+            Visible: =varShowTemplatePicker
+            Width: =600
+            X: =327
+            Y: =130
+      - CI_TplSubtitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Size: =12
+            Text: ="Showing only " & If(varChildMediaType="Photo", "Photo/Reportage", varChildMediaType) & " archives, newest first. Selecting one pre-fills this form and never modifies the original."
+            Visible: =varShowTemplatePicker
+            Width: =712
+            X: =327
+            Y: =162
+      - CI_TplClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: =Set(varShowTemplatePicker, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =16
+            Text: ="X"
+            Visible: =varShowTemplatePicker
+            Width: =40
+            X: =1011
+            Y: =122
+      - CI_TplSearch:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =varTplSearch
+            Font: =Font.'Open Sans'
+            Height: =36
+            HintText: ="Search by title or archive ID..."
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =Set(varTplSearch, Self.Value)
+            Visible: =varShowTemplatePicker
+            Width: =712
+            X: =327
+            Y: =208
+      - CI_TplGallery:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =316
+            Items: |-
+              =SortByColumns(
+                  Filter(
+                      CentralDepositMainList,
+                      MediaType.Value = varChildMediaType,
+                      IsBlank(varTplSearch)
+                          Or varTplSearch in Title
+                          Or varTplSearch in Text(ID)
+                  ),
+                  "ID", SortOrder.Descending
+              )
+            TemplatePadding: =0
+            TemplateSize: =56
+            Visible: =varShowTemplatePicker
+            Width: =712
+            X: =327
+            Y: =250
+          Children:
+            - CI_TplRowBg:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Height: =55
+                  HoverFill: =RGBA(240, 242, 246, 1)
+                  OnSelect: |-
+                    =Set(varTplCandidate, ThisItem);
+                    If(
+                        varChildTitle <> "" Or varChildDescription <> "",
+                        Set(varShowTplConfirm, true),
+                        Set(varChildTitle, Coalesce(varTplCandidate.Title, ""));
+                        Set(varChildDescription, Coalesce(varTplCandidate.Description, ""));
+                        Set(varChildCredits, Coalesce(varTplCandidate.Photographer, ""));
+                        Set(varChildLanguageVersions, Coalesce(varTplCandidate.LanguageVersions.Value, ""));
+                        Set(varChildContractCase, Coalesce(varTplCandidate.ContractCase.Value, Blank()));
+                        Set(varChildContractRef, Coalesce(varTplCandidate.ContractReference, ""));
+                        Set(varChildModelRelease, Coalesce(varTplCandidate.ModelRelease, false));
+                        Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
+                        Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRights, false));
+                        Set(varChildAIVoiceover, Coalesce(varTplCandidate.AIVoiceover, false));
+                        Set(varShowTemplatePicker, false)
+                    )
+                  Width: =712
+            - CI_TplRowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =28
+                  OnSelect: =Select(Parent)
+                  Text: =If(IsBlank(ThisItem.Title), "Untitled archive", ThisItem.Title)
+                  Width: =500
+                  X: =12
+                  Y: =4
+            - CI_TplRowMeta:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =22
+                  OnSelect: =Select(Parent)
+                  Size: =11
+                  Text: ="ID " & Text(ThisItem.ID) & If(IsBlank(ThisItem.ContractCase.Value), "", "   |   " & Left(ThisItem.ContractCase.Value, 30))
+                  Width: =560
+                  X: =12
+                  Y: =30
+            - CI_TplRowUse:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Right
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(56, 96, 178, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =55
+                  OnSelect: =Select(Parent)
+                  Size: =12
+                  Text: ="Use"
+                  Width: =100
+                  X: =600
+            - CI_TplRowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =712
+                  Y: =55
+      - CI_TplEmpty:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Height: =60
+            Text: ="No previous " & If(varChildMediaType="Photo", "Photo/Reportage", varChildMediaType) & " archives yet."
+            Visible: =varShowTemplatePicker And CountRows(CI_TplGallery.AllItems) = 0
+            Width: =712
+            X: =327
+            Y: =380
+      - CI_TplConfirmShade:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.35)
+            Height: =768
+            Visible: =varShowTplConfirm
+            Width: =1366
+      - CI_TplConfirmPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(186, 202, 226, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =170
+            Visible: =varShowTplConfirm
+            Width: =520
+            X: =423
+            Y: =290
+      - CI_TplConfirmText:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(32, 31, 30, 1)
+            Font: =Font.'Open Sans'
+            Height: =60
+            Text: ="You already started filling this form. Pre-filling from the selected template will overwrite your current entries. Continue?"
+            Visible: =varShowTplConfirm
+            Width: =472
+            X: =447
+            Y: =306
+      - CI_TplConfirmCancel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Set(varShowTplConfirm, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="Keep my entries"
+            Visible: =varShowTplConfirm
+            X: =587
+            Y: =396
+      - CI_TplConfirmOK:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |-
+              =Set(varChildTitle, Coalesce(varTplCandidate.Title, ""));
+              Set(varChildDescription, Coalesce(varTplCandidate.Description, ""));
+              Set(varChildCredits, Coalesce(varTplCandidate.Photographer, ""));
+              Set(varChildLanguageVersions, Coalesce(varTplCandidate.LanguageVersions.Value, ""));
+              Set(varChildContractCase, Coalesce(varTplCandidate.ContractCase.Value, Blank()));
+              Set(varChildContractRef, Coalesce(varTplCandidate.ContractReference, ""));
+              Set(varChildModelRelease, Coalesce(varTplCandidate.ModelRelease, false));
+              Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
+              Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRights, false));
+              Set(varChildAIVoiceover, Coalesce(varTplCandidate.AIVoiceover, false));
+              Set(varShowTplConfirm, false);
+              Set(varShowTemplatePicker, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="Overwrite and pre-fill"
+            Visible: =varShowTplConfirm
+            Width: =168
+            X: =759
+            Y: =396

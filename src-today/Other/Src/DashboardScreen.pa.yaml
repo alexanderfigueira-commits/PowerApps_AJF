@@ -1,0 +1,473 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  DashboardScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |-
+        =Set(varMonthStart, Date(Year(Now()), Month(Now()), 1));
+        Set(varKpiRejectedAll,
+            CountRows(Filter(CentralDepositMainList, Status.Value = "Rejected")));
+        Set(varKpiRejectedMonth,
+            CountRows(Filter(CentralDepositMainList, Status.Value = "Rejected", Created >= varMonthStart)));
+        Set(varKpiMyMonthTotal,
+            CountRows(Filter(CentralDepositMainList, 'Created By'.Email = User().Email, Created >= varMonthStart)));
+        Set(varKpiMyMonthSuccess,
+            CountRows(Filter(CentralDepositMainList, 'Created By'.Email = User().Email, Created >= varMonthStart, Status.Value = "Approved")));
+        Set(varKpiAllMonthTotal,
+            CountRows(Filter(CentralDepositMainList, Created >= varMonthStart)));
+        Set(varKpiAllMonthSuccess,
+            CountRows(Filter(CentralDepositMainList, Created >= varMonthStart, Status.Value = "Approved")));
+        Set(varKpiAvgPublishDays,
+            With(
+                {approved: Filter(CentralDepositMainList, Status.Value = "Approved", Not(IsBlank(PublicationDate)))},
+                If(CountRows(approved) = 0,
+                    Blank(),
+                    Round(
+                        Average(AddColumns(approved, "durHours",
+                            DateDiff(Created, PublicationDate, TimeUnit.Hours)),
+                            durHours) / 24,
+                        1))))
+    Children:
+      - DB_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+      - DB_PageTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Size: =22
+            Text: ="Administrator Dashboard"
+            Width: =600
+            X: =48
+            Y: =84
+      - DB_PageSub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Text: ="Key indicators "
+            Width: =700
+            X: =48
+            Y: =126
+      - DB_Card1:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =440
+            Width: =410
+            X: =48
+            Y: =166
+      - DB_Card1Accent:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(193, 40, 40, 1)
+            Height: =6
+            Width: =410
+            X: =48
+            Y: =166
+      - DB_Card1Title:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =12
+            Text: ="REJECTED REQUESTS"
+            Width: =360
+            X: =76
+            Y: =194
+      - DB_Card1Big:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(193, 40, 40, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =90
+            Size: =60
+            Text: =Text(Coalesce(varKpiRejectedAll, 0))
+            Width: =360
+            X: =76
+            Y: =232
+      - DB_Card1BigLbl:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Text: ="total requests with status Rejected"
+            Width: =360
+            X: =76
+            Y: =330
+      - DB_Card1Divider:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(230, 232, 238, 1)
+            Height: =1
+            Width: =354
+            X: =76
+            Y: =374
+      - DB_Card1Month:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =50
+            Size: =32
+            Text: =Text(Coalesce(varKpiRejectedMonth, 0))
+            Width: =360
+            X: =76
+            Y: =392
+      - DB_Card1MonthLbl:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =12
+            Text: ="rejected this month"
+            Width: =360
+            X: =76
+            Y: =448
+      - DB_Card2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =440
+            Width: =410
+            X: =478
+            Y: =166
+      - DB_Card2Accent:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =6
+            Width: =410
+            X: =478
+            Y: =166
+      - DB_Card2Title:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =12
+            Text: ="SUCCESS RATE "
+            Width: =360
+            X: =506
+            Y: =194
+      - DB_Card2My:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =70
+            Size: =44
+            Text: |-
+              =If(Coalesce(varKpiMyMonthTotal, 0) = 0,
+                  "No data",
+                  Text(Round(100 * varKpiMyMonthSuccess / varKpiMyMonthTotal, 0)) & " %")
+            Width: =360
+            X: =506
+            Y: =228
+      - DB_Card2MyLbl:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Size: =12
+            Text: ="My success rate - 0 approved of 0 of my requests this month"
+            Width: =360
+            X: =506
+            Y: =300
+      - DB_Card2Divider:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(230, 232, 238, 1)
+            Height: =1
+            Width: =354
+            X: =506
+            Y: =358
+      - DB_Card2All:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =70
+            Size: =44
+            Text: |-
+              =If(Coalesce(varKpiAllMonthTotal, 0) = 0,
+                  "No data",
+                  Text(Round(100 * varKpiAllMonthSuccess / varKpiAllMonthTotal, 0)) & " %")
+            Width: =360
+            X: =506
+            Y: =372
+      - DB_Card2AllLbl:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Size: =12
+            Text: ="Overall success rate - 0 approved of 0 requests this month (all users)"
+            Width: =360
+            X: =506
+            Y: =444
+      - DB_Card2Note:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Height: =32
+            Size: =11
+            Text: ="Success = status Approved. Requests created this month."
+            Width: =360
+            X: =506
+            Y: =548
+      - DB_Card3:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =440
+            Width: =410
+            X: =908
+            Y: =166
+      - DB_Card3Accent:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(22, 128, 80, 1)
+            Height: =6
+            Width: =410
+            X: =908
+            Y: =166
+      - DB_Card3Title:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =12
+            Text: ="AVG TIME TO PUBLISHED MEDIA"
+            Width: =360
+            X: =936
+            Y: =194
+      - DB_Card3Big:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(22, 128, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =90
+            Size: =54
+            Text: |-
+              =If(IsBlank(varKpiAvgPublishDays),
+                  "No data",
+                  If(varKpiAvgPublishDays < 1,
+                      Text(Round(varKpiAvgPublishDays * 24, 0)) & " h",
+                      Text(varKpiAvgPublishDays) & " days"))
+            Width: =360
+            X: =936
+            Y: =232
+      - DB_Card3BigLbl:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            Text: ="average from request creation to PublicationDate, across Approved requests"
+            Width: =360
+            X: =936
+            Y: =330
+      - DB_Card3Note:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Height: =60
+            Size: =11
+            Text: ="Uses the PublicationDate column on CentralDepositMainList. Requests with no PublicationDate are excluded."
+            Width: =360
+            X: =936
+            Y: =390
+      - DB_BtnEnter:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: =Navigate(MyRequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Requests Management"
+            Width: =280
+            X: =478
+            Y: =648
+      - DB_BtnHelp:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =48
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="Help"
+            Width: =110
+            X: =778
+            Y: =648
+      - HomeAppTitle_1:
+          Control: Label@2.5.1
+          Group: Header_1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+      - HomeUserName_1:
+          Control: Label@2.5.1
+          Group: Header_1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+      - Logo_EC_Form_6:
+          Control: Image@2.2.3
+          Group: Header_1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+      - CD_Logo_1:
+          Control: Image@2.2.3
+          Group: Header_1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+      - HomeAppSubtitle_1:
+          Control: Label@2.5.1
+          Group: Header_1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+      - Image1_6:
+          Control: Image@2.2.3
+          Group: Header_1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+      - Label12_4:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(149, 149, 149, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: |-
+              ="Audiovisual Service - DG COMM
+              This site is managed by the Directorate-General for Communication"
+            Width: =691
+            X: =265
+            Y: =717

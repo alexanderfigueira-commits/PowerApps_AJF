@@ -1,0 +1,56 @@
+{
+  "4ed94587-0999-4e35-b8f6-9906bb81d775": {
+    "appActions": [],
+    "connectionRef": {
+      "apiTier": "Standard",
+      "displayName": "SharePoint",
+      "iconUri": "https://static.powerapps.com/resource/ppcr/releases/v1.0.1814/1.0.1814.4751/sharepointonline/icon.png",
+      "id": "/providers/microsoft.powerapps/apis/shared_sharepointonline",
+      "parameterHints": {},
+      "parameterHintsV2": {}
+    },
+    "datasets": {
+      "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm": {
+        "dataSources": {
+          "AVCentralDepositRequests": {
+            "tableName": "b170a694-8b5c-4ac7-a9d5-b9111488b7bd"
+          },
+          "CentralDepositCentralList": {
+            "tableName": "301869de-daa0-4d59-838c-647a5ffd2ea5"
+          },
+          "SuspensionDates": {
+            "tableName": "5995c8f7-f1f9-49b3-a838-6409af0ffc2b"
+          }
+        }
+      }
+    },
+    "dataSources": [
+      "SuspensionDates",
+      "CentralDepositCentralList",
+      "AVCentralDepositRequests"
+    ],
+    "dependencies": {},
+    "dependents": [],
+    "id": "4ed94587-0999-4e35-b8f6-9906bb81d775"
+  },
+  "5d475d4e-3f06-4b7c-8070-e7bb7330bb6c": {
+    "appActions": [
+      "MyProfile"
+    ],
+    "connectionRef": {
+      "apiTier": "Standard",
+      "displayName": "Office 365 Users",
+      "iconUri": "https://static.powerapps.com/resource/ppcr/releases/v1.0.1807/1.0.1807.4725/office365users/icon.png",
+      "id": "/providers/microsoft.powerapps/apis/shared_office365users",
+      "parameterHints": {},
+      "parameterHintsV2": {}
+    },
+    "datasets": {},
+    "dataSources": [
+      "Office365Users"
+    ],
+    "dependencies": {},
+    "dependents": [],
+    "id": "5d475d4e-3f06-4b7c-8070-e7bb7330bb6c"
+  }
+}

@@ -1,0 +1,366 @@
+ChildMetaScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+
+    CM_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =52
+        Width: =1366
+        ZIndex: =1
+
+    Header_CM As group:
+        Height: =5
+        minimumHeight: =5
+        minimumWidth: =5
+        Visible: =true
+        Width: =5
+        X: =8
+        Y: =20
+
+        HomeAppTitle_CM As label:
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+            ZIndex: =100
+
+        HomeUserName_CM As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+            ZIndex: =101
+
+        Logo_EC_CM As image:
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+            ZIndex: =102
+
+        CD_Logo_CM As image:
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+            ZIndex: =103
+
+        HomeAppSubtitle_CM As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+            ZIndex: =104
+
+        Image1_CM As image:
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+            ZIndex: =105
+
+    CM_Back As button:
+        BorderThickness: =0
+        Color: =RGBA(186, 202, 226, 1)
+        Fill: =RGBA(0, 18, 107, 1)
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(RequestScreen)
+        Size: =13
+        Text: ="←  Back to request"
+        Width: =180
+        X: =16
+        Y: =10
+        ZIndex: =2
+
+    CM_Breadcrumb As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =52
+        Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+        Width: =700
+        X: =200
+        ZIndex: =3
+
+    CM_TabsBg As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =50
+        Width: =1366
+        Y: =52
+        ZIndex: =4
+
+    CM_Tab1 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildInfoScreen)
+        Size: =13
+        Text: ="✓  1.  Info"
+        Width: =150
+        X: =16
+        Y: =52
+        ZIndex: =5
+
+    CM_Tab2 As button:
+        BorderThickness: =0
+        Color: =RGBA(0, 18, 107, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(255, 255, 255, 1)
+        Size: =13
+        Text: ="2.  Metadata"
+        Width: =170
+        X: =176
+        Y: =52
+        ZIndex: =6
+
+    CM_Tab2Line As rectangle:
+        Height: =3
+        Width: =170
+        X: =176
+        Y: =99
+        ZIndex: =7
+
+    CM_Tab3 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildLegalScreen)
+        Size: =13
+        Text: ="3.  Legal & Docs"
+        Width: =180
+        X: =356
+        Y: =52
+        ZIndex: =8
+
+    CM_Tab4 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildValidScreen)
+        Size: =13
+        Text: ="4.  Validations"
+        Width: =170
+        X: =546
+        Y: =52
+        ZIndex: =9
+
+    CM_Gallery As gallery:
+        Fill: =RGBA(247, 248, 250, 1)
+        Height: =610
+        Items: |-
+            =[{id: 1}]
+        Layout: =Layout.Vertical
+        TemplatePadding: =0
+        TemplateSize: =580
+        Width: =1366
+        Y: =102
+        ZIndex: =10
+
+        CM_Card As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =560
+            Width: =1302
+            X: =32
+            Y: =16
+            ZIndex: =1
+
+        CM_TypeBadge As button:
+            BorderThickness: =0
+            Color: =RGBA(0, 18, 107, 1)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(230, 236, 245, 1)
+            Height: =30
+            Size: =12
+            Text: =If(varChildMediaType = "Photo", "Photo/Reportage", varChildMediaType)
+            Width: =166
+            X: =56
+            Y: =36
+            ZIndex: =2
+
+        CM_SectionHeader As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =18
+            Text: ="Metadata"
+            Width: =840
+            X: =56
+            Y: =80
+            ZIndex: =3
+
+        CM_LblLanguage As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Language version(s) *"
+            Width: =400
+            X: =56
+            Y: =122
+            ZIndex: =4
+
+        CM_Language As combobox:
+            DefaultSelectedItems: |-
+                =If(IsBlank(varChildLanguageVersions) Or varChildLanguageVersions = "", Table(), Table({Value: varChildLanguageVersions}))
+            Items: =["EN", "FR", "DE", "ES", "IT", "PL", "NL", "PT", "RO", "Multilingual"]
+            OnChange: =Set(varChildLanguageVersions, Concat(Self.SelectedItems, Value, ", "))
+            Width: =400
+            X: =56
+            Y: =148
+            ZIndex: =5
+
+        CM_LblCredits As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: |-
+                =If(varChildMediaType = "Photo", "Photographer / agency *",
+                   If(varChildMediaType = "Podcast",
+                      "Presenter / producer *", "Director / producer *"))
+            Width: =500
+            X: =500
+            Y: =122
+            ZIndex: =6
+
+        CM_Credits As text:
+            Default: =varChildCredits
+            HintText: |-
+                =If(varChildMediaType = "Photo", "Photographer name and/or agency",
+                   If(varChildMediaType = "Podcast",
+                      "Presenter and/or producer name", "Director and/or producer name"))
+            OnChange: =Set(varChildCredits, Self.Value)
+            Width: =500
+            X: =500
+            Y: =148
+            ZIndex: =7
+
+        CM_LblDesc As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Editorial description (max 500 characters)"
+            Width: =700
+            X: =56
+            Y: =206
+            ZIndex: =8
+
+        CM_Desc As text:
+            Default: =varChildDescription
+            Height: =88
+            HintText: ="Editorial description, context and keywords"
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varChildDescription, Self.Value)
+            Width: =1230
+            X: =56
+            Y: =232
+            ZIndex: =9
+
+        CM_AIVoiceoverLbl As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: |-
+                =If(
+                    varChildMediaType = "Podcast", "AI-generated voice-over",
+                    varChildMediaType = "Photo", "AI-generated images",
+                    varChildMediaType = "Video", "AI-generated content"
+                )
+            Width: =400
+            X: =56
+            Y: =338
+            ZIndex: =10
+
+        CM_AICheck As checkbox.Checkbox:
+            Height: =40
+            OnCheck: =Set(varChildAIVoiceover, true)
+            OnUncheck: =Set(varChildAIVoiceover, false)
+            Text: |-
+                =If(
+                    varChildMediaType = "Podcast", "This production uses an AI-generated voice-over",
+                    varChildMediaType = "Photo", "This production uses AI-generated images",
+                    varChildMediaType = "Video", "This production uses AI-generated content"
+                )
+            Width: =700
+            X: =52
+            Y: =360
+            ZIndex: =11
+
+        CM_AIWarning As rectangle:
+            BorderColor: =RGBA(254, 202, 202, 1)
+            BorderThickness: =1
+            Fill: =RGBA(254, 242, 242, 1)
+            Height: =44
+            Visible: =varChildAIVoiceover
+            Width: =900
+            X: =56
+            Y: =408
+            ZIndex: =12
+
+        CM_AIWarningText As label:
+            Color: =RGBA(193, 40, 40, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Text: ="⛔  AI voice-over is NOT accepted. This archive will fail validation and cannot be submitted."
+            Visible: =varChildAIVoiceover
+            Width: =880
+            X: =66
+            Y: =408
+            ZIndex: =13
+
+    CM_BottomBar As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =56
+        Width: =1366
+        Y: =712
+        ZIndex: =14
+
+    CM_BtnPrev As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildInfoScreen)
+        Size: =14
+        Text: ="←  Previous"
+        Width: =140
+        X: =32
+        Y: =720
+        ZIndex: =15
+
+    CM_BtnNext As button:
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(ChildLegalScreen)
+        Size: =14
+        Text: |-
+            ="Next: Legal & Docs  →"
+        Width: =220
+        X: =1122
+        Y: =720
+        ZIndex: =16
+
