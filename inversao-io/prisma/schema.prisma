@@ -1,0 +1,99 @@
+// Prisma schema para INVERSAO.IO
+// Documentacao: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  NONE
+  BASIC
+  PREMIUM
+}
+
+enum UsageAction {
+  ASSESSMENT
+  CONVERSATION
+  ROADMAP
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+
+  assessments   Assessment[]
+  conversations Conversation[]
+  roadmaps      Roadmap[]
+  usageLogs     UsageLog[]
+  subscription  Subscription?
+}
+
+model Assessment {
+  id        String   @id @default(cuid())
+  userId    String
+  // Respostas as 12 perguntas, guardadas como JSON
+  answers   Json
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  userId    String
+  // Historico de chat: array de { role, content }
+  messages  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Roadmap {
+  id        String   @id @default(cuid())
+  userId    String
+  // Conteudo do roadmap em markdown
+  content   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  plan                 Plan     @default(NONE)
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  status               String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UsageLog {
+  id        String      @id @default(cuid())
+  userId    String
+  action    UsageAction
+  createdAt DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, action, createdAt])
+}
