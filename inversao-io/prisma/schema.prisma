@@ -53,6 +53,8 @@ model Conversation {
   userId    String
   // Historico de chat: array de { role, content }
   messages  Json
+  // Ultima analise interna do diagnostico (alimenta o painel lateral)
+  diagnostico Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -6,10 +6,24 @@ funcionar de forma "invertida" e gera um roadmap de transformação de 18 meses.
 Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + PostgreSQL (Prisma)
 + NextAuth + Anthropic Claude API + Stripe**.
 
-> Estado atual: **Passo 5 — Chat com a Claude API.**
+> Estado atual: **Passo 5 — Chat com a Claude API (refinado).**
 > Já feito: setup, modelo de dados, autenticação, landing page, assessment,
-> chat de diagnóstico com IA (streaming) e limites de uso por tier.
+> chat de diagnóstico com a arquitetura de 3 passos (Analista → Crítico →
+> Resposta), painel lateral em tempo real e limites de uso por tier.
 > A seguir: geração de roadmap + PDF, dashboard, pagamentos Stripe.
+
+## Inteligência do diagnóstico (passo 5)
+
+Cada mensagem corre um pipeline de 3 chamadas à Claude API
+(`src/lib/diagnosis.ts`), em vez de uma só:
+
+1. **Analista** (temp. 0.4) — análise profunda escondida; devolve JSON com o
+   tipo de inversão, nível de valor, causa raiz e a melhor próxima pergunta.
+2. **Crítico** (temp. 0.4) — endurece/reescreve a pergunta para não ser genérica.
+3. **Resposta** (temp. 0.7) — a mensagem curta e humana que o utilizador vê.
+
+O JSON do Analista é guardado em `Conversation.diagnostico` e alimenta o
+painel lateral (tipo de inversão, eixo de valor 1–4, 3 sinais, confiança).
 
 ## Autenticação
 

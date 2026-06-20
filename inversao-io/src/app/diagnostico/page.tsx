@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
 import { verificarLimiteConversas } from "@/lib/usage";
 import type { ChatMessage } from "@/lib/anthropic";
+import { diagnosticoParaPainel, type Diagnostico } from "@/lib/diagnosis";
 import ChatClient from "./ChatClient";
 
 export default async function DiagnosticoPage() {
@@ -29,6 +30,10 @@ export default async function DiagnosticoPage() {
 
   const limite = await verificarLimiteConversas(userId);
   const messages = (conversation?.messages as unknown as ChatMessage[]) ?? [];
+  const diagnostico = conversation?.diagnostico
+    ? (conversation.diagnostico as unknown as Diagnostico)
+    : null;
+  const painel = diagnostico ? diagnosticoParaPainel(diagnostico) : null;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -52,6 +57,7 @@ export default async function DiagnosticoPage() {
       <ChatClient
         conversationId={conversation?.id ?? null}
         initialMessages={messages}
+        initialPainel={painel}
         limite={limite}
       />
     </div>

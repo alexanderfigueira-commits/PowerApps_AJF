@@ -4,20 +4,25 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, FormError } from "@/components/ui";
 import type { ChatMessage } from "@/lib/anthropic";
+import type { PainelData } from "@/lib/diagnosis";
 import type { EstadoLimite } from "@/lib/usage";
+import Painel from "./Painel";
 
 export default function ChatClient({
   conversationId: conversationIdInicial,
   initialMessages,
+  initialPainel,
   limite,
 }: {
   conversationId: string | null;
   initialMessages: ChatMessage[];
+  initialPainel: PainelData | null;
   limite: EstadoLimite;
 }) {
   const router = useRouter();
   const [conversationId, setConversationId] = useState(conversationIdInicial);
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+  const [painel, setPainel] = useState<PainelData | null>(initialPainel);
   const [input, setInput] = useState("");
   const [aResponder, setAResponder] = useState(false);
   const [aIniciar, setAIniciar] = useState(false);
@@ -32,7 +37,6 @@ export default function ChatClient({
     fimRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, aResponder]);
 
-  // Pelo menos uma troca: a IA abriu e o utilizador já respondeu pelo menos uma vez.
   const podeGerarRoadmap =
     messages.some((m) => m.role === "user") &&
     messages.some((m) => m.role === "assistant");
@@ -51,6 +55,7 @@ export default function ChatClient({
       }
       setConversationId(data.conversationId);
       setMessages(data.messages);
+      setPainel(data.painel ?? null);
     } catch {
       setErro("Ocorreu um erro. Tente novamente.");
     } finally {
@@ -74,35 +79,19 @@ export default function ChatClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversationId, mensagem: texto }),
       });
+      const data = await res.json().catch(() => ({}));
 
-      if (!res.ok || !res.body) {
-        const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
         setErro(data.erro ?? "Não foi possível obter resposta.");
         setAResponder(false);
         return;
       }
 
-      // Acrescenta uma mensagem de assistente vazia e preenche-a com o stream.
-      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        setMessages((prev) => {
-          const copia = [...prev];
-          const ultima = copia[copia.length - 1];
-          if (ultima && ultima.role === "assistant") {
-            copia[copia.length - 1] = {
-              ...ultima,
-              content: ultima.content + chunk,
-            };
-          }
-          return copia;
-        });
-      }
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.mensagem },
+      ]);
+      if (data.painel) setPainel(data.painel);
     } catch {
       setErro("Ocorreu um erro ao comunicar com a IA.");
     } finally {
@@ -110,7 +99,7 @@ export default function ChatClient({
     }
   }
 
-  async function gerarRoadmap() {
+  function gerarRoadmap() {
     if (!conversationId) return;
     router.push(`/roadmap?conversationId=${conversationId}`);
   }
@@ -140,10 +129,7 @@ export default function ChatClient({
               Atingiu o limite de conversas deste mês. Faça upgrade para Premium
               para conversas ilimitadas.
             </p>
-            <Button
-              className="mt-4"
-              onClick={() => router.push("/dashboard")}
-            >
+            <Button className="mt-4" onClick={() => router.push("/dashboard")}>
               Ver planos
             </Button>
           </div>
@@ -155,7 +141,7 @@ export default function ChatClient({
               </div>
             )}
             <Button onClick={iniciarConversa} disabled={aIniciar}>
-              {aIniciar ? "A iniciar..." : "Iniciar diagnóstico"}
+              {aIniciar ? "A analisar o seu negócio…" : "Iniciar diagnóstico"}
             </Button>
           </div>
         )}
@@ -163,76 +149,83 @@ export default function ChatClient({
     );
   }
 
-  // Conversa em curso.
+  // Conversa em curso: chat + painel lateral.
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4">
-      <div className="flex-1 space-y-5 py-6">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
-          >
+    <main className="mx-auto grid w-full max-w-5xl flex-1 gap-6 px-4 py-6 lg:grid-cols-[1fr_280px]">
+      <div className="flex min-h-0 flex-col">
+        <div className="flex-1 space-y-5">
+          {messages.map((m, i) => (
             <div
-              className={`max-w-[85%] whitespace-pre-wrap rounded-lg px-4 py-3 text-sm ${
-                m.role === "user"
-                  ? "bg-accent text-white"
-                  : "border border-border bg-white text-foreground"
-              }`}
+              key={i}
+              className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
             >
-              {m.content || (
-                <span className="text-muted">A escrever...</span>
-              )}
+              <div
+                className={`max-w-[85%] whitespace-pre-wrap rounded-lg px-4 py-3 text-sm ${
+                  m.role === "user"
+                    ? "bg-accent text-white"
+                    : "border border-border bg-white text-foreground"
+                }`}
+              >
+                {m.content}
+              </div>
             </div>
-          </div>
-        ))}
-        {aResponder &&
-          messages[messages.length - 1]?.role === "user" && (
+          ))}
+          {aResponder && (
             <div className="flex justify-start">
-              <div className="rounded-lg border border-border bg-white px-4 py-3 text-sm text-muted">
-                A escrever...
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-white px-4 py-3 text-sm text-muted">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />
+                A analisar…
               </div>
             </div>
           )}
-        <div ref={fimRef} />
+          <div ref={fimRef} />
+        </div>
+
+        <div className="sticky bottom-0 mt-4 border-t border-border bg-background py-4">
+          {erro && (
+            <div className="mb-3">
+              <FormError>{erro}</FormError>
+            </div>
+          )}
+          <form onSubmit={enviar} className="flex items-end gap-2">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              rows={2}
+              placeholder="Escreva a sua resposta..."
+              className="flex-1 resize-none rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  enviar(e);
+                }
+              }}
+              disabled={aResponder}
+            />
+            <Button
+              type="submit"
+              disabled={aResponder || input.trim().length === 0}
+            >
+              Enviar
+            </Button>
+          </form>
+          <div className="mt-3 flex items-center justify-between">
+            <p className="text-xs text-muted">
+              Enter para enviar, Shift+Enter para nova linha.
+            </p>
+            <Button
+              variant="secondary"
+              onClick={gerarRoadmap}
+              disabled={!podeGerarRoadmap || aResponder}
+            >
+              Gerar Roadmap
+            </Button>
+          </div>
+        </div>
       </div>
 
-      <div className="sticky bottom-0 border-t border-border bg-background py-4">
-        {erro && (
-          <div className="mb-3">
-            <FormError>{erro}</FormError>
-          </div>
-        )}
-        <form onSubmit={enviar} className="flex items-end gap-2">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            rows={2}
-            placeholder="Escreva a sua resposta..."
-            className="flex-1 resize-none rounded-md border border-border bg-white px-3 py-2 text-sm text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                enviar(e);
-              }
-            }}
-            disabled={aResponder}
-          />
-          <Button type="submit" disabled={aResponder || input.trim().length === 0}>
-            Enviar
-          </Button>
-        </form>
-        <div className="mt-3 flex items-center justify-between">
-          <p className="text-xs text-muted">
-            Enter para enviar, Shift+Enter para nova linha.
-          </p>
-          <Button
-            variant="secondary"
-            onClick={gerarRoadmap}
-            disabled={!podeGerarRoadmap || aResponder}
-          >
-            Gerar Roadmap
-          </Button>
-        </div>
+      <div className="lg:sticky lg:top-6 lg:self-start">
+        <Painel painel={painel} aAtualizar={aResponder} />
       </div>
     </main>
   );

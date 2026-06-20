@@ -3,17 +3,12 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
 import { verificarLimiteConversas } from "@/lib/usage";
-import {
-  buildSystemPrompt,
-  getAnthropic,
-  CLAUDE_MODEL,
-  SEED_USER_MESSAGE,
-  type ChatMessage,
-} from "@/lib/anthropic";
+import type { ChatMessage } from "@/lib/anthropic";
+import { executarPipeline } from "@/lib/diagnosis";
 import type { AssessmentAnswer } from "@/lib/assessment-questions";
 
-// Inicia uma nova conversa de diagnóstico: gera a primeira mensagem da IA a
-// partir das respostas do assessment mais recente.
+// Inicia uma nova conversa: corre o pipeline (Analista -> Crítico -> Resposta)
+// sem histórico para gerar a primeira observação da IA e o painel inicial.
 export async function POST() {
   try {
     const userId = await getCurrentUserId();
@@ -35,7 +30,6 @@ export async function POST() {
       );
     }
 
-    // Verifica o limite de conversas do tier antes de iniciar.
     const limite = await verificarLimiteConversas(userId);
     if (!limite.podeIniciar) {
       return NextResponse.json(
@@ -48,29 +42,18 @@ export async function POST() {
     }
 
     const answers = assessment.answers as unknown as AssessmentAnswer[];
-    const system = buildSystemPrompt(answers);
-
-    const anthropic = getAnthropic();
-    const resposta = await anthropic.messages.create({
-      model: CLAUDE_MODEL,
-      max_tokens: 1500,
-      system,
-      messages: [{ role: "user", content: SEED_USER_MESSAGE }],
+    const { mensagem, diagnostico, painel } = await executarPipeline({
+      assessment: answers,
+      messages: [],
     });
 
-    const texto = resposta.content
-      .filter((b) => b.type === "text")
-      .map((b) => (b.type === "text" ? b.text : ""))
-      .join("")
-      .trim();
+    const messages: ChatMessage[] = [{ role: "assistant", content: mensagem }];
 
-    const messages: ChatMessage[] = [{ role: "assistant", content: texto }];
-
-    // Cria a conversa e regista o uso (1 conversa = 1 sessão).
     const conversation = await prisma.conversation.create({
       data: {
         userId,
         messages: messages as unknown as Prisma.InputJsonValue,
+        diagnostico: diagnostico as unknown as Prisma.InputJsonValue,
       },
     });
     await prisma.usageLog.create({
@@ -78,7 +61,7 @@ export async function POST() {
     });
 
     return NextResponse.json(
-      { conversationId: conversation.id, messages },
+      { conversationId: conversation.id, messages, painel },
       { status: 201 },
     );
   } catch (error) {
