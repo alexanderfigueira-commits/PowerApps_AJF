@@ -2,22 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Paleta sobria para INVERSAO.IO.
+  Tom serio, profissional. Sem modo escuro automatico para garantir
+  consistencia visual no MVP.
+*/
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #18181b;
+  --muted: #71717a;
+  --border: #e4e4e7;
+  --accent: #1e293b;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 @layer utilities {

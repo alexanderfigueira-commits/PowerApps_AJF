@@ -6,9 +6,20 @@ funcionar de forma "invertida" e gera um roadmap de transformação de 18 meses.
 Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + PostgreSQL (Prisma)
 + NextAuth + Anthropic Claude API + Stripe**.
 
-> Estado atual: **Passo 1 — Setup do projeto e modelo de dados.**
-> As funcionalidades (autenticação, landing page, assessment, chat, roadmap,
-> dashboard, pagamentos) serão construídas nos passos seguintes.
+> Estado atual: **Passo 2 — Autenticação (registo e login).**
+> Já feito: setup, modelo de dados, registo/login com NextAuth + bcrypt,
+> proteção de rotas. A seguir: landing page, assessment, chat, roadmap,
+> dashboard e pagamentos.
+
+## Autenticação
+
+- Registo em `/registo` (nome, email, password) — password com hash bcrypt
+- Login em `/entrar` (NextAuth Credentials provider, sessão JWT)
+- Rotas protegidas via `src/middleware.ts` (`/dashboard`, `/assessment`,
+  `/diagnostico`, `/roadmap`) — redirecionam para `/entrar` se não autenticado
+- Após registo, o utilizador é autenticado e encaminhado para o assessment
+
+> Nota: não há recuperação de password neste MVP (intencional).
 
 ## Pré-requisitos
 
