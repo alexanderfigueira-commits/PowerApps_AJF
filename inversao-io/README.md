@@ -6,10 +6,9 @@ funcionar de forma "invertida" e gera um roadmap de transformação de 18 meses.
 Stack: **Next.js 14 (App Router) + TypeScript + Tailwind CSS + PostgreSQL (Prisma)
 + NextAuth + Anthropic Claude API + Stripe**.
 
-> Estado atual: **Passo 2 — Autenticação (registo e login).**
-> Já feito: setup, modelo de dados, registo/login com NextAuth + bcrypt,
-> proteção de rotas. A seguir: landing page, assessment, chat, roadmap,
-> dashboard e pagamentos.
+> Estado atual: **Passo 3 — Landing page.**
+> Já feito: setup, modelo de dados, autenticação, landing page pública.
+> A seguir: assessment, chat, roadmap, dashboard e pagamentos.
 
 ## Autenticação
 
