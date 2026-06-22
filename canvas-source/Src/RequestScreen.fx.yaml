@@ -208,10 +208,10 @@ RequestScreen As screen:
         Y: =85
         ZIndex: =9
 
-    RS_DG As text:
-        Default: =varRequestDG
-        HintText: ="e.g. DG COMM"
-        OnChange: =Set(varRequestDG, Self.Value)
+    RS_DG As combobox:
+        AllowCustomValue: =true
+        Items: =Sort(Distinct(Filter(AVCentralDepositRequests, Not(IsBlank(DG))), DG), Result)
+        OnChange: =Set(varRequestDG, Coalesce(Self.Selected.Value, ""))
         Width: =400
         X: =880
         Y: =111
@@ -512,11 +512,11 @@ RequestScreen As screen:
             HoverFill: =RGBA(230, 236, 245, 1)
             OnSelect: |-
                 =Set(varCurrentRequest,
-                    Patch(AVCentralDepositProjects,
+                    Patch(AVCentralDepositRequests,
                         If(
                             IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
-                            Defaults(AVCentralDepositProjects),
-                            LookUp(AVCentralDepositProjects, ID = varCurrentRequest.ID)
+                            Defaults(AVCentralDepositRequests),
+                            LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID)
                         ),
                         {
                             Title: varRequestTitle,
@@ -524,17 +524,18 @@ RequestScreen As screen:
                             OwnerContact: varRequestOwnerContact,
                             OwnerEmail: varRequestOwnerEmail,
                             Description: varRequestDescription,
-                            Status: If(IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0, {Value: "Draft"}, varCurrentRequest.Status)
+                            Status: {Value: "Draft"},
+                            ValidationStatus: {Value: "Incomplete"}
                         }
                     )
                 );
                 If(IsError(varCurrentRequest),
-                    Notify("Error saving request. Please try again.", NotificationType.Error),
-                    Notify("Request saved.", NotificationType.Success)
+                    Notify("Error saving draft. Please try again.", NotificationType.Error),
+                    Notify("Draft saved as Incomplete.", NotificationType.Success)
                 )
             PressedBorderColor: =RGBA(0, 0, 0, 1)
             Size: =13
-            Text: ="Draft Save"
+            Text: ="💾  Save draft"
             X: =967
             Y: =438
             ZIndex: =17

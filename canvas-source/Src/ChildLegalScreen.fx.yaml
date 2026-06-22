@@ -231,7 +231,7 @@ ChildLegalScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Contract reference number *"
-            Visible: =Not(IsBlank(varChildContractCase))
+            Visible: =Left(varChildContractCase, 6) = "Case 1" Or Left(varChildContractCase, 6) = "Case 2" Or Left(varChildContractCase, 6) = "Case 3"
             Width: =500
             X: =500
             Y: =148
@@ -241,7 +241,7 @@ ChildLegalScreen As screen:
             Default: =varChildContractRef
             HintText: ="e.g. COMM-2026-PHOTO-0142"
             OnChange: =Set(varChildContractRef, Self.Value)
-            Visible: =Not(IsBlank(varChildContractCase))
+            Visible: =Left(varChildContractCase, 6) = "Case 1" Or Left(varChildContractCase, 6) = "Case 2" Or Left(varChildContractCase, 6) = "Case 3"
             Width: =500
             X: =500
             Y: =174
@@ -292,6 +292,7 @@ ChildLegalScreen As screen:
             OnCheck: =Set(varChildMusicUsed, true)
             OnUncheck: =Set(varChildMusicUsed, false); Set(varChildMusicLicenceProvided, false)
             Text: ="This production contains music (original or licensed)"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =900
             X: =28
             Y: =352
@@ -302,7 +303,7 @@ ChildLegalScreen As screen:
             OnCheck: =Set(varChildMusicLicenceProvided, true)
             OnUncheck: =Set(varChildMusicLicenceProvided, false)
             Text: ="  ↳  Music licence / annex provided (attach below)"
-            Visible: =varChildMusicUsed
+            Visible: =(varChildMediaType = "Video" Or varChildMediaType = "Podcast") And varChildMusicUsed
             Width: =700
             X: =52
             Y: =390
@@ -313,6 +314,7 @@ ChildLegalScreen As screen:
             OnCheck: =Set(varChildPreexisting, true)
             OnUncheck: =Set(varChildPreexisting, false); Set(varChildPreexistingProvided, false)
             Text: ="Production contains pre-existing rights material"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =900
             X: =28
             Y: =428
@@ -323,7 +325,7 @@ ChildLegalScreen As screen:
             OnCheck: =Set(varChildPreexistingProvided, true)
             OnUncheck: =Set(varChildPreexistingProvided, false)
             Text: ="  ↳  Pre-existing rights annex(es) provided (attach below)"
-            Visible: =varChildPreexisting
+            Visible: =(varChildMediaType = "Video" Or varChildMediaType = "Podcast") And varChildPreexisting
             Width: =700
             X: =52
             Y: =466

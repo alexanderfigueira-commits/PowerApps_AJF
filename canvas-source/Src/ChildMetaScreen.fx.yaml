@@ -168,7 +168,7 @@ ChildMetaScreen As screen:
             =[{id: 1}]
         Layout: =Layout.Vertical
         TemplatePadding: =0
-        TemplateSize: =580
+        TemplateSize: =580 + If(varChildMediaType = "Podcast", 240, 0)
         Width: =1366
         Y: =102
         ZIndex: =10
@@ -177,7 +177,7 @@ ChildMetaScreen As screen:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =560
+            Height: =560 + If(varChildMediaType = "Podcast", 240, 0)
             Width: =1302
             X: =32
             Y: =16
@@ -212,6 +212,7 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Language version(s) *"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =400
             X: =56
             Y: =122
@@ -222,6 +223,7 @@ ChildMetaScreen As screen:
                 =If(IsBlank(varChildLanguageVersions) Or varChildLanguageVersions = "", Table(), Table({Value: varChildLanguageVersions}))
             Items: =["EN", "FR", "DE", "ES", "IT", "PL", "NL", "PT", "RO", "Multilingual"]
             OnChange: =Set(varChildLanguageVersions, Concat(Self.SelectedItems, Value, ", "))
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =400
             X: =56
             Y: =148
@@ -324,6 +326,92 @@ ChildMetaScreen As screen:
             X: =66
             Y: =408
             ZIndex: =13
+
+        CM_PodcastDivider As rectangle:
+            Fill: =RGBA(220, 224, 230, 1)
+            Height: =1
+            Visible: =varChildMediaType = "Podcast"
+            Width: =1230
+            X: =56
+            Y: =468
+            ZIndex: =14
+
+        CM_LblPodcastSection As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =15
+            Text: ="Podcast episode details"
+            Visible: =varChildMediaType = "Podcast"
+            Width: =600
+            X: =56
+            Y: =480
+            ZIndex: =15
+
+        CM_LblEpisodeSummary As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Episode summary *"
+            Visible: =varChildMediaType = "Podcast"
+            Width: =900
+            X: =56
+            Y: =516
+            ZIndex: =16
+
+        CM_EpisodeSummary As text:
+            Default: =varChildEpisodeSummary
+            Height: =64
+            HintText: ="Brief description of this episode (max 300 characters)"
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varChildEpisodeSummary, Self.Value)
+            Visible: =varChildMediaType = "Podcast"
+            Width: =900
+            X: =56
+            Y: =542
+            ZIndex: =17
+
+        CM_LblSeasonNumber As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Season nr. *"
+            Visible: =varChildMediaType = "Podcast"
+            Width: =160
+            X: =56
+            Y: =618
+            ZIndex: =18
+
+        CM_SeasonNumber As text:
+            Default: =Text(varChildSeasonNumber)
+            HintText: ="1"
+            OnChange: =Set(varChildSeasonNumber, Value(Self.Text))
+            Visible: =varChildMediaType = "Podcast"
+            Width: =160
+            X: =56
+            Y: =644
+            ZIndex: =19
+
+        CM_LblEpisodeNumber As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Episode nr. *"
+            Visible: =varChildMediaType = "Podcast"
+            Width: =160
+            X: =240
+            Y: =618
+            ZIndex: =20
+
+        CM_EpisodeNumber As text:
+            Default: =Text(varChildEpisodeNumber)
+            HintText: ="1"
+            OnChange: =Set(varChildEpisodeNumber, Value(Self.Text))
+            Visible: =varChildMediaType = "Podcast"
+            Width: =160
+            X: =240
+            Y: =644
+            ZIndex: =21
 
     CM_TopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
