@@ -320,8 +320,8 @@ RequestScreen As screen:
         Fill: =If(varRequestMediaType = "Photo", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
         HoverFill: =RGBA(240, 242, 246, 1)
         OnSelect: |-
-            =Set(varRequestMediaType, "Photo");
-            Set(varConfirmed, true)
+            =Set(varPendingMediaType, "Photo");
+            Set(varShowTypeConfirm, true)
         Size: =13
         Text: ="Photo/Reportage"
         Width: =180
@@ -354,8 +354,8 @@ RequestScreen As screen:
         Fill: =If(varRequestMediaType = "Podcast", RGBA(230, 236, 245, 1), RGBA(255, 255, 255, 1))
         HoverFill: =RGBA(240, 242, 246, 1)
         OnSelect: |-
-            =Set(varRequestMediaType, "Podcast");
-            Set(varConfirmed, true)
+            =Set(varPendingMediaType, "Podcast");
+            Set(varShowTypeConfirm, true)
         Size: =13
         Text: ="Podcast"
         Width: =180
@@ -399,7 +399,7 @@ RequestScreen As screen:
     RS_TypeConfirmOverlay As rectangle:
         Fill: =RGBA(0, 18, 107, 0.45)
         Height: =928
-        OnSelect: =Set(varShowTypeConfirm, false)
+        OnSelect: =Set(varShowTypeConfirm, false); Set(varPendingMediaType, ""); Set(varConfirmed, false)
         Visible: =varShowTypeConfirm
         Width: =1366
         ZIndex: =42
@@ -438,7 +438,7 @@ RequestScreen As screen:
     RS_TypeConfirmMsg As label:
         Color: =RGBA(60, 66, 80, 1)
         Height: =60
-        Text: ="Are you sure you want to select Video? All other media type options will be deactivated while this type is active."
+        Text: ="Are you sure you want to select " & varPendingMediaType & "? Once confirmed, the other production types will be disabled for this request."
         Visible: =varShowTypeConfirm
         Width: =460
         X: =447
@@ -454,7 +454,8 @@ RequestScreen As screen:
         HoverFill: =RGBA(247, 248, 250, 1)
         OnSelect: |-
             =Set(varPendingMediaType, "");
-            Set(varShowTypeConfirm, false)
+            Set(varShowTypeConfirm, false);
+            Set(varConfirmed, false)
         Size: =13
         Text: ="Cancel"
         Visible: =varShowTypeConfirm
