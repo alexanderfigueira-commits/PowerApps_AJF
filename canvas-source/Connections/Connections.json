@@ -1,9 +1,7 @@
 {
   "4ed94587-0999-4e35-b8f6-9906bb81d775": {
     "appActions": [
-      "providers/PowerPlatform.Governance/Operations/Read",
-      "providers/PowerPlatform.Governance/Operations/Write",
-      "providers/PowerPlatform.Governance/Operations/Delete"
+      "providers/PowerPlatform.Governance/Operations/Read"
     ],
     "connectionRef": {
       "apiTier": "Standard",
@@ -16,11 +14,14 @@
     "datasets": {
       "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm": {
         "dataSources": {
-          "AVCentralDepositProjects": {
-            "tableName": "11111111-2222-3333-4444-555555555555"
+          "AVCentralDepositMediaItems": {
+            "tableName": "301869de-daa0-4d59-838c-647a5ffd2ea5"
           },
-          "CentralDepositMainList": {
-            "tableName": "53fddb2f-3219-4783-8dc1-df18406a5bbc"
+          "AVCentralDepositRequests": {
+            "tableName": "b170a694-8b5c-4ac7-a9d5-b9111488b7bd"
+          },
+          "RolesPermissionsList": {
+            "tableName": "58e5019a-29bb-4cca-94dd-733e418619a0"
           },
           "SuspensionDates": {
             "tableName": "5995c8f7-f1f9-49b3-a838-6409af0ffc2b"
@@ -29,9 +30,10 @@
       }
     },
     "dataSources": [
-      "AVCentralDepositProjects",
       "SuspensionDates",
-      "CentralDepositMainList"
+      "AVCentralDepositRequests",
+      "AVCentralDepositMediaItems",
+      "RolesPermissionsList"
     ],
     "dependencies": {},
     "dependents": [],

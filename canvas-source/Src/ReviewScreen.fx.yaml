@@ -4,33 +4,77 @@ ReviewScreen As screen:
         =Set(varReviewProject, Blank());
         Set(varReviewComment, "")
 
-    RV_TopBar As rectangle:
-        Fill: =RGBA(0, 18, 107, 1)
-        Height: =52
-        Width: =1366
+    Header_RV As group:
+        Height: =5
+        minimumHeight: =5
+        minimumWidth: =5
+        Visible: =true
+        Width: =5
+        X: =8
+        Y: =20
         ZIndex: =1
 
-    RV_Back As button:
-        BorderThickness: =0
-        Color: =RGBA(186, 202, 226, 1)
-        Fill: =RGBA(0, 18, 107, 1)
-        HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(MyRequestScreen)
-        Size: =13
-        Text: ="←  Back to home"
-        X: =16
-        Y: =10
-        ZIndex: =2
+        HomeAppTitle_RV As label:
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+            ZIndex: =1
 
-    RV_Title As label:
-        Color: =RGBA(255, 255, 255, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =52
-        Size: =15
-        Text: ="Review queue"
-        Width: =300
-        X: =200
-        ZIndex: =3
+        HomeUserName_RV As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+            ZIndex: =28
+
+        Logo_EC_RV As image:
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+            ZIndex: =29
+
+        CD_Logo_RV As image:
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+            ZIndex: =30
+
+        HomeAppSubtitle_RV As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+            ZIndex: =31
+
+        Image1_RV As image:
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+            ZIndex: =32
 
     RV_QueuePanel As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -39,7 +83,7 @@ ReviewScreen As screen:
         Height: =840
         Width: =430
         Y: =52
-        ZIndex: =4
+        ZIndex: =2
 
     RV_QueueTitle As label:
         Color: =RGBA(0, 18, 107, 1)
@@ -50,14 +94,14 @@ ReviewScreen As screen:
         Width: =400
         X: =16
         Y: =60
-        ZIndex: =5
+        ZIndex: =3
 
     RV_QueueDivider As rectangle:
         Fill: =RGBA(220, 224, 230, 1)
         Height: =1
         Width: =430
         Y: =104
-        ZIndex: =6
+        ZIndex: =4
 
     "RV_QueueGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
         BorderColor: =RGBA(0, 0, 0, 0)
@@ -70,7 +114,7 @@ ReviewScreen As screen:
         TemplateSize: =72
         Width: =430
         Y: =106
-        ZIndex: =7
+        ZIndex: =5
 
         RV_QRowBg As rectangle:
             Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
@@ -119,7 +163,7 @@ ReviewScreen As screen:
         Width: =930
         X: =436
         Y: =52
-        ZIndex: =8
+        ZIndex: =6
 
     RV_EmptyState As label:
         Align: =Align.Center
@@ -130,19 +174,7 @@ ReviewScreen As screen:
         Width: =880
         X: =461
         Y: =420
-        ZIndex: =9
-
-    RV_DetailTitle As label:
-        Color: =RGBA(0, 18, 107, 1)
-        FontWeight: =FontWeight.Bold
-        Height: =36
-        Size: =18
-        Text: =Coalesce(varReviewProject.Title, "")
-        Visible: =Not(IsBlank(varReviewProject))
-        Width: =820
-        X: =460
-        Y: =68
-        ZIndex: =10
+        ZIndex: =7
 
     RV_DetailMeta As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -153,7 +185,7 @@ ReviewScreen As screen:
         Width: =860
         X: =460
         Y: =104
-        ZIndex: =11
+        ZIndex: =8
 
     RV_DetailDivider1 As rectangle:
         Fill: =RGBA(220, 224, 230, 1)
@@ -162,7 +194,7 @@ ReviewScreen As screen:
         Width: =900
         X: =436
         Y: =136
-        ZIndex: =12
+        ZIndex: =9
 
     RV_ChildrenTitle As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -173,7 +205,7 @@ ReviewScreen As screen:
         Width: =400
         X: =460
         Y: =148
-        ZIndex: =13
+        ZIndex: =10
 
     RV_ThTitle As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -185,7 +217,7 @@ ReviewScreen As screen:
         Width: =340
         X: =460
         Y: =180
-        ZIndex: =14
+        ZIndex: =11
 
     RV_ThType As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -197,7 +229,7 @@ ReviewScreen As screen:
         Width: =140
         X: =820
         Y: =180
-        ZIndex: =15
+        ZIndex: =12
 
     RV_ThValid As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -209,7 +241,7 @@ ReviewScreen As screen:
         Width: =160
         X: =976
         Y: =180
-        ZIndex: =16
+        ZIndex: =13
 
     "RV_ChildrenGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -232,7 +264,7 @@ ReviewScreen As screen:
         Width: =900
         X: =436
         Y: =216
-        ZIndex: =17
+        ZIndex: =14
 
         RV_CRowDivider As rectangle:
             Fill: =RGBA(220, 224, 230, 1)
@@ -291,7 +323,7 @@ ReviewScreen As screen:
         Width: =900
         X: =436
         Y: =392
-        ZIndex: =18
+        ZIndex: =15
 
     RV_LblOwnerAssign As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -302,7 +334,7 @@ ReviewScreen As screen:
         Width: =400
         X: =460
         Y: =404
-        ZIndex: =19
+        ZIndex: =16
 
     RV_OwnerName As text:
         Default: =Coalesce(varReviewProject.OwnerContact, "")
@@ -313,7 +345,7 @@ ReviewScreen As screen:
         Width: =380
         X: =460
         Y: =432
-        ZIndex: =20
+        ZIndex: =17
 
     RV_OwnerEmail As text:
         Default: =Coalesce(varReviewProject.OwnerEmail, "")
@@ -324,7 +356,7 @@ ReviewScreen As screen:
         Width: =380
         X: =860
         Y: =432
-        ZIndex: =21
+        ZIndex: =18
 
     RV_DetailDivider3 As rectangle:
         Fill: =RGBA(220, 224, 230, 1)
@@ -333,7 +365,7 @@ ReviewScreen As screen:
         Width: =900
         X: =436
         Y: =484
-        ZIndex: =22
+        ZIndex: =19
 
     RV_LblComment As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -344,7 +376,7 @@ ReviewScreen As screen:
         Width: =600
         X: =460
         Y: =496
-        ZIndex: =23
+        ZIndex: =20
 
     RV_Comment As text:
         Default: =varReviewComment
@@ -356,7 +388,7 @@ ReviewScreen As screen:
         Width: =880
         X: =460
         Y: =524
-        ZIndex: =24
+        ZIndex: =21
 
     RV_ExistingComment As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -368,7 +400,7 @@ ReviewScreen As screen:
         Width: =880
         X: =460
         Y: =628
-        ZIndex: =25
+        ZIndex: =22
 
     RV_DetailDivider4 As rectangle:
         Fill: =RGBA(220, 224, 230, 1)
@@ -377,7 +409,7 @@ ReviewScreen As screen:
         Width: =900
         X: =436
         Y: =666
-        ZIndex: =26
+        ZIndex: =23
 
     RV_BtnApprove As button:
         DisabledColor: =RGBA(255, 255, 255, 1)
@@ -407,7 +439,7 @@ ReviewScreen As screen:
         Width: =200
         X: =460
         Y: =680
-        ZIndex: =27
+        ZIndex: =24
 
     RV_BtnReject As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -445,7 +477,13 @@ ReviewScreen As screen:
         Visible: =Not(IsBlank(varReviewProject))
         X: =676
         Y: =680
-        ZIndex: =28
+        ZIndex: =25
+
+    RV_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =56
+        Width: =1366
+        ZIndex: =26
 
     RV_RejectHint As label:
         Color: =RGBA(140, 148, 160, 1)
@@ -458,5 +496,74 @@ ReviewScreen As screen:
         Width: =440
         X: =860
         Y: =692
-        ZIndex: =29
+        ZIndex: =27
+
+    RV_Title As label:
+        Align: =Align.Center
+        Color: =RGBA(0, 18, 107, 1)
+        Fill: =RGBA(241, 244, 249, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =52
+        Size: =15
+        Text: |-
+            ="Review queue:"
+        Width: =876
+        X: =460
+        Y: =62
+        ZIndex: =33
+
+    HomeAppTitle_3 As label:
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =35
+        Size: =18
+        Text: ="Central Deposit"
+        VerticalAlign: =VerticalAlign.Bottom
+        Width: =213
+        X: =79
+        Y: =5
+        ZIndex: =34
+
+    RS_Back_2 As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =36
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(MyRequestScreen)
+        Size: =13
+        Text: ="<"
+        Width: =40
+        X: =376
+        Y: =63
+        ZIndex: =35
+
+    RV_DetailTitle As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =31
+        Size: =15
+        Text: =Coalesce(varReviewProject.RequestNumber, "")
+        Visible: =Not(IsBlank(varReviewProject))
+        Width: =200
+        X: =980
+        Y: =72
+        ZIndex: =36
+
+    NoInternetIcon_6 As icon:
+        Color: =RGBA(255, 0, 0, 1)
+        DisplayMode: =DisplayMode.View
+        FocusedBorderThickness: =0
+        Height: =44
+        Icon: =Icon.GlobeNotConnected
+        PaddingBottom: =5
+        PaddingLeft: =5
+        PaddingRight: =5
+        PaddingTop: =5
+        Tooltip: ="No internet connection detected. Please verify your connection and try again."
+        Visible: =!Connection.Connected
+        X: =858
+        Y: =680
+        ZIndex: =37
 

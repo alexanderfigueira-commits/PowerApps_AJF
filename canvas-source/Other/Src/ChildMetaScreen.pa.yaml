@@ -12,13 +12,6 @@ Screens:
       Fill: =RGBA(247, 248, 250, 1)
       LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
     Children:
-      - CM_TopBar:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(0, 18, 107, 1)
-            Height: =52
-            Width: =1366
       - CM_Back:
           Control: Classic/Button@2.2.0
           Properties:
@@ -187,7 +180,7 @@ Screens:
                   DisplayMode: =DisplayMode.View
                   Fill: =RGBA(230, 236, 245, 1)
                   Font: =Font.'Open Sans'
-                  Height: =32
+                  Height: =30
                   HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
                   HoverColor: =RGBA(255, 255, 255, 1)
                   HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
@@ -195,8 +188,8 @@ Screens:
                   PressedColor: =Self.Fill
                   PressedFill: =Self.Color
                   Size: =12
-                  Text: =varChildMediaType
-                  Width: =140
+                  Text: =If(varChildMediaType = "Photo", "Photo/Reportage", varChildMediaType)
+                  Width: =166
                   X: =56
                   Y: =36
             - CM_SectionHeader:
@@ -364,6 +357,13 @@ Screens:
                   Width: =880
                   X: =66
                   Y: =408
+      - CM_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
       - CM_BottomBar:
           Control: Rectangle@2.3.0
           Properties:
@@ -415,3 +415,80 @@ Screens:
             Width: =220
             X: =1122
             Y: =720
+      - HomeAppTitle_CM:
+          Control: Label@2.5.1
+          Group: Header_CM
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+      - HomeUserName_CM:
+          Control: Label@2.5.1
+          Group: Header_CM
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+      - Logo_EC_CM:
+          Control: Image@2.2.3
+          Group: Header_CM
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+      - CD_Logo_CM:
+          Control: Image@2.2.3
+          Group: Header_CM
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+      - HomeAppSubtitle_CM:
+          Control: Label@2.5.1
+          Group: Header_CM
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+      - Image1_CM:
+          Control: Image@2.2.3
+          Group: Header_CM
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299

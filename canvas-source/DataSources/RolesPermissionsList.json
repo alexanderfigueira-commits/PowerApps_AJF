@@ -25,25 +25,26 @@
       "{TriggerWindowEndToken}": "Trigger Window End Token",
       "{TriggerWindowStartToken}": "Trigger Window Start Token",
       "{VersionNumber}": "Version number",
-      "Active": "Active",
       "Author": "Created By",
       "Author#Claims": "Created By Claims",
       "ComplianceAssetId": "Compliance Asset Id",
       "Created": "Created",
       "Editor": "Modified By",
       "Editor#Claims": "Modified By Claims",
-      "EndBlockedDate": "EndBlockedDate",
       "ID": "ID",
       "Modified": "Modified",
       "OData__ColorTag": "Color Tag",
-      "StartBlockedDate": "StartBlockedDate",
-      "Title": "Title"
+      "Role": "Role",
+      "Role#Id": "Role Id",
+      "Title": "Title",
+      "UserEmail": "UserEmail",
+      "UserEmail#Claims": "UserEmail Claims"
     },
     "DatasetName": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",
     "EncodeDataset": true,
     "IsSampleData": false,
     "IsWritable": true,
-    "Name": "SuspensionDates",
+    "Name": "RolesPermissionsList",
     "Type": "ConnectedDataSourceInfo"
   }
 ]

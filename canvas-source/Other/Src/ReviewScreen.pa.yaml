@@ -15,45 +15,21 @@ Screens:
         =Set(varReviewProject, Blank());
         Set(varReviewComment, "")
     Children:
-      - RV_TopBar:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(0, 18, 107, 1)
-            Height: =52
-            Width: =1366
-      - RV_Back:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(186, 202, 226, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: =Navigate(HomeScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="←  Back to home"
-            X: =16
-            Y: =10
-      - RV_Title:
+      - HomeAppTitle_RV:
           Control: Label@2.5.1
+          Group: Header_RV
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =52
-            Size: =15
-            Text: ="Review queue"
-            Width: =300
-            X: =200
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
       - RV_QueuePanel:
           Control: Rectangle@2.3.0
           Properties:
@@ -163,20 +139,6 @@ Screens:
             Width: =880
             X: =461
             Y: =420
-      - RV_DetailTitle:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Bold
-            Height: =36
-            Size: =18
-            Text: =Coalesce(varReviewProject.Title, "")
-            Visible: =Not(IsBlank(varReviewProject))
-            Width: =820
-            X: =460
-            Y: =68
       - RV_DetailMeta:
           Control: Label@2.5.1
           Properties:
@@ -303,7 +265,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   Height: =42
                   Size: =12
-                  Text: =If(IsBlank(ThisItem.MediaType.Value), "—", ThisItem.MediaType.Value)
+                  Text: =If(IsBlank(ThisItem.MediaType.Value), "—", If(ThisItem.MediaType.Value = "Photo", "Photo/Reportage", ThisItem.MediaType.Value))
                   Width: =140
                   X: =384
             - RV_CRowValid:
@@ -533,6 +495,13 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject))
             X: =676
             Y: =680
+      - RV_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
       - RV_RejectHint:
           Control: Label@2.5.1
           Properties:
@@ -548,3 +517,147 @@ Screens:
             Width: =440
             X: =860
             Y: =692
+      - HomeUserName_RV:
+          Control: Label@2.5.1
+          Group: Header_RV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+      - Logo_EC_RV:
+          Control: Image@2.2.3
+          Group: Header_RV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+      - CD_Logo_RV:
+          Control: Image@2.2.3
+          Group: Header_RV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+      - HomeAppSubtitle_RV:
+          Control: Label@2.5.1
+          Group: Header_RV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+      - Image1_RV:
+          Control: Image@2.2.3
+          Group: Header_RV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+      - RV_Title:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(241, 244, 249, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =52
+            Size: =15
+            Text: ="Review queue:"
+            Width: =876
+            X: =460
+            Y: =62
+      - HomeAppTitle_3:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =79
+            Y: =5
+      - RS_Back_2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(MyRequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="<"
+            Width: =40
+            X: =376
+            Y: =63
+      - RV_DetailTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =31
+            Size: =15
+            Text: =Coalesce(varReviewProject.RequestNumber, "")
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =200
+            X: =980
+            Y: =72
+      - NoInternetIcon_6:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 0, 0, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =44
+            Icon: =Icon.GlobeNotConnected
+            PaddingBottom: =5
+            PaddingLeft: =5
+            PaddingRight: =5
+            PaddingTop: =5
+            Tooltip: ="No internet connection detected. Please verify your connection and try again."
+            Visible: =!Connection.Connected
+            X: =858
+            Y: =680

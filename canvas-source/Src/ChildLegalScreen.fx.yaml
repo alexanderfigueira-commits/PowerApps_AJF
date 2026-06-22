@@ -1,32 +1,85 @@
 ChildLegalScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
 
-    CL_TopBar As rectangle:
-        Fill: =RGBA(0, 18, 107, 1)
-        Height: =52
-        Width: =1366
+    Header_CL As group:
+        Height: =5
+        minimumHeight: =5
+        minimumWidth: =5
+        Visible: =true
+        Width: =5
+        X: =8
+        Y: =20
         ZIndex: =1
 
-    CL_Back As button:
-        BorderThickness: =0
-        Color: =RGBA(186, 202, 226, 1)
-        Fill: =RGBA(0, 18, 107, 1)
-        HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(RequestScreen)
-        Size: =13
-        Text: ="←  Back to request"
-        Width: =180
-        X: =16
-        Y: =10
-        ZIndex: =2
+        HomeAppTitle_CL As label:
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+            ZIndex: =14
+
+        HomeUserName_CL As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+            ZIndex: =15
+
+        Logo_EC_CL As image:
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+            ZIndex: =16
+
+        CD_Logo_CL As image:
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+            ZIndex: =17
+
+        HomeAppSubtitle_CL As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+            ZIndex: =18
+
+        Image1_CL As image:
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+            ZIndex: =19
 
     CL_Breadcrumb As label:
         Color: =RGBA(186, 202, 226, 1)
-        Height: =52
+        Height: =56
         Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
         Width: =700
         X: =200
-        ZIndex: =3
+        ZIndex: =2
 
     CL_TabsBg As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -35,7 +88,7 @@ ChildLegalScreen As screen:
         Height: =50
         Width: =1366
         Y: =52
-        ZIndex: =4
+        ZIndex: =3
 
     CL_Tab1 As button:
         BorderThickness: =0
@@ -48,7 +101,7 @@ ChildLegalScreen As screen:
         Width: =150
         X: =16
         Y: =52
-        ZIndex: =5
+        ZIndex: =4
 
     CL_Tab2 As button:
         BorderThickness: =0
@@ -61,7 +114,7 @@ ChildLegalScreen As screen:
         Width: =170
         X: =176
         Y: =52
-        ZIndex: =6
+        ZIndex: =5
 
     CL_Tab3 As button:
         BorderThickness: =0
@@ -73,14 +126,14 @@ ChildLegalScreen As screen:
         Width: =180
         X: =356
         Y: =52
-        ZIndex: =7
+        ZIndex: =6
 
     CL_Tab3Line As rectangle:
         Height: =3
         Width: =180
         X: =356
         Y: =99
-        ZIndex: =8
+        ZIndex: =7
 
     CL_Tab4 As button:
         BorderThickness: =0
@@ -93,7 +146,7 @@ ChildLegalScreen As screen:
         Width: =170
         X: =546
         Y: =52
-        ZIndex: =9
+        ZIndex: =8
 
     CL_Gallery As gallery:
         Fill: =RGBA(247, 248, 250, 1)
@@ -105,7 +158,7 @@ ChildLegalScreen As screen:
         TemplateSize: =730
         Width: =1366
         Y: =102
-        ZIndex: =10
+        ZIndex: =9
 
         CL_Banner As rectangle:
             BorderColor: =RGBA(147, 197, 253, 1)
@@ -321,7 +374,7 @@ ChildLegalScreen As screen:
         Height: =56
         Width: =1366
         Y: =712
-        ZIndex: =11
+        ZIndex: =10
 
     CL_BtnPrev As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -335,6 +388,12 @@ ChildLegalScreen As screen:
         Width: =140
         X: =32
         Y: =720
+        ZIndex: =11
+
+    CL_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =56
+        Width: =1366
         ZIndex: =12
 
     CL_BtnNext As button:

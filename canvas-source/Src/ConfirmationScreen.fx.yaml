@@ -1,21 +1,82 @@
 ConfirmationScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
 
+    Header_CF As group:
+        Height: =5
+        minimumHeight: =5
+        minimumWidth: =5
+        Visible: =true
+        Width: =5
+        X: =8
+        Y: =20
+
+        HomeAppTitle_CF As label:
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+            ZIndex: =100
+
+        HomeUserName_CF As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+            ZIndex: =101
+
+        Logo_EC_CF As image:
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+            ZIndex: =102
+
+        CD_Logo_CF As image:
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+            ZIndex: =103
+
+        HomeAppSubtitle_CF As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+            ZIndex: =104
+
+        Image1_CF As image:
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+            ZIndex: =105
+
     CF_TopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
-        Height: =64
+        Height: =56
         Width: =1366
         ZIndex: =1
-
-    CF_AppTitle As label:
-        Color: =RGBA(255, 255, 255, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =64
-        Size: =16
-        Text: ="AV Central Deposit"
-        Width: =400
-        X: =24
-        ZIndex: =2
 
     CF_Circle As circle.Circle:
         Fill: =RGBA(223, 245, 233, 1)

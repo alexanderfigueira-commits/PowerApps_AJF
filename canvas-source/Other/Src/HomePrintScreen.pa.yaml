@@ -17,20 +17,8 @@ Screens:
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Fill: =RGBA(0, 18, 107, 1)
-            Height: =52
+            Height: =56
             Width: =1366
-      - HP_AppTitle:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =52
-            Size: =15
-            Text: ="AV Central Deposit - Requests Export"
-            Width: =600
-            X: =32
       - HP_BtnBack:
           Control: Classic/Button@2.2.0
           Properties:
@@ -43,7 +31,7 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(247, 248, 250, 1)
-            OnSelect: =Navigate(HomeScreen)
+            OnSelect: =Navigate(MyRequestScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -74,7 +62,7 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: |+
+            OnSelect: |
               =Set(varPDF, PDF(HomePrintScreen));
               Download(varPDF, "MyDocument.pdf")
             PressedBorderColor: =Self.Fill
@@ -199,7 +187,7 @@ Screens:
                   FontWeight: =FontWeight.Semibold
                   Height: =52
                   Size: =12
-                  Text: =If(IsBlank(ThisItem.Title), "Untitled request", ThisItem.Title)
+                  Text: =If(IsBlank(ThisItem.RequestNumber), "Untitled request", ThisItem.RequestNumber)
                   Width: =380
                   X: =16
             - HP_RowDG:
@@ -289,3 +277,80 @@ Screens:
             Width: =1302
             X: =32
             Y: =158 + Max(52, 52 * CountRows(colPrintData)) + 12
+      - HomeAppTitle_HP:
+          Control: Label@2.5.1
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+      - HomeUserName_HP:
+          Control: Label@2.5.1
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+      - Logo_EC_HP:
+          Control: Image@2.2.3
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+      - CD_Logo_HP:
+          Control: Image@2.2.3
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+      - HomeAppSubtitle_HP:
+          Control: Label@2.5.1
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+      - Image1_HP:
+          Control: Image@2.2.3
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299

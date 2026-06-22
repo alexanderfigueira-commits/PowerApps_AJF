@@ -100,7 +100,7 @@
       "zeroalltabindexes": false
     },
     "Author": "",
-    "BindingErrorCount": 816,
+    "BindingErrorCount": 489,
     "ConnectionString": "",
     "ContainsThirdPartyPcfControls": false,
     "DefaultConnectedDataSourceMaxGetRowsCount": 2000,
@@ -117,13 +117,13 @@
     "Id": "823932f0-8907-4f30-91b0-a2da8a16dfdd",
     "LocalDatabaseReferences": "",
     "ManualOfflineProfileId": "",
-    "Name": "Central Deposit Ticket System V3",
+    "Name": "Central Deposit Ticket System_V3",
     "OriginatingVersion": "1.324",
-    "ParserErrorCount": 6,
+    "ParserErrorCount": 2,
     "ShowStatusBar": false
   },
   "PublishInfo": {
-    "AppName": "Central Deposit Ticket System V3",
+    "AppName": "Central Deposit Ticket System_V3",
     "BackgroundColor": "rgba(50, 86, 160, 1)",
     "IconColor": "RGBA(255,255,255,1)",
     "IconName": "CheckList",

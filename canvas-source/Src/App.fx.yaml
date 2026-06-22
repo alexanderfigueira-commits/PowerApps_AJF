@@ -1,12 +1,19 @@
 App As appinfo:
     BackEnabled: =false
     OnStart: |-
-        =Set(Office365Connected, true);
-        Set(varShowPopup, false);
-        IfError(
-            Set(MyProfile, Office365Users.MyProfile()),
-            Set(Office365Connected, false)
-        );
+        =Set(varUserRole,Coalesce(LookUp(RolesPermissionsList,UserEmail.Email=User().Email,Role.Value),"REQUESTOR"));
+        If(varUserRole="REQUESTOR",(MyRequestScreen),(DashboardScreen));
+        
+        Set(Office365Connected, true );Set(varShowPopup, false );IfError(Set(MyProfile,Office365Users.MyProfile()),Set(Office365Connected, false ));
+        
+        
+        Set(varFilter, "All");
+        Set(varFilterDG, Blank());
+        Set(varFilterRequest, Blank());
+        Set(varFilterArchive, Blank());
+        Set(varFilterStartDate, Blank());
+        Set(varFilterEndDate, Blank());
+        /*
         Set(VideoCoverageSelected, false);
         Set(OnlyConferenceEventSelected, false);
         Set(ConferenceEventSelected, false);
@@ -97,6 +104,9 @@ App As appinfo:
         Set(varRequestMediaType, "");
         Set(varRequestAIDeclared, false);
         Set(varRequestContractor, "");
+        Set(varUserRole, "REQUESTOR");
+        
+        );
         Clear(colArchives);
         Set(varShowTemplatePicker, false);
         Set(varShowTplConfirm, false);
@@ -115,8 +125,8 @@ App As appinfo:
         Set(varKpiMyMonthSuccess, 0);
         Set(varKpiAllMonthTotal, 0);
         Set(varKpiAllMonthSuccess, 0);
-        Set(varKpiAvgPublishDays, Blank());
-    StartScreen: =DashboardScreen
+        Set(varKpiAvgPublishDays, Blank());*/
+    StartScreen: =
     Theme: =PowerAppsTheme
 
     Host As hostControl.DefaultHostControlVariant:

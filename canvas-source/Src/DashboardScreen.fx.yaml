@@ -3,20 +3,20 @@ DashboardScreen As screen:
     OnVisible: |-
         =Set(varMonthStart, Date(Year(Now()), Month(Now()), 1));
         Set(varKpiRejectedAll,
-            CountRows(Filter(CentralDepositMainList, Status.Value = "Rejected")));
+            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Rejected")));
         Set(varKpiRejectedMonth,
-            CountRows(Filter(CentralDepositMainList, Status.Value = "Rejected", Created >= varMonthStart)));
+            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Rejected", Created >= varMonthStart)));
         Set(varKpiMyMonthTotal,
-            CountRows(Filter(CentralDepositMainList, 'Created By'.Email = User().Email, Created >= varMonthStart)));
+            CountRows(Filter(AVCentralDepositRequests, 'Created By'.Email = User().Email, Created >= varMonthStart)));
         Set(varKpiMyMonthSuccess,
-            CountRows(Filter(CentralDepositMainList, 'Created By'.Email = User().Email, Created >= varMonthStart, Status.Value = "Approved")));
+            CountRows(Filter(AVCentralDepositRequests, 'Created By'.Email = User().Email, Created >= varMonthStart, Status.Value = "Approved")));
         Set(varKpiAllMonthTotal,
-            CountRows(Filter(CentralDepositMainList, Created >= varMonthStart)));
+            CountRows(Filter(AVCentralDepositRequests, Created >= varMonthStart)));
         Set(varKpiAllMonthSuccess,
-            CountRows(Filter(CentralDepositMainList, Created >= varMonthStart, Status.Value = "Approved")));
+            CountRows(Filter(AVCentralDepositRequests, Created >= varMonthStart, Status.Value = "Approved")));
         Set(varKpiAvgPublishDays,
             With(
-                {approved: Filter(CentralDepositMainList, Status.Value = "Approved", Not(IsBlank(PublicationDate)))},
+                {approved: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)))},
                 If(CountRows(approved) = 0,
                     Blank(),
                     Round(
@@ -25,63 +25,101 @@ DashboardScreen As screen:
                             durHours) / 24,
                         1))))
 
+    Header_1 As group:
+        Height: =5
+        minimumHeight: =5
+        minimumWidth: =5
+        Visible: =true
+        Width: =5
+        X: =8
+        Y: =20
+
+        HomeAppTitle_1 As label:
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+            ZIndex: =37
+
+        HomeUserName_1 As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+            ZIndex: =38
+
+        Logo_EC_Form_6 As image:
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+            ZIndex: =39
+
+        CD_Logo_1 As image:
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+            ZIndex: =40
+
+        HomeAppSubtitle_1 As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+            ZIndex: =41
+
+        Image1_6 As image:
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+            ZIndex: =42
+
     DB_TopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
         Height: =56
         Width: =1366
-        ZIndex: =1
-
-    DB_AppTitle As label:
-        Color: =RGBA(255, 255, 255, 1)
-        FontWeight: =FontWeight.Semibold
-        Height: =28
-        Size: =16
-        Text: ="Central Deposit"
-        VerticalAlign: =VerticalAlign.Bottom
-        Width: =400
-        X: =72
-        Y: =4
-        ZIndex: =2
-
-    DB_AppSubtitle As label:
-        Color: =RGBA(186, 202, 226, 1)
-        Height: =16
-        Size: =8
-        Text: ="Ticket System"
-        VerticalAlign: =VerticalAlign.Top
-        Width: =400
-        X: =72
-        Y: =32
-        ZIndex: =3
-
-    DB_UserName As label:
-        Align: =Align.Right
-        Color: =RGBA(186, 202, 226, 1)
-        Height: =56
-        Size: =12
-        Text: =User().FullName
-        Width: =240
-        X: =1110
-        ZIndex: =4
+        ZIndex: =8
 
     DB_PageTitle As label:
         Color: =RGBA(0, 18, 107, 1)
         FontWeight: =FontWeight.Bold
         Size: =22
-        Text: ="Dashboard"
+        Text: ="Administrator Dashboard"
         Width: =600
         X: =48
         Y: =84
-        ZIndex: =5
+        ZIndex: =10
 
     DB_PageSub As label:
         Color: =RGBA(96, 104, 120, 1)
         Height: =24
-        Text: ="Key indicators for " & Text(Now(), "mmmm yyyy") & " — refreshed each time this screen opens."
+        Text: ="Key indicators "
         Width: =700
         X: =48
         Y: =126
-        ZIndex: =6
+        ZIndex: =11
 
     DB_Card1 As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -91,7 +129,7 @@ DashboardScreen As screen:
         Width: =410
         X: =48
         Y: =166
-        ZIndex: =7
+        ZIndex: =12
 
     DB_Card1Accent As rectangle:
         Fill: =RGBA(193, 40, 40, 1)
@@ -99,7 +137,7 @@ DashboardScreen As screen:
         Width: =410
         X: =48
         Y: =166
-        ZIndex: =8
+        ZIndex: =13
 
     DB_Card1Title As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -110,7 +148,7 @@ DashboardScreen As screen:
         Width: =360
         X: =76
         Y: =194
-        ZIndex: =9
+        ZIndex: =14
 
     DB_Card1Big As label:
         Color: =RGBA(193, 40, 40, 1)
@@ -121,7 +159,7 @@ DashboardScreen As screen:
         Width: =360
         X: =76
         Y: =232
-        ZIndex: =10
+        ZIndex: =15
 
     DB_Card1BigLbl As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -130,7 +168,7 @@ DashboardScreen As screen:
         Width: =360
         X: =76
         Y: =330
-        ZIndex: =11
+        ZIndex: =16
 
     DB_Card1Divider As rectangle:
         Fill: =RGBA(230, 232, 238, 1)
@@ -138,7 +176,7 @@ DashboardScreen As screen:
         Width: =354
         X: =76
         Y: =374
-        ZIndex: =12
+        ZIndex: =17
 
     DB_Card1Month As label:
         Color: =RGBA(0, 18, 107, 1)
@@ -149,17 +187,17 @@ DashboardScreen As screen:
         Width: =360
         X: =76
         Y: =392
-        ZIndex: =13
+        ZIndex: =18
 
     DB_Card1MonthLbl As label:
         Color: =RGBA(96, 104, 120, 1)
         Height: =24
         Size: =12
-        Text: ="rejected this month (" & Text(Now(), "mmmm") & ")"
+        Text: ="rejected this month"
         Width: =360
         X: =76
         Y: =448
-        ZIndex: =14
+        ZIndex: =19
 
     DB_Card2 As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -169,25 +207,25 @@ DashboardScreen As screen:
         Width: =410
         X: =478
         Y: =166
-        ZIndex: =15
+        ZIndex: =20
 
     DB_Card2Accent As rectangle:
         Height: =6
         Width: =410
         X: =478
         Y: =166
-        ZIndex: =16
+        ZIndex: =21
 
     DB_Card2Title As label:
         Color: =RGBA(96, 104, 120, 1)
         FontWeight: =FontWeight.Semibold
         Height: =24
         Size: =12
-        Text: ="SUCCESS RATE — " & Upper(Text(Now(), "mmmm"))
+        Text: ="SUCCESS RATE "
         Width: =360
         X: =506
         Y: =194
-        ZIndex: =17
+        ZIndex: =22
 
     DB_Card2My As label:
         Color: =RGBA(56, 96, 178, 1)
@@ -201,16 +239,16 @@ DashboardScreen As screen:
         Width: =360
         X: =506
         Y: =228
-        ZIndex: =18
+        ZIndex: =23
 
     DB_Card2MyLbl As label:
         Color: =RGBA(60, 66, 80, 1)
         Size: =12
-        Text: ="My success rate — " & Text(Coalesce(varKpiMyMonthSuccess, 0)) & " approved of " & Text(Coalesce(varKpiMyMonthTotal, 0)) & " of my requests this month"
+        Text: ="My success rate - 0 approved of 0 of my requests this month"
         Width: =360
         X: =506
         Y: =300
-        ZIndex: =19
+        ZIndex: =24
 
     DB_Card2Divider As rectangle:
         Fill: =RGBA(230, 232, 238, 1)
@@ -218,7 +256,7 @@ DashboardScreen As screen:
         Width: =354
         X: =506
         Y: =358
-        ZIndex: =20
+        ZIndex: =25
 
     DB_Card2All As label:
         Color: =RGBA(0, 18, 107, 1)
@@ -232,16 +270,16 @@ DashboardScreen As screen:
         Width: =360
         X: =506
         Y: =372
-        ZIndex: =21
+        ZIndex: =26
 
     DB_Card2AllLbl As label:
         Color: =RGBA(60, 66, 80, 1)
         Size: =12
-        Text: ="Overall success rate — " & Text(Coalesce(varKpiAllMonthSuccess, 0)) & " approved of " & Text(Coalesce(varKpiAllMonthTotal, 0)) & " requests this month (all users)"
+        Text: ="Overall success rate - 0 approved of 0 requests this month (all users)"
         Width: =360
         X: =506
         Y: =444
-        ZIndex: =22
+        ZIndex: =27
 
     DB_Card2Note As label:
         Color: =RGBA(140, 148, 160, 1)
@@ -251,7 +289,7 @@ DashboardScreen As screen:
         Width: =360
         X: =506
         Y: =548
-        ZIndex: =23
+        ZIndex: =28
 
     DB_Card3 As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -261,7 +299,7 @@ DashboardScreen As screen:
         Width: =410
         X: =908
         Y: =166
-        ZIndex: =24
+        ZIndex: =29
 
     DB_Card3Accent As rectangle:
         Fill: =RGBA(22, 128, 80, 1)
@@ -269,7 +307,7 @@ DashboardScreen As screen:
         Width: =410
         X: =908
         Y: =166
-        ZIndex: =25
+        ZIndex: =30
 
     DB_Card3Title As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -280,7 +318,7 @@ DashboardScreen As screen:
         Width: =360
         X: =936
         Y: =194
-        ZIndex: =26
+        ZIndex: =31
 
     DB_Card3Big As label:
         Color: =RGBA(22, 128, 80, 1)
@@ -296,7 +334,7 @@ DashboardScreen As screen:
         Width: =360
         X: =936
         Y: =232
-        ZIndex: =27
+        ZIndex: =32
 
     DB_Card3BigLbl As label:
         Color: =RGBA(60, 66, 80, 1)
@@ -305,7 +343,7 @@ DashboardScreen As screen:
         Width: =360
         X: =936
         Y: =330
-        ZIndex: =28
+        ZIndex: =33
 
     DB_Card3Note As label:
         Color: =RGBA(140, 148, 160, 1)
@@ -315,17 +353,17 @@ DashboardScreen As screen:
         Width: =360
         X: =936
         Y: =390
-        ZIndex: =29
+        ZIndex: =34
 
     DB_BtnEnter As button:
         Height: =48
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: =Navigate(MyRequestScreen)
-        Text: ="Enter the application"
+        Text: ="Requests Management"
         Width: =280
-        X: =543
+        X: =478
         Y: =648
-        ZIndex: =30
+        ZIndex: =35
 
     DB_BtnHelp As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -338,7 +376,37 @@ DashboardScreen As screen:
         Size: =13
         Text: ="Help"
         Width: =110
-        X: =843
+        X: =778
         Y: =648
-        ZIndex: =31
+        ZIndex: =36
+
+    Label12_4 As label:
+        Align: =Align.Center
+        AutoHeight: =true
+        Color: =RGBA(149, 149, 149, 1)
+        FontWeight: =FontWeight.Semibold
+        Size: =11
+        Text: |-
+            ="Audiovisual Service - DG COMM
+            This site is managed by the Directorate-General for Communication"
+        Width: =691
+        X: =265
+        Y: =717
+        ZIndex: =43
+
+    NoInternetIcon_4 As icon:
+        Color: =RGBA(255, 0, 0, 1)
+        DisplayMode: =DisplayMode.View
+        FocusedBorderThickness: =0
+        Height: =44
+        Icon: =Icon.GlobeNotConnected
+        PaddingBottom: =5
+        PaddingLeft: =5
+        PaddingRight: =5
+        PaddingTop: =5
+        Tooltip: ="No internet connection detected. Please verify your connection and try again."
+        Visible: =!Connection.Connected
+        X: =16
+        Y: =719
+        ZIndex: =44
 

@@ -57,34 +57,6 @@ Screens:
              Note: "Set the owner on the Request screen."}
         )
     Children:
-      - CV_TopBar:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(0, 18, 107, 1)
-            Height: =52
-            Width: =1366
-      - CV_Back:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(186, 202, 226, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: =Navigate(RequestScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="←  Back to request"
-            Width: =180
-            X: =16
-            Y: =10
       - CV_Breadcrumb:
           Control: Label@2.5.1
           Properties:
@@ -384,6 +356,13 @@ Screens:
             Width: =440
             X: =660
             Y: =720
+      - CV_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
       - CV_BtnSaveArchive:
           Control: Classic/Button@2.2.0
           Properties:
@@ -441,7 +420,84 @@ Screens:
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
             Size: =14
-            Text: ="Save archive  ✓"
+            Text: ="Save Media  ✓"
             Width: =200
             X: =1142
             Y: =720
+      - HomeAppTitle_CV:
+          Control: Label@2.5.1
+          Group: Header_CV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+      - HomeUserName_CV:
+          Control: Label@2.5.1
+          Group: Header_CV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+      - Logo_EC_CV:
+          Control: Image@2.2.3
+          Group: Header_CV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+      - CD_Logo_CV:
+          Control: Image@2.2.3
+          Group: Header_CV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+      - HomeAppSubtitle_CV:
+          Control: Label@2.5.1
+          Group: Header_CV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+      - Image1_CV:
+          Control: Image@2.2.3
+          Group: Header_CV
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299

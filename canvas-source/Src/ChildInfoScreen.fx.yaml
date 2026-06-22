@@ -1,24 +1,77 @@
 ChildInfoScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
 
-    CI_TopBar As rectangle:
-        Fill: =RGBA(0, 18, 107, 1)
-        Height: =52
-        Width: =1366
+    Header_CI As group:
+        Height: =5
+        minimumHeight: =5
+        minimumWidth: =5
+        Visible: =true
+        Width: =5
+        X: =8
+        Y: =20
         ZIndex: =1
 
-    CI_Back As button:
-        BorderThickness: =0
-        Color: =RGBA(186, 202, 226, 1)
-        Fill: =RGBA(0, 18, 107, 1)
-        HoverFill: =RGBA(0, 18, 107, 1)
-        OnSelect: =Navigate(RequestScreen)
-        Size: =13
-        Text: ="←  Back to request"
-        Width: =180
-        X: =16
-        Y: =10
-        ZIndex: =2
+        HomeAppTitle_CI As label:
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+            ZIndex: =28
+
+        HomeUserName_CI As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+            ZIndex: =29
+
+        Logo_EC_CI As image:
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+            ZIndex: =30
+
+        CD_Logo_CI As image:
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+            ZIndex: =31
+
+        HomeAppSubtitle_CI As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+            ZIndex: =32
+
+        Image1_CI As image:
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+            ZIndex: =33
 
     CI_Breadcrumb As label:
         Color: =RGBA(186, 202, 226, 1)
@@ -26,7 +79,7 @@ ChildInfoScreen As screen:
         Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
         Width: =700
         X: =200
-        ZIndex: =3
+        ZIndex: =2
 
     CI_TabsBg As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -35,7 +88,7 @@ ChildInfoScreen As screen:
         Height: =50
         Width: =1366
         Y: =52
-        ZIndex: =4
+        ZIndex: =3
 
     CI_Tab1 As button:
         BorderThickness: =0
@@ -47,13 +100,13 @@ ChildInfoScreen As screen:
         Width: =150
         X: =16
         Y: =52
-        ZIndex: =5
+        ZIndex: =4
 
     CI_Tab1Line As rectangle:
         Height: =3
         X: =16
         Y: =99
-        ZIndex: =6
+        ZIndex: =5
 
     CI_Tab2 As button:
         BorderThickness: =0
@@ -66,7 +119,7 @@ ChildInfoScreen As screen:
         Width: =170
         X: =176
         Y: =52
-        ZIndex: =7
+        ZIndex: =6
 
     CI_Tab3 As button:
         BorderThickness: =0
@@ -79,7 +132,7 @@ ChildInfoScreen As screen:
         Width: =180
         X: =356
         Y: =52
-        ZIndex: =8
+        ZIndex: =7
 
     CI_Tab4 As button:
         BorderThickness: =0
@@ -92,7 +145,7 @@ ChildInfoScreen As screen:
         Width: =170
         X: =546
         Y: =52
-        ZIndex: =9
+        ZIndex: =8
 
     CI_Gallery As gallery:
         Fill: =RGBA(247, 248, 250, 1)
@@ -104,7 +157,7 @@ ChildInfoScreen As screen:
         TemplateSize: =816 + Switch(varChildMediaType, "Video", 160, "Podcast", 320, 0)
         Width: =1366
         Y: =102
-        ZIndex: =10
+        ZIndex: =9
 
         CI_Card As rectangle:
             BorderColor: =RGBA(220, 224, 230, 1)
@@ -121,7 +174,7 @@ ChildInfoScreen As screen:
             FontWeight: =FontWeight.Bold
             Height: =30
             Size: =18
-            Text: ="Archive identification"
+            Text: ="Media details"
             Width: =840
             X: =56
             Y: =26
@@ -466,7 +519,7 @@ ChildInfoScreen As screen:
         Height: =56
         Width: =1366
         Y: =712
-        ZIndex: =11
+        ZIndex: =10
 
     CI_BtnSave As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -481,7 +534,7 @@ ChildInfoScreen As screen:
         Width: =140
         X: =32
         Y: =720
-        ZIndex: =12
+        ZIndex: =11
 
     CI_BtnNext As button:
         HoverFill: =RGBA(0, 18, 107, 1)
@@ -492,7 +545,7 @@ ChildInfoScreen As screen:
         Width: =200
         X: =1142
         Y: =720
-        ZIndex: =13
+        ZIndex: =12
 
     CI_BtnTemplate As button:
         BorderColor: =RGBA(56, 96, 178, 1)
@@ -509,9 +562,9 @@ ChildInfoScreen As screen:
         Size: =12
         Text: ="Use previous archive as template"
         Width: =300
-        X: =1018
-        Y: =16
-        ZIndex: =40
+        X: =1011
+        Y: =125
+        ZIndex: =13
 
     CI_TplOverlay As rectangle:
         Fill: =RGBA(0, 18, 107, 0.45)
@@ -519,7 +572,7 @@ ChildInfoScreen As screen:
         OnSelect: =Set(varShowTemplatePicker, false)
         Visible: =varShowTemplatePicker
         Width: =1366
-        ZIndex: =41
+        ZIndex: =14
 
     CI_TplPanel As rectangle:
         BorderColor: =RGBA(186, 202, 226, 1)
@@ -530,7 +583,7 @@ ChildInfoScreen As screen:
         Width: =760
         X: =303
         Y: =114
-        ZIndex: =42
+        ZIndex: =15
 
     CI_TplTitle As label:
         Color: =RGBA(0, 18, 107, 1)
@@ -542,7 +595,7 @@ ChildInfoScreen As screen:
         Width: =600
         X: =327
         Y: =130
-        ZIndex: =43
+        ZIndex: =16
 
     CI_TplSubtitle As label:
         Color: =RGBA(96, 104, 120, 1)
@@ -552,7 +605,7 @@ ChildInfoScreen As screen:
         Width: =712
         X: =327
         Y: =162
-        ZIndex: =44
+        ZIndex: =17
 
     CI_TplClose As button:
         BorderThickness: =0
@@ -567,7 +620,7 @@ ChildInfoScreen As screen:
         Width: =40
         X: =1011
         Y: =122
-        ZIndex: =45
+        ZIndex: =18
 
     CI_TplSearch As text:
         Default: =varTplSearch
@@ -578,7 +631,7 @@ ChildInfoScreen As screen:
         Width: =712
         X: =327
         Y: =208
-        ZIndex: =46
+        ZIndex: =19
 
     CI_TplGallery As gallery.galleryVertical:
         DelayItemLoading: =true
@@ -602,7 +655,7 @@ ChildInfoScreen As screen:
         Width: =712
         X: =327
         Y: =250
-        ZIndex: =47
+        ZIndex: =20
 
         CI_TplRowBg As rectangle:
             Fill: =RGBA(0, 0, 0, 0)
@@ -677,14 +730,14 @@ ChildInfoScreen As screen:
         Width: =712
         X: =327
         Y: =380
-        ZIndex: =48
+        ZIndex: =21
 
     CI_TplConfirmShade As rectangle:
         Fill: =RGBA(0, 18, 107, 0.35)
         Height: =768
         Visible: =varShowTplConfirm
         Width: =1366
-        ZIndex: =49
+        ZIndex: =22
 
     CI_TplConfirmPanel As rectangle:
         BorderColor: =RGBA(186, 202, 226, 1)
@@ -695,7 +748,7 @@ ChildInfoScreen As screen:
         Width: =520
         X: =423
         Y: =290
-        ZIndex: =50
+        ZIndex: =23
 
     CI_TplConfirmText As label:
         Color: =RGBA(32, 31, 30, 1)
@@ -705,7 +758,13 @@ ChildInfoScreen As screen:
         Width: =472
         X: =447
         Y: =306
-        ZIndex: =51
+        ZIndex: =24
+
+    CI_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =56
+        Width: =1366
+        ZIndex: =25
 
     CI_TplConfirmCancel As button:
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -720,7 +779,7 @@ ChildInfoScreen As screen:
         Visible: =varShowTplConfirm
         X: =587
         Y: =396
-        ZIndex: =52
+        ZIndex: =26
 
     CI_TplConfirmOK As button:
         Height: =38
@@ -744,5 +803,20 @@ ChildInfoScreen As screen:
         Width: =168
         X: =759
         Y: =396
-        ZIndex: =53
+        ZIndex: =27
+
+    RS_Back_1 As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =36
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(RequestScreen)
+        Size: =13
+        Text: ="< No Saving"
+        Width: =154
+        X: =192
+        Y: =724
+        ZIndex: =34
 
