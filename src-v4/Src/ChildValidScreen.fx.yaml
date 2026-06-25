@@ -362,11 +362,12 @@ ChildValidScreen As screen:
         DisplayMode: =If(CountIf(colValidations, Not(Pass)) = 0, DisplayMode.Edit, DisplayMode.Disabled)
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
-            =With({existingRec: LookUp(colArchives, ArchiveId = varCurrentChildId)},
+            =With(
+                {existingRec: LookUp(colArchives, ArchiveId = varCurrentChildId)},
                 RemoveIf(colArchives, ArchiveId = varCurrentChildId);
                 Collect(colArchives, {
                     ArchiveId: varCurrentChildId,
-                    SPId: If(IsBlank(existingRec), 0, existingRec.SPId),
+                    SPId: Coalesce(existingRec.SPId, 0),
                     Title: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
                     MediaType: varChildMediaType,
                     Description: varChildDescription,
@@ -398,8 +399,70 @@ ChildValidScreen As screen:
                     PreexistingProvided: varChildPreexistingProvided
                 })
             );
-            Notify("Archive added to request. Press Submit request when all archives are ready.", NotificationType.Success);
-            Navigate(RequestScreen)
+            If(
+                Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
+                IfError(
+                    With(
+                        {localItem: LookUp(colArchives, ArchiveId = varCurrentChildId)},
+                        With(
+                            {
+                                savedMedia: Patch(
+                                    AVCentralDepositMediaItems,
+                                    If(
+                                        Coalesce(localItem.SPId, 0) = 0,
+                                        Defaults(AVCentralDepositMediaItems),
+                                        LookUp(AVCentralDepositMediaItems, ID = localItem.SPId)
+                                    ),
+                                    {
+                                        Title: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
+                                        Description: varChildDescription,
+                                        MediaType: Table({Value: varChildMediaType}),
+                                        CaptureDate: varChildCaptureDate,
+                                        ProductionPlace: varChildProductionPlace,
+                                        ProductType: If(
+                                            IsBlank(varChildProductType) Or varChildProductType = "",
+                                            Blank(),
+                                            Table({Value: varChildProductType})
+                                        ),
+                                        SeriesTitle: varChildSeriesTitle,
+                                        EpisodeTitle: varChildEpisodeTitle,
+                                        EpisodeSummary: varChildEpisodeSummary,
+                                        SeasonNumber: varChildSeasonNumber,
+                                        EpisodeNumber: varChildEpisodeNumber,
+                                        ProductionEndDate: varChildProductionEndDate,
+                                        PublicationStartDate: varChildPublicationStartDate,
+                                        PublicationEndDate: varChildPublicationEndDate,
+                                        ReferenceLinks: varChildLinks,
+                                        Tags: varChildTags,
+                                        FTPPath: varChildFTPPath,
+                                        LanguageVersions: Table({Value: varChildLanguageVersions}),
+                                        AIVoiceover: If(varChildAIVoiceover, "Yes", "No"),
+                                        ContractCase: Table({Value: varChildContractCase}),
+                                        ContractCase1Sub: If(
+                                            IsBlank(varChildContractCase1Sub) Or varChildContractCase1Sub = "",
+                                            Blank(),
+                                            Table({Value: varChildContractCase1Sub})
+                                        ),
+                                        ContractReference: varChildContractRef,
+                                        MusicUsed: varChildMusicUsed,
+                                        MusicLicenseProvided: varChildMusicLicenceProvided,
+                                        PreexistingRightsProvided: varChildPreexistingProvided,
+                                        ModelReleaseProvided: varChildModelReleaseProvided,
+                                        DepositStatus: Table({Value: "Pending Approval"}),
+                                        ParentRequest: varCurrentRequest.RequestNumber
+                                    }
+                                )
+                            },
+                            UpdateIf(colArchives, ArchiveId = varCurrentChildId, {SPId: savedMedia.ID});
+                            Notify("Archive saved to SharePoint.", NotificationType.Success);
+                            Navigate(RequestScreen)
+                        )
+                    ),
+                    Notify("Save failed: " & FirstError.Message, NotificationType.Error)
+                ),
+                Notify("Archive added to request. Save or submit the request to persist media to SharePoint.", NotificationType.Success);
+                Navigate(RequestScreen)
+            )
         Size: =14
         Text: ="Save Media  ✓"
         Width: =200
