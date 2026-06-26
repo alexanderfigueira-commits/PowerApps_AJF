@@ -908,55 +908,53 @@ RequestScreen As screen:
             ZIndex: =32
 
         RS_BtnResubmitRequest As button:
-            DisabledColor: =RGBA(255, 255, 255, 1)
-            DisabledFill: =RGBA(186, 196, 214, 1)
-            DisplayMode: |-
-                =If(
-                    CountRows(colArchives) > 0
-                    And CountIf(colArchives,
-                        IsBlank(Title) Or Title = "" Or Title = "New archive"
-                        Or IsBlank(MediaType) Or MediaType = ""
-                        Or IsBlank(ContractCase) Or ContractCase = ""
-                        Or Coalesce(AIVoiceover, false)
-                    ) = 0,
-                    DisplayMode.Edit,
-                    DisplayMode.Disabled
-                )
+            DisplayMode: =DisplayMode.Edit
             Fill: =RGBA(180, 95, 6, 1)
             HoverFill: =RGBA(120, 60, 0, 1)
             OnSelect: |-
                 =IfError(
-                    Set(varCurrentRequest,
-                        Patch(AVCentralDepositRequests,
-                            LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
-                            {
-                                RequestNumber: varRequestTitle,
-                                DG: {Value: varRequestDG},
-                                OwnerContact: varRequestOwnerContact,
-                                OwnerEmail: varRequestOwnerEmail,
-                                Description: varRequestDescription,
-                                Status: {Value: "Submitted"}
-                            }
-                        )
-                    );
-                    ForAll(
-                        Filter(colArchives, SPId > 0),
-                        Patch(
-                            AVCentralDepositMediaItems,
-                            LookUp(AVCentralDepositMediaItems, ID = SPId),
-                            {DepositStatus: Table({Value: "Pending Approval"})}
-                        )
-                    );
-                    Clear(colArchives);
-                    Notify("Request resubmitted for review.", NotificationType.Success);
-                    Navigate(MyRequestScreen),
-                    Notify("Error resubmitting. Please try again.", NotificationType.Error)
+                    With(
+                        {
+                            savedReq: Patch(
+                                AVCentralDepositRequests,
+                                LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
+                                {
+                                    RequestNumber: varRequestTitle,
+                                    DG: {Value: varRequestDG},
+                                    OwnerContact: varRequestOwnerContact,
+                                    OwnerEmail: varRequestOwnerEmail,
+                                    Description: varRequestDescription,
+                                    Status: {Value: "Submitted"}
+                                }
+                            )
+                        },
+                        Set(varCurrentRequest, savedReq);
+                        ForAll(
+                            Filter(colArchives, SPId > 0),
+                            Patch(
+                                AVCentralDepositMediaItems,
+                                LookUp(AVCentralDepositMediaItems, ID = SPId),
+                                {DepositStatus: Table({Value: "Pending Approval"})}
+                            )
+                        );
+                        Clear(colArchives);
+                        Notify("Request resubmitted for review.", NotificationType.Success);
+                        Navigate(MyRequestScreen)
+                    ),
+                    Notify("Error resubmitting: " & FirstError.Message, NotificationType.Error)
                 )
             Size: =14
             Text: ="Resubmit for review  →"
             Visible: |-
                 =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
                 And varCurrentRequest.Status.Value = "Rejected"
+                And CountRows(colArchives) > 0
+                And CountIf(colArchives,
+                    IsBlank(Title) Or Title = "" Or Title = "New archive"
+                    Or IsBlank(MediaType) Or MediaType = ""
+                    Or IsBlank(ContractCase) Or ContractCase = ""
+                    Or Coalesce(AIVoiceover, false)
+                ) = 0
             Width: =220
             X: =1114
             Y: =720
