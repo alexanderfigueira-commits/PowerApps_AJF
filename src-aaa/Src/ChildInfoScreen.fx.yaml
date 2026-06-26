@@ -578,8 +578,8 @@ ChildInfoScreen As screen:
         Items: |-
             =SortByColumns(
                 Filter(
-                    CentralDepositMainList,
-                    MediaType.Value = varChildMediaType,
+                    AVCentralDepositMediaItems,
+                    varChildMediaType in MediaType.Value,
                     IsBlank(varTplSearch)
                         Or varTplSearch in Title
                         Or varTplSearch in Text(ID)
@@ -607,14 +607,16 @@ ChildInfoScreen As screen:
                     Set(varShowTplConfirm, true),
                     Set(varChildTitle, Coalesce(varTplCandidate.Title, ""));
                     Set(varChildDescription, Coalesce(varTplCandidate.Description, ""));
-                    Set(varChildCredits, Coalesce(varTplCandidate.Photographer, ""));
-                    Set(varChildLanguageVersions, Coalesce(varTplCandidate.LanguageVersions.Value, ""));
-                    Set(varChildContractCase, Coalesce(varTplCandidate.ContractCase.Value, Blank()));
+                    Set(varChildCredits, Coalesce(First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
+                    Set(varChildLanguageVersions, Concat(varTplCandidate.LanguageVersions, Value, ", "));
+                    Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
+                    Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
                     Set(varChildContractRef, Coalesce(varTplCandidate.ContractReference, ""));
-                    Set(varChildModelRelease, Coalesce(varTplCandidate.ModelRelease, false));
+                    Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
                     Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
-                    Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRights, false));
-                    Set(varChildAIVoiceover, Coalesce(varTplCandidate.AIVoiceover, false));
+                    Set(varChildMusicLicenceProvided, Coalesce(varTplCandidate.MusicLicenseProvided, false));
+                    Set(varChildPreexistingProvided, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+                    Set(varChildAIVoiceover, varTplCandidate.AIVoiceover = "Yes");
                     Set(varShowTemplatePicker, false)
                 )
             Width: =712
@@ -635,7 +637,7 @@ ChildInfoScreen As screen:
             Height: =22
             OnSelect: =Select(Parent)
             Size: =11
-            Text: ="ID " & Text(ThisItem.ID) & If(IsBlank(ThisItem.ContractCase.Value), "", "   |   " & Left(ThisItem.ContractCase.Value, 30))
+            Text: ="ID " & Text(ThisItem.ID) & If(IsBlank(First(ThisItem.ContractCase).Value), "", "   |   " & Left(First(ThisItem.ContractCase).Value, 30))
             Width: =560
             X: =12
             Y: =30
@@ -726,14 +728,16 @@ ChildInfoScreen As screen:
         OnSelect: |-
             =Set(varChildTitle, Coalesce(varTplCandidate.Title, ""));
             Set(varChildDescription, Coalesce(varTplCandidate.Description, ""));
-            Set(varChildCredits, Coalesce(varTplCandidate.Photographer, ""));
-            Set(varChildLanguageVersions, Coalesce(varTplCandidate.LanguageVersions.Value, ""));
-            Set(varChildContractCase, Coalesce(varTplCandidate.ContractCase.Value, Blank()));
+            Set(varChildCredits, Coalesce(First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
+            Set(varChildLanguageVersions, Concat(varTplCandidate.LanguageVersions, Value, ", "));
+            Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
+            Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
             Set(varChildContractRef, Coalesce(varTplCandidate.ContractReference, ""));
-            Set(varChildModelRelease, Coalesce(varTplCandidate.ModelRelease, false));
+            Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
             Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
-            Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRights, false));
-            Set(varChildAIVoiceover, Coalesce(varTplCandidate.AIVoiceover, false));
+            Set(varChildMusicLicenceProvided, Coalesce(varTplCandidate.MusicLicenseProvided, false));
+            Set(varChildPreexistingProvided, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+            Set(varChildAIVoiceover, varTplCandidate.AIVoiceover = "Yes");
             Set(varShowTplConfirm, false);
             Set(varShowTemplatePicker, false)
         Size: =13

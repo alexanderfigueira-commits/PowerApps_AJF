@@ -217,7 +217,7 @@ RequestScreen As screen:
         ZIndex: =11
 
     RS_Owner As text:
-        Default: =First(varCurrentRequest.OwnerContact).DisplayName
+        Default: =First(varCurrentRequest.Contractor_Contact).DisplayName
         HintText: ="Name of the DG official responsible"
         OnChange: =
         Width: =380
@@ -236,8 +236,7 @@ RequestScreen As screen:
         ZIndex: =13
 
     RS_Contractor As text:
-        Default: |
-            =
+        Default: =First(varCurrentRequest.DG_Agency_Contact).DisplayName
         HintText: ="Name of the contractor / production company"
         OnChange: =
         Width: =380
@@ -581,58 +580,36 @@ RequestScreen As screen:
             Height: =36
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
-                =/*If(
-                    IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
-                    Set(varCurrentRequest,
-                        Patch(AVCentralDepositProjects, Defaults(AVCentralDepositProjects),
-                            {
-                                Title: varRequestTitle,
-                                DG: varRequestDG,
-                                OwnerContact: varRequestOwnerContact,
-                                OwnerEmail: varRequestOwnerEmail,
-                                Description: varRequestDescription,
-                                Status: {Value: "Draft"}
-                            }
-                        )
-                    )
-                );
-                If(
-                    Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
-                    Set(varCurrentChildId, Text(GUID()));
-                    Set(varChildTitle, "");
-                    Set(varChildMediaType, "Photo");
-                    Set(varChildDescription, "");
-                    Set(varChildCaptureDate, Blank());
-                    Set(varChildProductionPlace, "");
-                    Set(varChildCredits, "");
-                    Set(varChildLanguageVersions, "");
-                    Set(varChildAIVoiceover, false);
-                    Set(varChildContractCase, Blank());
-                    Set(varChildContractCase1Sub, Blank());
-                    Set(varChildContractRef, "");
-                    Set(varChildModelRelease, false);
-                    Set(varChildModelReleaseProvided, false);
-                    Set(varChildMusicUsed, false);
-                    Set(varChildMusicLicenceProvided, false);
-                    Set(varChildPreexisting, false);
-                    Set(varChildPreexistingProvided, false);
-                    Set(varChildEpisodeTitle, "");
-                    Set(varChildEpisodeSummary, "");
-                    Set(varChildSeasonNumber, 0);
-                    Set(varChildEpisodeNumber, 0);
-                    Set(varChildSeriesTitle, "");
-                    Set(varChildProductType, "");
-                    Set(varChildProductionEndDate, Blank());
-                    Set(varChildPublicationStartDate, Blank());
-                    Set(varChildPublicationEndDate, Blank());
-                    Set(varChildLinks, "");
-                    Set(varChildTags, "");
-                    Set(varChildFTPPath, "");
-                    Navigate(ChildInfoScreen),
-                    Notify("Could not save request. Check required fields.", NotificationType.Error)
-                )*/
-                 Set(varChildMediaType, varRequestMediaType);
-                
+                =Set(varCurrentChildId, Text(GUID()));
+                Set(varChildTitle, "");
+                Set(varChildMediaType, varRequestMediaType);
+                Set(varChildDescription, "");
+                Set(varChildCaptureDate, Blank());
+                Set(varChildProductionPlace, "");
+                Set(varChildCredits, "");
+                Set(varChildLanguageVersions, "");
+                Set(varChildAIVoiceover, false);
+                Set(varChildContractCase, "");
+                Set(varChildContractCase1Sub, "");
+                Set(varChildContractRef, "");
+                Set(varChildModelRelease, false);
+                Set(varChildModelReleaseProvided, false);
+                Set(varChildMusicUsed, false);
+                Set(varChildMusicLicenceProvided, false);
+                Set(varChildPreexisting, false);
+                Set(varChildPreexistingProvided, false);
+                Set(varChildEpisodeTitle, "");
+                Set(varChildEpisodeSummary, "");
+                Set(varChildSeasonNumber, 0);
+                Set(varChildEpisodeNumber, 0);
+                Set(varChildSeriesTitle, "");
+                Set(varChildProductType, "");
+                Set(varChildProductionEndDate, Blank());
+                Set(varChildPublicationStartDate, Blank());
+                Set(varChildPublicationEndDate, Blank());
+                Set(varChildLinks, "");
+                Set(varChildTags, "");
+                Set(varChildFTPPath, "");
                 Navigate(ChildInfoScreen)
             Size: =13
             Text: ="+  Add new media"
@@ -893,94 +870,32 @@ RequestScreen As screen:
                 )
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
-                =Set(varCurrentRequest,
-                    Patch(AVCentralDepositRequests,
-                        LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
-                        {
-                            RequestNumber: varRequestTitle,
-                            DG: {Value: varRequestDG},
-                            OwnerContact: varRequestOwnerContact,
-                            OwnerEmail: varRequestOwnerEmail,
-                            Description: varRequestDescription,
-                            Status: {Value: "Submitted"}
-                        }
-                    )
-                );
-                If(IsError(varCurrentRequest),
-                    Notify("Error submitting request. Please try again.", NotificationType.Error),
-                    ForAll(colArchives,
-                        If(
-                            Coalesce(SPId, 0) > 0,
-                            Patch(CentralDepositMainList, LookUp(CentralDepositMainList, ID = SPId),
-                                {
-                                    Project: Title,
-                                    MediaType: {Value: MediaType},
-                                    Description: Description,
-                                    CaptureDate: CaptureDate,
-                                    ProductionPlace: ProductionPlace,
-                                    ProductType: If(MediaType = "Video", ProductType, ""),
-                                    SeriesTitle: If(MediaType = "Podcast", SeriesTitle, ""),
-                                    EpisodeTitle: If(MediaType = "Podcast", EpisodeTitle, ""),
-                                    EpisodeSummary: If(MediaType = "Podcast", EpisodeSummary, ""),
-                                    SeasonNumber: If(MediaType = "Podcast", SeasonNumber, 0),
-                                    EpisodeNumber: If(MediaType = "Podcast", EpisodeNumber, 0),
-                                    PublicationEndDate: If(MediaType = "Video" Or MediaType = "Podcast", ProductionEndDate, Blank()),
-                                    PublicationStartDate: PublicationStartDate,
-                                    ProductionEndDate: PublicationEndDate,
-                                    ReferenceLinks: ReferenceLinks,
-                                    Tags: Tags,
-                                    FTPPath: FTPPath,
-                                    LanguageVersions: {Value: LanguageVersions},
-                                    Photographer: If(MediaType = "Photo", Credits, ""),
-                                    Director: If(MediaType = "Video", Credits, ""),
-                                    Producer: If(MediaType = "Podcast", Credits, ""),
-                                    AIVoiceover: AIVoiceover,
-                                    ContractCase: {Value: ContractCase},
-                                    ContractReference: ContractRef,
-                                    MusicUsed: MusicUsed,
-                                    MusicLicenseProvided: MusicLicenceProvided,
-                                    PreexistingRightsProvided: PreexistingProvided,
-                                    DepositStatus: {Value: "Pending Approval"}
-                                }
-                            ),
-                            Patch(CentralDepositMainList, Defaults(CentralDepositMainList),
-                                {
-                                    Project: Title,
-                                    MediaType: {Value: MediaType},
-                                    Description: Description,
-                                    CaptureDate: CaptureDate,
-                                    ProductionPlace: ProductionPlace,
-                                    ProductType: If(MediaType = "Video", ProductType, ""),
-                                    SeriesTitle: If(MediaType = "Podcast", SeriesTitle, ""),
-                                    EpisodeTitle: If(MediaType = "Podcast", EpisodeTitle, ""),
-                                    EpisodeSummary: If(MediaType = "Podcast", EpisodeSummary, ""),
-                                    SeasonNumber: If(MediaType = "Podcast", SeasonNumber, 0),
-                                    EpisodeNumber: If(MediaType = "Podcast", EpisodeNumber, 0),
-                                    PublicationEndDate: If(MediaType = "Video" Or MediaType = "Podcast", ProductionEndDate, Blank()),
-                                    PublicationStartDate: PublicationStartDate,
-                                    ProductionEndDate: PublicationEndDate,
-                                    ReferenceLinks: ReferenceLinks,
-                                    Tags: Tags,
-                                    FTPPath: FTPPath,
-                                    LanguageVersions: {Value: LanguageVersions},
-                                    Photographer: If(MediaType = "Photo", Credits, ""),
-                                    Director: If(MediaType = "Video", Credits, ""),
-                                    Producer: If(MediaType = "Podcast", Credits, ""),
-                                    AIVoiceover: AIVoiceover,
-                                    ContractCase: {Value: ContractCase},
-                                    ContractReference: ContractRef,
-                                    MusicUsed: MusicUsed,
-                                    MusicLicenseProvided: MusicLicenceProvided,
-                                    PreexistingRightsProvided: PreexistingProvided,
-                                    DepositStatus: {Value: "Pending Approval"},
-                                    ParentProject: {Id: varCurrentRequest.ID, Value: varCurrentRequest.RequestNumber}
-                                }
-                            )
+                =IfError(
+                    Set(varCurrentRequest,
+                        Patch(AVCentralDepositRequests,
+                            LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
+                            {
+                                RequestNumber: varRequestTitle,
+                                DG: {Value: varRequestDG},
+                                OwnerContact: varRequestOwnerContact,
+                                OwnerEmail: varRequestOwnerEmail,
+                                Description: varRequestDescription,
+                                Status: {Value: "Submitted"}
+                            }
+                        )
+                    );
+                    ForAll(
+                        Filter(colArchives, SPId > 0),
+                        Patch(
+                            AVCentralDepositMediaItems,
+                            LookUp(AVCentralDepositMediaItems, ID = SPId),
+                            {DepositStatus: Table({Value: "Pending Approval"})}
                         )
                     );
                     Clear(colArchives);
                     Notify("Request submitted successfully.", NotificationType.Success);
-                    Navigate(MyRequestScreen)
+                    Navigate(MyRequestScreen),
+                    Notify("Error submitting request. Please try again.", NotificationType.Error)
                 )
             Size: =14
             Text: ="Submit request  →"
@@ -1010,70 +925,32 @@ RequestScreen As screen:
             Fill: =RGBA(180, 95, 6, 1)
             HoverFill: =RGBA(120, 60, 0, 1)
             OnSelect: |-
-                =Set(varCurrentRequest,
-                    Patch(AVCentralDepositRequests,
-                        LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
-                        {
-                            RequestNumber: varRequestTitle,
-                            DG: {Value: varRequestDG},
-                            OwnerContact: varRequestOwnerContact,
-                            OwnerEmail: varRequestOwnerEmail,
-                            Description: varRequestDescription,
-                            Status: {Value: "Submitted"}
-                        }
-                    )
-                );
-                If(IsError(varCurrentRequest),
-                    Notify("Error resubmitting. Please try again.", NotificationType.Error),
-                    ForAll(colArchives,
-                        If(
-                            Coalesce(SPId, 0) > 0,
-                            Patch(CentralDepositMainList, LookUp(CentralDepositMainList, ID = SPId),
-                                {
-                                    Project: Title,
-                                    MediaType: {Value: MediaType},
-                                    Description: Description,
-                                    CaptureDate: CaptureDate,
-                                    ProductionPlace: ProductionPlace,
-                                    LanguageVersions: {Value: LanguageVersions},
-                                    Photographer: If(MediaType = "Photo", Credits, ""),
-                                    Director: If(MediaType = "Video", Credits, ""),
-                                    Producer: If(MediaType = "Podcast", Credits, ""),
-                                    AIVoiceover: AIVoiceover,
-                                    ContractCase: {Value: ContractCase},
-                                    ContractReference: ContractRef,
-                                    MusicUsed: MusicUsed,
-                                    MusicLicenseProvided: MusicLicenceProvided,
-                                    PreexistingRightsProvided: PreexistingProvided,
-                                    DepositStatus: {Value: "Pending Approval"}
-                                }
-                            ),
-                            Patch(CentralDepositMainList, Defaults(CentralDepositMainList),
-                                {
-                                    Project: Title,
-                                    MediaType: {Value: MediaType},
-                                    Description: Description,
-                                    CaptureDate: CaptureDate,
-                                    ProductionPlace: ProductionPlace,
-                                    LanguageVersions: {Value: LanguageVersions},
-                                    Photographer: If(MediaType = "Photo", Credits, ""),
-                                    Director: If(MediaType = "Video", Credits, ""),
-                                    Producer: If(MediaType = "Podcast", Credits, ""),
-                                    AIVoiceover: AIVoiceover,
-                                    ContractCase: {Value: ContractCase},
-                                    ContractReference: ContractRef,
-                                    MusicUsed: MusicUsed,
-                                    MusicLicenseProvided: MusicLicenceProvided,
-                                    PreexistingRightsProvided: PreexistingProvided,
-                                    DepositStatus: {Value: "Pending Approval"},
-                                    ParentProject: {Id: varCurrentRequest.ID, Value: varCurrentRequest.RequestNumber}
-                                }
-                            )
+                =IfError(
+                    Set(varCurrentRequest,
+                        Patch(AVCentralDepositRequests,
+                            LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
+                            {
+                                RequestNumber: varRequestTitle,
+                                DG: {Value: varRequestDG},
+                                OwnerContact: varRequestOwnerContact,
+                                OwnerEmail: varRequestOwnerEmail,
+                                Description: varRequestDescription,
+                                Status: {Value: "Submitted"}
+                            }
+                        )
+                    );
+                    ForAll(
+                        Filter(colArchives, SPId > 0),
+                        Patch(
+                            AVCentralDepositMediaItems,
+                            LookUp(AVCentralDepositMediaItems, ID = SPId),
+                            {DepositStatus: Table({Value: "Pending Approval"})}
                         )
                     );
                     Clear(colArchives);
                     Notify("Request resubmitted for review.", NotificationType.Success);
-                    Navigate(MyRequestScreen)
+                    Navigate(MyRequestScreen),
+                    Notify("Error resubmitting. Please try again.", NotificationType.Error)
                 )
             Size: =14
             Text: ="Resubmit for review  →"
