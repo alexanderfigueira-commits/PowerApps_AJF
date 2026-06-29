@@ -224,7 +224,7 @@ HomePrintScreen As screen:
             Color: =RGBA(96, 104, 120, 1)
             Height: =52
             Size: =12
-            Text: =Text(CountRows(Filter(CentralDepositMainList, ParentProject.Id = ThisItem.ID)))
+            Text: =Text(CountRows(Filter(AVCentralDepositMediaItems, ParentRequest = ThisItem.RequestNumber)))
             Width: =120
             X: =596
             ZIndex: =4

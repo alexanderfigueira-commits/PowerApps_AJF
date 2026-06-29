@@ -250,9 +250,9 @@ ReviewScreen As screen:
         Items: |-
             =If(
                 IsBlank(varReviewProject),
-                Filter(CentralDepositMainList, 1 = 2),
+                Filter(AVCentralDepositMediaItems, 1 = 2),
                 Sort(
-                    Filter(CentralDepositMainList, ParentProject.Id = varReviewProject.ID),
+                    Filter(AVCentralDepositMediaItems, ParentRequest = varReviewProject.RequestNumber),
                     Modified, SortOrder.Descending
                 )
             )
@@ -277,7 +277,7 @@ ReviewScreen As screen:
             Color: =RGBA(32, 31, 30, 1)
             Height: =42
             Size: =12
-            Text: =If(IsBlank(ThisItem.Project) Or ThisItem.Project = "New archive", "— untitled —", ThisItem.Project)
+            Text: =If(IsBlank(ThisItem.CD_MediaNumber) Or ThisItem.CD_MediaNumber = "New archive", "— untitled —", ThisItem.CD_MediaNumber)
             Width: =340
             X: =24
             ZIndex: =2
@@ -294,10 +294,10 @@ ReviewScreen As screen:
         RV_CRowValid As label:
             Color: |-
                 =If(
-                    Not(IsBlank(ThisItem.Project)) And ThisItem.Project <> "New archive"
+                    Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
                     And Not(IsBlank(ThisItem.MediaType.Value))
                     And Not(IsBlank(ThisItem.ContractCase.Value))
-                    And Not(Coalesce(ThisItem.AIVoiceover, false)),
+                    And Not(ThisItem.AIVoiceover = "Yes"),
                     RGBA(22, 128, 80, 1),
                     RGBA(193, 40, 40, 1)
                 )
@@ -305,10 +305,10 @@ ReviewScreen As screen:
             Size: =12
             Text: |-
                 =If(
-                    Not(IsBlank(ThisItem.Project)) And ThisItem.Project <> "New archive"
+                    Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
                     And Not(IsBlank(ThisItem.MediaType.Value))
                     And Not(IsBlank(ThisItem.ContractCase.Value))
-                    And Not(Coalesce(ThisItem.AIVoiceover, false)),
+                    And Not(ThisItem.AIVoiceover = "Yes"),
                     "✓  Ready",
                     "⚠  Incomplete"
                 )

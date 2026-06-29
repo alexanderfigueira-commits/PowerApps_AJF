@@ -349,7 +349,7 @@ DashboardScreen As screen:
         Color: =RGBA(140, 148, 160, 1)
         Height: =60
         Size: =11
-        Text: ="Uses the PublicationDate column on CentralDepositMainList. Requests with no PublicationDate are excluded."
+        Text: ="Uses the PublicationStartDate column on AVCentralDepositMediaItems. Items with no PublicationStartDate are excluded."
         Width: =360
         X: =936
         Y: =390
