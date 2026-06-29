@@ -216,10 +216,15 @@ RequestScreen As screen:
         Y: =165
         ZIndex: =11
 
-    RS_Owner As text:
-        Default: =Coalesce(First(varCurrentRequest.'DG/Agency_Contact').DisplayName, varRequestOwnerContact)
-        HintText: ="Name of the DG official responsible"
-        OnChange: =Set(varRequestOwnerContact, Self.Value)
+    RS_Owner As combobox:
+        DefaultSelectedItems: =ForAll(varCurrentRequest.'DG/Agency_Contact' As p, {DisplayName: p.DisplayName, Mail: p.Email})
+        DisplayFields: =["DisplayName"]
+        InputTextPlaceholder: ="Search the DG official responsible"
+        IsSearchable: =true
+        Items: =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+        OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
+        SearchFields: =["DisplayName"]
+        SelectMultiple: =true
         Width: =380
         X: =56
         Y: =191
@@ -235,10 +240,15 @@ RequestScreen As screen:
         Y: =165
         ZIndex: =13
 
-    RS_Contractor As text:
-        Default: =varCurrentRequest.Contractor_Contact.DisplayName
-        HintText: ="Name of the contractor / production company"
-        OnChange: =
+    RS_Contractor As combobox:
+        DefaultSelectedItems: =ForAll(varCurrentRequest.Contractor_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
+        DisplayFields: =["DisplayName"]
+        InputTextPlaceholder: ="Search the contractor / production company"
+        IsSearchable: =true
+        Items: =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+        OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
+        SearchFields: =["DisplayName"]
+        SelectMultiple: =true
         Width: =380
         X: =460
         Y: =191
@@ -519,6 +529,8 @@ RequestScreen As screen:
                                 RequestTitle: varRequestTitle,
                                 DG: {Value: varRequestDG},
                                 Description: varRequestDescription,
+                                'DG/Agency_Contact': ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                 Status: {Value: "Draft"}
                             }
                         )
@@ -893,6 +905,8 @@ RequestScreen As screen:
                                     RequestTitle: varRequestTitle,
                                     DG: {Value: varRequestDG},
                                     Description: varRequestDescription,
+                                    'DG/Agency_Contact': ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                    Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                     Status: {Value: "Submitted"}
                                 }
                             )
@@ -951,6 +965,8 @@ RequestScreen As screen:
                                     RequestTitle: varRequestTitle,
                                     DG: {Value: varRequestDG},
                                     Description: varRequestDescription,
+                                    'DG/Agency_Contact': ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                    Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                     Status: {Value: "Submitted"}
                                 }
                             )
