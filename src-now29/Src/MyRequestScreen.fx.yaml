@@ -6,9 +6,9 @@ MyRequestScreen As screen:
         
         Set(varFilter, "All");
         
-        Set(varFilterDG, Blank());
-        Set(varFilterRequestName, Blank());
-        Set(varFilterMediaName, Blank());
+        Set(varFilterDG, "");
+        Set(varFilterRequestName, "");
+        Set(varFilterMediaName, "");
         Set(varFilterStartDate, Blank());
         Set(varFilterEndDate, Blank())
 
@@ -437,11 +437,9 @@ MyRequestScreen As screen:
         Height: =36
         HoverFill: =RGBA(230, 236, 245, 1)
         OnSelect: |-
-            =Set(varFilterDG, Blank());
-            Set(varFilterRequestName, Blank());
-            Set(varFilterMediaName, Blank());
-            
-            
+            =Set(varFilterDG, "");
+            Set(varFilterRequestName, "");
+            Set(varFilterMediaName, "");
             Reset(HomeFilterDG);
             Reset(HomeFilterRequest);
             Reset(HomeFilterMedia);
