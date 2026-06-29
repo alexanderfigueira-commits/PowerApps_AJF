@@ -1,0 +1,472 @@
+ChildValidScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+    OnVisible: |-
+        =ClearCollect(colValidations,
+            {Check: "Media type is set",
+             Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "",
+             Note: "Select a production type on the Info tab."},
+            {Check: "Archive title is provided",
+             Pass: Not(IsBlank(varChildTitle)) And varChildTitle <> "" And varChildTitle <> "New archive",
+             Note: "Enter a descriptive title on the Info tab."},
+            {Check: "Capture / production date is set",
+             Pass: Not(IsBlank(varChildCaptureDate)),
+             Note: "Set the production date on the Info tab."},
+            {Check: "Language version(s) selected",
+             Pass: Not(IsBlank(varChildLanguageVersions)) And varChildLanguageVersions <> "",
+             Note: "Select at least one language on the Metadata tab."},
+            {Check: "No AI-generated voice-over (not accepted)",
+             Pass: Not(varChildAIVoiceover),
+             Note: "⛔ AI voice-over detected. This archive cannot be submitted."},
+            {Check: "Contract case (1–6) is selected",
+             Pass: Not(IsBlank(varChildContractCase)) And varChildContractCase <> "",
+             Note: "Select a contract case on the Legal & Docs tab."},
+            {Check: "Case 1 sub-type selected (if Case 1)",
+             Pass: Left(varChildContractCase, 6) <> "Case 1" Or (Not(IsBlank(varChildContractCase1Sub)) And varChildContractCase1Sub <> ""),
+             Note: "Select the framework / specific / offer sub-type on the Legal & Docs tab."},
+            {Check: "Contract reference number provided",
+             Pass: Not(IsBlank(varChildContractRef)) And varChildContractRef <> "",
+             Note: "Enter the contract reference on the Legal & Docs tab."},
+            {Check: "Photographer / agency provided (Photo only)",
+             Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildCredits)) And varChildCredits <> ""),
+             Note: "Enter the photographer / agency on the Metadata tab."},
+            {Check: "Model release: if persons appear → forms provided",
+             Pass: Not(varChildModelRelease) Or varChildModelReleaseProvided,
+             Note: "Recognisable persons declared but model release not confirmed. Attach forms on Legal & Docs."},
+            {Check: "Music licence: if music used → documentation provided",
+             Pass: Not(varChildMusicUsed) Or varChildMusicLicenceProvided,
+             Note: "Music declared but licence/annex not confirmed. Attach on Legal & Docs."},
+            {Check: "Pre-existing rights: if declared → annex provided",
+             Pass: Not(varChildPreexisting) Or varChildPreexistingProvided,
+             Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
+            {Check: "FTP delivery path set on this archive",
+             Pass: Not(IsBlank(varChildFTPPath)) And varChildFTPPath <> "",
+             Note: "Enter the FTP path on the Info tab."},
+            {Check: "Owner / point of contact set on the request",
+             Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "",
+             Note: "Set the owner on the Request screen."}
+        )
+
+    Header_CV As group:
+        Height: =5
+        minimumHeight: =5
+        minimumWidth: =5
+        Visible: =true
+        Width: =5
+        X: =8
+        Y: =20
+        ZIndex: =1
+
+        HomeAppTitle_CV As label:
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+            ZIndex: =19
+
+        HomeUserName_CV As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+            ZIndex: =20
+
+        Logo_EC_CV As image:
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+            ZIndex: =21
+
+        CD_Logo_CV As image:
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+            ZIndex: =22
+
+        HomeAppSubtitle_CV As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+            ZIndex: =23
+
+        Image1_CV As image:
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+            ZIndex: =24
+
+    CV_Breadcrumb As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =52
+        Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+        Width: =700
+        X: =200
+        ZIndex: =2
+
+    CV_TabsBg As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =50
+        Width: =1366
+        Y: =52
+        ZIndex: =3
+
+    CV_Tab1 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildInfoScreen)
+        Size: =13
+        Text: ="✓  1.  Info"
+        Width: =150
+        X: =16
+        Y: =52
+        ZIndex: =4
+
+    CV_Tab2 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildMetaScreen)
+        Size: =13
+        Text: ="✓  2.  Metadata"
+        Width: =170
+        X: =176
+        Y: =52
+        ZIndex: =5
+
+    CV_Tab3 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildLegalScreen)
+        Size: =13
+        Text: ="✓  3.  Legal & Docs"
+        Width: =180
+        X: =356
+        Y: =52
+        ZIndex: =6
+
+    CV_Tab4 As button:
+        BorderThickness: =0
+        Color: =RGBA(0, 18, 107, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(255, 255, 255, 1)
+        Size: =13
+        Text: ="4.  Validations"
+        Width: =170
+        X: =546
+        Y: =52
+        ZIndex: =7
+
+    CV_Tab4Line As rectangle:
+        Height: =3
+        Width: =170
+        X: =546
+        Y: =99
+        ZIndex: =8
+
+    CV_OverallCard As rectangle:
+        BorderColor: |-
+            =If(CountIf(colValidations, Not(Pass)) = 0,
+                RGBA(134, 239, 172, 1),
+                RGBA(254, 202, 202, 1))
+        BorderThickness: =2
+        Fill: |-
+            =If(CountIf(colValidations, Not(Pass)) = 0,
+                RGBA(240, 253, 244, 1),
+                RGBA(254, 242, 242, 1))
+        Height: =64
+        Width: =1302
+        X: =32
+        Y: =112
+        ZIndex: =9
+
+    CV_OverallIcon As label:
+        Color: =If(CountIf(colValidations, Not(Pass)) = 0, RGBA(22,128,80,1), RGBA(193,40,40,1))
+        FontWeight: =FontWeight.Bold
+        Height: =64
+        Size: =28
+        Text: =If(CountIf(colValidations, Not(Pass)) = 0, "✓", "✗")
+        Width: =60
+        X: =56
+        Y: =112
+        ZIndex: =10
+
+    CV_OverallStatus As label:
+        Color: =If(CountIf(colValidations, Not(Pass)) = 0, RGBA(22,128,80,1), RGBA(193,40,40,1))
+        FontWeight: =FontWeight.Semibold
+        Height: =64
+        Size: =16
+        Text: |-
+            =If(CountIf(colValidations, Not(Pass)) = 0,
+                "Ready — all checks passed. Press Save archive to add to your request.",
+                Text(CountIf(colValidations, Not(Pass))) & " point(s) missing — resolve before saving")
+        Width: =900
+        X: =116
+        Y: =112
+        ZIndex: =11
+
+    CV_BtnRefresh As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(247, 248, 250, 1)
+        Height: =36
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: |-
+            =ClearCollect(colValidations,
+                {Check: "Media type is set", Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "", Note: "Select a production type on the Info tab."},
+                {Check: "Archive title is provided", Pass: Not(IsBlank(varChildTitle)) And varChildTitle <> "" And varChildTitle <> "New archive", Note: "Enter a descriptive title on the Info tab."},
+                {Check: "Capture / production date is set", Pass: Not(IsBlank(varChildCaptureDate)), Note: "Set the production date on the Info tab."},
+                {Check: "Language version(s) selected", Pass: Not(IsBlank(varChildLanguageVersions)) And varChildLanguageVersions <> "", Note: "Select at least one language on the Metadata tab."},
+                {Check: "No AI-generated voice-over (not accepted)", Pass: Not(varChildAIVoiceover), Note: "⛔ AI voice-over detected. This archive cannot be submitted."},
+                {Check: "Contract case (1–6) is selected", Pass: Not(IsBlank(varChildContractCase)) And varChildContractCase <> "", Note: "Select a contract case on the Legal & Docs tab."},
+                {Check: "Case 1 sub-type selected (if Case 1)", Pass: Left(varChildContractCase, 6) <> "Case 1" Or (Not(IsBlank(varChildContractCase1Sub)) And varChildContractCase1Sub <> ""), Note: "Select the framework / specific / offer sub-type on the Legal & Docs tab."},
+                {Check: "Contract reference number provided", Pass: Not(IsBlank(varChildContractRef)) And varChildContractRef <> "", Note: "Enter the contract reference on the Legal & Docs tab."},
+                {Check: "Photographer / agency provided (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildCredits)) And varChildCredits <> ""), Note: "Enter the photographer / agency on the Metadata tab."},
+                {Check: "Model release: if persons appear → forms provided", Pass: Not(varChildModelRelease) Or varChildModelReleaseProvided, Note: "Recognisable persons declared but model release not confirmed. Attach forms on Legal & Docs."},
+                {Check: "Music licence: if music used → documentation provided", Pass: Not(varChildMusicUsed) Or varChildMusicLicenceProvided, Note: "Music declared but licence/annex not confirmed. Attach on Legal & Docs."},
+                {Check: "Pre-existing rights: if declared → annex provided", Pass: Not(varChildPreexisting) Or varChildPreexistingProvided, Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
+                {Check: "FTP delivery path set on this archive", Pass: Not(IsBlank(varChildFTPPath)) And varChildFTPPath <> "", Note: "Enter the FTP path on the Info tab."},
+                {Check: "Owner / point of contact set on the request", Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "", Note: "Set the owner on the Request screen."}
+            )
+        Size: =12
+        Text: ="↻  Re-check"
+        Width: =120
+        X: =1198
+        Y: =130
+        ZIndex: =12
+
+    "CV_ChecklistGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
+        Height: =480
+        Items: =colValidations
+        Layout: =Layout.Vertical
+        TemplatePadding: =0
+        TemplateSize: =44
+        Width: =1302
+        X: =32
+        Y: =188
+        ZIndex: =13
+
+        CV_RowBg As rectangle:
+            Fill: =If(ThisItem.Pass, RGBA(240, 253, 244, 1), RGBA(254, 242, 242, 1))
+            Height: =43
+            Width: =1302
+            ZIndex: =1
+
+        CV_RowDivider As rectangle:
+            Fill: =RGBA(230, 232, 238, 1)
+            Height: =1
+            Width: =1302
+            Y: =43
+            ZIndex: =2
+
+        CV_RowIcon As label:
+            Color: =If(ThisItem.Pass, RGBA(22,128,80,1), RGBA(193,40,40,1))
+            FontWeight: =FontWeight.Bold
+            Height: =43
+            Size: =16
+            Text: =If(ThisItem.Pass, "✓", "✗")
+            Width: =44
+            X: =16
+            ZIndex: =3
+
+        CV_RowCheck As label:
+            Color: =If(ThisItem.Pass, RGBA(22,128,80,1), RGBA(80,40,40,1))
+            FontWeight: =If(ThisItem.Pass, FontWeight.Normal, FontWeight.Semibold)
+            Height: =43
+            Text: =ThisItem.Check
+            Width: =560
+            X: =64
+            ZIndex: =4
+
+        CV_RowNote As label:
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =43
+            Size: =12
+            Text: =If(ThisItem.Pass, "—", ThisItem.Note)
+            Width: =640
+            X: =652
+            ZIndex: =5
+
+    CV_BottomBar As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =56
+        Width: =1366
+        Y: =712
+        ZIndex: =14
+
+    CV_BtnPrev As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildLegalScreen)
+        Size: =14
+        Text: ="←  Previous"
+        Width: =140
+        X: =32
+        Y: =720
+        ZIndex: =15
+
+    CV_MissingNote As label:
+        Align: =Align.Right
+        Color: =RGBA(193, 40, 40, 1)
+        Size: =12
+        Text: =If(CountIf(colValidations, Not(Pass)) = 0, "", Text(CountIf(colValidations, Not(Pass))) & " check(s) must pass before saving")
+        Width: =440
+        X: =660
+        Y: =720
+        ZIndex: =16
+
+    CV_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =56
+        Width: =1366
+        ZIndex: =17
+
+    CV_BtnSaveArchive As button:
+        DisabledColor: =RGBA(255, 255, 255, 1)
+        DisabledFill: =RGBA(186, 196, 214, 1)
+        DisplayMode: =If(CountIf(colValidations, Not(Pass)) = 0, DisplayMode.Edit, DisplayMode.Disabled)
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: |-
+            =With(
+                {existingRec: LookUp(colArchives, ArchiveId = varCurrentChildId)},
+                RemoveIf(colArchives, ArchiveId = varCurrentChildId);
+                Collect(colArchives, {
+                    ArchiveId: varCurrentChildId,
+                    SPId: Coalesce(existingRec.SPId, 0),
+                    Title: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
+                    MediaType: varChildMediaType,
+                    Description: varChildDescription,
+                    CaptureDate: varChildCaptureDate,
+                    ProductionPlace: varChildProductionPlace,
+                    ProductType: varChildProductType,
+                    SeriesTitle: varChildSeriesTitle,
+                    EpisodeTitle: varChildEpisodeTitle,
+                    EpisodeSummary: varChildEpisodeSummary,
+                    SeasonNumber: varChildSeasonNumber,
+                    EpisodeNumber: varChildEpisodeNumber,
+                    ProductionEndDate: varChildProductionEndDate,
+                    PublicationStartDate: varChildPublicationStartDate,
+                    PublicationEndDate: varChildPublicationEndDate,
+                    ReferenceLinks: varChildLinks,
+                    Tags: varChildTags,
+                    FTPPath: varChildFTPPath,
+                    LanguageVersions: varChildLanguageVersions,
+                    Credits: varChildCredits,
+                    AIVoiceover: varChildAIVoiceover,
+                    ContractCase: varChildContractCase,
+                    ContractCase1Sub: varChildContractCase1Sub,
+                    ContractRef: varChildContractRef,
+                    ModelRelease: varChildModelRelease,
+                    ModelReleaseProvided: varChildModelReleaseProvided,
+                    MusicUsed: varChildMusicUsed,
+                    MusicLicenceProvided: varChildMusicLicenceProvided,
+                    Preexisting: varChildPreexisting,
+                    PreexistingProvided: varChildPreexistingProvided
+                })
+            );
+            If(
+                Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
+                IfError(
+                    With(
+                        {localItem: LookUp(colArchives, ArchiveId = varCurrentChildId)},
+                        With(
+                            {
+                                savedMedia: Patch(
+                                    AVCentralDepositMediaItems,
+                                    If(
+                                        Coalesce(localItem.SPId, 0) = 0,
+                                        Defaults(AVCentralDepositMediaItems),
+                                        LookUp(AVCentralDepositMediaItems, ID = localItem.SPId)
+                                    ),
+                                    {
+                                        Title: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
+                                        Description: varChildDescription,
+                                        MediaType: Table({Value: varChildMediaType}),
+                                        CaptureDate: varChildCaptureDate,
+                                        ProductionPlace: varChildProductionPlace,
+                                        ProductType: If(
+                                            IsBlank(varChildProductType) Or varChildProductType = "",
+                                            Blank(),
+                                            Table({Value: varChildProductType})
+                                        ),
+                                        SeriesTitle: varChildSeriesTitle,
+                                        EpisodeTitle: varChildEpisodeTitle,
+                                        EpisodeSummary: varChildEpisodeSummary,
+                                        SeasonNumber: varChildSeasonNumber,
+                                        EpisodeNumber: varChildEpisodeNumber,
+                                        ProductionEndDate: varChildProductionEndDate,
+                                        PublicationStartDate: varChildPublicationStartDate,
+                                        PublicationEndDate: varChildPublicationEndDate,
+                                        ReferenceLinks: varChildLinks,
+                                        Tags: varChildTags,
+                                        FTPPath: varChildFTPPath,
+                                        LanguageVersions: Table({Value: varChildLanguageVersions}),
+                                        AIVoiceover: If(varChildAIVoiceover, "Yes", "No"),
+                                        ContractCase: Table({Value: varChildContractCase}),
+                                        ContractCase1Sub: If(
+                                            IsBlank(varChildContractCase1Sub) Or varChildContractCase1Sub = "",
+                                            Blank(),
+                                            Table({Value: varChildContractCase1Sub})
+                                        ),
+                                        ContractReference: varChildContractRef,
+                                        MusicUsed: varChildMusicUsed,
+                                        MusicLicenseProvided: varChildMusicLicenceProvided,
+                                        PreexistingRightsProvided: varChildPreexistingProvided,
+                                        ModelReleaseProvided: varChildModelReleaseProvided,
+                                        DepositStatus: Table({Value: "Pending Approval"}),
+                                        ParentRequest: varCurrentRequest.RequestNumber
+                                    }
+                                )
+                            },
+                            UpdateIf(colArchives, ArchiveId = varCurrentChildId, {SPId: savedMedia.ID});
+                            Notify("Archive saved to SharePoint.", NotificationType.Success);
+                            Navigate(RequestScreen)
+                        )
+                    ),
+                    Notify("Save failed: " & FirstError.Message, NotificationType.Error)
+                ),
+                Notify("Archive added to request. Save or submit the request to persist media to SharePoint.", NotificationType.Success);
+                Navigate(RequestScreen)
+            )
+        Size: =14
+        Text: ="Save Media  ✓"
+        Width: =200
+        X: =1142
+        Y: =720
+        ZIndex: =18
+
