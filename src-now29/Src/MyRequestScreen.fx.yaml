@@ -229,8 +229,7 @@ MyRequestScreen As screen:
                 Set(varRequestTitle, Coalesce(ThisItem.RequestNumber, ""));
                 Set(varRequestDG, Coalesce(ThisItem.DG.Value, ""));
                 Set(varRequestDescription, Coalesce(ThisItem.Description, ""));
-                Set(varRequestOwnerContact, ThisItem.'DG/Agency_Contact');
-                Set(varRequestOwnerEmail, ThisItem.field_4);
+                Set(varRequestOwnerContact, Coalesce(First(ThisItem.'DG/Agency_Contact').DisplayName, ""));
                 Set(varRequestMediaType, "");
                 Navigate(RequestScreen, ScreenTransition.Cover)
             Width: =1270

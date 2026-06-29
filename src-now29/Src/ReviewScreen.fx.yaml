@@ -107,7 +107,7 @@ ReviewScreen As screen:
         BorderColor: =RGBA(0, 0, 0, 0)
         DelayItemLoading: =true
         Height: =786
-        Items: =Sort(Filter(AVCentralDepositProjects, Status.Value = "Submitted"), Modified, SortOrder.Descending)
+        Items: =Sort(Filter(AVCentralDepositRequests, Status.Value = "Submitted"), Modified, SortOrder.Descending)
         Layout: =Layout.Vertical
         LoadingSpinner: =LoadingSpinner.Data
         TemplatePadding: =0
@@ -149,7 +149,7 @@ ReviewScreen As screen:
             Height: =24
             OnSelect: =Select(Parent)
             Size: =12
-            Text: =Coalesce(ThisItem.DG, "—") & "  ·  " & Coalesce(ThisItem.OwnerContact, "—")
+            Text: =Coalesce(ThisItem.DG.Value, "—") & "  ·  " & Coalesce(First(ThisItem.'DG/Agency_Contact').DisplayName, "—")
             Width: =390
             X: =20
             Y: =38
@@ -180,7 +180,7 @@ ReviewScreen As screen:
         Color: =RGBA(96, 104, 120, 1)
         Height: =24
         Text: |-
-            =Coalesce(varReviewProject.DG, "—") & "   ·   Owner: " & Coalesce(varReviewProject.OwnerContact, "—")
+            =Coalesce(varReviewProject.DG.Value, "—") & "   ·   Contact: " & Coalesce(First(varReviewProject.'DG/Agency_Contact').DisplayName, "—")
         Visible: =Not(IsBlank(varReviewProject))
         Width: =860
         X: =460
@@ -337,10 +337,9 @@ ReviewScreen As screen:
         ZIndex: =16
 
     RV_OwnerName As text:
-        Default: =Coalesce(varReviewProject.OwnerContact, "")
-        HintText: ="Owner name"
-        OnChange: |-
-            =Set(varReviewProject, Patch(varReviewProject, {OwnerContact: Self.Value}))
+        Default: =Coalesce(First(varReviewProject.'DG/Agency_Contact').DisplayName, "—")
+        DisplayMode: =DisplayMode.View
+        HintText: ="DG / Agency contact"
         Visible: =Not(IsBlank(varReviewProject))
         Width: =380
         X: =460
@@ -348,10 +347,9 @@ ReviewScreen As screen:
         ZIndex: =17
 
     RV_OwnerEmail As text:
-        Default: =Coalesce(varReviewProject.OwnerEmail, "")
-        HintText: ="owner@ec.europa.eu"
-        OnChange: |-
-            =Set(varReviewProject, Patch(varReviewProject, {OwnerEmail: Self.Value}))
+        Default: =Coalesce(varReviewProject.Contractor_Contact.DisplayName, "—")
+        DisplayMode: =DisplayMode.View
+        HintText: ="Contractor contact"
         Visible: =Not(IsBlank(varReviewProject))
         Width: =380
         X: =860
@@ -419,20 +417,28 @@ ReviewScreen As screen:
         Height: =44
         HoverFill: =RGBA(15, 90, 55, 1)
         OnSelect: |-
-            =Patch(AVCentralDepositProjects,
-                LookUp(AVCentralDepositProjects, ID = varReviewProject.ID),
-                {
-                    Status: {Value: "Approved"},
-                    OwnerContact: varReviewProject.OwnerContact,
-                    OwnerEmail: varReviewProject.OwnerEmail,
-                    ReviewedByName: User().FullName,
-                    ReviewedByEmail: User().Email,
-                    ReviewedDate: Now()
-                }
-            );
-            Notify("Request approved.", NotificationType.Success);
-            Set(varReviewProject, Blank());
-            Set(varReviewComment, "")
+            =IfError(
+                Patch(AVCentralDepositRequests,
+                    LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
+                    {
+                        Status: {Value: "Approved"},
+                        ReviewedByContact: Table({
+                            '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                            Claims: "i:0#.f|membership|" & Lower(User().Email),
+                            DisplayName: User().FullName,
+                            Email: User().Email,
+                            Department: "",
+                            JobTitle: "",
+                            Picture: ""
+                        }),
+                        ReviewedDate: Now()
+                    }
+                );
+                Notify("Request approved.", NotificationType.Success);
+                Set(varReviewProject, Blank());
+                Set(varReviewComment, ""),
+                Notify("Approve failed: " & FirstError.Message, NotificationType.Error)
+            )
         Size: =14
         Text: ="✓  Approve"
         Visible: =Not(IsBlank(varReviewProject))
@@ -457,21 +463,29 @@ ReviewScreen As screen:
         Height: =44
         HoverFill: =RGBA(253, 235, 235, 1)
         OnSelect: |-
-            =Patch(AVCentralDepositProjects,
-                LookUp(AVCentralDepositProjects, ID = varReviewProject.ID),
-                {
-                    Status: {Value: "Rejected"},
-                    OwnerContact: varReviewProject.OwnerContact,
-                    OwnerEmail: varReviewProject.OwnerEmail,
-                    ReviewerComments: varReviewComment,
-                    ReviewedByName: User().FullName,
-                    ReviewedByEmail: User().Email,
-                    ReviewedDate: Now()
-                }
-            );
-            Notify("Request rejected. The owner will be notified on their next visit.", NotificationType.Warning);
-            Set(varReviewProject, Blank());
-            Set(varReviewComment, "")
+            =IfError(
+                Patch(AVCentralDepositRequests,
+                    LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
+                    {
+                        Status: {Value: "Rejected"},
+                        ReviewerComments: varReviewComment,
+                        ReviewedByContact: Table({
+                            '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                            Claims: "i:0#.f|membership|" & Lower(User().Email),
+                            DisplayName: User().FullName,
+                            Email: User().Email,
+                            Department: "",
+                            JobTitle: "",
+                            Picture: ""
+                        }),
+                        ReviewedDate: Now()
+                    }
+                );
+                Notify("Request rejected. The owner will see your comment on their next visit.", NotificationType.Warning);
+                Set(varReviewProject, Blank());
+                Set(varReviewComment, ""),
+                Notify("Reject failed: " & FirstError.Message, NotificationType.Error)
+            )
         Size: =14
         Text: ="✕  Reject"
         Visible: =Not(IsBlank(varReviewProject))

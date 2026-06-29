@@ -217,9 +217,9 @@ RequestScreen As screen:
         ZIndex: =11
 
     RS_Owner As text:
-        Default: =First(varCurrentRequest.OwnerContact).DisplayName
+        Default: =Coalesce(First(varCurrentRequest.'DG/Agency_Contact').DisplayName, varRequestOwnerContact)
         HintText: ="Name of the DG official responsible"
-        OnChange: =
+        OnChange: =Set(varRequestOwnerContact, Self.Value)
         Width: =380
         X: =56
         Y: =191
@@ -236,8 +236,7 @@ RequestScreen As screen:
         ZIndex: =13
 
     RS_Contractor As text:
-        Default: |
-            =
+        Default: =varCurrentRequest.Contractor_Contact.DisplayName
         HintText: ="Name of the contractor / production company"
         OnChange: =
         Width: =380
@@ -510,9 +509,8 @@ RequestScreen As screen:
                         ),
                         {
                             RequestNumber: varRequestTitle,
+                            RequestTitle: varRequestTitle,
                             DG: {Value: varRequestDG},
-                            'DG/Agency_Contact': varRequestOwnerContact,
-                            OwnerEmail: varRequestOwnerEmail,
                             Description: varRequestDescription,
                             Status: {Value: "Draft"}
                         }
@@ -584,7 +582,7 @@ RequestScreen As screen:
                 =/*If(
                     IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
                     Set(varCurrentRequest,
-                        Patch(AVCentralDepositProjects, Defaults(AVCentralDepositProjects),
+                        Patch(AVCentralDepositRequests, Defaults(AVCentralDepositRequests),
                             {
                                 Title: varRequestTitle,
                                 DG: varRequestDG,
@@ -928,9 +926,8 @@ RequestScreen As screen:
                                 LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
                                 {
                                     RequestNumber: varRequestTitle,
+                                    RequestTitle: varRequestTitle,
                                     DG: {Value: varRequestDG},
-                                    'DG/Agency_Contact': varRequestOwnerContact,
-                                    OwnerEmail: varRequestOwnerEmail,
                                     Description: varRequestDescription,
                                     Status: {Value: "Submitted"}
                                 }
@@ -987,9 +984,8 @@ RequestScreen As screen:
                                 LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
                                 {
                                     RequestNumber: varRequestTitle,
+                                    RequestTitle: varRequestTitle,
                                     DG: {Value: varRequestDG},
-                                    'DG/Agency_Contact': varRequestOwnerContact,
-                                    OwnerEmail: varRequestOwnerEmail,
                                     Description: varRequestDescription,
                                     Status: {Value: "Submitted"}
                                 }
