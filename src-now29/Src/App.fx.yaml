@@ -45,7 +45,6 @@ App As appinfo:
         Set(varChildMusicLicenceProvided, false);
         Set(varChildPreexisting, false);
         Set(varChildPreexistingProvided, false);
-        Clear(colArchives);
         Set(varReviewComment, "");
         Set(varReviewProject, Blank());
         Set(varShowTemplatePicker, false);
