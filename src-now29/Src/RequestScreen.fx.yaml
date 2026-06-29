@@ -495,30 +495,36 @@ RequestScreen As screen:
             Color: =RGBA(60, 66, 80, 1)
             DisabledColor: =RGBA(186, 196, 214, 1)
             DisabledFill: =RGBA(240, 242, 246, 1)
-            DisplayMode: =If(IsBlank(varRequestTitle) Or varRequestTitle = "", DisplayMode.Disabled, DisplayMode.Edit)
+            DisplayMode: |-
+                =If(
+                    IsBlank(varRequestTitle) Or varRequestTitle = ""
+                    Or IsBlank(varRequestDG) Or varRequestDG = "",
+                    DisplayMode.Disabled,
+                    DisplayMode.Edit
+                )
             Fill: =RGBA(255, 255, 255, 1)
             Height: =36
             HoverFill: =RGBA(230, 236, 245, 1)
             OnSelect: |-
-                =Set(varCurrentRequest,
-                    Patch(AVCentralDepositRequests,
-                        If(
-                            IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
-                            Defaults(AVCentralDepositRequests),
-                            LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID)
-                        ),
-                        {
-                            RequestNumber: varRequestTitle,
-                            RequestTitle: varRequestTitle,
-                            DG: {Value: varRequestDG},
-                            Description: varRequestDescription,
-                            Status: {Value: "Draft"}
-                        }
-                    )
-                );
-                If(IsError(varCurrentRequest),
-                    Notify("Error saving draft. Please try again.", NotificationType.Error),
-                    Notify("Draft saved as Incomplete.", NotificationType.Success)
+                =IfError(
+                    Set(varCurrentRequest,
+                        Patch(AVCentralDepositRequests,
+                            If(
+                                IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
+                                Defaults(AVCentralDepositRequests),
+                                LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID)
+                            ),
+                            {
+                                RequestNumber: varRequestTitle,
+                                RequestTitle: varRequestTitle,
+                                DG: {Value: varRequestDG},
+                                Description: varRequestDescription,
+                                Status: {Value: "Draft"}
+                            }
+                        )
+                    );
+                    Notify("Draft saved as Incomplete.", NotificationType.Success),
+                    Notify("Error saving draft: " & FirstError.Message, NotificationType.Error)
                 )
             PressedBorderColor: =RGBA(0, 0, 0, 1)
             Size: =13
