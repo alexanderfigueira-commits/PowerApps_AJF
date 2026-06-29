@@ -575,7 +575,14 @@ RequestScreen As screen:
         RS_BtnAddArchive As button:
             DisabledColor: =RGBA(255, 255, 255, 1)
             DisabledFill: =RGBA(186, 196, 214, 1)
-            DisplayMode: =If(IsBlank(varRequestTitle) Or varRequestTitle = "" Or IsBlank(varRequestMediaType) Or varRequestMediaType = "", DisplayMode.Disabled, DisplayMode.Edit)
+            DisplayMode: |-
+                =If(
+                    IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0
+                    Or IsBlank(varRequestTitle) Or varRequestTitle = ""
+                    Or IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                    DisplayMode.Disabled,
+                    DisplayMode.Edit
+                )
             Height: =36
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
