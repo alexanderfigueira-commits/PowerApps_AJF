@@ -4,12 +4,61 @@ Comprehensive manual + Test-Studio test plan for the Canvas app
 (`Central Deposit Ticket System`). Covers every screen, the full
 request → media → submit → review → approve/reject lifecycle, data-type
 correctness against SharePoint, and regression checks for every bug fixed
-through v15.
+through v16.
 
 **How to use**
 - Run the suites top-to-bottom; later suites depend on data created earlier.
 - Each test has: **Pre** (precondition), **Steps**, **Expected**, and
   **If it fails → Fix** (the proposed solution / likely root cause).
+
+---
+
+## Execution log
+
+### Run 1 — static execution against packed source (v16)
+Date: 2026-06-29 · Scope: code-level / static layer only (no live
+SharePoint runtime available in CI). Result: **2 blockers found and fixed**,
+all other statically-verifiable tests pass.
+
+| Test | Status | Evidence |
+|------|--------|----------|
+| SV-12 colArchives schema parity | ✅ PASS | both `Collect` calls = identical 31 fields |
+| SV-2 single-select patch shape | ✅ PASS | no `Table({Value})` in media patch/reads |
+| SV-3 DepositStatus = "Pending Approval" | ✅ PASS | single-select `{Value}` |
+| SV-4 AIVoiceover text↔boolean | ✅ PASS | write `If(…,"Yes","No")`, read `="Yes"` |
+| SV-8 ParentRequest link | ✅ PASS | `ParentRequest: varCurrentRequest.RequestNumber` |
+| RQ-1 RequestTitle (required) written | ✅ PASS | present in Save/Submit/Resubmit |
+| RQ-1b no OwnerEmail / text→Person writes | ✅ PASS | dead `/* */` block removed (v16) |
+| CH-3 language single-select | ✅ PASS | `SelectMultiple=false` |
+| CH-11 AI voice-over blocks save | ✅ PASS | `Pass: Not(varChildAIVoiceover)` |
+| **CH-9 FTP check Photo-only** | 🔧 FIXED (was FAIL) | required for all types → gated to Photo (v16) |
+| **CH-10 Language check Video/Podcast-only** | 🔧 FIXED (was FAIL) | required for all types → gated to V/P (v16) |
+| SB-1 Submit flips status + media DepositStatus | ✅ PASS | `Filter(colArchives, SPId>0)` loop |
+| SB-6 Resubmit gating | ✅ PASS | Status="Rejected" + ready |
+| RV-1 queue = Submitted requests | ✅ PASS | `Filter(AVCentralDepositRequests, Status.Value="Submitted")` |
+| RV-2 archives by ParentRequest | ✅ PASS | |
+| RV-4 / RV-5 approve/reject real columns | ✅ PASS | + no phantom columns (`OwnerContact`/`ReviewedByName`) |
+| ST-1 role lookup | ✅ PASS | `UserEmail.Email` + `Role.Value` |
+| ST-4 no `Clear(colArchives)` at startup | ✅ PASS | removed from App.OnStart |
+| APP empty inits → `Blank()` | ✅ PASS | no `, "")` remain |
+| DI-1/2/3/5 list repoint · samples · dead screens · homeprint | ✅ PASS | |
+
+**Blockers fixed this run (root cause + fix):**
+- **CH-9** — the "FTP delivery path" check required FTP for *every* media
+  type, but the FTP field is shown only for Photo ⇒ Video/Podcast could
+  never pass validation ⇒ *Save Media* stayed disabled.
+  Fix: `Pass: varChildMediaType <> "Photo" Or (FTP filled)`.
+- **CH-10** — the "Language version(s)" check required a language for *every*
+  type, but Language is shown only for Video/Podcast ⇒ Photo could never
+  save. Fix: `Pass: (type<>Video And type<>Podcast) Or (language filled)`.
+  Both applied in `ChildValidScreen.OnVisible` **and** `CV_BtnRefresh`.
+
+**Not covered by static run (require the live browser player + test SharePoint):**
+SV-1/3/5/6/7/9/11 (actual SP writes & round-trip), SB-1/5 end-to-end,
+RV-4/5/**7** (verify `ReviewedByContact` person record saves; fallback in
+RV-7 if it errors), ST-5 landing screen, DI-7 offline indicator, and all of
+suite 9 edge cases. Use suite 10 (Test Studio) to automate the critical
+write paths.
 - Severity: 🔴 blocker · 🟠 major · 🟡 minor.
 
 ---
@@ -226,14 +275,17 @@ Assert(LookUp(AVCentralDepositMediaItems, CD_MediaNumber="TS Photo").AIVoiceover
 ---
 
 ### Sign-off
+Legend: ✅ static PASS · 🔧 fixed this run · ⏳ needs live runtime (browser player + test SharePoint)
+
 | Suite | Pass/Fail | Tester | Date | Notes |
 |-------|-----------|--------|------|-------|
-| 1 Startup | | | | |
-| 2 MyRequest | | | | |
-| 3 Request form | | | | |
-| 4 Child wizard | | | | |
-| 5 Save archive | | | | |
-| 6 Submit/Resubmit | | | | |
-| 7 Review/Approval | | | | |
-| 8 Data integrity | | | | |
-| 9 Edge cases | | | | |
+| 1 Startup | ✅ static (ST-1, ST-4) · ⏳ ST-5 landing | Claude (static) | 2026-06-29 | role lookup, no startup Clear, Blank() inits verified |
+| 2 MyRequest | ⏳ runtime | | | logic depends on live queue/role data |
+| 3 Request form | ✅ RQ-1/RQ-1b static · ⏳ RQ-2..8 runtime | Claude (static) | 2026-06-29 | RequestTitle written; no OwnerEmail/Person-text writes |
+| 4 Child wizard | ✅ CH-3/9/10/11 static · ⏳ CH-1/2/4..8 runtime | Claude (static) | 2026-06-29 | **CH-9 & CH-10 FIXED** (validation gating) |
+| 5 Save archive | ✅ SV-2/3/4/8/12 static · ⏳ SV-1/5/6/7/9/10/11 runtime | Claude (static) | 2026-06-29 | schema parity + single-select shapes verified |
+| 6 Submit/Resubmit | ✅ SB-1/6 static · ⏳ SB-2/3/4/5 runtime | Claude (static) | 2026-06-29 | status flip + DepositStatus loop verified |
+| 7 Review/Approval | ✅ RV-1/2/4/5 static · ⏳ RV-3/6/7/8/9 runtime | Claude (static) | 2026-06-29 | real columns only; verify person stamp at runtime (RV-7) |
+| 8 Data integrity | ✅ DI-1/2/3/5 static · ⏳ DI-4/6/7 runtime | Claude (static) | 2026-06-29 | repoint/cleanup verified |
+| 9 Edge cases | ⏳ runtime | | | run in browser player |
+| 10 Test Studio | ⏳ to author/run | | | assertions provided |
