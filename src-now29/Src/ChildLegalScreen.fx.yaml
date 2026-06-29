@@ -190,6 +190,7 @@ ChildLegalScreen As screen:
             ZIndex: =3
 
         CL_Case As dropdown:
+            Default: =varChildContractCase
             Height: =44
             Items: |-
                 =[
@@ -218,6 +219,7 @@ ChildLegalScreen As screen:
             ZIndex: =5
 
         CL_Case1Sub As dropdown:
+            Default: =varChildContractCase1Sub
             Items: =["Framework contract", "Specific contract", "Offer / quote"]
             OnChange: =Set(varChildContractCase1Sub, Self.Selected.Value)
             Visible: =Left(varChildContractCase, 6) = "Case 1"
