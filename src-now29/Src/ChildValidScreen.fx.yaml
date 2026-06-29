@@ -416,13 +416,14 @@ ChildValidScreen As screen:
                                     {
                                         Title: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
                                         Description: varChildDescription,
-                                        MediaType: Table({Value: varChildMediaType}),
+                                        // Single-select Choice columns: patch as a record {Value:"..."}, not Table({...}).
+                                        MediaType: {Value: varChildMediaType},
                                         CaptureDate: varChildCaptureDate,
                                         ProductionPlace: varChildProductionPlace,
                                         ProductType: If(
                                             IsBlank(varChildProductType) Or varChildProductType = "",
                                             Blank(),
-                                            Table({Value: varChildProductType})
+                                            {Value: varChildProductType}
                                         ),
                                         SeriesTitle: varChildSeriesTitle,
                                         EpisodeTitle: varChildEpisodeTitle,
@@ -435,20 +436,21 @@ ChildValidScreen As screen:
                                         ReferenceLinks: varChildLinks,
                                         Tags: varChildTags,
                                         FTPPath: varChildFTPPath,
-                                        LanguageVersions: Table({Value: varChildLanguageVersions}),
+                                        LanguageVersions: {Value: varChildLanguageVersions},
+                                        // AIVoiceover column is TEXT; var is Boolean by convention, converted here only.
                                         AIVoiceover: If(varChildAIVoiceover, "Yes", "No"),
-                                        ContractCase: Table({Value: varChildContractCase}),
+                                        ContractCase: {Value: varChildContractCase},
                                         ContractCase1Sub: If(
                                             IsBlank(varChildContractCase1Sub) Or varChildContractCase1Sub = "",
                                             Blank(),
-                                            Table({Value: varChildContractCase1Sub})
+                                            {Value: varChildContractCase1Sub}
                                         ),
                                         ContractReference: varChildContractRef,
                                         MusicUsed: varChildMusicUsed,
                                         MusicLicenseProvided: varChildMusicLicenceProvided,
                                         PreexistingRightsProvided: varChildPreexistingProvided,
                                         ModelReleaseProvided: varChildModelReleaseProvided,
-                                        DepositStatus: Table({Value: "Pending Approval"}),
+                                        DepositStatus: {Value: "Pending Approval"},
                                         ParentRequest: varCurrentRequest.RequestNumber
                                     }
                                 )

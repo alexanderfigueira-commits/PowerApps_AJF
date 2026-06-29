@@ -85,8 +85,8 @@ App As appinfo:
         Set(varChildTags, "");
         Set(varChildFTPPath, "");
         Set(varChildAIVoiceover, false);
-        Set(varChildContractCase, Blank());
-        Set(varChildContractCase1Sub, Blank());
+        Set(varChildContractCase, "");
+        Set(varChildContractCase1Sub, "");
         Set(varChildContractRef, "");
         Set(varChildModelRelease, false);
         Set(varChildModelReleaseProvided, false);

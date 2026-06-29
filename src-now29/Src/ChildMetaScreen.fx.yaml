@@ -222,7 +222,8 @@ ChildMetaScreen As screen:
             DefaultSelectedItems: |-
                 =If(IsBlank(varChildLanguageVersions) Or varChildLanguageVersions = "", Table(), Table({Value: varChildLanguageVersions}))
             Items: =["EN", "FR", "DE", "ES", "IT", "PL", "NL", "PT", "RO", "Multilingual"]
-            OnChange: =Set(varChildLanguageVersions, Concat(Self.SelectedItems, Value, ", "))
+            OnChange: =Set(varChildLanguageVersions, Self.Selected.Value)
+            SelectMultiple: =false
             Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =400
             X: =56

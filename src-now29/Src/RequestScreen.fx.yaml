@@ -18,11 +18,11 @@ RequestScreen As screen:
                     ArchiveId: Text(ID),
                     SPId: ID,
                     Title: CD_MediaNumber,
-                    MediaType: Coalesce(First(MediaType).Value, ""),
+                    MediaType: Coalesce(MediaType.Value, ""),
                     Description: Coalesce(Description, ""),
                     CaptureDate: CaptureDate,
                     ProductionPlace: Coalesce(ProductionPlace, ""),
-                    ProductType: Coalesce(First(ProductType).Value, ""),
+                    ProductType: Coalesce(ProductType.Value, ""),
                     SeriesTitle: Coalesce(SeriesTitle, ""),
                     EpisodeTitle: Coalesce(EpisodeTitle, ""),
                     EpisodeSummary: Coalesce(EpisodeSummary, ""),
@@ -34,11 +34,11 @@ RequestScreen As screen:
                     ReferenceLinks: Coalesce(ReferenceLinks, ""),
                     Tags: Coalesce(Tags, ""),
                     FTPPath: Coalesce(FTPPath, ""),
-                    LanguageVersions: Coalesce(First(LanguageVersions).Value, ""),
+                    LanguageVersions: Coalesce(LanguageVersions.Value, ""),
                     Credits: Coalesce(First(Photographer).DisplayName, First(Director).DisplayName, First(Producer).DisplayName, ""),
                     AIVoiceover: AIVoiceover = "Yes",
-                    ContractCase: Coalesce(First(ContractCase).Value, ""),
-                    ContractCase1Sub: Coalesce(First(ContractCase1Sub).Value, ""),
+                    ContractCase: Coalesce(ContractCase.Value, ""),
+                    ContractCase1Sub: Coalesce(ContractCase1Sub.Value, ""),
                     ContractRef: Coalesce(ContractReference, ""),
                     ModelRelease: false,
                     ModelReleaseProvided: Coalesce(ModelReleaseProvided, false),
@@ -607,8 +607,8 @@ RequestScreen As screen:
                     Set(varChildCredits, "");
                     Set(varChildLanguageVersions, "");
                     Set(varChildAIVoiceover, false);
-                    Set(varChildContractCase, Blank());
-                    Set(varChildContractCase1Sub, Blank());
+                    Set(varChildContractCase, "");
+                    Set(varChildContractCase1Sub, "");
                     Set(varChildContractRef, "");
                     Set(varChildModelRelease, false);
                     Set(varChildModelReleaseProvided, false);
@@ -628,11 +628,38 @@ RequestScreen As screen:
                     Set(varChildLinks, "");
                     Set(varChildTags, "");
                     Set(varChildFTPPath, "");
-                    Navigate(ChildInfoScreen),
                     Notify("Could not save request. Check required fields.", NotificationType.Error)
                 )*/
-                 Set(varChildMediaType, varRequestMediaType);
-                
+                Set(varCurrentChildId, Text(GUID()));
+                Set(varChildTitle, "");
+                Set(varChildMediaType, varRequestMediaType);
+                Set(varChildDescription, "");
+                Set(varChildCaptureDate, Blank());
+                Set(varChildProductionPlace, "");
+                Set(varChildCredits, "");
+                Set(varChildLanguageVersions, "");
+                Set(varChildAIVoiceover, false);
+                Set(varChildContractCase, "");
+                Set(varChildContractCase1Sub, "");
+                Set(varChildContractRef, "");
+                Set(varChildModelRelease, false);
+                Set(varChildModelReleaseProvided, false);
+                Set(varChildMusicUsed, false);
+                Set(varChildMusicLicenceProvided, false);
+                Set(varChildPreexisting, false);
+                Set(varChildPreexistingProvided, false);
+                Set(varChildEpisodeTitle, "");
+                Set(varChildEpisodeSummary, "");
+                Set(varChildSeasonNumber, 0);
+                Set(varChildEpisodeNumber, 0);
+                Set(varChildSeriesTitle, "");
+                Set(varChildProductType, "");
+                Set(varChildProductionEndDate, Blank());
+                Set(varChildPublicationStartDate, Blank());
+                Set(varChildPublicationEndDate, Blank());
+                Set(varChildLinks, "");
+                Set(varChildTags, "");
+                Set(varChildFTPPath, "");
                 Navigate(ChildInfoScreen)
             Size: =13
             Text: ="+  Add new media"
