@@ -188,9 +188,9 @@ RequestScreen As screen:
         ZIndex: =7
 
     RS_Title As text:
-        Default: =varCurrentRequest.RequestTitle
+        Default: =Coalesce(varCurrentRequest.RequestTitle, varRequestTitle)
         HintText: ="e.g. EU Climate Action Week 2026 — opening session"
-        OnChange: =
+        OnChange: =Set(varRequestTitle, Self.Value)
         Width: =800
         X: =56
         Y: =111
@@ -255,11 +255,11 @@ RequestScreen As screen:
         ZIndex: =15
 
     RS_Description As text:
-        Default: =varCurrentRequest.Description
+        Default: =Coalesce(varCurrentRequest.Description, varRequestDescription)
         Height: =80
         HintText: ="Describe the purpose, context and scope of this request"
         Mode: =TextMode.MultiLine
-        OnChange: =
+        OnChange: =Set(varRequestDescription, Self.Value)
         Width: =1230
         X: =56
         Y: =271
@@ -981,7 +981,7 @@ RequestScreen As screen:
             )
         HoverBorderColor: =RGBA(0, 18, 107, 1)
         Items: =colDGOptions
-        OnChange: =
+        OnChange: =Set(varRequestDG, Self.Selected.Value)
         PressedColor: =Self.Color
         PressedFill: =Self.Fill
         SelectionFill: =RGBA(0, 176, 240, 1)
