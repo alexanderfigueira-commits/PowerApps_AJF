@@ -579,56 +579,7 @@ RequestScreen As screen:
             Height: =36
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
-                =/*If(
-                    IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
-                    Set(varCurrentRequest,
-                        Patch(AVCentralDepositRequests, Defaults(AVCentralDepositRequests),
-                            {
-                                Title: varRequestTitle,
-                                DG: varRequestDG,
-                                OwnerContact: varRequestOwnerContact,
-                                OwnerEmail: varRequestOwnerEmail,
-                                Description: varRequestDescription,
-                                Status: {Value: "Draft"}
-                            }
-                        )
-                    )
-                );
-                If(
-                    Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
-                    Set(varCurrentChildId, Text(GUID()));
-                    Set(varChildTitle, "");
-                    Set(varChildMediaType, "Photo");
-                    Set(varChildDescription, "");
-                    Set(varChildCaptureDate, Blank());
-                    Set(varChildProductionPlace, "");
-                    Set(varChildCredits, "");
-                    Set(varChildLanguageVersions, "");
-                    Set(varChildAIVoiceover, false);
-                    Set(varChildContractCase, "");
-                    Set(varChildContractCase1Sub, "");
-                    Set(varChildContractRef, "");
-                    Set(varChildModelRelease, false);
-                    Set(varChildModelReleaseProvided, false);
-                    Set(varChildMusicUsed, false);
-                    Set(varChildMusicLicenceProvided, false);
-                    Set(varChildPreexisting, false);
-                    Set(varChildPreexistingProvided, false);
-                    Set(varChildEpisodeTitle, "");
-                    Set(varChildEpisodeSummary, "");
-                    Set(varChildSeasonNumber, 0);
-                    Set(varChildEpisodeNumber, 0);
-                    Set(varChildSeriesTitle, "");
-                    Set(varChildProductType, "");
-                    Set(varChildProductionEndDate, Blank());
-                    Set(varChildPublicationStartDate, Blank());
-                    Set(varChildPublicationEndDate, Blank());
-                    Set(varChildLinks, "");
-                    Set(varChildTags, "");
-                    Set(varChildFTPPath, "");
-                    Notify("Could not save request. Check required fields.", NotificationType.Error)
-                )*/
-                Set(varCurrentChildId, Text(GUID()));
+                =Set(varCurrentChildId, Text(GUID()));
                 Set(varChildTitle, "");
                 Set(varChildMediaType, varRequestMediaType);
                 Set(varChildDescription, "");
