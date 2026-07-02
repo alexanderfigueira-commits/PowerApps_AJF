@@ -188,7 +188,7 @@ RequestScreen As screen:
         ZIndex: =7
 
     RS_Title As text:
-        Default: =Coalesce(varCurrentRequest.RequestTitle, varRequestTitle)
+        Default: =varRequestTitle
         HintText: ="e.g. EU Climate Action Week 2026 — opening session"
         OnChange: =Set(varRequestTitle, Self.Value)
         Width: =800
@@ -265,7 +265,7 @@ RequestScreen As screen:
         ZIndex: =15
 
     RS_Description As text:
-        Default: =Coalesce(varCurrentRequest.Description, varRequestDescription)
+        Default: =varRequestDescription
         Height: =80
         HintText: ="Describe the purpose, context and scope of this request"
         Mode: =TextMode.MultiLine
