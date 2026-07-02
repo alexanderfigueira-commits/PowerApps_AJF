@@ -494,7 +494,7 @@ ChildInfoScreen As screen:
         Height: =34
         HoverFill: =RGBA(230, 236, 245, 1)
         OnSelect: |-
-            =Set(varTplSearch, "");
+            =Set(varTplSearch, Blank());
             Set(varTplCandidate, Blank());
             Set(varShowTplConfirm, false);
             Set(varShowTemplatePicker, true)
@@ -579,7 +579,7 @@ ChildInfoScreen As screen:
             =SortByColumns(
                 Filter(
                     AVCentralDepositMediaItems,
-                    MediaType.Value = varChildMediaType,
+                    varChildMediaType in MediaType.Value,
                     IsBlank(varTplSearch)
                         Or varTplSearch in Title
                         Or varTplSearch in Text(ID)
@@ -608,9 +608,9 @@ ChildInfoScreen As screen:
                     Set(varChildTitle, Coalesce(varTplCandidate.Title, ""));
                     Set(varChildDescription, Coalesce(varTplCandidate.Description, ""));
                     Set(varChildCredits, Coalesce(First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
-                    Set(varChildLanguageVersions, Coalesce(varTplCandidate.LanguageVersions.Value, ""));
-                    Set(varChildContractCase, Coalesce(varTplCandidate.ContractCase.Value, ""));
-                    Set(varChildContractCase1Sub, Coalesce(varTplCandidate.ContractCase1Sub.Value, ""));
+                    Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, ""));
+                    Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
+                    Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
                     Set(varChildContractRef, Coalesce(varTplCandidate.ContractReference, ""));
                     Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
                     Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
@@ -639,7 +639,7 @@ ChildInfoScreen As screen:
             Height: =22
             OnSelect: =Select(Parent)
             Size: =11
-            Text: ="ID " & Text(ThisItem.ID) & If(IsBlank(ThisItem.ContractCase.Value), "", "   |   " & Left(ThisItem.ContractCase.Value, 30))
+            Text: ="ID " & Text(ThisItem.ID) & If(IsBlank(First(ThisItem.ContractCase).Value), "", "   |   " & Left(First(ThisItem.ContractCase).Value, 30))
             Width: =560
             X: =12
             Y: =30
@@ -731,9 +731,9 @@ ChildInfoScreen As screen:
             =Set(varChildTitle, Coalesce(varTplCandidate.Title, ""));
             Set(varChildDescription, Coalesce(varTplCandidate.Description, ""));
             Set(varChildCredits, Coalesce(First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
-            Set(varChildLanguageVersions, Coalesce(varTplCandidate.LanguageVersions.Value, ""));
-            Set(varChildContractCase, Coalesce(varTplCandidate.ContractCase.Value, ""));
-            Set(varChildContractCase1Sub, Coalesce(varTplCandidate.ContractCase1Sub.Value, ""));
+            Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, ""));
+            Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
+            Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
             Set(varChildContractRef, Coalesce(varTplCandidate.ContractReference, ""));
             Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
             Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));

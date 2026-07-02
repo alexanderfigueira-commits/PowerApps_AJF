@@ -3,7 +3,7 @@ RequestScreen As screen:
     OnVisible: |-
         =Set(varShowTypeConfirm, false);
         Set(varConfirmed, false);
-        Set(varCurrentChildId, "");
+        Set(varCurrentChildId, Blank());
         Clear(colArchives);
         If(
             Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
@@ -18,11 +18,11 @@ RequestScreen As screen:
                     ArchiveId: Text(ID),
                     SPId: ID,
                     Title: CD_MediaNumber,
-                    MediaType: Coalesce(MediaType.Value, ""),
+                    MediaType: Coalesce(First(MediaType).Value, ""),
                     Description: Coalesce(Description, ""),
                     CaptureDate: CaptureDate,
                     ProductionPlace: Coalesce(ProductionPlace, ""),
-                    ProductType: Coalesce(ProductType.Value, ""),
+                    ProductType: Coalesce(First(ProductType).Value, ""),
                     SeriesTitle: Coalesce(SeriesTitle, ""),
                     EpisodeTitle: Coalesce(EpisodeTitle, ""),
                     EpisodeSummary: Coalesce(EpisodeSummary, ""),
@@ -34,11 +34,11 @@ RequestScreen As screen:
                     ReferenceLinks: Coalesce(ReferenceLinks, ""),
                     Tags: Coalesce(Tags, ""),
                     FTPPath: Coalesce(FTPPath, ""),
-                    LanguageVersions: Coalesce(LanguageVersions.Value, ""),
+                    LanguageVersions: Coalesce(First(LanguageVersions).Value, ""),
                     Credits: Coalesce(First(Photographer).DisplayName, First(Director).DisplayName, First(Producer).DisplayName, ""),
                     AIVoiceover: AIVoiceover = "Yes",
-                    ContractCase: Coalesce(ContractCase.Value, ""),
-                    ContractCase1Sub: Coalesce(ContractCase1Sub.Value, ""),
+                    ContractCase: Coalesce(First(ContractCase).Value, ""),
+                    ContractCase1Sub: Coalesce(First(ContractCase1Sub).Value, ""),
                     ContractRef: Coalesce(ContractReference, ""),
                     ModelRelease: false,
                     ModelReleaseProvided: Coalesce(ModelReleaseProvided, false),
@@ -222,7 +222,7 @@ RequestScreen As screen:
         InputTextPlaceholder: ="Search the DG official responsible"
         IsSearchable: =true
         Items: =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
-        OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
+        OnChange: =Set(varRequestDGContact, Concat(Self.SelectedItems, DisplayName, ", "))
         SearchFields: =["DisplayName"]
         SelectMultiple: =true
         Width: =380
@@ -241,14 +241,14 @@ RequestScreen As screen:
         ZIndex: =13
 
     RS_Contractor As combobox:
-        DefaultSelectedItems: =ForAll(varCurrentRequest.Contractor_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
+        DefaultSelectedItems: =If(IsBlank(varCurrentRequest.Contractor_Contact), Table(), Table({DisplayName: varCurrentRequest.Contractor_Contact.DisplayName, Mail: varCurrentRequest.Contractor_Contact.Email}))
         DisplayFields: =["DisplayName"]
         InputTextPlaceholder: ="Search the contractor / production company"
         IsSearchable: =true
         Items: =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
-        OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
+        OnChange: =Set(varRequestContratorContact, Concat(Self.SelectedItems, DisplayName, ", "))
         SearchFields: =["DisplayName"]
-        SelectMultiple: =true
+        SelectMultiple: =false
         Width: =380
         X: =460
         Y: =191
@@ -397,7 +397,7 @@ RequestScreen As screen:
     RS_TypeConfirmOverlay As rectangle:
         Fill: =RGBA(0, 18, 107, 0.45)
         Height: =928
-        OnSelect: =Set(varShowTypeConfirm, false); Set(varPendingMediaType, ""); Set(varConfirmed, false)
+        OnSelect: =Set(varShowTypeConfirm, false); Set(varPendingMediaType, Blank()); Set(varConfirmed, false)
         Visible: =varShowTypeConfirm
         Width: =1366
         ZIndex: =42
@@ -451,7 +451,7 @@ RequestScreen As screen:
         Height: =38
         HoverFill: =RGBA(247, 248, 250, 1)
         OnSelect: |-
-            =Set(varPendingMediaType, "");
+            =Set(varPendingMediaType, Blank());
             Set(varShowTypeConfirm, false);
             Set(varConfirmed, false)
         Size: =13
@@ -469,7 +469,7 @@ RequestScreen As screen:
             =Set(varRequestMediaType, varPendingMediaType);
             Set(varConfirmed, true);
             Set(varShowTypeConfirm, false);
-            Set(varPendingMediaType, "")
+            Set(varPendingMediaType, Blank())
         Size: =13
         Text: ="Confirm"
         Visible: =varShowTypeConfirm
@@ -530,7 +530,7 @@ RequestScreen As screen:
                                 DG: {Value: varRequestDG},
                                 Description: varRequestDescription,
                                 'DG/Agency_Contact': ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                Contractor_Contact: If(CountRows(RS_Contractor.SelectedItems) = 0, Blank(), With({u: First(RS_Contractor.SelectedItems)}, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
                                 Status: {Value: "Draft"}
                             }
                         )
@@ -605,35 +605,35 @@ RequestScreen As screen:
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
                 =Set(varCurrentChildId, Text(GUID()));
-                Set(varChildTitle, "");
+                Set(varChildTitle, Blank());
                 Set(varChildMediaType, varRequestMediaType);
-                Set(varChildDescription, "");
+                Set(varChildDescription, Blank());
                 Set(varChildCaptureDate, Blank());
-                Set(varChildProductionPlace, "");
-                Set(varChildCredits, "");
-                Set(varChildLanguageVersions, "");
+                Set(varChildProductionPlace, Blank());
+                Set(varChildCredits, Blank());
+                Set(varChildLanguageVersions, Blank());
                 Set(varChildAIVoiceover, false);
-                Set(varChildContractCase, "");
-                Set(varChildContractCase1Sub, "");
-                Set(varChildContractRef, "");
+                Set(varChildContractCase, Blank());
+                Set(varChildContractCase1Sub, Blank());
+                Set(varChildContractRef, Blank());
                 Set(varChildModelRelease, false);
                 Set(varChildModelReleaseProvided, false);
                 Set(varChildMusicUsed, false);
                 Set(varChildMusicLicenceProvided, false);
                 Set(varChildPreexisting, false);
                 Set(varChildPreexistingProvided, false);
-                Set(varChildEpisodeTitle, "");
-                Set(varChildEpisodeSummary, "");
+                Set(varChildEpisodeTitle, Blank());
+                Set(varChildEpisodeSummary, Blank());
                 Set(varChildSeasonNumber, 0);
                 Set(varChildEpisodeNumber, 0);
-                Set(varChildSeriesTitle, "");
-                Set(varChildProductType, "");
+                Set(varChildSeriesTitle, Blank());
+                Set(varChildProductType, Blank());
                 Set(varChildProductionEndDate, Blank());
                 Set(varChildPublicationStartDate, Blank());
                 Set(varChildPublicationEndDate, Blank());
-                Set(varChildLinks, "");
-                Set(varChildTags, "");
-                Set(varChildFTPPath, "");
+                Set(varChildLinks, Blank());
+                Set(varChildTags, Blank());
+                Set(varChildFTPPath, Blank());
                 Navigate(ChildInfoScreen)
             Size: =13
             Text: ="+  Add new media"
@@ -906,7 +906,7 @@ RequestScreen As screen:
                                     DG: {Value: varRequestDG},
                                     Description: varRequestDescription,
                                     'DG/Agency_Contact': ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                    Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                    Contractor_Contact: If(CountRows(RS_Contractor.SelectedItems) = 0, Blank(), With({u: First(RS_Contractor.SelectedItems)}, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
                                     Status: {Value: "Submitted"}
                                 }
                             )
@@ -917,7 +917,7 @@ RequestScreen As screen:
                             Patch(
                                 AVCentralDepositMediaItems,
                                 LookUp(AVCentralDepositMediaItems, ID = SPId),
-                                {DepositStatus: {Value: "Pending Approval"}}
+                                {DepositStatus: Table({Value: "Pending Approval"})}
                             )
                         );
                         Clear(colArchives);
@@ -966,7 +966,7 @@ RequestScreen As screen:
                                     DG: {Value: varRequestDG},
                                     Description: varRequestDescription,
                                     'DG/Agency_Contact': ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                    Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                    Contractor_Contact: If(CountRows(RS_Contractor.SelectedItems) = 0, Blank(), With({u: First(RS_Contractor.SelectedItems)}, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
                                     Status: {Value: "Submitted"}
                                 }
                             )
@@ -977,7 +977,7 @@ RequestScreen As screen:
                             Patch(
                                 AVCentralDepositMediaItems,
                                 LookUp(AVCentralDepositMediaItems, ID = SPId),
-                                {DepositStatus: {Value: "Pending Approval"}}
+                                {DepositStatus: Table({Value: "Pending Approval"})}
                             )
                         );
                         Clear(colArchives);

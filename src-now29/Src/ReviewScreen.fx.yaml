@@ -2,7 +2,7 @@ ReviewScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: |-
         =Set(varReviewProject, Blank());
-        Set(varReviewComment, "")
+        Set(varReviewComment, Blank())
 
     Header_RV As group:
         Height: =5
@@ -122,7 +122,7 @@ ReviewScreen As screen:
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
                 =Set(varReviewProject, ThisItem);
-                Set(varReviewComment, "")
+                Set(varReviewComment, Blank())
             Width: =430
             ZIndex: =1
 
@@ -286,7 +286,7 @@ ReviewScreen As screen:
             Color: =RGBA(96, 104, 120, 1)
             Height: =42
             Size: =12
-            Text: =If(IsBlank(ThisItem.MediaType.Value), "—", If(ThisItem.MediaType.Value = "Photo", "Photo/Reportage", ThisItem.MediaType.Value))
+            Text: =If(IsBlank(First(ThisItem.MediaType).Value), "—", If(First(ThisItem.MediaType).Value = "Photo", "Photo/Reportage", First(ThisItem.MediaType).Value))
             Width: =140
             X: =384
             ZIndex: =3
@@ -295,8 +295,8 @@ ReviewScreen As screen:
             Color: |-
                 =If(
                     Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
-                    And Not(IsBlank(ThisItem.MediaType.Value))
-                    And Not(IsBlank(ThisItem.ContractCase.Value))
+                    And Not(IsBlank(First(ThisItem.MediaType).Value))
+                    And Not(IsBlank(First(ThisItem.ContractCase).Value))
                     And Not(ThisItem.AIVoiceover = "Yes"),
                     RGBA(22, 128, 80, 1),
                     RGBA(193, 40, 40, 1)
@@ -306,8 +306,8 @@ ReviewScreen As screen:
             Text: |-
                 =If(
                     Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
-                    And Not(IsBlank(ThisItem.MediaType.Value))
-                    And Not(IsBlank(ThisItem.ContractCase.Value))
+                    And Not(IsBlank(First(ThisItem.MediaType).Value))
+                    And Not(IsBlank(First(ThisItem.ContractCase).Value))
                     And Not(ThisItem.AIVoiceover = "Yes"),
                     "✓  Ready",
                     "⚠  Incomplete"
@@ -436,7 +436,7 @@ ReviewScreen As screen:
                 );
                 Notify("Request approved.", NotificationType.Success);
                 Set(varReviewProject, Blank());
-                Set(varReviewComment, ""),
+                Set(varReviewComment, Blank()),
                 Notify("Approve failed: " & FirstError.Message, NotificationType.Error)
             )
         Size: =14
@@ -483,7 +483,7 @@ ReviewScreen As screen:
                 );
                 Notify("Request rejected. The owner will see your comment on their next visit.", NotificationType.Warning);
                 Set(varReviewProject, Blank());
-                Set(varReviewComment, ""),
+                Set(varReviewComment, Blank()),
                 Notify("Reject failed: " & FirstError.Message, NotificationType.Error)
             )
         Size: =14

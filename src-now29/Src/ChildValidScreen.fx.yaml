@@ -42,7 +42,7 @@ ChildValidScreen As screen:
              Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath)) And varChildFTPPath <> ""),
              Note: "Enter the FTP path on the Info tab."},
             {Check: "Owner / point of contact set on the request",
-             Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "",
+             Pass: Not(IsBlank(varRequestDGContact)) And varRequestDGContact <> "",
              Note: "Set the owner on the Request screen."}
         )
 
@@ -256,7 +256,7 @@ ChildValidScreen As screen:
                 {Check: "Music licence: if music used → documentation provided", Pass: Not(varChildMusicUsed) Or varChildMusicLicenceProvided, Note: "Music declared but licence/annex not confirmed. Attach on Legal & Docs."},
                 {Check: "Pre-existing rights: if declared → annex provided", Pass: Not(varChildPreexisting) Or varChildPreexistingProvided, Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
                 {Check: "FTP delivery path set on this archive (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath)) And varChildFTPPath <> ""), Note: "Enter the FTP path on the Info tab."},
-                {Check: "Owner / point of contact set on the request", Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "", Note: "Set the owner on the Request screen."}
+                {Check: "Owner / point of contact set on the request", Pass: Not(IsBlank(varRequestDGContact)) And varRequestDGContact <> "", Note: "Set the owner on the Request screen."}
             )
         Size: =12
         Text: ="↻  Re-check"
@@ -416,14 +416,14 @@ ChildValidScreen As screen:
                                     {
                                         Title: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
                                         Description: varChildDescription,
-                                        // Single-select Choice columns: patch as a record {Value:"..."}, not Table({...}).
-                                        MediaType: {Value: varChildMediaType},
+                                        // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
+                                        MediaType: Table({Value: varChildMediaType}),
                                         CaptureDate: varChildCaptureDate,
                                         ProductionPlace: varChildProductionPlace,
                                         ProductType: If(
                                             IsBlank(varChildProductType) Or varChildProductType = "",
                                             Blank(),
-                                            {Value: varChildProductType}
+                                            Table({Value: varChildProductType})
                                         ),
                                         SeriesTitle: varChildSeriesTitle,
                                         EpisodeTitle: varChildEpisodeTitle,
@@ -436,21 +436,21 @@ ChildValidScreen As screen:
                                         ReferenceLinks: varChildLinks,
                                         Tags: varChildTags,
                                         FTPPath: varChildFTPPath,
-                                        LanguageVersions: {Value: varChildLanguageVersions},
+                                        LanguageVersions: Table({Value: varChildLanguageVersions}),
                                         // AIVoiceover column is TEXT; var is Boolean by convention, converted here only.
                                         AIVoiceover: If(varChildAIVoiceover, "Yes", "No"),
-                                        ContractCase: {Value: varChildContractCase},
+                                        ContractCase: Table({Value: varChildContractCase}),
                                         ContractCase1Sub: If(
                                             IsBlank(varChildContractCase1Sub) Or varChildContractCase1Sub = "",
                                             Blank(),
-                                            {Value: varChildContractCase1Sub}
+                                            Table({Value: varChildContractCase1Sub})
                                         ),
                                         ContractReference: varChildContractRef,
                                         MusicUsed: varChildMusicUsed,
                                         MusicLicenseProvided: varChildMusicLicenceProvided,
                                         PreexistingRightsProvided: varChildPreexistingProvided,
                                         ModelReleaseProvided: varChildModelReleaseProvided,
-                                        DepositStatus: {Value: "Pending Approval"},
+                                        DepositStatus: Table({Value: "Pending Approval"}),
                                         ParentRequest: varCurrentRequest.RequestNumber
                                     }
                                 )
