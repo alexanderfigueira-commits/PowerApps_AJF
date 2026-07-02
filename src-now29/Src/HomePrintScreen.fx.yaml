@@ -114,6 +114,51 @@ HomePrintScreen As screen:
         Y: =68
         ZIndex: =5
 
+    HP_BtnWord As button:
+        BorderColor: =RGBA(56, 96, 178, 1)
+        BorderThickness: =1
+        Color: =RGBA(56, 96, 178, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: |-
+            =With(
+                {
+                    wordHtml:
+                        "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'>" &
+                        "<head><meta charset='utf-8'><title>AV Central Deposit - Requests</title></head><body>" &
+                        "<h1 style='font-family:Arial;color:#00126B;'>AV Central Deposit - Requests</h1>" &
+                        "<p style='font-family:Arial;font-size:10pt;color:#606878;'>" &
+                            Text(CountRows(colPrintData)) & " request(s)  -  exported " & Text(Now(), "dd/mm/yyyy hh:mm") & "</p>" &
+                        "<table border='1' cellspacing='0' cellpadding='6' style='border-collapse:collapse;font-family:Arial;font-size:10pt;'>" &
+                        "<tr style='background:#F0F2F6;font-weight:bold;'>" &
+                            "<td>Request</td><td>DG</td><td>Archives</td><td>Status</td><td>Submitted</td><td>Description</td></tr>" &
+                        Concat(
+                            colPrintData,
+                            "<tr><td>" & If(IsBlank(RequestNumber), "Untitled request", RequestNumber) &
+                            "</td><td>" & Coalesce(DG.Value, "-") &
+                            "</td><td>" & Text(CountRows(Filter(AVCentralDepositMediaItems, ParentRequest = RequestNumber))) &
+                            "</td><td>" & Coalesce(Status.Value, "Draft") &
+                            "</td><td>" & If(IsBlank(StartRequestDate), "-", Text(StartRequestDate, "dd/mm/yyyy")) &
+                            "</td><td>" & Substitute(Substitute(Coalesce(Description, "-"), "&", "&amp;"), "<", "&lt;") &
+                            "</td></tr>"
+                        ) &
+                        "</table>" &
+                        "<p style='font-family:Arial;font-size:8pt;color:#8C94A0;'>AV Central Deposit Ticket System  -  Audiovisual Service, DG COMM  -  " &
+                            Text(Today(), "dd/mm/yyyy") & "</p>" &
+                        "</body></html>"
+                },
+                Download(
+                    "data:application/msword;charset=utf-8," & EncodeUrl(wordHtml),
+                    "CentralDeposit-Requests.doc"
+                )
+            )
+        Size: =13
+        Text: ="⬇  Download Word"
+        Width: =180
+        X: =960
+        Y: =68
+        ZIndex: =16
+
     HP_TableHeader As rectangle:
         Fill: =RGBA(240, 242, 246, 1)
         Height: =40
@@ -215,7 +260,7 @@ HomePrintScreen As screen:
             Color: =RGBA(96, 104, 120, 1)
             Height: =52
             Size: =12
-            Text: =If(IsBlank(ThisItem.DG), "—", ThisItem.DG)
+            Text: =If(IsBlank(ThisItem.DG.Value), "—", ThisItem.DG.Value)
             Width: =160
             X: =416
             ZIndex: =3
