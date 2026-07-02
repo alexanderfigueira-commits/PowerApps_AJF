@@ -494,7 +494,7 @@ ChildInfoScreen As screen:
         Height: =34
         HoverFill: =RGBA(230, 236, 245, 1)
         OnSelect: |-
-            =Set(varTplSearch, Blank());
+            =Set(varTplSearch, "");
             Set(varTplCandidate, Blank());
             Set(varShowTplConfirm, false);
             Set(varShowTemplatePicker, true)

@@ -263,7 +263,7 @@ HelpScreen As screen:
                 );
                 Set(varFeedbackSent, true);
                 Set(varRating, 0);
-                Set(varFeedbackText, Blank())
+                Set(varFeedbackText, "")
             Size: =13
             Text: ="Submit feedback"
             Width: =180

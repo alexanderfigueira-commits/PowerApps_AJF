@@ -6,9 +6,9 @@ MyRequestScreen As screen:
         
         Set(varFilter, "All");
         
-        Set(varFilterDG, Blank());
-        Set(varFilterRequestName, Blank());
-        Set(varFilterMediaName, Blank());
+        Set(varFilterDG, "");
+        Set(varFilterRequestName, "");
+        Set(varFilterMediaName, "");
         Set(varFilterStartDate, Blank());
         Set(varFilterEndDate, Blank())
 
@@ -42,13 +42,13 @@ MyRequestScreen As screen:
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
             =Set(varCurrentRequest, Defaults(AVCentralDepositRequests));
-            Set(varRequestTitle, Blank());
-            Set(varRequestDG, Blank());
-            Set(varRequestDescription, Blank());
-            Set(varRequestDGContact, Blank());
-            Set(varRequestContratorContact, Blank());
+            Set(varRequestTitle, "");
+            Set(varRequestDG, "");
+            Set(varRequestDescription, "");
+            Set(varRequestDGContact, "");
+            Set(varRequestContratorContact, "");
             Set(varRequestOwnerEmail, User().Email);
-            Set(varRequestMediaType, Blank());
+            Set(varRequestMediaType, "");
             Navigate(RequestScreen)
         Size: =14
         Text: ="+  New request"
@@ -243,8 +243,8 @@ MyRequestScreen As screen:
                 Set(varRequestDG, Coalesce(ThisItem.DG.Value, ""));
                 Set(varRequestDescription, Coalesce(ThisItem.Description, ""));
                 Set(varRequestDGContact, Coalesce(First(ThisItem.'DG/Agency_Contact').DisplayName, ""));
-                Set(varRequestContratorContact, Coalesce(ThisItem.Contractor_Contact.DisplayName, ""));
-                Set(varRequestMediaType, Blank());
+                Set(varRequestContratorContact, Coalesce(First(ThisItem.Contractor_Contact).DisplayName, ""));
+                Set(varRequestMediaType, "");
                 Navigate(RequestScreen, ScreenTransition.Cover)
             Width: =1270
             ZIndex: =1
@@ -329,7 +329,7 @@ MyRequestScreen As screen:
             HoverFill: =RGBA(56, 96, 178, 1)
             OnSelect: |-
                 =Set(varReviewProject, ThisItem);
-                Set(varReviewComment, Blank());
+                Set(varReviewComment, "");
                 Navigate(ReviewScreen)
             Size: =12
             Text: ="Review  →"
@@ -439,9 +439,9 @@ MyRequestScreen As screen:
         Height: =36
         HoverFill: =RGBA(230, 236, 245, 1)
         OnSelect: |-
-            =Set(varFilterDG, Blank());
-            Set(varFilterRequestName, Blank());
-            Set(varFilterMediaName, Blank());
+            =Set(varFilterDG, "");
+            Set(varFilterRequestName, "");
+            Set(varFilterMediaName, "");
             Reset(HomeFilterDG);
             Reset(HomeFilterRequest);
             Reset(HomeFilterMedia);
