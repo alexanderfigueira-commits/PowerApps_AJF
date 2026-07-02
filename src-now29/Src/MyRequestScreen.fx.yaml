@@ -45,7 +45,7 @@ MyRequestScreen As screen:
             Set(varRequestTitle, "");
             Set(varRequestDG, "");
             Set(varRequestDescription, "");
-            Set(varRequestOwnerContact, Blank());
+            Set(varRequestOwnerContact, "");
             Set(varRequestOwnerEmail, User().Email);
             Set(varRequestMediaType, "");
             Navigate(RequestScreen)
