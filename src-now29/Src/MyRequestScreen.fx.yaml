@@ -241,7 +241,8 @@ MyRequestScreen As screen:
                 Set(varRequestTitle, Coalesce(ThisItem.RequestNumber, ""));
                 Set(varRequestDG, Coalesce(ThisItem.DG.Value, ""));
                 Set(varRequestDescription, Coalesce(ThisItem.Description, ""));
-                Set(varRequestOwnerContact, Coalesce(First(ThisItem.'DG/Agency_Contact').DisplayName, ""));
+                Set(varRequestDGContact, ThisItem.DG_Agency_Contact.DisplayName);
+                Set(varRequestContratorContact, ThisItem.Contractor_Contact.DisplayName);
                 Set(varRequestMediaType, "");
                 Navigate(RequestScreen, ScreenTransition.Cover)
             Width: =1270
@@ -491,7 +492,7 @@ MyRequestScreen As screen:
             =ClearCollect(colPrintData, HomeGallery.AllItems);
             Navigate(HomePrintScreen)
         Size: =13
-        Text: ="📄  Export PDF"
+        Text: ="📄  Report"
         Width: =140
         X: =1203
         Y: =92
