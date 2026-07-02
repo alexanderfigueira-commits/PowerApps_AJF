@@ -326,8 +326,8 @@ MyRequestScreen As screen:
             Height: =32
             HoverFill: =RGBA(56, 96, 178, 1)
             OnSelect: |-
-                =Set(varReviewRequest, ThisItem);
-                Set(varReviewComment, Blank());
+                =Set(varReviewProject, ThisItem);
+                Set(varReviewComment, "");
                 Navigate(ReviewScreen)
             Size: =12
             Text: ="Review  →"
