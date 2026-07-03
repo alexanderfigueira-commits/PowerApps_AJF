@@ -1,0 +1,960 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  MyRequestScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |
+        =ClearCollect(colDGOptions, {Value: "All"});
+        Collect(colDGOptions, Choices(AVCentralDepositRequests.DG));
+        Set(
+            varUserRole,
+            If( 
+                !IsEmpty(
+                    Filter(
+                        RolesPermissionsList,
+                        Role.Value = "ADMINISTRATOR",
+                        UserEmail.Email = User().Email
+                    )
+                ),
+                "ADMINISTRATOR",
+                "USER"
+            )
+        );
+
+
+
+        //ClearCollect(colAssignees, {Value: "All"});
+        ForAll(
+            Distinct(Filter(RolesPermissionsList, Role.Value = "ADMINISTRATOR"), UserEmail.DisplayName),
+            Collect(colAssignees, {Value: ThisRecord.Value})
+        );
+
+        Set(varFilter, "All");
+        Set(varFilterDG, "");
+        Set(varFilterRequestName, "");
+        Set(varFilterStartDate, Blank());
+        Set(varFilterEndDate, Blank());
+    Children:
+      - HomeTopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+      - HomeAppTitle:
+          Control: Label@2.5.1
+          Group: Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =79
+            Y: =5
+      - HomeUserName:
+          Control: Label@2.5.1
+          Group: Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1101
+            Y: =18
+      - HomePageTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Size: =26
+            Text: =If(varUserRole = "ADMINISTRATOR", "Request Management", "My requests")
+            Width: =600
+            X: =48
+            Y: =68
+      - HomePageSubtitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Text: ="Acquires Audiovisual Productions for Central Deposit Follow-Up."
+            Width: =700
+            X: =48
+            Y: =119
+      - HomeBtnNew:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =43
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |-
+              =Set(varCurrentRequest, Defaults(AVCentralDepositRequests));
+              Set(varRequestTitle, Blank());
+              Set(varRequestDG, "");
+              Set(varRequestDescription,  Blank());
+              Set(varRequestOwnerContact, "");
+              Set(varRequestOwnerEmail, User().Email);
+              Set(varRequestMediaType, "");
+              Navigate(RequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="+  New request"
+            X: =781
+            Y: =92
+      - HomeChipAll:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter="All", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(varFilter="All", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(varFilter="All", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: =Set(varFilter, "All")
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="All"
+            Width: =64
+            X: =48
+            Y: =180
+      - HomeChipDraft:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter="Draft", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(varFilter="Draft", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(varFilter="Draft", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: =Set(varFilter, "Draft")
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="Draft"
+            Width: =80
+            X: =120
+            Y: =180
+      - HomeChipSubmitted:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter="Pending", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(varFilter="Pending", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(varFilter="Pending", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: =Set(varFilter, "Pending")
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="Pending"
+            Width: =110
+            X: =208
+            Y: =180
+      - HomeChipApproved:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter="Approved", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(varFilter="Approved", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(varFilter="Approved", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: =Set(varFilter, "Approved")
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="Approved"
+            Width: =110
+            X: =326
+            Y: =180
+      - HomeChipRejected:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter="Rejected", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(varFilter="Rejected", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(varFilter="Rejected", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: =Set(varFilter, "Rejected")
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="Rejected"
+            Width: =100
+            X: =444
+            Y: =180
+      - HomeTableCard:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =380
+            Width: =1270
+            X: =48
+            Y: =320
+      - HomeTableHeader:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(240, 242, 246, 1)
+            Height: =44
+            Width: =1270
+            X: =48
+            Y: =320
+      - HomeThAssignee:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="ASSIGNEE"
+            Width: =210
+            X: =870
+            Y: =320
+      - HomeThRequest:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="REQUEST"
+            Width: =90
+            X: =48
+            Y: =320
+      - HomeThName:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="REQUEST NAME"
+            Width: =280
+            X: =164
+            Y: =320
+      - HomeThDG:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="DG"
+            X: =410
+            Y: =324
+      - HomeThArchives:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="MEDIA ITEMS (Nº)"
+            Width: =140
+            X: =575
+            Y: =324
+      - HomeThStatus:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="STATUS"
+            Width: =70
+            X: =790
+            Y: =320
+      - HomeGallery:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =330
+            Items: |-
+              =Filter(
+                  AVCentralDepositRequests,
+                  varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                  varFilter = "All" Or Status.Value = varFilter,
+                  varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
+                  IsBlank(varFilterRequestName) Or varFilterRequestName = "" Or StartsWith(RequestTitle, varFilterRequestName),
+                  IsEmpty(cmbFilterAssignee.SelectedItems) Or "All" in cmbFilterAssignee.SelectedItems.Value Or First(DG_Agency_Contact).DisplayName in cmbFilterAssignee.SelectedItems.Value,
+                  IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
+                  IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate
+              )
+            TemplateSize: =60
+            Width: =1270
+            X: =46
+            Y: =364
+          Children:
+            - HomeRowSelect:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+                  Height: =59
+                  HoverFill: =RGBA(240, 242, 246, 1)
+                  OnSelect: |-
+                    =Set(varCurrentRequest, ThisItem);
+                    Set(varRequestTitle1, Coalesce(ThisItem.RequestNumber, ""));
+                    Set(varRequestDG, Coalesce(ThisItem.DG.Value, ""));
+                    Set(varRequestDescription1, Coalesce(ThisItem.Description, ""));
+                    Set(varRequestOwnerContact, Coalesce(First(ThisItem.DG_Agency_Contact).DisplayName, ""));
+                    Set(varRequestMediaType, "");
+                    Navigate(RequestScreen, ScreenTransition.Cover)
+                  Width: =1270
+            - HomeRowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =1270
+                  Y: =59
+            - HomeRowRequest:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =59
+                  OnSelect: =Select(Parent)
+                  Text: =If(IsBlank(ThisItem.RequestNumber), "Untitled request", ThisItem.RequestNumber)
+                  Width: =90
+                  X: =13
+            - HomeRowName:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =59
+                  OnSelect: =Select(Parent)
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "—", ThisItem.RequestTitle)
+                  Width: =280
+                  X: =120
+            - HomeRowDG:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =59
+                  OnSelect: =Select(Parent)
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.DG.Value), "—", ThisItem.DG.Value)
+                  X: =410
+            - HomeRowArchives:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =59
+                  OnSelect: =Select(Parent)
+                  Text: =Text(CountRows(Filter(AVCentralDepositMediaItems, ParentRequest exactin ThisItem.RequestNumber)))
+                  Width: =120
+                  X: =575
+            - HomeRowBadge:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =Color.White
+                  DisabledBorderColor: =Self.BorderColor
+                  DisplayMode: =DisplayMode.View
+                  Fill: |-
+                    =If("Approved" in ThisItem.Status.Value, Color.DarkGreen,
+                       "Pending" in ThisItem.Status.Value, Color.Orange,
+                       "Draft" in ThisItem.Status.Value, Color.Gray,
+                       "Rejected" in ThisItem.Status.Value, Color.Red,
+                       "Published" in ThisItem.Status.Value, Color.DarkOrchid,
+                       Color.Gray)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Size: =11
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
+                  Width: =150
+                  X: =714
+                  Y: =10
+            - HomeRowReview:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 96, 178, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(56, 96, 178, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(56, 96, 178, 1)
+                  OnSelect: |-
+                    =Set(varReviewProject, ThisItem);
+                    Set(varReviewComment, Blank());
+                    Navigate(ReviewScreen)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: ="Review  →"
+                  Tooltip: ="Open in review queue to approve or reject"
+                  Visible: =ThisItem.Status.Value = "Pending"
+                  Width: =120
+                  X: =1100
+                  Y: =14
+            - HomeRowAssignee:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =59
+                  OnSelect: =Select(Parent)
+                  Size: =12
+                  Text: =If(IsBlank(First(ThisItem.DG_Agency_Contact).DisplayName), "—", First(ThisItem.DG_Agency_Contact).DisplayName)
+                  Width: =210
+                  X: =870
+      - HomeEmptyState:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Size: =14
+            Text: ="No requests yet - press the button + New request to create your first one."
+            Visible: =CountRows(HomeGallery.AllItems) = 0
+            Width: =1270
+            X: =48
+            Y: =530
+      - Logo_EC_Form_5:
+          Control: Image@2.2.3
+          Group: Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =562
+      - NoInternetIcon_3:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 0, 0, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =44
+            Icon: =Icon.GlobeNotConnected
+            PaddingBottom: =5
+            PaddingLeft: =5
+            PaddingRight: =5
+            PaddingTop: =5
+            Tooltip: ="No internet connection detected. Please verify your connection and try again."
+            Visible: =!Connection.Connected
+            X: =16
+            Y: =719
+      - Label12_3:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(149, 149, 149, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: |-
+              ="Audiovisual Service - DG COMM
+              This site is managed by the Directorate-General for Communication"
+            Width: =691
+            X: =265
+            Y: =717
+      - CD_Logo:
+          Control: Image@2.2.3
+          Group: Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =23
+            Y: =6
+      - HomeFilterBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =62
+            Width: =1270
+            X: =48
+            Y: =222
+      - HomeLblDG:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =10
+            Text: ="DG / AGENCY"
+            Width: =180
+            X: =68
+            Y: =226
+      - HomeFilterDG:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(35, 31, 32, 1)
+            ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
+            ChevronDisabledFill: =RGBA(235, 233, 229, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
+            ChevronHoverFill: =Self.ChevronFill
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Items: =colDGOptions
+            Items.Value: =Value
+            OnChange: =Set(varFilterDG, Self.SelectedText.Value)
+            PressedColor: =Self.Color
+            PressedFill: =Self.Fill
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(0, 176, 240, 1)
+            Width: =180
+            X: =68
+            Y: =244
+      - HomeLblRequest:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =10
+            Text: ="REQUEST NAME"
+            Width: =220
+            X: =258
+            Y: =226
+      - HomeFilterRequestName:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =""
+            Font: =Font.'Open Sans'
+            Height: =36
+            HintText: ="Search by request name…"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =Set(varFilterRequestName, Self.Text)
+            Width: =220
+            X: =258
+            Y: =244
+      - HomeBtnClear:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(247, 248, 250, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =Set(varFilterDG, "");
+              Set(varFilterRequestName, "");
+              Reset(HomeFilterDG);
+              Reset(HomeFilterRequestName);
+              Reset(cmbFilterAssignee);
+              Reset(HomeFilterStart);
+              Reset(HomeFilterEnd)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="Clear"
+            Width: =80
+            X: =1215
+            Y: =239
+      - HomeBtnReview:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: =Navigate(ReviewScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: |-
+              ="👁  Review queue"
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =150
+            X: =951
+            Y: =92
+      - HomeThAction:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =11
+            Text: ="ACTION"
+            Width: =160
+            X: =1101
+            Y: =320
+      - HomeBtnPrint:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =ClearCollect(colPrintData, HomeGallery.AllItems);
+              Navigate(HomePrintScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: |-
+              ="📄 Export"
+            Width: =140
+            X: =1203
+            Y: =92
+      - HomeCounterBar:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: |-
+              =If(
+                  CountIf(HomeGallery.AllItems, Status.Value = "Rejected") > 0,
+                  RGBA(193, 40, 40, 1),
+                  If(
+                      CountRows(HomeGallery.AllItems) > 0
+                      And CountIf(HomeGallery.AllItems, Status.Value = "Approved") = CountRows(HomeGallery.AllItems),
+                      RGBA(22, 128, 80, 1),
+                      RGBA(96, 104, 120, 1)
+                  )
+              )
+            Font: =Font.'Open Sans'
+            Height: =28
+            Size: =12
+            Text: |-
+              =Text(CountRows(HomeGallery.AllItems)) & If(CountRows(HomeGallery.AllItems) = 1, "  request", "  requests") & "   " &
+              If(
+                  CountRows(Filter(HomeGallery.AllItems, Status.Value = "Rejected")) > 0,
+                  "⚠  " & Text(CountRows(Filter(HomeGallery.AllItems, Status.Value = "Rejected"))) & " rejected",
+                  If(
+                      CountRows(HomeGallery.AllItems) > 0
+                      And CountRows(Filter(HomeGallery.AllItems, Status.Value = "Approved")) = CountRows(HomeGallery.AllItems),
+                      "✓  all approved",
+                      If(
+                          CountRows(Filter(HomeGallery.AllItems, Status.Value = "Draft")) > 0,
+                          "◌  " & Text(CountRows(Filter(HomeGallery.AllItems, Status.Value = "Draft"))) & " in draft",
+                          ""
+                      )
+                  )
+              )
+            Width: =900
+            X: =48
+            Y: =288
+      - HomeBtnHelp:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="?  Help"
+            Width: =90
+            X: =1107
+            Y: =92
+      - HomeLblArchive:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =10
+            Text: ="ASSIGNEE"
+            Width: =220
+            X: =488
+            Y: =226
+      - cmbFilterAssignee:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(56, 96, 178, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            ChevronHoverFill: =RGBA(255, 255, 255, 1)
+            DisplayFields: =["Value"]
+            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.Disabled)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverFill: =RGBA(186, 202, 226, 1)
+            InputTextPlaceholder: ="Filter by assignee"
+            Items: =colAssignees.Value
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            SearchFields: =["Value"]
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(56, 96, 178, 1)
+            Width: =220
+            X: =488
+            Y: =246
+      - HomeLblFilterStart:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =10
+            Text: ="SUBMISSION START DATE"
+            Width: =190
+            X: =718
+            Y: =226
+      - HomeFilterStart:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DateTimeZone: =%DateTimeZone.RESERVED%.Local
+            DefaultDate: =Today()-31
+            DisplayMode: =%DisplayMode.RESERVED%.Edit
+            Font: =Font.'Open Sans'
+            Format: ="dd-mm-yyyy"
+            IconBackground: =RGBA(56, 96, 178, 1)
+            IconFill: =RGBA(255, 255, 255, 1)
+            OnChange: =Set(varFilterStartDate, Self.SelectedDate)
+            StartOfWeek: =%StartOfWeek.RESERVED%.Sunday
+            Width: =190
+            X: =718
+            Y: =244
+      - HomeLblFilterEnd:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =10
+            Text: ="SUBMISSION END DATE"
+            Width: =190
+            X: =918
+            Y: =226
+      - HomeFilterEnd:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DateTimeZone: =%DateTimeZone.RESERVED%.Local
+            DisplayMode: =%DisplayMode.RESERVED%.Edit
+            Font: =Font.'Open Sans'
+            Format: ="dd-mm-yyyy"
+            IconBackground: =RGBA(56, 96, 178, 1)
+            IconFill: =RGBA(255, 255, 255, 1)
+            OnChange: =Set(varFilterEndDate, Self.SelectedDate)
+            StartOfWeek: =%StartOfWeek.RESERVED%.Sunday
+            Width: =190
+            X: =918
+            Y: =244
+      - HomeAppSubtitle:
+          Control: Label@2.5.1
+          Group: Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =109
+            Y: =28
+      - HomeBtnDashboard:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: =Navigate(DashboardScreen, ScreenTransition.Fade)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: |-
+              ="📊  Dashboard"
+            Width: =130
+            X: =642
+            Y: =92
+      - Image1_5:
+          Control: Image@2.2.3
+          Group: Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1297
+      - HomeChipPublished:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(varFilter="Published", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(varFilter="Published", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(varFilter="Published", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: =Set(varFilter, "Published")
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="Published"
+            Width: =100
+            X: =555
+            Y: =180
