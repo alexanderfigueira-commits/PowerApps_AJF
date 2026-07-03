@@ -329,17 +329,23 @@ ReviewScreen As screen:
         Color: =RGBA(60, 66, 80, 1)
         FontWeight: =FontWeight.Semibold
         Height: =24
-        Text: ="Owner / point of contact"
+        Text: ="Assignee(s)  —  approver is added on approval; add a co-assignee if needed"
         Visible: =Not(IsBlank(varReviewProject))
-        Width: =400
+        Width: =700
         X: =460
         Y: =404
         ZIndex: =16
 
-    RV_OwnerName As text:
-        Default: =Coalesce(First(varReviewProject.DG_Agency_Contact).DisplayName, "—")
-        DisplayMode: =DisplayMode.View
-        HintText: ="DG / Agency contact"
+    RV_Assignee As combobox:
+        DefaultSelectedItems: |-
+            =ForAll(varReviewProject.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
+        DisplayFields: =["DisplayName"]
+        DisplayMode: =DisplayMode.Edit
+        InputTextPlaceholder: ="Search people to add as assignee…"
+        IsSearchable: =true
+        Items: =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+        SearchFields: =["DisplayName"]
+        SelectMultiple: =true
         Visible: =Not(IsBlank(varReviewProject))
         Width: =380
         X: =460
@@ -422,6 +428,25 @@ ReviewScreen As screen:
                     LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
                     {
                         Status: {Value: "Approved"},
+                        // Assignee(s) = the approver, plus any co-assignees selected in RV_Assignee.
+                        DG_Agency_Contact: ForAll(
+                            Ungroup(
+                                Table(
+                                    {u: Table({DisplayName: User().FullName, Mail: User().Email})},
+                                    {u: ShowColumns(RV_Assignee.SelectedItems, "DisplayName", "Mail")}
+                                ),
+                                "u"
+                            ) As pers,
+                            {
+                                '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                                Claims: "i:0#.f|membership|" & Lower(pers.Mail),
+                                DisplayName: pers.DisplayName,
+                                Email: pers.Mail,
+                                Department: "",
+                                JobTitle: "",
+                                Picture: ""
+                            }
+                        ),
                         ReviewedByContact: Table({
                             '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                             Claims: "i:0#.f|membership|" & Lower(User().Email),
