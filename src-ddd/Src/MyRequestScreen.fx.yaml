@@ -574,7 +574,7 @@ MyRequestScreen As screen:
         DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.Disabled)
         Height: =36
         InputTextPlaceholder: ="Filter by assignee"
-        Items: =Distinct(AVCentralDepositRequests, First(DG_Agency_Contact).DisplayName)
+        Items: =Distinct(Filter(RolesPermissionsList, Role.Value = "ADMINISTRATOR"), UserEmail.DisplayName)
         SearchFields: =["Value"]
         SelectMultiple: =true
         Width: =220
