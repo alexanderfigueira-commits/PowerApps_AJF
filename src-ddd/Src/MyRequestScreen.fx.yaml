@@ -640,7 +640,7 @@ MyRequestScreen As screen:
         Text: ="📊  Dashboard"
         Visible: =true
         Width: =130
-        X: =638
+        X: =795
         Y: =92
         ZIndex: =42
 
