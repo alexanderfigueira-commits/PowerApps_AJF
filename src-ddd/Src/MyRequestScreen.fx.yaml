@@ -222,7 +222,7 @@ MyRequestScreen As screen:
                 varFilter = "All" Or Status.Value = varFilter,
                 varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                 IsBlank(varFilterRequestName) Or varFilterRequestName = "" Or StartsWith(RequestNumber, varFilterRequestName),
-                IsEmpty(cmbFilterAssignee.SelectedItems) Or First(DG_Agency_Contact).DisplayName in cmbFilterAssignee.SelectedItems.Value,
+                IsEmpty(cmbFilterAssignee.SelectedItems) Or "All" in cmbFilterAssignee.SelectedItems.Value Or First(DG_Agency_Contact).DisplayName in cmbFilterAssignee.SelectedItems.Value,
                 IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                 IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate
             )
@@ -339,7 +339,7 @@ MyRequestScreen As screen:
             HoverFill: =RGBA(56, 96, 178, 1)
             OnSelect: |-
                 =Set(varReviewProject, ThisItem);
-                Set(varReviewComment, "");
+                Set(varReviewComment, Blank());
                 Navigate(ReviewScreen)
             Size: =12
             Text: ="Review  →"
@@ -574,7 +574,14 @@ MyRequestScreen As screen:
         DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.Disabled)
         Height: =36
         InputTextPlaceholder: ="Filter by assignee"
-        Items: =Distinct(Filter(RolesPermissionsList, Role.Value = "ADMINISTRATOR"), UserEmail.DisplayName)
+        Items: |-
+            =Ungroup(
+                Table(
+                    {v: Table({Value: "All"})},
+                    {v: Distinct(Filter(RolesPermissionsList, Role.Value = "ADMINISTRATOR"), UserEmail.DisplayName)}
+                ),
+                "v"
+            )
         SearchFields: =["Value"]
         SelectMultiple: =true
         Width: =220

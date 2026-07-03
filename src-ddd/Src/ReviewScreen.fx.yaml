@@ -2,7 +2,7 @@ ReviewScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: |-
         =Set(varReviewProject, Blank());
-        Set(varReviewComment, "")
+        Set(varReviewComment, Blank())
 
     Header_RV As group:
         Height: =5
@@ -122,7 +122,7 @@ ReviewScreen As screen:
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
                 =Set(varReviewProject, ThisItem);
-                Set(varReviewComment, "")
+                Set(varReviewComment, Blank())
             Width: =430
             ZIndex: =1
 
@@ -436,7 +436,7 @@ ReviewScreen As screen:
                 );
                 Notify("Request approved.", NotificationType.Success);
                 Set(varReviewProject, Blank());
-                Set(varReviewComment, ""),
+                Set(varReviewComment, Blank()),
                 Notify("Approve failed: " & FirstError.Message, NotificationType.Error)
             )
         Size: =14
@@ -483,7 +483,7 @@ ReviewScreen As screen:
                 );
                 Notify("Request rejected. The owner will see your comment on their next visit.", NotificationType.Warning);
                 Set(varReviewProject, Blank());
-                Set(varReviewComment, ""),
+                Set(varReviewComment, Blank()),
                 Notify("Reject failed: " & FirstError.Message, NotificationType.Error)
             )
         Size: =14
