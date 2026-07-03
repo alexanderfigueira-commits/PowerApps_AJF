@@ -41,9 +41,9 @@ MyRequestScreen As screen:
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |-
             =Set(varCurrentRequest, Defaults(AVCentralDepositRequests));
-            Set(varRequestTitle, "");
+            Set(varRequestTitle, Blank());
             Set(varRequestDG, "");
-            Set(varRequestDescription, "");
+            Set(varRequestDescription, Blank());
             Set(varRequestOwnerContact, "");
             Set(varRequestOwnerEmail, User().Email);
             Set(varRequestMediaType, "");
