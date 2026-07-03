@@ -8,7 +8,6 @@ MyRequestScreen As screen:
         
         Set(varFilterDG, "");
         Set(varFilterRequestName, "");
-        Set(varFilterMediaName, "");
         Set(varFilterStartDate, Blank());
         Set(varFilterEndDate, Blank())
 
@@ -195,10 +194,22 @@ MyRequestScreen As screen:
         Height: =44
         Size: =11
         Text: ="STATUS"
-        Width: =160
+        Width: =70
         X: =790
         Y: =320
         ZIndex: =17
+
+    HomeThAssignee As label:
+        Align: =Align.Center
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =44
+        Size: =11
+        Text: ="ASSIGNEE"
+        Width: =210
+        X: =870
+        Y: =320
+        ZIndex: =14
 
     "HomeGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
         BorderColor: =RGBA(220, 224, 230, 1)
@@ -211,13 +222,7 @@ MyRequestScreen As screen:
                 varFilter = "All" Or Status.Value = varFilter,
                 varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                 IsBlank(varFilterRequestName) Or varFilterRequestName = "" Or StartsWith(RequestNumber, varFilterRequestName),
-                IsBlank(varFilterMediaName) Or varFilterMediaName = "" Or
-                    !IsEmpty(
-                        Filter(
-                            AVCentralDepositMediaItems,
-                            ParentRequest = RequestNumber And StartsWith(Title, varFilterMediaName)
-                        )
-                    ),
+                IsEmpty(cmbFilterAssignee.SelectedItems) Or First(DG_Agency_Contact).DisplayName in cmbFilterAssignee.SelectedItems.Value,
                 IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                 IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate
             )
@@ -313,6 +318,17 @@ MyRequestScreen As screen:
             X: =714
             Y: =10
             ZIndex: =6
+
+        HomeRowAssignee As label:
+            Align: =Align.Center
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =59
+            OnSelect: =Select(Parent)
+            Size: =12
+            Text: =If(IsBlank(First(ThisItem.DG_Agency_Contact).DisplayName), "—", First(ThisItem.DG_Agency_Contact).DisplayName)
+            Width: =210
+            X: =870
+            ZIndex: =8
 
         HomeRowReview As button:
             BorderColor: =RGBA(56, 96, 178, 1)
@@ -435,10 +451,9 @@ MyRequestScreen As screen:
         OnSelect: |-
             =Set(varFilterDG, "");
             Set(varFilterRequestName, "");
-            Set(varFilterMediaName, "");
             Reset(HomeFilterDG);
             Reset(HomeFilterRequest);
-            Reset(HomeFilterMedia);
+            Reset(cmbFilterAssignee);
             Reset(HomeFilterStart);
             Reset(HomeFilterEnd)
         Size: =12
@@ -548,17 +563,20 @@ MyRequestScreen As screen:
         FontWeight: =FontWeight.Semibold
         Height: =16
         Size: =10
-        Text: ="MEDIA FILE NAME"
+        Text: ="ASSIGNEE"
         Width: =220
         X: =488
         Y: =226
         ZIndex: =35
 
-    HomeFilterMedia As text:
-        Default: =""
+    cmbFilterAssignee As combobox:
+        DisplayFields: =["Value"]
+        DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.Disabled)
         Height: =36
-        HintText: ="Search by media file name…"
-        OnChange: =Set(varFilterMediaName, Self.Text)
+        InputTextPlaceholder: ="Filter by assignee"
+        Items: =Distinct(AVCentralDepositRequests, First(DG_Agency_Contact).DisplayName)
+        SearchFields: =["Value"]
+        SelectMultiple: =true
         Width: =220
         X: =488
         Y: =244
@@ -613,7 +631,7 @@ MyRequestScreen As screen:
         OnSelect: =Navigate(DashboardScreen, ScreenTransition.Fade)
         Size: =13
         Text: ="📊  Dashboard"
-        Visible: =varUserRole = "ADMINISTRATOR"
+        Visible: =true
         Width: =130
         X: =638
         Y: =92
