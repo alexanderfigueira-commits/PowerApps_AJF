@@ -1,5 +1,10 @@
 ChildMetaScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
+    OnVisible: |-
+        =If(varChildMediaType = "Photo" And (IsEmpty(colPhotoCaptions) Or varPhotoCaptionsChildId <> varCurrentChildId),
+            ClearCollect(colPhotoCaptions, {Name: "", Caption: ""});
+            Set(varPhotoCaptionsChildId, varCurrentChildId);
+            Set(varChildContractingAuthority, ""))
 
     Header_CM As group:
         Height: =5
@@ -168,7 +173,7 @@ ChildMetaScreen As screen:
             =[{id: 1}]
         Layout: =Layout.Vertical
         TemplatePadding: =0
-        TemplateSize: =580 + If(varChildMediaType = "Podcast", 240, 0)
+        TemplateSize: =580 + If(varChildMediaType = "Podcast", 240, If(varChildMediaType = "Photo", 160, 0))
         Width: =1366
         Y: =102
         ZIndex: =10
@@ -177,7 +182,7 @@ ChildMetaScreen As screen:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =560 + If(varChildMediaType = "Podcast", 240, 0)
+            Height: =560 + If(varChildMediaType = "Podcast", 240, If(varChildMediaType = "Photo", 160, 0))
             Width: =1302
             X: =32
             Y: =16
@@ -238,24 +243,24 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: |-
-                =If(varChildMediaType = "Photo", "Photographer / agency *",
+                =If(varChildMediaType = "Photo", "Contractor / Agency *",
                    If(varChildMediaType = "Podcast",
                       "Presenter / producer *", "Director / producer *"))
             Width: =500
-            X: =500
-            Y: =122
+            X: =If(varChildMediaType = "Photo", 588, 500)
+            Y: =If(varChildMediaType = "Photo", 530, 122)
             ZIndex: =6
 
         CM_Credits As text:
             Default: =varChildCredits1
             HintText: |-
-                =If(varChildMediaType = "Photo", "Photographer name and/or agency",
+                =If(varChildMediaType = "Photo", "Contractor or agency name",
                    If(varChildMediaType = "Podcast",
                       "Presenter and/or producer name", "Director and/or producer name"))
             OnChange: =Set(varChildCredits1, Self.Text)
             Width: =500
-            X: =500
-            Y: =148
+            X: =If(varChildMediaType = "Photo", 588, 500)
+            Y: =If(varChildMediaType = "Photo", 556, 148)
             ZIndex: =7
 
         CM_LblDesc As label:
@@ -263,6 +268,7 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Editorial description (max 500 characters)"
+            Visible: =varChildMediaType <> "Photo"
             Width: =700
             X: =56
             Y: =206
@@ -274,10 +280,212 @@ ChildMetaScreen As screen:
             HintText: ="Editorial description, context and keywords"
             Mode: =TextMode.MultiLine
             OnChange: =Set(varChildDescription1, Self.Text)
+            Visible: =varChildMediaType <> "Photo"
             Width: =1230
             X: =56
             Y: =232
             ZIndex: =9
+
+        CM_PhotoNotice As rectangle:
+            BorderColor: =RGBA(186, 202, 226, 1)
+            BorderThickness: =1
+            Fill: =RGBA(230, 236, 245, 1)
+            Height: =50
+            Visible: =varChildMediaType = "Photo"
+            Width: =1230
+            X: =56
+            Y: =122
+            ZIndex: =40
+
+        CM_PhotoNoticeText As label:
+            Color: =RGBA(56, 96, 178, 1)
+            Height: =50
+            Italic: =true
+            Size: =12
+            Text: ="Notice: Where technically possible, the IPTC metadata fields of the TIF/JPEG file should be filled in by the photographer or producing service."
+            Visible: =varChildMediaType = "Photo"
+            Width: =1206
+            X: =68
+            Y: =122
+            ZIndex: =41
+
+        CM_LblShootDate As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Shooting date *"
+            Visible: =varChildMediaType = "Photo"
+            Width: =300
+            X: =56
+            Y: =186
+            ZIndex: =42
+
+        CM_ShootDate As datepicker:
+            DefaultDate: =varChildCaptureDate
+            OnChange: =Set(varChildCaptureDate, Self.SelectedDate)
+            Visible: =varChildMediaType = "Photo"
+            Width: =300
+            X: =56
+            Y: =212
+            ZIndex: =43
+
+        CM_LblPlacePhoto As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Place *"
+            Visible: =varChildMediaType = "Photo"
+            Width: =500
+            X: =388
+            Y: =186
+            ZIndex: =44
+
+        CM_PlacePhoto As text:
+            Default: =varChildProductionPlace1
+            HintText: ="where the photo has been taken"
+            OnChange: =Set(varChildProductionPlace1, Self.Text)
+            Visible: =varChildMediaType = "Photo"
+            Width: =500
+            X: =388
+            Y: =212
+            ZIndex: =45
+
+        CM_LblCaptions As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Photo captions *   (one entry per photo file)"
+            Visible: =varChildMediaType = "Photo"
+            Width: =800
+            X: =56
+            Y: =266
+            ZIndex: =46
+
+        CM_CaptionGallery As gallery:
+            Height: =180
+            Items: =colPhotoCaptions
+            Layout: =Layout.Vertical
+            TemplatePadding: =4
+            TemplateSize: =84
+            Visible: =varChildMediaType = "Photo"
+            Width: =1230
+            X: =56
+            Y: =292
+            ZIndex: =47
+
+            CM_CapName As text:
+                Default: =ThisItem.Name
+                HintText: ="name of the photo file"
+                OnChange: =Patch(colPhotoCaptions, ThisItem, {Name: Self.Text})
+                Width: =380
+                Y: =8
+                ZIndex: =1
+
+            CM_CapCaption As text:
+                Default: =ThisItem.Caption
+                Height: =72
+                HintText: ="short description with names and functions of personalities photographed and clear identification, e.g.: 1st from left to right"
+                MaxLength: =500
+                Mode: =TextMode.MultiLine
+                OnChange: =Patch(colPhotoCaptions, ThisItem, {Caption: Self.Text})
+                Width: =720
+                X: =396
+                Y: =4
+                ZIndex: =2
+
+            CM_CapRemove As button:
+                BorderColor: =RGBA(220, 224, 230, 1)
+                BorderThickness: =1
+                Color: =RGBA(193, 40, 40, 1)
+                Fill: =RGBA(255, 255, 255, 1)
+                Height: =36
+                HoverFill: =RGBA(254, 242, 242, 1)
+                OnSelect: =Remove(colPhotoCaptions, ThisItem)
+                Size: =13
+                Text: ="✕"
+                Width: =40
+                X: =1136
+                Y: =8
+                ZIndex: =3
+
+        CM_CapAdd As button:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: =Collect(colPhotoCaptions, {Name: "", Caption: ""})
+            Size: =12
+            Text: ="+  Add caption"
+            Visible: =varChildMediaType = "Photo"
+            Width: =160
+            X: =56
+            Y: =482
+            ZIndex: =48
+
+        CM_LblAuthority As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Contracting authority *"
+            Visible: =varChildMediaType = "Photo"
+            Width: =500
+            X: =56
+            Y: =530
+            ZIndex: =49
+
+        CM_Authority As text:
+            Default: =varChildContractingAuthority
+            HintText: ="Contracting authority"
+            OnChange: =Set(varChildContractingAuthority, Self.Text)
+            Visible: =varChildMediaType = "Photo"
+            Width: =500
+            X: =56
+            Y: =556
+            ZIndex: =50
+
+        CM_LblLinksPhoto As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Links"
+            Visible: =varChildMediaType = "Photo"
+            Width: =640
+            X: =56
+            Y: =610
+            ZIndex: =51
+
+        CM_LinksPhoto As text:
+            Default: =varChildLinks1
+            HintText: ="Relevant URLs or SharePoint references"
+            OnChange: =Set(varChildLinks1, Self.Text)
+            Visible: =varChildMediaType = "Photo"
+            Width: =640
+            X: =56
+            Y: =636
+            ZIndex: =52
+
+        CM_LblTagsPhoto As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Pertinent tags"
+            Visible: =varChildMediaType = "Photo"
+            Width: =510
+            X: =720
+            Y: =610
+            ZIndex: =53
+
+        CM_TagsPhoto As text:
+            Default: =varChildTags1
+            HintText: ="Comma-separated keywords for discoverability"
+            OnChange: =Set(varChildTags, Self.Text)
+            Visible: =varChildMediaType = "Photo"
+            Width: =510
+            X: =720
+            Y: =636
+            ZIndex: =54
 
         CM_AIWarning As rectangle:
             BorderColor: =RGBA(254, 202, 202, 1)
