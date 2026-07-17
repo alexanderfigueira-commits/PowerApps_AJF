@@ -10,7 +10,11 @@ ChildMetaScreen As screen:
             Set(varChildProducer, "");
             Set(varChildExecProducer, "");
             Set(varChildScript, "");
-            Set(varChildSubtitlesProvided, false))
+            Set(varChildSubtitlesProvided, false));
+        If(varChildMediaType = "Podcast" And varPodMetaChildId <> varCurrentChildId,
+            Set(varPodMetaChildId, varCurrentChildId);
+            Set(varChildProducer, "");
+            Set(varChildExecProducer, ""))
 
     Header_CM As group:
         Height: =5
@@ -179,7 +183,7 @@ ChildMetaScreen As screen:
             =[{id: 1}]
         Layout: =Layout.Vertical
         TemplatePadding: =0
-        TemplateSize: =580 + If(varChildMediaType = "Podcast", 240, If(varChildMediaType = "Photo", 160, 0))
+        TemplateSize: =580 + If(varChildMediaType = "Podcast", 360, If(varChildMediaType = "Photo", 160, 0))
         Width: =1366
         Y: =102
         ZIndex: =10
@@ -188,7 +192,7 @@ ChildMetaScreen As screen:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =560 + If(varChildMediaType = "Podcast", 240, If(varChildMediaType = "Photo", 160, 0))
+            Height: =560 + If(varChildMediaType = "Podcast", 340, If(varChildMediaType = "Photo", 160, 0))
             Width: =1302
             X: =32
             Y: =16
@@ -224,24 +228,24 @@ ChildMetaScreen As screen:
             Height: =22
             Text: ="Language version(s) *"
             Visible: =varChildMediaType = "Podcast"
-            Width: =400
+            Width: =295
             X: =56
-            Y: =122
+            Y: =366
             ZIndex: =4
 
         CM_Language As combobox:
             DefaultSelectedItems: |-
                 =If(IsBlank(varChildLanguageVersions) Or varChildLanguageVersions = "", Table(), Table({Value: varChildLanguageVersions}))
             DisplayFields: =["Value"]
-            Items: =["EN", "FR", "DE", "ES", "IT", "PL", "NL", "PT", "RO", "Multilingual"]
+            Items: =["EN", "FR", "DE", "IT", "ES", "PT", "NL", "PL", "RO", "EL", "CS", "SV", "HU", "BG", "DA", "FI", "SK", "HR", "LT", "SL", "LV", "ET", "MT", "GA", "Other"]
             OnChange: =Set(varChildLanguageVersions, Self.Selected.Value)
             SearchFields: =["Value"]
-            SearchItems: =Search(["EN","FR","DE","ES","IT","PL","NL","PT","RO","Multilingual"],CM_Language.SearchText,Value)
+            SearchItems: =Search(["EN","FR","DE","IT","ES","PT","NL","PL","RO","EL","CS","SV","HU","BG","DA","FI","SK","HR","LT","SL","LV","ET","MT","GA","Other"],CM_Language.SearchText,Value)
             SelectMultiple: =false
             Visible: =varChildMediaType = "Podcast"
-            Width: =400
+            Width: =295
             X: =56
-            Y: =148
+            Y: =392
             ZIndex: =5
 
         CM_LblCredits As label:
@@ -250,23 +254,23 @@ ChildMetaScreen As screen:
             Height: =22
             Text: |-
                 =If(varChildMediaType = "Photo", "Contractor / Agency *",
-                   If(varChildMediaType = "Podcast", "Presenter / producer *",
+                   If(varChildMediaType = "Podcast", "Director, Motion Designer, Photographer",
                       If(varChildMediaType = "Video", "Director, Motion Designer, Photographer", "Director / producer *")))
-            Width: =500
-            X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, 500))
-            Y: =If(varChildMediaType = "Photo", 530, If(varChildMediaType = "Video", 476, 122))
+            Width: =If(varChildMediaType = "Podcast", 390, 500)
+            X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 896, 500)))
+            Y: =If(varChildMediaType = "Photo", 530, If(varChildMediaType = "Video", 476, If(varChildMediaType = "Podcast", 526, 122)))
             ZIndex: =6
 
         CM_Credits As text:
             Default: =varChildCredits1
             HintText: |-
                 =If(varChildMediaType = "Photo", "Contractor or agency name",
-                   If(varChildMediaType = "Podcast", "Presenter and/or producer name",
+                   If(varChildMediaType = "Podcast", "precise names + function",
                       If(varChildMediaType = "Video", "precise names + function", "Director and/or producer name")))
             OnChange: =Set(varChildCredits1, Self.Text)
-            Width: =500
-            X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, 500))
-            Y: =If(varChildMediaType = "Photo", 556, If(varChildMediaType = "Video", 502, 148))
+            Width: =If(varChildMediaType = "Podcast", 390, 500)
+            X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 896, 500)))
+            Y: =If(varChildMediaType = "Photo", 556, If(varChildMediaType = "Video", 502, If(varChildMediaType = "Podcast", 552, 148)))
             ZIndex: =7
 
         CM_LblDesc As label:
@@ -274,7 +278,7 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Editorial description (max 500 characters)"
-            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
             Width: =700
             X: =56
             Y: =206
@@ -286,7 +290,7 @@ ChildMetaScreen As screen:
             HintText: ="Editorial description, context and keywords"
             Mode: =TextMode.MultiLine
             OnChange: =Set(varChildDescription1, Self.Text)
-            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
             Width: =1230
             X: =56
             Y: =232
@@ -319,41 +323,41 @@ ChildMetaScreen As screen:
             Color: =RGBA(60, 66, 80, 1)
             FontWeight: =FontWeight.Semibold
             Height: =22
-            Text: =If(varChildMediaType = "Video", "Filming date *", "Shooting date *")
-            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
+            Text: =If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", "Filming date *", "Shooting date *")
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =295
-            X: =56
-            Y: =If(varChildMediaType = "Video", 122, 186)
+            X: =If(varChildMediaType = "Podcast", 367, 56)
+            Y: =If(varChildMediaType = "Video", 122, If(varChildMediaType = "Podcast", 366, 186))
             ZIndex: =42
 
         CM_ShootDate As datepicker:
             DefaultDate: =varChildCaptureDate
             OnChange: =Set(varChildCaptureDate, Self.SelectedDate)
-            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =295
-            X: =56
-            Y: =If(varChildMediaType = "Video", 148, 212)
+            X: =If(varChildMediaType = "Podcast", 367, 56)
+            Y: =If(varChildMediaType = "Video", 148, If(varChildMediaType = "Podcast", 392, 212))
             ZIndex: =43
 
         CM_LblPlacePhoto As label:
             Color: =RGBA(60, 66, 80, 1)
             FontWeight: =FontWeight.Semibold
             Height: =22
-            Text: =If(varChildMediaType = "Video", "Production place *", "Place *")
-            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
-            Width: =500
-            X: =If(varChildMediaType = "Video", 56, 388)
-            Y: =If(varChildMediaType = "Video", 202, 186)
+            Text: =If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", "Production place *", "Place *")
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Width: =If(varChildMediaType = "Podcast", 400, 500)
+            X: =If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 367, 388))
+            Y: =If(varChildMediaType = "Video", 202, If(varChildMediaType = "Podcast", 446, 186))
             ZIndex: =44
 
         CM_PlacePhoto As text:
             Default: =varChildProductionPlace1
-            HintText: =If(varChildMediaType = "Video", "City, country or venue", "where the photo has been taken")
+            HintText: =If(varChildMediaType = "Photo", "where the photo has been taken", "City, country or venue")
             OnChange: =Set(varChildProductionPlace1, Self.Text)
-            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
-            Width: =500
-            X: =If(varChildMediaType = "Video", 56, 388)
-            Y: =If(varChildMediaType = "Video", 228, 212)
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Width: =If(varChildMediaType = "Podcast", 400, 500)
+            X: =If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 367, 388))
+            Y: =If(varChildMediaType = "Video", 228, If(varChildMediaType = "Podcast", 472, 212))
             ZIndex: =45
 
         CM_LblCaptions As label:
@@ -456,20 +460,20 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Links"
-            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
-            Width: =If(varChildMediaType = "Video", 500, 640)
-            X: =If(varChildMediaType = "Video", 588, 56)
-            Y: =If(varChildMediaType = "Video", 202, 610)
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 400, 640))
+            X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 788, 56))
+            Y: =If(varChildMediaType = "Video", 202, If(varChildMediaType = "Podcast", 446, 610))
             ZIndex: =51
 
         CM_LinksPhoto As text:
             Default: =varChildLinks1
             HintText: ="Relevant URLs or SharePoint references"
             OnChange: =Set(varChildLinks1, Self.Text)
-            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
-            Width: =If(varChildMediaType = "Video", 500, 640)
-            X: =If(varChildMediaType = "Video", 588, 56)
-            Y: =If(varChildMediaType = "Video", 228, 636)
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 400, 640))
+            X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 788, 56))
+            Y: =If(varChildMediaType = "Video", 228, If(varChildMediaType = "Podcast", 472, 636))
             ZIndex: =52
 
         CM_LblTagsPhoto As label:
@@ -477,20 +481,20 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Pertinent tags"
-            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
-            Width: =If(varChildMediaType = "Video", 500, 510)
-            X: =If(varChildMediaType = "Video", 588, 720)
-            Y: =If(varChildMediaType = "Video", 476, 610)
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 500, 510))
+            X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 56, 720))
+            Y: =If(varChildMediaType = "Video", 476, If(varChildMediaType = "Podcast", 766, 610))
             ZIndex: =53
 
         CM_TagsPhoto As text:
             Default: =varChildTags1
             HintText: ="Comma-separated keywords for discoverability"
             OnChange: =Set(varChildTags, Self.Text)
-            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
-            Width: =If(varChildMediaType = "Video", 500, 510)
-            X: =If(varChildMediaType = "Video", 588, 720)
-            Y: =If(varChildMediaType = "Video", 502, 636)
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 500, 510))
+            X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 56, 720))
+            Y: =If(varChildMediaType = "Video", 502, If(varChildMediaType = "Podcast", 792, 636))
             ZIndex: =54
 
         CM_LblProdEnd As label:
@@ -498,19 +502,19 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Production end date *"
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =295
-            X: =367
-            Y: =122
+            X: =If(varChildMediaType = "Podcast", 678, 367)
+            Y: =If(varChildMediaType = "Podcast", 366, 122)
             ZIndex: =55
 
         CM_ProdEnd As datepicker:
             DefaultDate: =varChildProductionEndDate
             OnChange: =Set(varChildProductionEndDate, Self.SelectedDate)
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =295
-            X: =367
-            Y: =148
+            X: =If(varChildMediaType = "Podcast", 678, 367)
+            Y: =If(varChildMediaType = "Podcast", 392, 148)
             ZIndex: =56
 
         CM_LblPubStartV As label:
@@ -518,19 +522,19 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Publication start date *"
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =295
-            X: =678
-            Y: =122
+            X: =If(varChildMediaType = "Podcast", 989, 678)
+            Y: =If(varChildMediaType = "Podcast", 366, 122)
             ZIndex: =57
 
         CM_PubStartV As datepicker:
             DefaultDate: =varChildPublicationStartDate
             OnChange: =Set(varChildPublicationStartDate, Self.SelectedDate)
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =295
-            X: =678
-            Y: =148
+            X: =If(varChildMediaType = "Podcast", 989, 678)
+            Y: =If(varChildMediaType = "Podcast", 392, 148)
             ZIndex: =58
 
         CM_LblPubEndV As label:
@@ -538,19 +542,19 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Publication end date *"
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =295
-            X: =989
-            Y: =122
+            X: =If(varChildMediaType = "Podcast", 56, 989)
+            Y: =If(varChildMediaType = "Podcast", 446, 122)
             ZIndex: =59
 
         CM_PubEndV As datepicker:
             DefaultDate: =varChildPublicationEndDate
             OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =295
-            X: =989
-            Y: =148
+            X: =If(varChildMediaType = "Podcast", 56, 989)
+            Y: =If(varChildMediaType = "Podcast", 472, 148)
             ZIndex: =60
 
         CM_LblScript As label:
@@ -581,10 +585,10 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Producer *"
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =400
             X: =56
-            Y: =396
+            Y: =If(varChildMediaType = "Podcast", 526, 396)
             ZIndex: =63
 
         CM_Producer As combobox:
@@ -596,10 +600,10 @@ ChildMetaScreen As screen:
             OnChange: =Set(varChildProducer, Self.Selected.Value)
             SearchFields: =["Value"]
             SelectMultiple: =false
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =400
             X: =56
-            Y: =422
+            Y: =If(varChildMediaType = "Podcast", 552, 422)
             ZIndex: =64
 
         CM_LblExecProducer As label:
@@ -607,21 +611,97 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Executive producer"
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =500
-            X: =588
-            Y: =396
+            X: =If(varChildMediaType = "Podcast", 476, 588)
+            Y: =If(varChildMediaType = "Podcast", 526, 396)
             ZIndex: =65
 
         CM_ExecProducer As text:
             Default: =varChildExecProducer
             HintText: ="contractor, agency"
             OnChange: =Set(varChildExecProducer, Self.Text)
-            Visible: =varChildMediaType = "Video"
+            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =500
-            X: =588
-            Y: =422
+            X: =If(varChildMediaType = "Podcast", 476, 588)
+            Y: =If(varChildMediaType = "Podcast", 552, 422)
             ZIndex: =66
+
+        CM_PodcastNote As rectangle:
+            BorderColor: =RGBA(186, 202, 226, 1)
+            BorderThickness: =1
+            Fill: =RGBA(230, 236, 245, 1)
+            Height: =40
+            Visible: =varChildMediaType = "Podcast"
+            Width: =1230
+            X: =56
+            Y: =122
+            ZIndex: =40
+
+        CM_PodcastNoteText As label:
+            Color: =RGBA(56, 96, 178, 1)
+            Height: =40
+            Italic: =true
+            Size: =12
+            Text: ="This section captures the metadata for each individual episode."
+            Visible: =varChildMediaType = "Podcast"
+            Width: =1206
+            X: =68
+            Y: =122
+            ZIndex: =41
+
+        CM_LblEpisodeTitleP As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Title of the episode *"
+            Visible: =varChildMediaType = "Podcast"
+            Width: =500
+            X: =448
+            Y: =178
+            ZIndex: =67
+
+        CM_EpisodeTitleP As text:
+            Default: =Coalesce(varChildTitle, varChildTitle1)
+            HintText: ="Episode or segment title"
+            OnChange: =Set(varChildTitle, Self.Text); Set(varChildTitle1, Self.Text)
+            Visible: =varChildMediaType = "Podcast"
+            Width: =500
+            X: =448
+            Y: =204
+            ZIndex: =68
+
+        CM_LblEpisodeVisual As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Episode visual"
+            Visible: =varChildMediaType = "Podcast"
+            Width: =800
+            X: =56
+            Y: =606
+            ZIndex: =69
+
+        CM_HintEpisodeVisual As label:
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =20
+            Size: =11
+            Text: ="Horizontal format, 1280x720 px, JPEG or PNG only."
+            Visible: =varChildMediaType = "Podcast"
+            Width: =800
+            X: =56
+            Y: =628
+            ZIndex: =70
+
+        CM_EpisodeVisual As attachments:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =100
+            MaxAttachments: =3
+            Visible: =varChildMediaType = "Podcast"
+            Width: =1230
+            X: =56
+            Y: =650
+            ZIndex: =71
 
         CM_AIWarning As rectangle:
             BorderColor: =RGBA(254, 202, 202, 1)
@@ -631,7 +711,7 @@ ChildMetaScreen As screen:
             Visible: =varChildAIVoiceover
             Width: =900
             X: =56
-            Y: =408
+            Y: =If(varChildMediaType = "Podcast", 832, 408)
             ZIndex: =12
 
         CM_AIWarningText As label:
@@ -642,13 +722,13 @@ ChildMetaScreen As screen:
             Visible: =varChildAIVoiceover
             Width: =880
             X: =66
-            Y: =408
+            Y: =If(varChildMediaType = "Podcast", 832, 408)
             ZIndex: =13
 
         CM_PodcastDivider As rectangle:
             Fill: =RGBA(220, 224, 230, 1)
             Height: =1
-            Visible: =varChildMediaType = "Podcast"
+            Visible: =false
             Width: =1230
             X: =56
             Y: =468
@@ -660,7 +740,7 @@ ChildMetaScreen As screen:
             Height: =28
             Size: =15
             Text: ="Podcast episode details"
-            Visible: =varChildMediaType = "Podcast"
+            Visible: =false
             Width: =600
             X: =56
             Y: =480
@@ -670,11 +750,11 @@ ChildMetaScreen As screen:
             Color: =RGBA(60, 66, 80, 1)
             FontWeight: =FontWeight.Semibold
             Height: =22
-            Text: ="Episode summary *"
+            Text: ="Summary of the episode *"
             Visible: =varChildMediaType = "Podcast"
             Width: =900
             X: =56
-            Y: =516
+            Y: =258
             ZIndex: =16
 
         CM_EpisodeSummary As text:
@@ -684,9 +764,9 @@ ChildMetaScreen As screen:
             Mode: =TextMode.MultiLine
             OnChange: =Set(varChildEpisodeSummary1, Self.Text)
             Visible: =varChildMediaType = "Podcast"
-            Width: =900
+            Width: =1230
             X: =56
-            Y: =542
+            Y: =284
             ZIndex: =17
 
         CM_LblSeasonNumber As label:
@@ -697,7 +777,7 @@ ChildMetaScreen As screen:
             Visible: =varChildMediaType = "Podcast"
             Width: =160
             X: =56
-            Y: =618
+            Y: =178
             ZIndex: =18
 
         CM_SeasonNumber As text:
@@ -707,7 +787,7 @@ ChildMetaScreen As screen:
             Visible: =varChildMediaType = "Podcast"
             Width: =160
             X: =56
-            Y: =644
+            Y: =204
             ZIndex: =19
 
         CM_LblEpisodeNumber As label:
@@ -718,7 +798,7 @@ ChildMetaScreen As screen:
             Visible: =varChildMediaType = "Podcast"
             Width: =160
             X: =240
-            Y: =618
+            Y: =178
             ZIndex: =20
 
         CM_EpisodeNumber As text:
@@ -728,7 +808,7 @@ ChildMetaScreen As screen:
             Visible: =varChildMediaType = "Podcast"
             Width: =160
             X: =240
-            Y: =644
+            Y: =204
             ZIndex: =21
 
     CM_TopBar As rectangle:
