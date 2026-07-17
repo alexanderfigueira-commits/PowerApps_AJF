@@ -27,7 +27,40 @@ DashboardScreen As screen:
                         Average(AddColumns(approved, "durHours",
                             DateDiff(Created, PublicationDate, TimeUnit.Hours)),
                             durHours) / 24,
-                        1))))
+                        1))));
+        Set(varShowTrend, false);
+        ClearCollect(colPublishTrend,
+            ForAll(Sequence(12) As Mo,
+                With(
+                    {
+                        curSet: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)), Year(PublicationDate) = Year(Now()), Month(PublicationDate) = Mo.Value),
+                        prevSet: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)), Year(PublicationDate) = Year(Now()) - 1, Month(PublicationDate) = Mo.Value)
+                    },
+                    {
+                        month: Mo.Value,
+                        cur: If(CountRows(curSet) = 0, 0, Round(Average(curSet, DateDiff(Created, PublicationDate, TimeUnit.Hours)) / 24, 1)),
+                        prev: If(CountRows(prevSet) = 0, 0, Round(Average(prevSet, DateDiff(Created, PublicationDate, TimeUnit.Hours)) / 24, 1))
+                    }
+                )
+            )
+        );
+        Set(varTrendMax, Max(1, Max(Max(colPublishTrend, cur), Max(colPublishTrend, prev))));
+        Set(varTrendSvg,
+            "data:image/svg+xml;utf8," & EncodeUrl(
+                "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='300' viewBox='0 0 720 300'>" &
+                "<rect width='720' height='300' fill='#ffffff'/>" &
+                "<line x1='56' y1='270' x2='700' y2='270' stroke='#d7dce4' stroke-width='1'/>" &
+                "<line x1='56' y1='147' x2='700' y2='147' stroke='#eef0f4' stroke-width='1'/>" &
+                "<line x1='56' y1='24' x2='700' y2='24' stroke='#eef0f4' stroke-width='1'/>" &
+                "<text x='48' y='274' font-size='11' fill='#7a8394' text-anchor='end'>0</text>" &
+                "<text x='48' y='151' font-size='11' fill='#7a8394' text-anchor='end'>" & Text(Round(varTrendMax / 2, 1)) & "</text>" &
+                "<text x='48' y='30' font-size='11' fill='#7a8394' text-anchor='end'>" & Text(Round(varTrendMax, 1)) & "</text>" &
+                Concat(colPublishTrend, "<text x='" & Text(Round(56 + (month - 1) / 11 * 644, 0)) & "' y='288' font-size='11' fill='#7a8394' text-anchor='middle'>" & Mid("JFMAMJJASOND", month, 1) & "</text>") &
+                "<polyline fill='none' stroke='#ED7D31' stroke-width='2.5' points='" & Concat(Filter(colPublishTrend, prev > 0), Text(Round(56 + (month - 1) / 11 * 644, 0)) & "," & Text(Round(270 - (prev / varTrendMax) * 246, 0)) & " ") & "'/>" &
+                "<polyline fill='none' stroke='#00126b' stroke-width='3' points='" & Concat(Filter(colPublishTrend, cur > 0), Text(Round(56 + (month - 1) / 11 * 644, 0)) & "," & Text(Round(270 - (cur / varTrendMax) * 246, 0)) & " ") & "'/>" &
+                "</svg>"
+            )
+        )
 
     Header_1 As group:
         Height: =5
@@ -436,6 +469,152 @@ DashboardScreen As screen:
         X: =1042
         Y: =448
         ZIndex: =52
+
+    DB_TrendBtn As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(0, 18, 107, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =34
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: =Set(varShowTrend, true)
+        RadiusBottomLeft: =8
+        RadiusBottomRight: =8
+        RadiusTopLeft: =8
+        RadiusTopRight: =8
+        Size: =15
+        Text: ="📈"
+        Tooltip: ="View monthly publish-time trend (this year vs previous)"
+        Width: =34
+        X: =958
+        Y: =176
+        ZIndex: =60
+
+    DB_TrendOverlay As rectangle:
+        Fill: =RGBA(0, 18, 107, 0.45)
+        Height: =768
+        OnSelect: =Set(varShowTrend, false)
+        Visible: =varShowTrend
+        Width: =1366
+        ZIndex: =61
+
+    DB_TrendPanel As rectangle:
+        BorderColor: =RGBA(230, 234, 240, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =440
+        RadiusBottomLeft: =16
+        RadiusBottomRight: =16
+        RadiusTopLeft: =16
+        RadiusTopRight: =16
+        Visible: =varShowTrend
+        Width: =780
+        X: =293
+        Y: =150
+        ZIndex: =62
+
+    DB_TrendAccent As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =6
+        RadiusTopLeft: =16
+        RadiusTopRight: =16
+        Visible: =varShowTrend
+        Width: =780
+        X: =293
+        Y: =150
+        ZIndex: =63
+
+    DB_TrendTitle As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =28
+        Size: =16
+        Text: ="Average time to published media — monthly trend"
+        Visible: =varShowTrend
+        Width: =680
+        X: =317
+        Y: =176
+        ZIndex: =64
+
+    DB_TrendSubtitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =20
+        Size: =11
+        Text: ="Days from request creation to publication, by publication month."
+        Visible: =varShowTrend
+        Width: =680
+        X: =317
+        Y: =204
+        ZIndex: =65
+
+    DB_TrendClose As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =36
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varShowTrend, false)
+        RadiusBottomLeft: =18
+        RadiusBottomRight: =18
+        RadiusTopLeft: =18
+        RadiusTopRight: =18
+        Size: =15
+        Text: ="✕"
+        Visible: =varShowTrend
+        Width: =36
+        X: =1031
+        Y: =160
+        ZIndex: =66
+
+    DB_TrendImage As image:
+        Height: =300
+        Image: =varTrendSvg
+        ImagePosition: =ImagePosition.Fit
+        Visible: =varShowTrend
+        Width: =720
+        X: =323
+        Y: =232
+        ZIndex: =67
+
+    DB_TrendLegendCur As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =12
+        Visible: =varShowTrend
+        Width: =24
+        X: =340
+        Y: =548
+        ZIndex: =68
+
+    DB_TrendLegendCurLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =20
+        Size: =11
+        Text: ="This year (" & Text(Year(Now())) & ")"
+        Visible: =varShowTrend
+        Width: =160
+        X: =370
+        Y: =544
+        ZIndex: =69
+
+    DB_TrendLegendPrev As rectangle:
+        Fill: =RGBA(237, 125, 49, 1)
+        Height: =12
+        Visible: =varShowTrend
+        Width: =24
+        X: =540
+        Y: =548
+        ZIndex: =70
+
+    DB_TrendLegendPrevLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =20
+        Size: =11
+        Text: ="Previous year (" & Text(Year(Now()) - 1) & ")"
+        Visible: =varShowTrend
+        Width: =200
+        X: =570
+        Y: =544
+        ZIndex: =71
 
     DB_BtnEnter As button:
         Height: =48
