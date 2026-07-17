@@ -31,6 +31,7 @@ MyRequestScreen As screen:
         Set(varFilterRequestName, "");
         Set(varFilterStartDate, Blank());
         Set(varFilterEndDate, Blank());
+        UpdateContext({locProdTypeFilter: Blank()});
 
     HomeTopBar As rectangle:
         Fill: =RGBA(0, 18, 107, 1)
@@ -51,7 +52,7 @@ MyRequestScreen As screen:
     HomePageSubtitle As label:
         Color: =RGBA(96, 104, 120, 1)
         Height: =24
-        Text: ="Acquires Audiovisual Productions for Central Deposit Follow-Up."
+        Text: ="Central Deposit Request Management System"
         Width: =700
         X: =48
         Y: =119
@@ -145,14 +146,85 @@ MyRequestScreen As screen:
         Y: =180
         ZIndex: =11
 
+    HomeLblProdType As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: ="PRODUCTION TYPE"
+        Width: =180
+        X: =48
+        Y: =300
+        ZIndex: =52
+
+    HomeTypePhoto As button:
+        BorderColor: =If(locProdTypeFilter = "Photo", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+        BorderThickness: =If(locProdTypeFilter = "Photo", 2, 1)
+        Color: =If(locProdTypeFilter = "Photo", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(locProdTypeFilter = "Photo", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+        Height: =36
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =UpdateContext({locProdTypeFilter: If(locProdTypeFilter = "Photo", Blank(), "Photo")})
+        PressedFill: =RGBA(230, 236, 245, 1)
+        RadiusBottomLeft: =10
+        RadiusBottomRight: =10
+        RadiusTopLeft: =10
+        RadiusTopRight: =10
+        Size: =12
+        Text: ="📷  Photo / Reportage"
+        Width: =190
+        X: =48
+        Y: =322
+        ZIndex: =53
+
+    HomeTypeVideo As button:
+        BorderColor: =If(locProdTypeFilter = "Video", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+        BorderThickness: =If(locProdTypeFilter = "Video", 2, 1)
+        Color: =If(locProdTypeFilter = "Video", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(locProdTypeFilter = "Video", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+        Height: =36
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =UpdateContext({locProdTypeFilter: If(locProdTypeFilter = "Video", Blank(), "Video")})
+        PressedFill: =RGBA(230, 236, 245, 1)
+        RadiusBottomLeft: =10
+        RadiusBottomRight: =10
+        RadiusTopLeft: =10
+        RadiusTopRight: =10
+        Size: =12
+        Text: ="🎬  Video"
+        Width: =120
+        X: =250
+        Y: =322
+        ZIndex: =54
+
+    HomeTypePodcast As button:
+        BorderColor: =If(locProdTypeFilter = "Podcast", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+        BorderThickness: =If(locProdTypeFilter = "Podcast", 2, 1)
+        Color: =If(locProdTypeFilter = "Podcast", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(locProdTypeFilter = "Podcast", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+        Height: =36
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =UpdateContext({locProdTypeFilter: If(locProdTypeFilter = "Podcast", Blank(), "Podcast")})
+        PressedFill: =RGBA(230, 236, 245, 1)
+        RadiusBottomLeft: =10
+        RadiusBottomRight: =10
+        RadiusTopLeft: =10
+        RadiusTopRight: =10
+        Size: =12
+        Text: ="🎙️  Podcast"
+        Width: =130
+        X: =382
+        Y: =322
+        ZIndex: =55
+
     HomeTableCard As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
-        Height: =380
+        Height: =332
         Width: =1270
         X: =48
-        Y: =320
+        Y: =368
         ZIndex: =12
 
     HomeTableHeader As rectangle:
@@ -160,7 +232,7 @@ MyRequestScreen As screen:
         Height: =44
         Width: =1270
         X: =48
-        Y: =320
+        Y: =368
         ZIndex: =13
 
     HomeThRequest As label:
@@ -172,7 +244,7 @@ MyRequestScreen As screen:
         Text: ="REQUEST"
         Width: =90
         X: =48
-        Y: =320
+        Y: =368
         ZIndex: =14
 
     HomeThName As label:
@@ -183,7 +255,7 @@ MyRequestScreen As screen:
         Text: ="REQUEST NAME"
         Width: =280
         X: =164
-        Y: =320
+        Y: =368
         ZIndex: =14
 
     HomeThAssignee As label:
@@ -195,7 +267,7 @@ MyRequestScreen As screen:
         Text: ="ASSIGNEE"
         Width: =210
         X: =870
-        Y: =320
+        Y: =368
         ZIndex: =14
 
     HomeThDG As label:
@@ -206,7 +278,7 @@ MyRequestScreen As screen:
         Size: =11
         Text: ="DG"
         X: =410
-        Y: =324
+        Y: =372
         ZIndex: =15
 
     HomeThArchives As label:
@@ -218,7 +290,7 @@ MyRequestScreen As screen:
         Text: ="MEDIA ITEMS (Nº)"
         Width: =140
         X: =575
-        Y: =324
+        Y: =372
         ZIndex: =16
 
     HomeThStatus As label:
@@ -229,13 +301,13 @@ MyRequestScreen As screen:
         Text: ="STATUS"
         Width: =70
         X: =790
-        Y: =320
+        Y: =368
         ZIndex: =17
 
     "HomeGallery As gallery.'BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0'":
         BorderColor: =RGBA(220, 224, 230, 1)
         DelayItemLoading: =true
-        Height: =330
+        Height: =282
         Items: |-
             =Filter(
                 AVCentralDepositRequests,
@@ -245,7 +317,14 @@ MyRequestScreen As screen:
                 IsBlank(varFilterRequestName) Or varFilterRequestName = "" Or StartsWith(RequestTitle, varFilterRequestName),
                 IsEmpty(cmbFilterAssignee.SelectedItems) Or "All" in cmbFilterAssignee.SelectedItems.Value Or First(DG_Agency_Contact).DisplayName in cmbFilterAssignee.SelectedItems.Value,
                 IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
-                IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate
+                IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
+                IsBlank(locProdTypeFilter) Or
+                    !IsEmpty(
+                        Filter(
+                            AVCentralDepositMediaItems,
+                            ParentRequest = RequestNumber And First(MediaType).Value = locProdTypeFilter
+                        )
+                    )
             )
         Layout: =Layout.Vertical
         LoadingSpinner: =LoadingSpinner.Data
@@ -253,7 +332,7 @@ MyRequestScreen As screen:
         TemplateSize: =60
         Width: =1270
         X: =46
-        Y: =364
+        Y: =412
         ZIndex: =18
 
         HomeRowSelect As rectangle:
@@ -378,7 +457,7 @@ MyRequestScreen As screen:
         Visible: =CountRows(HomeGallery.AllItems) = 0
         Width: =1270
         X: =48
-        Y: =530
+        Y: =560
         ZIndex: =19
 
     NoInternetIcon_3 As icon:
@@ -508,7 +587,7 @@ MyRequestScreen As screen:
         Text: ="ACTION"
         Width: =160
         X: =1101
-        Y: =320
+        Y: =368
         ZIndex: =31
 
     HomeBtnPrint As button:
