@@ -166,7 +166,7 @@ ChildLegalScreen As screen:
             =[{id: 1}]
         Layout: =Layout.Vertical
         TemplatePadding: =0
-        TemplateSize: =335
+        TemplateSize: =If(varChildMediaType = "Video", 960, 335)
         Width: =1366
         Y: =102
         ZIndex: =15
@@ -367,7 +367,7 @@ ChildLegalScreen As screen:
             Color: =RGBA(96, 104, 120, 1)
             Height: =22
             Size: =12
-            Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes, SRT/VTT subtitles, scripts."
+            Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes, VTT subtitles (SRT is no longer accepted), scripts."
             Width: =1302
             X: =32
             Y: =552
@@ -381,6 +381,39 @@ ChildLegalScreen As screen:
             X: =32
             Y: =578
             ZIndex: =20
+
+
+        CL_ChkSubtitles As checkbox.Checkbox:
+            Height: =36
+            OnCheck: =Set(varChildSubtitlesProvided, true)
+            OnUncheck: =Set(varChildSubtitlesProvided, false)
+            Text: ="Subtitles are provided for this production (VTT format)"
+            Visible: =varChildMediaType = "Video"
+            Width: =900
+            X: =28
+            Y: =734
+            ZIndex: =21
+
+        CL_LblVTT As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="VTT subtitle file(s) *   (VTT only - SRT is not accepted)"
+            Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
+            Width: =800
+            X: =32
+            Y: =776
+            ZIndex: =22
+
+        CL_VTTUpload As attachments:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =110
+            MaxAttachments: =5
+            Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
+            Width: =1302
+            X: =32
+            Y: =802
+            ZIndex: =23
 
     CL_BottomBar As rectangle:
         BorderColor: =RGBA(220, 224, 230, 1)

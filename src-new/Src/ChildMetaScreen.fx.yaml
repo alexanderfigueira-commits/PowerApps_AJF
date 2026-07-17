@@ -4,7 +4,13 @@ ChildMetaScreen As screen:
         =If(varChildMediaType = "Photo" And (IsEmpty(colPhotoCaptions) Or varPhotoCaptionsChildId <> varCurrentChildId),
             ClearCollect(colPhotoCaptions, {Name: "", Caption: ""});
             Set(varPhotoCaptionsChildId, varCurrentChildId);
-            Set(varChildContractingAuthority, ""))
+            Set(varChildContractingAuthority, ""));
+        If(varChildMediaType = "Video" And varVideoMetaChildId <> varCurrentChildId,
+            Set(varVideoMetaChildId, varCurrentChildId);
+            Set(varChildProducer, "");
+            Set(varChildExecProducer, "");
+            Set(varChildScript, "");
+            Set(varChildSubtitlesProvided, false))
 
     Header_CM As group:
         Height: =5
@@ -217,7 +223,7 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Language version(s) *"
-            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Visible: =varChildMediaType = "Podcast"
             Width: =400
             X: =56
             Y: =122
@@ -232,7 +238,7 @@ ChildMetaScreen As screen:
             SearchFields: =["Value"]
             SearchItems: =Search(["EN","FR","DE","ES","IT","PL","NL","PT","RO","Multilingual"],CM_Language.SearchText,Value)
             SelectMultiple: =false
-            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Visible: =varChildMediaType = "Podcast"
             Width: =400
             X: =56
             Y: =148
@@ -244,23 +250,23 @@ ChildMetaScreen As screen:
             Height: =22
             Text: |-
                 =If(varChildMediaType = "Photo", "Contractor / Agency *",
-                   If(varChildMediaType = "Podcast",
-                      "Presenter / producer *", "Director / producer *"))
+                   If(varChildMediaType = "Podcast", "Presenter / producer *",
+                      If(varChildMediaType = "Video", "Director, Motion Designer, Photographer", "Director / producer *")))
             Width: =500
-            X: =If(varChildMediaType = "Photo", 588, 500)
-            Y: =If(varChildMediaType = "Photo", 530, 122)
+            X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, 500))
+            Y: =If(varChildMediaType = "Photo", 530, If(varChildMediaType = "Video", 476, 122))
             ZIndex: =6
 
         CM_Credits As text:
             Default: =varChildCredits1
             HintText: |-
                 =If(varChildMediaType = "Photo", "Contractor or agency name",
-                   If(varChildMediaType = "Podcast",
-                      "Presenter and/or producer name", "Director and/or producer name"))
+                   If(varChildMediaType = "Podcast", "Presenter and/or producer name",
+                      If(varChildMediaType = "Video", "precise names + function", "Director and/or producer name")))
             OnChange: =Set(varChildCredits1, Self.Text)
             Width: =500
-            X: =If(varChildMediaType = "Photo", 588, 500)
-            Y: =If(varChildMediaType = "Photo", 556, 148)
+            X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, 500))
+            Y: =If(varChildMediaType = "Photo", 556, If(varChildMediaType = "Video", 502, 148))
             ZIndex: =7
 
         CM_LblDesc As label:
@@ -268,7 +274,7 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Editorial description (max 500 characters)"
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =700
             X: =56
             Y: =206
@@ -280,7 +286,7 @@ ChildMetaScreen As screen:
             HintText: ="Editorial description, context and keywords"
             Mode: =TextMode.MultiLine
             OnChange: =Set(varChildDescription1, Self.Text)
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =1230
             X: =56
             Y: =232
@@ -313,41 +319,41 @@ ChildMetaScreen As screen:
             Color: =RGBA(60, 66, 80, 1)
             FontWeight: =FontWeight.Semibold
             Height: =22
-            Text: ="Shooting date *"
-            Visible: =varChildMediaType = "Photo"
-            Width: =300
+            Text: =If(varChildMediaType = "Video", "Filming date *", "Shooting date *")
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
+            Width: =295
             X: =56
-            Y: =186
+            Y: =If(varChildMediaType = "Video", 122, 186)
             ZIndex: =42
 
         CM_ShootDate As datepicker:
             DefaultDate: =varChildCaptureDate
             OnChange: =Set(varChildCaptureDate, Self.SelectedDate)
-            Visible: =varChildMediaType = "Photo"
-            Width: =300
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
+            Width: =295
             X: =56
-            Y: =212
+            Y: =If(varChildMediaType = "Video", 148, 212)
             ZIndex: =43
 
         CM_LblPlacePhoto As label:
             Color: =RGBA(60, 66, 80, 1)
             FontWeight: =FontWeight.Semibold
             Height: =22
-            Text: ="Place *"
-            Visible: =varChildMediaType = "Photo"
+            Text: =If(varChildMediaType = "Video", "Production place *", "Place *")
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
             Width: =500
-            X: =388
-            Y: =186
+            X: =If(varChildMediaType = "Video", 56, 388)
+            Y: =If(varChildMediaType = "Video", 202, 186)
             ZIndex: =44
 
         CM_PlacePhoto As text:
             Default: =varChildProductionPlace1
-            HintText: ="where the photo has been taken"
+            HintText: =If(varChildMediaType = "Video", "City, country or venue", "where the photo has been taken")
             OnChange: =Set(varChildProductionPlace1, Self.Text)
-            Visible: =varChildMediaType = "Photo"
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
             Width: =500
-            X: =388
-            Y: =212
+            X: =If(varChildMediaType = "Video", 56, 388)
+            Y: =If(varChildMediaType = "Video", 228, 212)
             ZIndex: =45
 
         CM_LblCaptions As label:
@@ -450,20 +456,20 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Links"
-            Visible: =varChildMediaType = "Photo"
-            Width: =640
-            X: =56
-            Y: =610
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
+            Width: =If(varChildMediaType = "Video", 500, 640)
+            X: =If(varChildMediaType = "Video", 588, 56)
+            Y: =If(varChildMediaType = "Video", 202, 610)
             ZIndex: =51
 
         CM_LinksPhoto As text:
             Default: =varChildLinks1
             HintText: ="Relevant URLs or SharePoint references"
             OnChange: =Set(varChildLinks1, Self.Text)
-            Visible: =varChildMediaType = "Photo"
-            Width: =640
-            X: =56
-            Y: =636
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
+            Width: =If(varChildMediaType = "Video", 500, 640)
+            X: =If(varChildMediaType = "Video", 588, 56)
+            Y: =If(varChildMediaType = "Video", 228, 636)
             ZIndex: =52
 
         CM_LblTagsPhoto As label:
@@ -471,21 +477,151 @@ ChildMetaScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Pertinent tags"
-            Visible: =varChildMediaType = "Photo"
-            Width: =510
-            X: =720
-            Y: =610
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
+            Width: =If(varChildMediaType = "Video", 500, 510)
+            X: =If(varChildMediaType = "Video", 588, 720)
+            Y: =If(varChildMediaType = "Video", 476, 610)
             ZIndex: =53
 
         CM_TagsPhoto As text:
             Default: =varChildTags1
             HintText: ="Comma-separated keywords for discoverability"
             OnChange: =Set(varChildTags, Self.Text)
-            Visible: =varChildMediaType = "Photo"
-            Width: =510
-            X: =720
-            Y: =636
+            Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video"
+            Width: =If(varChildMediaType = "Video", 500, 510)
+            X: =If(varChildMediaType = "Video", 588, 720)
+            Y: =If(varChildMediaType = "Video", 502, 636)
             ZIndex: =54
+
+        CM_LblProdEnd As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Production end date *"
+            Visible: =varChildMediaType = "Video"
+            Width: =295
+            X: =367
+            Y: =122
+            ZIndex: =55
+
+        CM_ProdEnd As datepicker:
+            DefaultDate: =varChildProductionEndDate
+            OnChange: =Set(varChildProductionEndDate, Self.SelectedDate)
+            Visible: =varChildMediaType = "Video"
+            Width: =295
+            X: =367
+            Y: =148
+            ZIndex: =56
+
+        CM_LblPubStartV As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Publication start date *"
+            Visible: =varChildMediaType = "Video"
+            Width: =295
+            X: =678
+            Y: =122
+            ZIndex: =57
+
+        CM_PubStartV As datepicker:
+            DefaultDate: =varChildPublicationStartDate
+            OnChange: =Set(varChildPublicationStartDate, Self.SelectedDate)
+            Visible: =varChildMediaType = "Video"
+            Width: =295
+            X: =678
+            Y: =148
+            ZIndex: =58
+
+        CM_LblPubEndV As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Publication end date *"
+            Visible: =varChildMediaType = "Video"
+            Width: =295
+            X: =989
+            Y: =122
+            ZIndex: =59
+
+        CM_PubEndV As datepicker:
+            DefaultDate: =varChildPublicationEndDate
+            OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
+            Visible: =varChildMediaType = "Video"
+            Width: =295
+            X: =989
+            Y: =148
+            ZIndex: =60
+
+        CM_LblScript As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Script / Shotlist"
+            Visible: =varChildMediaType = "Video"
+            Width: =800
+            X: =56
+            Y: =282
+            ZIndex: =61
+
+        CM_Script As text:
+            Default: =varChildScript
+            Height: =64
+            HintText: ="with timing, names and functions of the personalities filmed and clear identification"
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varChildScript, Self.Text)
+            Visible: =varChildMediaType = "Video"
+            Width: =1230
+            X: =56
+            Y: =308
+            ZIndex: =62
+
+        CM_LblProducer As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Producer *"
+            Visible: =varChildMediaType = "Video"
+            Width: =400
+            X: =56
+            Y: =396
+            ZIndex: =63
+
+        CM_Producer As combobox:
+            DefaultSelectedItems: |-
+                =If(IsBlank(varChildProducer) Or varChildProducer = "", Table(), Table({Value: varChildProducer}))
+            DisplayFields: =["Value"]
+            InputTextPlaceholder: ="contracting authority"
+            Items: =Choices(AVCentralDepositRequests.DG)
+            OnChange: =Set(varChildProducer, Self.Selected.Value)
+            SearchFields: =["Value"]
+            SelectMultiple: =false
+            Visible: =varChildMediaType = "Video"
+            Width: =400
+            X: =56
+            Y: =422
+            ZIndex: =64
+
+        CM_LblExecProducer As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Executive producer"
+            Visible: =varChildMediaType = "Video"
+            Width: =500
+            X: =588
+            Y: =396
+            ZIndex: =65
+
+        CM_ExecProducer As text:
+            Default: =varChildExecProducer
+            HintText: ="contractor, agency"
+            OnChange: =Set(varChildExecProducer, Self.Text)
+            Visible: =varChildMediaType = "Video"
+            Width: =500
+            X: =588
+            Y: =422
+            ZIndex: =66
 
         CM_AIWarning As rectangle:
             BorderColor: =RGBA(254, 202, 202, 1)

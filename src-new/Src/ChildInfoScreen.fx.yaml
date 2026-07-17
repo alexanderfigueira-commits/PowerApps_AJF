@@ -154,7 +154,7 @@ ChildInfoScreen As screen:
             =[{id: 1}]
         Layout: =Layout.Vertical
         TemplatePadding: =0
-        TemplateSize: =If(varChildMediaType = "Photo", 440, 816 + Switch(varChildMediaType, "Video", 160, "Podcast", 160, 0))
+        TemplateSize: =If(varChildMediaType = "Photo", 440, If(varChildMediaType = "Video", 490, 816 + Switch(varChildMediaType, "Podcast", 160, 0)))
         Width: =1366
         Y: =102
         ZIndex: =9
@@ -163,7 +163,7 @@ ChildInfoScreen As screen:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =If(varChildMediaType = "Photo", 420, 796 + Switch(varChildMediaType, "Video", 160, "Podcast", 160, 0))
+            Height: =If(varChildMediaType = "Photo", 420, If(varChildMediaType = "Video", 470, 796 + Switch(varChildMediaType, "Podcast", 160, 0)))
             Width: =1302
             X: =32
             Y: =6
@@ -240,7 +240,7 @@ ChildInfoScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Capture / production date *"
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =300
             X: =56
             Y: =310
@@ -249,7 +249,7 @@ ChildInfoScreen As screen:
         CI_CaptureDate As datepicker:
             DefaultDate: =varChildCaptureDate
             OnChange: =Set(varChildCaptureDate, Self.SelectedDate)
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =300
             X: =56
             Y: =336
@@ -260,7 +260,7 @@ ChildInfoScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Production place"
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =300
             X: =388
             Y: =310
@@ -270,7 +270,7 @@ ChildInfoScreen As screen:
             Default: =varChildProductionPlace1
             HintText: ="City, country or venue"
             OnChange: =Set(varChildProductionPlace1, Self.Text)
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =300
             X: =388
             Y: =336
@@ -280,22 +280,43 @@ ChildInfoScreen As screen:
             Color: =RGBA(60, 66, 80, 1)
             FontWeight: =FontWeight.Semibold
             Height: =22
-            Text: ="Product type"
+            Text: ="Type of product *"
             Visible: =varChildMediaType = "Video"
             Width: =600
             X: =56
-            Y: =392
+            Y: =310
             ZIndex: =16
 
-        CI_ProductType As text:
+        CI_ProductType As dropdown:
             Default: =varChildProductType1
-            HintText: ="e.g. Documentary, News, Feature, Institutional..."
-            OnChange: =Set(varChildProductType, Self.Text)
+            Items: =["Clip", "Social Media Clip", "Animation", "Teaser", "Others"]
+            OnChange: =Set(varChildProductType, Self.Selected.Value)
             Visible: =varChildMediaType = "Video"
-            Width: =600
+            Width: =400
+            X: =56
+            Y: =336
+            ZIndex: =17
+
+        CI_LblLanguage As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Language version(s) *"
+            Visible: =varChildMediaType = "Video"
+            Width: =400
+            X: =56
+            Y: =392
+            ZIndex: =45
+
+        CI_Language As dropdown:
+            Default: =varChildLanguageVersions
+            Items: =["EN", "FR", "DE", "IT", "ES", "PT", "NL", "PL", "RO", "EL", "CS", "SV", "HU", "BG", "DA", "FI", "SK", "HR", "LT", "SL", "LV", "ET", "MT", "GA", "Other"]
+            OnChange: =Set(varChildLanguageVersions, Self.Selected.Value)
+            Visible: =varChildMediaType = "Video"
+            Width: =400
             X: =56
             Y: =418
-            ZIndex: =17
+            ZIndex: =46
 
         CI_LblSeriesTitle As label:
             Color: =RGBA(60, 66, 80, 1)
@@ -344,7 +365,7 @@ ChildInfoScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Production end date"
-            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Visible: =varChildMediaType = "Podcast"
             Width: =300
             X: =56
             Y: =392 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0)
@@ -353,7 +374,7 @@ ChildInfoScreen As screen:
         CI_ProductionEndDate As datepicker:
             DefaultDate: =varChildProductionEndDate
             OnChange: =Set(varChildProductionEndDate, Self.SelectedDate)
-            Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+            Visible: =varChildMediaType = "Podcast"
             Width: =300
             X: =56
             Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0)
@@ -364,7 +385,7 @@ ChildInfoScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Publication start date"
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =300
             X: =56
             Y: =392 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
@@ -373,7 +394,7 @@ ChildInfoScreen As screen:
         CI_PubStartDate As datepicker:
             DefaultDate: =varChildPublicationStartDate
             OnChange: =Set(varChildPublicationStartDate, Self.SelectedDate)
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =300
             X: =56
             Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
@@ -384,7 +405,7 @@ ChildInfoScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Publication end date"
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =300
             X: =388
             Y: =392 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
@@ -393,7 +414,7 @@ ChildInfoScreen As screen:
         CI_PubEndDate As datepicker:
             DefaultDate: =varChildPublicationEndDate
             OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =300
             X: =388
             Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
@@ -404,7 +425,7 @@ ChildInfoScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Reference links"
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =800
             X: =56
             Y: =472 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
@@ -414,7 +435,7 @@ ChildInfoScreen As screen:
             Default: =varChildLinks1
             HintText: ="Relevant URLs or SharePoint references"
             OnChange: =Set(varChildLinks1, Self.Text)
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =900
             X: =56
             Y: =498 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
@@ -425,7 +446,7 @@ ChildInfoScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Pertinent tags"
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =800
             X: =56
             Y: =552 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
@@ -435,7 +456,7 @@ ChildInfoScreen As screen:
             Default: =varChildTags1
             HintText: ="Comma-separated keywords for discoverability"
             OnChange: =Set(varChildTags, Self.Text)
-            Visible: =varChildMediaType <> "Photo"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video"
             Width: =900
             X: =56
             Y: =578 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
