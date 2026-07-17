@@ -2,7 +2,9 @@ ReviewScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: |-
         =Set(varReviewProject, Blank());
-        Set(varReviewComment, Blank())
+        Set(varReviewComment, Blank());
+        Set(varReviewQueueMine, Coalesce(varReviewMineOnly, false));
+        Set(varReviewMineOnly, false)
 
     Header_RV As group:
         Height: =5
@@ -107,7 +109,14 @@ ReviewScreen As screen:
         BorderColor: =RGBA(0, 0, 0, 0)
         DelayItemLoading: =true
         Height: =786
-        Items: =Sort(Filter(AVCentralDepositRequests, Status.Value = "Submitted"), Modified, SortOrder.Descending)
+        Items: |-
+            =Sort(
+                Filter(AVCentralDepositRequests,
+                    If(varReviewQueueMine, Status.Value = "Pending", Status.Value = "Submitted"),
+                    Not(varReviewQueueMine) Or Not(IsEmpty(Filter(DG_Agency_Contact, Lower(Email) = Lower(User().Email))))
+                ),
+                Modified, SortOrder.Descending
+            )
         Layout: =Layout.Vertical
         LoadingSpinner: =LoadingSpinner.Data
         TemplatePadding: =0

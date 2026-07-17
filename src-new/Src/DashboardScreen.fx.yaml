@@ -470,6 +470,26 @@ DashboardScreen As screen:
         Y: =448
         ZIndex: =52
 
+    Pending_ValidateBtn As button:
+        BorderColor: =RGBA(237, 125, 49, 1)
+        BorderThickness: =1
+        Color: =RGBA(237, 125, 49, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =30
+        HoverFill: =RGBA(253, 237, 224, 1)
+        OnSelect: =Set(varReviewMineOnly, true); Navigate(ReviewScreen, ScreenTransition.Cover)
+        RadiusBottomLeft: =8
+        RadiusBottomRight: =8
+        RadiusTopLeft: =8
+        RadiusTopRight: =8
+        Size: =13
+        Text: ="✅"
+        Tooltip: ="Validate my assigned pending requests"
+        Width: =30
+        X: =1284
+        Y: =176
+        ZIndex: =60
+
     Pending_CardBtn As button:
         BorderThickness: =0
         Color: =RGBA(0, 0, 0, 0)
