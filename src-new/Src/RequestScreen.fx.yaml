@@ -304,7 +304,11 @@ RequestScreen As screen:
         Fill: =RGBA(255, 255, 255, 1)
         Height: =36
         HoverFill: =RGBA(247, 248, 250, 1)
-        OnSelect: =Navigate(MyRequestScreen)
+        OnSelect: |-
+            =Set(varRequestMediaType, "");
+            Set(varConfirmed, false);
+            Set(varShowTypeConfirm, false);
+            Navigate(MyRequestScreen)
         Size: =13
         Text: ="<  My Requests"
         X: =782
@@ -451,7 +455,7 @@ RequestScreen As screen:
     RS_CardPhoto As rectangle:
         BorderColor: =If(varRequestMediaType = "Photo", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
         BorderThickness: =If(varRequestMediaType = "Photo", 2, 1)
-        Fill: =If(varRequestMediaType = "Photo", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+        Fill: =If(varRequestMediaType = "Photo", RGBA(230, 236, 245, 1), If(varRequestMediaType <> "" And Not(IsBlank(varRequestMediaType)), RGBA(242, 243, 245, 1), RGBA(250, 251, 253, 1)))
         Height: =210
         RadiusBottomLeft: =14
         RadiusBottomRight: =14
@@ -504,6 +508,7 @@ RequestScreen As screen:
         Color: =RGBA(0, 0, 0, 0)
         Fill: =RGBA(0, 0, 0, 0)
         Height: =210
+        DisplayMode: =If(varRequestMediaType <> "" And varRequestMediaType <> "Photo", DisplayMode.Disabled, DisplayMode.Edit)
         HoverFill: =RGBA(0, 18, 107, 0.06)
         OnSelect: |-
             =Set(varRequestMediaType, "Photo");
@@ -524,7 +529,7 @@ RequestScreen As screen:
     RS_CardVideo As rectangle:
         BorderColor: =If(varRequestMediaType = "Video", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
         BorderThickness: =If(varRequestMediaType = "Video", 2, 1)
-        Fill: =If(varRequestMediaType = "Video", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+        Fill: =If(varRequestMediaType = "Video", RGBA(230, 236, 245, 1), If(varRequestMediaType <> "" And Not(IsBlank(varRequestMediaType)), RGBA(242, 243, 245, 1), RGBA(250, 251, 253, 1)))
         Height: =210
         RadiusBottomLeft: =14
         RadiusBottomRight: =14
@@ -577,6 +582,7 @@ RequestScreen As screen:
         Color: =RGBA(0, 0, 0, 0)
         Fill: =RGBA(0, 0, 0, 0)
         Height: =210
+        DisplayMode: =If(varRequestMediaType <> "" And varRequestMediaType <> "Video", DisplayMode.Disabled, DisplayMode.Edit)
         HoverFill: =RGBA(0, 18, 107, 0.06)
         OnSelect: |-
             =Set(varRequestMediaType, "Video");
@@ -597,7 +603,7 @@ RequestScreen As screen:
     RS_CardPodcast As rectangle:
         BorderColor: =If(varRequestMediaType = "Podcast", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
         BorderThickness: =If(varRequestMediaType = "Podcast", 2, 1)
-        Fill: =If(varRequestMediaType = "Podcast", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+        Fill: =If(varRequestMediaType = "Podcast", RGBA(230, 236, 245, 1), If(varRequestMediaType <> "" And Not(IsBlank(varRequestMediaType)), RGBA(242, 243, 245, 1), RGBA(250, 251, 253, 1)))
         Height: =210
         RadiusBottomLeft: =14
         RadiusBottomRight: =14
@@ -650,6 +656,7 @@ RequestScreen As screen:
         Color: =RGBA(0, 0, 0, 0)
         Fill: =RGBA(0, 0, 0, 0)
         Height: =210
+        DisplayMode: =If(varRequestMediaType <> "" And varRequestMediaType <> "Podcast", DisplayMode.Disabled, DisplayMode.Edit)
         HoverFill: =RGBA(0, 18, 107, 0.06)
         OnSelect: |-
             =Set(varRequestMediaType, "Podcast");
