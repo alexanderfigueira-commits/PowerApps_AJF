@@ -6,7 +6,7 @@ ChildValidScreen As screen:
              Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "",
              Note: "Select a production type on the Info tab."},
             {Check: "Archive title is provided",
-             Pass: Not(IsBlank(varChildTitle)) And varChildTitle <> "" And varChildTitle <> "New archive",
+             Pass: Not(IsBlank(varChildTitle1)) And varChildTitle1 <> "" And varChildTitle1 <> "New archive",
              Note: "Enter a descriptive title on the Info tab."},
             {Check: "Capture / production date is set",
              Pass: Not(IsBlank(varChildCaptureDate)),
@@ -184,7 +184,7 @@ ChildValidScreen As screen:
     CV_Breadcrumb As label:
         Color: =RGBA(186, 202, 226, 1)
         Height: =52
-        Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+        Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1)
         Width: =700
         X: =200
         ZIndex: =2
@@ -307,7 +307,7 @@ ChildValidScreen As screen:
         OnSelect: |-
             =ClearCollect(colValidations,
                 {Check: "Media type is set", Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "", Note: "Select a production type on the Info tab."},
-                {Check: "Archive title is provided", Pass: Not(IsBlank(varChildTitle)) And varChildTitle <> "" And varChildTitle <> "New archive", Note: "Enter a descriptive title on the Info tab."},
+                {Check: "Archive title is provided", Pass: Not(IsBlank(varChildTitle1)) And varChildTitle1 <> "" And varChildTitle1 <> "New archive", Note: "Enter a descriptive title on the Info tab."},
                 {Check: "Capture / production date is set", Pass: Not(IsBlank(varChildCaptureDate)), Note: "Set the date on the Info tab (Metadata tab for Photo/Reportage)."},
                 {Check: "Language version(s) selected (Video / Podcast only)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildLanguageVersions)) And varChildLanguageVersions <> ""), Note: "Select the language on the Info tab (Video) or Metadata tab (Podcast)."},
                 {Check: "No AI-generated voice-over (not accepted)", Pass: Not(varChildAIVoiceover), Note: "⛔ AI voice-over detected. This archive cannot be submitted."},
@@ -452,29 +452,29 @@ ChildValidScreen As screen:
                 Collect(colArchives, {
                     ArchiveId: varCurrentChildId,
                     SPId: Coalesce(existingRec.SPId, 0),
-                    Title: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
+                    Title: If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1),
                     MediaType: varChildMediaType,
                     Description: varChildDescription1,
                     CaptureDate: varChildCaptureDate,
-                    ProductionPlace: varChildProductionPlace,
+                    ProductionPlace: varChildProductionPlace1,
                     ProductType: varChildProductType,
-                    SeriesTitle: varChildSeriesTitle,
+                    SeriesTitle: varChildSeriesTitle1,
                     EpisodeTitle: varChildEpisodeTitle,
-                    EpisodeSummary: varChildEpisodeSummary,
+                    EpisodeSummary: varChildEpisodeSummary1,
                     SeasonNumber: varChildSeasonNumber,
                     EpisodeNumber: varChildEpisodeNumber,
                     ProductionEndDate: varChildProductionEndDate,
                     PublicationStartDate: varChildPublicationStartDate,
                     PublicationEndDate: varChildPublicationEndDate,
-                    ReferenceLinks: varChildLinks,
+                    ReferenceLinks: varChildLinks1,
                     Tags: varChildTags,
                     FTPPath: varChildFTPPath,
                     LanguageVersions: varChildLanguageVersions,
-                    Credits: varChildCredits,
+                    Credits: varChildCredits1,
                     AIVoiceover: varChildAIVoiceover,
                     ContractCase: varChildContractCase,
                     ContractCase1Sub: varChildContractCase1Sub,
-                    ContractRef: varChildContractRef,
+                    ContractRef: varChildContractRef1,
                     ModelRelease: varChildModelRelease,
                     ModelReleaseProvided: varChildModelReleaseProvided,
                     MusicUsed: varChildMusicUsed,
@@ -498,26 +498,27 @@ ChildValidScreen As screen:
                                         LookUp(AVCentralDepositMediaItems, ID = localItem.SPId)
                                     ),
                                     {
-                                        Title: If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle),
-                                        Description: varChildDescription,
+                                        Title: If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1),
+                                        Description: varChildDescription1,
                                         // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
                                         MediaType: Table({Value: varChildMediaType}),
+                                        Credits: varChildCredits1,
                                         CaptureDate: varChildCaptureDate,
-                                        ProductionPlace: varChildProductionPlace,
+                                        ProductionPlace: varChildProductionPlace1,
                                         ProductType: If(
                                             IsBlank(varChildProductType) Or varChildProductType = "",
                                             Blank(),
                                             Table({Value: varChildProductType})
                                         ),
-                                        SeriesTitle: varChildSeriesTitle,
+                                        SeriesTitle: varChildSeriesTitle1,
                                         EpisodeTitle: varChildEpisodeTitle,
-                                        EpisodeSummary: varChildEpisodeSummary,
+                                        EpisodeSummary: varChildEpisodeSummary1,
                                         SeasonNumber: varChildSeasonNumber,
                                         EpisodeNumber: varChildEpisodeNumber,
                                         ProductionEndDate: varChildProductionEndDate,
                                         PublicationStartDate: varChildPublicationStartDate,
                                         PublicationEndDate: varChildPublicationEndDate,
-                                        ReferenceLinks: varChildLinks,
+                                        ReferenceLinks: varChildLinks1,
                                         Tags: varChildTags,
                                         FTPPath: varChildFTPPath,
                                         LanguageVersions: Table({Value: varChildLanguageVersions}),
@@ -529,7 +530,7 @@ ChildValidScreen As screen:
                                             Blank(),
                                             Table({Value: varChildContractCase1Sub})
                                         ),
-                                        ContractReference: varChildContractRef,
+                                        ContractReference: varChildContractRef1,
                                         MusicUsed: varChildMusicUsed,
                                         MusicLicenseProvided: varChildMusicLicenceProvided,
                                         PreexistingRightsProvided: varChildPreexistingProvided,

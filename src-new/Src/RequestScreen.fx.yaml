@@ -818,6 +818,10 @@ RequestScreen As screen:
             OnSelect: |-
                 =Set(varCurrentChildId, Text(GUID()));
                 Set(varChildTitle, Blank());
+                Set(varChildTitle1, "");
+                Set(varChildProductType, "");
+                Set(varChildTags, "");
+                Set(varChildEpisodeTitle, "");
                 Set(varChildMediaType, varRequestMediaType);
                 Set(varChildDescription1, "");
                 Set(varChildCaptureDate, Blank());
@@ -954,6 +958,8 @@ RequestScreen As screen:
                     Set(varChildEpisodeNumber, Coalesce(ThisItem.EpisodeNumber, 0));
                     Set(varChildSeriesTitle1, Coalesce(ThisItem.SeriesTitle, ""));
                     Set(varChildProductType1, Coalesce(ThisItem.ProductType, ""));
+                    Set(varChildProductType, Coalesce(ThisItem.ProductType, ""));
+                    Set(varChildTags, Coalesce(ThisItem.Tags, ""));
                     Set(varChildProductionEndDate, ThisItem.ProductionEndDate);
                     Set(varChildPublicationStartDate, ThisItem.PublicationStartDate);
                     Set(varChildPublicationEndDate, ThisItem.PublicationEndDate);
