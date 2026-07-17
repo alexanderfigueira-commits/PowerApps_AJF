@@ -6,6 +6,10 @@ DashboardScreen As screen:
             CountRows(Filter(AVCentralDepositRequests, Status.Value = "Rejected")));
         Set(varKpiRejectedMonth,
             CountRows(Filter(AVCentralDepositRequests, Status.Value = "Rejected", Created >= varMonthStart)));
+        Set(varKpiPendingAll,
+            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Pending")));
+        Set(varKpiPendingMonth,
+            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Pending", Created >= varMonthStart)));
         Set(varKpiMyMonthTotal,
             CountRows(Filter(AVCentralDepositRequests, 'Created By'.Email = User().Email, Created >= varMonthStart)));
         Set(varKpiMyMonthSuccess,
@@ -126,7 +130,7 @@ DashboardScreen As screen:
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
         Height: =440
-        Width: =410
+        Width: =304
         X: =48
         Y: =166
         ZIndex: =12
@@ -134,7 +138,7 @@ DashboardScreen As screen:
     DB_Card1Accent As rectangle:
         Fill: =RGBA(193, 40, 40, 1)
         Height: =6
-        Width: =410
+        Width: =304
         X: =48
         Y: =166
         ZIndex: =13
@@ -145,7 +149,7 @@ DashboardScreen As screen:
         Height: =24
         Size: =12
         Text: ="REJECTED REQUESTS"
-        Width: =360
+        Width: =248
         X: =76
         Y: =194
         ZIndex: =14
@@ -156,7 +160,7 @@ DashboardScreen As screen:
         Height: =90
         Size: =60
         Text: =Text(Coalesce(varKpiRejectedAll, 0))
-        Width: =360
+        Width: =248
         X: =76
         Y: =232
         ZIndex: =15
@@ -165,7 +169,7 @@ DashboardScreen As screen:
         Color: =RGBA(60, 66, 80, 1)
         Height: =24
         Text: ="total requests with status Rejected"
-        Width: =360
+        Width: =248
         X: =76
         Y: =330
         ZIndex: =16
@@ -173,7 +177,7 @@ DashboardScreen As screen:
     DB_Card1Divider As rectangle:
         Fill: =RGBA(230, 232, 238, 1)
         Height: =1
-        Width: =354
+        Width: =248
         X: =76
         Y: =374
         ZIndex: =17
@@ -184,7 +188,7 @@ DashboardScreen As screen:
         Height: =50
         Size: =32
         Text: =Text(Coalesce(varKpiRejectedMonth, 0))
-        Width: =360
+        Width: =248
         X: =76
         Y: =392
         ZIndex: =18
@@ -194,7 +198,7 @@ DashboardScreen As screen:
         Height: =24
         Size: =12
         Text: ="rejected this month"
-        Width: =360
+        Width: =248
         X: =76
         Y: =448
         ZIndex: =19
@@ -204,15 +208,15 @@ DashboardScreen As screen:
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
         Height: =440
-        Width: =410
-        X: =478
+        Width: =304
+        X: =370
         Y: =166
         ZIndex: =20
 
     DB_Card2Accent As rectangle:
         Height: =6
-        Width: =410
-        X: =478
+        Width: =304
+        X: =370
         Y: =166
         ZIndex: =21
 
@@ -222,8 +226,8 @@ DashboardScreen As screen:
         Height: =24
         Size: =12
         Text: ="SUCCESS RATE "
-        Width: =360
-        X: =506
+        Width: =248
+        X: =398
         Y: =194
         ZIndex: =22
 
@@ -236,8 +240,8 @@ DashboardScreen As screen:
             =If(Coalesce(varKpiMyMonthTotal, 0) = 0,
                 "No data",
                 Text(Round(100 * varKpiMyMonthSuccess / varKpiMyMonthTotal, 0)) & " %")
-        Width: =360
-        X: =506
+        Width: =248
+        X: =398
         Y: =228
         ZIndex: =23
 
@@ -245,16 +249,16 @@ DashboardScreen As screen:
         Color: =RGBA(60, 66, 80, 1)
         Size: =12
         Text: ="My success rate - 0 approved of 0 of my requests this month"
-        Width: =360
-        X: =506
+        Width: =248
+        X: =398
         Y: =300
         ZIndex: =24
 
     DB_Card2Divider As rectangle:
         Fill: =RGBA(230, 232, 238, 1)
         Height: =1
-        Width: =354
-        X: =506
+        Width: =248
+        X: =398
         Y: =358
         ZIndex: =25
 
@@ -267,8 +271,8 @@ DashboardScreen As screen:
             =If(Coalesce(varKpiAllMonthTotal, 0) = 0,
                 "No data",
                 Text(Round(100 * varKpiAllMonthSuccess / varKpiAllMonthTotal, 0)) & " %")
-        Width: =360
-        X: =506
+        Width: =248
+        X: =398
         Y: =372
         ZIndex: =26
 
@@ -276,8 +280,8 @@ DashboardScreen As screen:
         Color: =RGBA(60, 66, 80, 1)
         Size: =12
         Text: ="Overall success rate - 0 approved of 0 requests this month (all users)"
-        Width: =360
-        X: =506
+        Width: =248
+        X: =398
         Y: =444
         ZIndex: =27
 
@@ -286,8 +290,8 @@ DashboardScreen As screen:
         Height: =32
         Size: =11
         Text: ="Success = status Approved. Requests created this month."
-        Width: =360
-        X: =506
+        Width: =248
+        X: =398
         Y: =548
         ZIndex: =28
 
@@ -296,16 +300,16 @@ DashboardScreen As screen:
         BorderThickness: =1
         Fill: =RGBA(255, 255, 255, 1)
         Height: =440
-        Width: =410
-        X: =908
+        Width: =304
+        X: =692
         Y: =166
         ZIndex: =29
 
     DB_Card3Accent As rectangle:
         Fill: =RGBA(22, 128, 80, 1)
         Height: =6
-        Width: =410
-        X: =908
+        Width: =304
+        X: =692
         Y: =166
         ZIndex: =30
 
@@ -315,8 +319,8 @@ DashboardScreen As screen:
         Height: =24
         Size: =12
         Text: ="AVG TIME TO PUBLISHED MEDIA"
-        Width: =360
-        X: =936
+        Width: =248
+        X: =720
         Y: =194
         ZIndex: =31
 
@@ -331,8 +335,8 @@ DashboardScreen As screen:
                 If(varKpiAvgPublishDays < 1,
                     Text(Round(varKpiAvgPublishDays * 24, 0)) & " h",
                     Text(varKpiAvgPublishDays) & " days"))
-        Width: =360
-        X: =936
+        Width: =248
+        X: =720
         Y: =232
         ZIndex: =32
 
@@ -340,8 +344,8 @@ DashboardScreen As screen:
         Color: =RGBA(60, 66, 80, 1)
         Height: =48
         Text: ="average from request creation to PublicationDate, across Approved requests"
-        Width: =360
-        X: =936
+        Width: =248
+        X: =720
         Y: =330
         ZIndex: =33
 
@@ -350,10 +354,88 @@ DashboardScreen As screen:
         Height: =60
         Size: =11
         Text: ="Uses the PublicationStartDate column on AVCentralDepositMediaItems. Items with no PublicationStartDate are excluded."
-        Width: =360
-        X: =936
+        Width: =248
+        X: =720
         Y: =390
         ZIndex: =34
+
+    Pending_Card As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =440
+        Width: =304
+        X: =1014
+        Y: =166
+        ZIndex: =45
+
+    Pending_CardAccent As rectangle:
+        Fill: =RGBA(237, 125, 49, 1)
+        Height: =6
+        Width: =304
+        X: =1014
+        Y: =166
+        ZIndex: =46
+
+    Pending_CardTitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =24
+        Size: =12
+        Text: ="PENDING REQUESTS"
+        Width: =248
+        X: =1042
+        Y: =194
+        ZIndex: =47
+
+    Pending_CardBig As label:
+        Color: =RGBA(237, 125, 49, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =90
+        Size: =60
+        Text: =Text(Coalesce(varKpiPendingAll, 0))
+        Width: =248
+        X: =1042
+        Y: =232
+        ZIndex: =48
+
+    Pending_CardBigLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =24
+        Text: ="total requests with status Pending"
+        Width: =248
+        X: =1042
+        Y: =330
+        ZIndex: =49
+
+    Pending_CardDivider As rectangle:
+        Fill: =RGBA(230, 232, 238, 1)
+        Height: =1
+        Width: =248
+        X: =1042
+        Y: =374
+        ZIndex: =50
+
+    Pending_CardMonth As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =50
+        Size: =32
+        Text: =Text(Coalesce(varKpiPendingMonth, 0))
+        Width: =248
+        X: =1042
+        Y: =392
+        ZIndex: =51
+
+    Pending_CardMonthLbl As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =24
+        Size: =12
+        Text: ="pending this month"
+        Width: =248
+        X: =1042
+        Y: =448
+        ZIndex: =52
 
     DB_BtnEnter As button:
         Height: =48
