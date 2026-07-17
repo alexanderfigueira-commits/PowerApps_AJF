@@ -470,6 +470,20 @@ DashboardScreen As screen:
         Y: =448
         ZIndex: =52
 
+    Pending_CardBtn As button:
+        BorderThickness: =0
+        Color: =RGBA(0, 0, 0, 0)
+        Fill: =RGBA(0, 0, 0, 0)
+        Height: =440
+        HoverFill: =RGBA(237, 125, 49, 0.06)
+        OnSelect: =Set(varNavFilter, "Pending"); Navigate(MyRequestScreen, ScreenTransition.Cover)
+        PressedFill: =RGBA(237, 125, 49, 0.12)
+        Tooltip: ="View all pending requests"
+        Width: =304
+        X: =1014
+        Y: =166
+        ZIndex: =59
+
     DB_TrendBtn As button:
         BorderColor: =RGBA(220, 224, 230, 1)
         BorderThickness: =1

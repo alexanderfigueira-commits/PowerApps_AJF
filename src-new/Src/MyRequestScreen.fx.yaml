@@ -26,7 +26,8 @@ MyRequestScreen As screen:
             Collect(colAssignees, {Value: ThisRecord.Value})
         );
         
-        Set(varFilter, "All");
+        Set(varFilter, Coalesce(varNavFilter, "All"));
+        Set(varNavFilter, Blank());
         Set(varFilterDG, "");
         Set(varFilterRequestName, "");
         Set(varFilterStartDate, Blank());
