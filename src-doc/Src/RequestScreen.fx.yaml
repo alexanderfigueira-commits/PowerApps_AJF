@@ -221,6 +221,7 @@ RequestScreen As screen:
             =ForAll(varCurrentRequest.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
         DisplayFields: =["DisplayName"]
         InputTextPlaceholder: ="Search the DG official responsible"
+        IsSearchable: =true
         Items: |-
             =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
         OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
@@ -245,6 +246,7 @@ RequestScreen As screen:
             =ForAll(varCurrentRequest.Contractor_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
         DisplayFields: =["DisplayName"]
         InputTextPlaceholder: ="Search the contractor / production company"
+        IsSearchable: =true
         Items: |-
             =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
         OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
