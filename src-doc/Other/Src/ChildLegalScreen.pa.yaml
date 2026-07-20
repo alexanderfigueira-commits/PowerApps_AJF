@@ -1,0 +1,616 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ChildLegalScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
+    Children:
+      - CL_Breadcrumb:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =56
+            Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+            Width: =700
+            X: =200
+      - CL_TabsBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =50
+            Width: =1366
+            Y: =52
+      - CL_Tab1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildInfoScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="✓  1.  Info"
+            Width: =150
+            X: =16
+            Y: =52
+      - CL_Tab2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildMetaScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="✓  2.  Metadata"
+            Width: =170
+            X: =176
+            Y: =52
+      - CL_Tab3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 18, 107, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 1)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="3.  Legal & Docs"
+            Width: =180
+            X: =356
+            Y: =52
+      - CL_Tab3Line:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =3
+            Width: =180
+            X: =356
+            Y: =99
+      - CL_Tab4:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildValidScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="4.  Validations"
+            Width: =170
+            X: =546
+            Y: =52
+      - CL_BtnNext:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: =Navigate(ChildValidScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: |-
+              ="Next: Validations  →"
+            Width: =220
+            X: =1110
+            Y: =720
+      - HomeAppTitle_CL:
+          Control: Label@2.5.1
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+      - HomeUserName_CL:
+          Control: Label@2.5.1
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+      - Logo_EC_CL:
+          Control: Image@2.2.3
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+      - CD_Logo_CL:
+          Control: Image@2.2.3
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+      - HomeAppSubtitle_CL:
+          Control: Label@2.5.1
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+      - CL_Gallery:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DelayItemLoading: =false
+            Fill: =RGBA(247, 248, 250, 1)
+            Height: =666
+            Items: |-
+              =[{id: 1}]
+            LoadingSpinner: =LoadingSpinner.None
+            TemplatePadding: =0
+            TemplateSize: =If(varChildMediaType = "Video", 960, 335)
+            Width: =1366
+            Y: =102
+          Children:
+            - CL_Banner:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(147, 197, 253, 1)
+                  BorderThickness: =1
+                  Fill: =RGBA(239, 246, 255, 1)
+                  Height: =40
+                  Width: =1302
+                  X: =32
+                  Y: =6
+            - CL_BannerText:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 64, 175, 1)
+                  Font: =Font.'Open Sans'
+                  Text: ="Select the contract case for this media, confirm rights flags and upload required legal documents below."
+                  Width: =1260
+                  X: =52
+                  Y: =6
+            - CL_LblCase:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =28
+                  Size: =16
+                  Text: ="Contract case *"
+                  Width: =600
+                  X: =32
+                  Y: =58
+            - CL_Case:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  ChevronBackground: =RGBA(56, 96, 178, 1)
+                  ChevronFill: =RGBA(255, 255, 255, 1)
+                  ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                  Default: =varChildContractCase
+                  Font: =Font.'Open Sans'
+                  Height: =44
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Items: |-
+                    =[
+                        "Case 1 - framework / direct service contract",
+                        "Case 2 - specific service contract",
+                        "Case 3 - co-production agreement",
+                        "Case 4 - acquisition of existing material",
+                        "Case 5 - internal EU production",
+                        "Case 6 - donation / free licence"
+                    ]
+                  Items.Value: =Value
+                  OnChange: =Set(varChildContractCase, Self.Selected.Value)
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(0, 18, 107, 1)
+                  SelectionColor: =RGBA(255, 255, 255, 1)
+                  SelectionFill: =RGBA(56, 96, 178, 1)
+                  Width: =900
+                  X: =32
+                  Y: =90
+            - CL_LblCase1Sub:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Case 1 sub-type *"
+                  Visible: =Left(varChildContractCase, 6) = "Case 1"
+                  Width: =400
+                  X: =32
+                  Y: =148
+            - CL_Case1Sub:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  ChevronBackground: =RGBA(56, 96, 178, 1)
+                  ChevronFill: =RGBA(255, 255, 255, 1)
+                  ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                  Default: =varChildContractCase1Sub
+                  Font: =Font.'Open Sans'
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Items: =["Framework contract", "Specific contract", "Offer / quote"]
+                  Items.Value: =Value
+                  OnChange: =Set(varChildContractCase1Sub, Self.Selected.Value)
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(0, 18, 107, 1)
+                  SelectionColor: =RGBA(255, 255, 255, 1)
+                  SelectionFill: =RGBA(56, 96, 178, 1)
+                  Visible: =Left(varChildContractCase, 6) = "Case 1"
+                  Width: =400
+                  X: =32
+                  Y: =174
+            - CL_LblRef:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Contract reference number *"
+                  Visible: =Left(varChildContractCase, 6) = "Case 1" Or Left(varChildContractCase, 6) = "Case 2" Or Left(varChildContractCase, 6) = "Case 3"
+                  Width: =500
+                  X: =500
+                  Y: =148
+            - CL_Ref:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =varChildContractRef1
+                  Font: =Font.'Open Sans'
+                  HintText: ="e.g. COMM-2026-PHOTO-0142"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildContractRef1, Self.Text)
+                  Visible: =Left(varChildContractCase, 6) = "Case 1" Or Left(varChildContractCase, 6) = "Case 2" Or Left(varChildContractCase, 6) = "Case 3"
+                  Width: =500
+                  X: =500
+                  Y: =174
+            - CL_Divider1:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =1302
+                  X: =32
+                  Y: =230
+            - CL_LblRights:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =28
+                  Size: =16
+                  Text: ="Rights & declarations"
+                  Width: =600
+                  X: =32
+                  Y: =242
+            - CL_ChkModel:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildModelRelease, true)
+                  OnUncheck: =Set(varChildModelRelease, false); Set(varChildModelReleaseProvided, false)
+                  Text: ="Recognisable private persons appear in this production"
+                  Width: =900
+                  X: =28
+                  Y: =276
+            - CL_ChkModelProvided:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildModelReleaseProvided, true)
+                  OnUncheck: =Set(varChildModelReleaseProvided, false)
+                  Text: ="  ↳  Model release form(s) provided (attach below)"
+                  Visible: =varChildModelRelease
+                  Width: =700
+                  X: =52
+                  Y: =314
+            - CL_ChkMusic:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildMusicUsed, true)
+                  OnUncheck: =Set(varChildMusicUsed, false); Set(varChildMusicLicenceProvided, false)
+                  Text: ="This production contains music (original or licensed)"
+                  Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+                  Width: =900
+                  X: =28
+                  Y: =352
+            - CL_ChkMusicProvided:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildMusicLicenceProvided, true)
+                  OnUncheck: =Set(varChildMusicLicenceProvided, false)
+                  Text: ="  ↳  Music licence / annex provided (attach below)"
+                  Visible: =(varChildMediaType = "Video" Or varChildMediaType = "Podcast") And varChildMusicUsed
+                  Width: =700
+                  X: =52
+                  Y: =390
+            - CL_ChkPreexisting:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildPreexisting, true)
+                  OnUncheck: =Set(varChildPreexisting, false); Set(varChildPreexistingProvided, false)
+                  Text: ="Production contains pre-existing rights material"
+                  Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+                  Width: =900
+                  X: =28
+                  Y: =428
+            - CL_ChkPreexistingProvided:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildPreexistingProvided, true)
+                  OnUncheck: =Set(varChildPreexistingProvided, false)
+                  Text: ="  ↳  Pre-existing rights annex(es) provided (attach below)"
+                  Visible: =(varChildMediaType = "Video" Or varChildMediaType = "Podcast") And varChildPreexisting
+                  Width: =700
+                  X: =52
+                  Y: =466
+            - CL_Divider2:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =1302
+                  X: =32
+                  Y: =510
+            - CL_LblAttachments:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =28
+                  Size: =16
+                  Text: ="Legal annexes & supporting documents"
+                  Width: =800
+                  X: =32
+                  Y: =520
+            - CL_AttachHint:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =22
+                  Size: =12
+                  Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes, VTT subtitles (SRT is no longer accepted), scripts."
+                  Width: =1302
+                  X: =32
+                  Y: =552
+            - CL_Annex:
+                Control: Attachments@2.3.0
+                Properties:
+                  BorderColor: =RGBA(220, 224, 230, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =140
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  ItemColor: =RGBA(255, 255, 255, 1)
+                  ItemFill: =RGBA(56, 96, 178, 1)
+                  ItemHoverFill: =RGBA(186, 202, 226, 1)
+                  Items: =[]
+                  MaxAttachments: =20
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(0, 18, 107, 1)
+                  Width: =1302
+                  X: =32
+                  Y: =578
+            - CL_ChkSubtitles:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildSubtitlesProvided, true)
+                  OnUncheck: =Set(varChildSubtitlesProvided, false)
+                  Text: ="Subtitles are provided for this production (VTT format)"
+                  Visible: =varChildMediaType = "Video"
+                  Width: =900
+                  X: =28
+                  Y: =734
+            - CL_LblVTT:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="VTT subtitle file(s) *   (VTT only - SRT is not accepted)"
+                  Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
+                  Width: =800
+                  X: =32
+                  Y: =776
+            - CL_VTTUpload:
+                Control: Attachments@2.3.0
+                Properties:
+                  BorderColor: =RGBA(220, 224, 230, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =110
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  ItemColor: =RGBA(255, 255, 255, 1)
+                  ItemFill: =RGBA(56, 96, 178, 1)
+                  ItemHoverFill: =RGBA(186, 202, 226, 1)
+                  Items: =[]
+                  MaxAttachments: =5
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(0, 18, 107, 1)
+                  Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
+                  Width: =1302
+                  X: =32
+                  Y: =802
+      - CL_BottomBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =56
+            Width: =1366
+            Y: =712
+      - CL_BtnPrev:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildMetaScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="←  Previous"
+            Width: =140
+            X: =32
+            Y: =720
+      - CL_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+      - Image1_CL:
+          Control: Image@2.2.3
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
