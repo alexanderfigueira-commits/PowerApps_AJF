@@ -486,15 +486,15 @@ ChildValidScreen As screen:
                 Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
                 IfError(
                     With(
-                        {localItem: LookUp(colArchives, ArchiveId = varCurrentChildId)},
+                        {spId: Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0)},
                         With(
                             {
                                 savedMedia: Patch(
                                     AVCentralDepositMediaItems,
                                     If(
-                                        Coalesce(localItem.SPId, 0) = 0,
+                                        spId = 0,
                                         Defaults(AVCentralDepositMediaItems),
-                                        LookUp(AVCentralDepositMediaItems, ID = localItem.SPId)
+                                        LookUp(AVCentralDepositMediaItems, ID = spId)
                                     ),
                                     {
                                         Title: If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1),
