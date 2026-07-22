@@ -751,7 +751,6 @@ ChildInfoScreen As screen:
                     Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, ""));
                     Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
                     Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
-                    Set(varChildContractRef1, Coalesce(varTplCandidate.ContractReference, ""));
                     Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
                     Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
                     Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
@@ -875,7 +874,6 @@ ChildInfoScreen As screen:
             Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, ""));
             Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
             Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
-            Set(varChildContractRef1, Coalesce(varTplCandidate.ContractReference, ""));
             Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
             Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
             Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));

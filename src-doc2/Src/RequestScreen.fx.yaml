@@ -39,7 +39,6 @@ RequestScreen As screen:
                     AIVoiceover: AIVoiceover = "Yes",
                     ContractCase: Coalesce(First(ContractCase).Value, ""),
                     ContractCase1Sub: Coalesce(First(ContractCase1Sub).Value, ""),
-                    ContractRef: Coalesce(ContractReference, ""),
                     ModelRelease: false,
                     ModelReleaseProvided: Coalesce(ModelReleaseProvided, false),
                     MusicUsed: Coalesce(MusicUsed, false),
@@ -575,7 +574,6 @@ RequestScreen As screen:
                 Set(varChildAIVoiceover, false);
                 Set(varChildContractCase, "");
                 Set(varChildContractCase1Sub, "");
-                Set(varChildContractRef1, "");
                 Set(varChildModelRelease, false);
                 Set(varChildModelReleaseProvided, false);
                 Set(varChildMusicUsed, false);
@@ -691,7 +689,6 @@ RequestScreen As screen:
                     Set(varChildAIVoiceover, Coalesce(ThisItem.AIVoiceover, false));
                     Set(varChildContractCase, Coalesce(ThisItem.ContractCase, ""));
                     Set(varChildContractCase1Sub, Coalesce(ThisItem.ContractCase1Sub, ""));
-                    Set(varChildContractRef1, Coalesce(ThisItem.ContractRef, ""));
                     Set(varChildModelRelease, Coalesce(ThisItem.ModelRelease, false));
                     Set(varChildModelReleaseProvided, Coalesce(ThisItem.ModelReleaseProvided, false));
                     Set(varChildMusicUsed, Coalesce(ThisItem.MusicUsed, false));

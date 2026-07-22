@@ -38,7 +38,6 @@ App As appinfo:
         Set(varChildAIVoiceover, false);
         Set(varChildContractCase, "");
         Set(varChildContractCase1Sub, "");
-        Set(varChildContractRef, "");
         Set(varChildModelRelease, false);
         Set(varChildModelReleaseProvided, false);
         Set(varChildMusicUsed, false);
