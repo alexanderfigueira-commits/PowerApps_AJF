@@ -148,7 +148,7 @@ ReviewScreen As screen:
             FontWeight: =FontWeight.Semibold
             Height: =28
             OnSelect: =Select(Parent)
-            Text: =ThisItem.RequestNumber
+            Text: =Coalesce(ThisItem.RequestTitle, "Untitled request")
             Width: =390
             X: =20
             Y: =10
@@ -262,7 +262,7 @@ ReviewScreen As screen:
                 IsBlank(varReviewProject),
                 Filter(AVCentralDepositMediaItems, 1 = 2),
                 Sort(
-                    Filter(AVCentralDepositMediaItems, ParentRequest = varReviewProject.RequestNumber),
+                    Filter(AVCentralDepositMediaItems, ParentRequest = Text(varReviewProject.RequestNumber, "0")),
                     Modified, SortOrder.Descending
                 )
             )
@@ -585,7 +585,7 @@ ReviewScreen As screen:
         FontWeight: =FontWeight.Bold
         Height: =31
         Size: =15
-        Text: =Coalesce(varReviewProject.RequestNumber, "")
+        Text: =Coalesce(varReviewProject.RequestTitle, "")
         Visible: =Not(IsBlank(varReviewProject))
         Width: =200
         X: =980

@@ -497,7 +497,7 @@ ChildValidScreen As screen:
                                         LookUp(AVCentralDepositMediaItems, ID = spId)
                                     ),
                                     {
-                                        Title: If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1),
+                                        Title: If(spId = 0, Text(Coalesce(Max(AVCentralDepositMediaItems, IfError(Value(CD_MediaNumber), 0)), 0) + 1, "0"), LookUp(AVCentralDepositMediaItems, ID = spId).CD_MediaNumber),
                                         Description: varChildDescription1,
                                         // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
                                         MediaType: Table({Value: varChildMediaType}),
@@ -534,7 +534,7 @@ ChildValidScreen As screen:
                                         PreexistingRightsProvided: varChildPreexistingProvided,
                                         ModelReleaseProvided: varChildModelReleaseProvided,
                                         DepositStatus: Table({Value: "Pending Approval"}),
-                                        ParentRequest: varCurrentRequest.RequestNumber
+                                        ParentRequest: Text(varCurrentRequest.RequestNumber, "0")
                                     }
                                 )
                             },

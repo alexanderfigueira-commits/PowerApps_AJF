@@ -256,7 +256,7 @@ MyRequestScreen As screen:
                     !IsEmpty(
                         Filter(
                             colMyMedia,
-                            ParentRequest = RequestNumber And First(MediaType).Value = locProdTypeFilter
+                            ParentRequest = Text(RequestNumber, "0") And First(MediaType).Value = locProdTypeFilter
                         )
                     )
             )
@@ -275,7 +275,7 @@ MyRequestScreen As screen:
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
                 =Set(varCurrentRequest, ThisItem);
-                Set(varRequestTitle1, Coalesce(ThisItem.RequestNumber, ""));
+                Set(varRequestTitle1, Coalesce(ThisItem.RequestTitle, ""));
                 Set(varRequestDG, Coalesce(ThisItem.DG.Value, ""));
                 Set(varRequestDescription1, Coalesce(ThisItem.Description, ""));
                 Set(varRequestOwnerContact, Coalesce(First(ThisItem.DG_Agency_Contact).DisplayName, ""));
@@ -296,7 +296,7 @@ MyRequestScreen As screen:
             Height: =59
             OnSelect: =Select(Parent)
             Size: =10
-            Text: =If(IsBlank(ThisItem.RequestNumber), "Untitled request", ThisItem.RequestNumber)
+            Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
             Width: =90
             X: =13
             ZIndex: =3
@@ -329,7 +329,7 @@ MyRequestScreen As screen:
             Height: =59
             OnSelect: =Select(Parent)
             Size: =10
-            Text: =Text(CountRows(Filter(colMyMedia, ParentRequest exactin ThisItem.RequestNumber)))
+            Text: =Text(CountRows(Filter(colMyMedia, ParentRequest exactin Text(ThisItem.RequestNumber, "0"))))
             Width: =65
             X: =603
             ZIndex: =5

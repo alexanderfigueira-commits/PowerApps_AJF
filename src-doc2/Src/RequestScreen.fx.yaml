@@ -10,7 +10,7 @@ RequestScreen As screen:
             Refresh(AVCentralDepositMediaItems);
             ForAll(
                 Sort(
-                    Filter(AVCentralDepositMediaItems, ParentRequest = varCurrentRequest.RequestNumber),
+                    Filter(AVCentralDepositMediaItems, ParentRequest = Text(varCurrentRequest.RequestNumber, "0")),
                     Modified,
                     SortOrder.Descending
                 ),
@@ -466,7 +466,7 @@ RequestScreen As screen:
                                 LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID)
                             ),
                             {
-                                RequestNumber: varRequestTitle,
+                                RequestNumber: If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0, Coalesce(Max(AVCentralDepositRequests, IfError(Value(RequestNumber), 0)), 0) + 1, varCurrentRequest.RequestNumber),
                                 RequestTitle: varRequestTitle,
                                 DG: {Value: varRequestDG},
                                 Description: varRequestDescription,
@@ -551,7 +551,7 @@ RequestScreen As screen:
                         Set(varCurrentRequest,
                             Patch(AVCentralDepositRequests, Defaults(AVCentralDepositRequests),
                                 {
-                                    RequestNumber: Coalesce(varRequestTitle, varRequestTitle1),
+                                    RequestNumber: Coalesce(Max(AVCentralDepositRequests, IfError(Value(RequestNumber), 0)), 0) + 1,
                                     RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
                                     DG: {Value: varRequestDG},
                                     Description: varRequestDescription,
@@ -865,7 +865,7 @@ RequestScreen As screen:
                                 AVCentralDepositRequests,
                                 LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
                                 {
-                                    RequestNumber: varRequestTitle,
+                                    RequestNumber: varCurrentRequest.RequestNumber,
                                     RequestTitle: varRequestTitle,
                                     DG: {Value: varRequestDG},
                                     Description: varRequestDescription,
@@ -926,7 +926,7 @@ RequestScreen As screen:
                                 AVCentralDepositRequests,
                                 LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
                                 {
-                                    RequestNumber: varRequestTitle,
+                                    RequestNumber: varCurrentRequest.RequestNumber,
                                     RequestTitle: varRequestTitle,
                                     DG: {Value: varRequestDG},
                                     Description: varRequestDescription,
