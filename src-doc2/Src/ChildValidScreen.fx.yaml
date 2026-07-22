@@ -470,7 +470,6 @@ ChildValidScreen As screen:
                     Tags: varChildTags,
                     FTPPath: varChildFTPPath,
                     LanguageVersions: varChildLanguageVersions,
-                    Credits: varChildCredits1,
                     AIVoiceover: varChildAIVoiceover,
                     ContractCase: varChildContractCase,
                     ContractCase1Sub: varChildContractCase1Sub,
@@ -502,8 +501,7 @@ ChildValidScreen As screen:
                                         Description: varChildDescription1,
                                         // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
                                         MediaType: Table({Value: varChildMediaType}),
-                                        Credits: varChildCredits1,
-                                        CaptureDate: varChildCaptureDate,
+                                                            CaptureDate: varChildCaptureDate,
                                         ProductionPlace: varChildProductionPlace1,
                                         ProductType: If(
                                             IsBlank(varChildProductType) Or varChildProductType = "",

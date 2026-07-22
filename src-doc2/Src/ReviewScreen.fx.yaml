@@ -2,7 +2,7 @@ ReviewScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: |-
         =Set(varReviewProject, Blank());
-        Set(varReviewComment, Blank());
+        Set(varReviewComment, "");
         Set(varReviewQueueMine, Coalesce(varReviewMineOnly, false));
         Set(varReviewMineOnly, false)
 
@@ -131,7 +131,7 @@ ReviewScreen As screen:
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
                 =Set(varReviewProject, ThisItem);
-                Set(varReviewComment, Blank())
+                Set(varReviewComment, "")
             Width: =430
             ZIndex: =1
 
@@ -350,9 +350,12 @@ ReviewScreen As screen:
             =ForAll(varReviewProject.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
         DisplayFields: =["DisplayName"]
         InputTextPlaceholder: ="Search people to add as assignee…"
+        IsSearchable: =true
         Items: |-
             =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
         SearchFields: =["DisplayName"]
+        SearchItems: |-
+            =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
         Visible: =Not(IsBlank(varReviewProject))
         Width: =380
         X: =460
@@ -390,11 +393,11 @@ ReviewScreen As screen:
         ZIndex: =20
 
     RV_Comment As text:
-        Default: =varReviewComment
+        Default: =Coalesce(varReviewComment, "")
         Height: =100
         HintText: ="Explain what needs to be corrected before the project can be approved."
         Mode: =TextMode.MultiLine
-        OnChange: =Set(varReviewComment, Self.Value)
+        OnChange: =Set(varReviewComment, Self.Text)
         Visible: =Not(IsBlank(varReviewProject))
         Width: =880
         X: =460
@@ -436,24 +439,15 @@ ReviewScreen As screen:
                     {
                         Status: {Value: "Approved"},
                         // Assignee(s) = the approver, plus any co-assignees selected in RV_Assignee.
-                        DG_Agency_Contact: ForAll(
-                            Ungroup(
-                                Table(
-                                    {u: Table({DisplayName: User().FullName, Mail: User().Email})},
-                                    {u: ShowColumns(RV_Assignee.SelectedItems, "DisplayName", "Mail")}
-                                ),
-                                "u"
-                            ) As pers,
-                            {
-                                '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
-                                Claims: "i:0#.f|membership|" & Lower(pers.Mail),
-                                DisplayName: pers.DisplayName,
-                                Email: pers.Mail,
-                                Department: "",
-                                JobTitle: "",
-                                Picture: ""
-                            }
-                        ),
+                        DG_Agency_Contact: Table({
+                            '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                            Claims: "i:0#.f|membership|" & Lower(User().Email),
+                            DisplayName: User().FullName,
+                            Email: User().Email,
+                            Department: "",
+                            JobTitle: "",
+                            Picture: ""
+                        }),
                         ReviewedByContact: Table({
                             '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                             Claims: "i:0#.f|membership|" & Lower(User().Email),
@@ -468,7 +462,7 @@ ReviewScreen As screen:
                 );
                 Notify("Request approved.", NotificationType.Success);
                 Set(varReviewProject, Blank());
-                Set(varReviewComment, Blank()),
+                Set(varReviewComment, ""),
                 Notify("Approve failed: " & FirstError.Message, NotificationType.Error)
             )
         Size: =14
@@ -515,7 +509,7 @@ ReviewScreen As screen:
                 );
                 Notify("Request rejected. The owner will see your comment on their next visit.", NotificationType.Warning);
                 Set(varReviewProject, Blank());
-                Set(varReviewComment, Blank()),
+                Set(varReviewComment, ""),
                 Notify("Reject failed: " & FirstError.Message, NotificationType.Error)
             )
         Size: =14

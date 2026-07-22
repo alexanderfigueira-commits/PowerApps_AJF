@@ -106,7 +106,7 @@ HomePrintScreen As screen:
         HoverFill: =RGBA(0, 18, 107, 1)
         OnSelect: |
             =Set(varPDF, PDF(HomePrintScreen));
-            Download(varPDF, "MyDocument.pdf")
+            Download(varPDF)
         Size: =13
         Text: ="⬇  Download PDF"
         Width: =180
@@ -326,10 +326,7 @@ HomePrintScreen As screen:
                             Text(Today(), "dd/mm/yyyy") & "</p>" &
                         "</body></html>"
                 },
-                Download(
-                    "data:application/msword;charset=utf-8," & EncodeUrl(wordHtml),
-                    "CentralDeposit-Requests.doc"
-                )
+                Download("data:application/msword;charset=utf-8," & EncodeUrl(wordHtml))
             )
         Size: =13
         Text: ="⬇  Download Word"

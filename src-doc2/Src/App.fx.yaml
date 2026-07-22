@@ -45,7 +45,7 @@ App As appinfo:
         Set(varChildMusicLicenceProvided, false);
         Set(varChildPreexisting, false);
         Set(varChildPreexistingProvided, false);
-        Set(varReviewComment, Blank());
+        Set(varReviewComment, "");
         Set(varReviewProject, Blank());
         Set(varShowTemplatePicker, false);
         Set(varShowTplConfirm, false);
@@ -64,7 +64,7 @@ App As appinfo:
         Set(varKpiMyMonthSuccess, 0);
         Set(varKpiAllMonthTotal, 0);
         Set(varKpiAllMonthSuccess, 0);
-        Set(varKpiAvgPublishDays, Blank())
+        Set(varKpiAvgPublishDays, If(false, 0))
     StartScreen: =
     Theme: =PowerAppsTheme
 

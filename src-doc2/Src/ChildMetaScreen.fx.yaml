@@ -733,6 +733,7 @@ ChildMetaScreen As screen:
             Items: =Choices(AVCentralDepositRequests.DG)
             OnChange: =Set(varChildProducer, Self.Selected.Value)
             SearchFields: =["Value"]
+            SearchItems: =Choices(AVCentralDepositRequests.DG)
             SelectMultiple: =false
             Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
             Width: =400
