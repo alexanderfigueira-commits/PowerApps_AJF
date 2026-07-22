@@ -1,5 +1,6 @@
 ChildInfoScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
+    OnVisible: =ClearCollect(colTplMedia, AVCentralDepositMediaItems)
 
     Header_CI As group:
         Height: =5
@@ -713,7 +714,7 @@ ChildInfoScreen As screen:
         Items: |-
             =SortByColumns(
                 Filter(
-                    AVCentralDepositMediaItems,
+                    colTplMedia,
                     varChildMediaType in MediaType.Value,
                     IsBlank(varTplSearch)
                         Or varTplSearch in Title

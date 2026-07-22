@@ -4,7 +4,8 @@ ReviewScreen As screen:
         =Set(varReviewProject, Blank());
         Set(varReviewComment, "");
         Set(varReviewQueueMine, Coalesce(varReviewMineOnly, false));
-        Set(varReviewMineOnly, false)
+        Set(varReviewMineOnly, false);
+        ClearCollect(colRevReqs, AVCentralDepositRequests)
 
     Header_RV As group:
         Height: =5
@@ -111,7 +112,7 @@ ReviewScreen As screen:
         Height: =786
         Items: |-
             =Sort(
-                Filter(AVCentralDepositRequests,
+                Filter(colRevReqs,
                     If(varReviewQueueMine, Status.Value = "Pending", Status.Value = "Submitted"),
                     Not(varReviewQueueMine) Or Not(IsEmpty(Filter(DG_Agency_Contact, Lower(Email) = Lower(User().Email))))
                 ),

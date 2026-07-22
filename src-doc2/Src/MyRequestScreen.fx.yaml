@@ -32,6 +32,8 @@ MyRequestScreen As screen:
         Set(varFilterRequestName, "");
         Set(varFilterStartDate, Blank());
         Set(varFilterEndDate, Blank());
+        ClearCollect(colMyReqs, AVCentralDepositRequests);
+        ClearCollect(colMyMedia, AVCentralDepositMediaItems);
         UpdateContext({locProdTypeFilter: Blank()});
 
     HomeTopBar As rectangle:
@@ -242,7 +244,7 @@ MyRequestScreen As screen:
         Height: =282
         Items: |-
             =Filter(
-                AVCentralDepositRequests,
+                colMyReqs,
                 varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
                 varFilter = "All" Or Status.Value = varFilter,
                 varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
@@ -253,7 +255,7 @@ MyRequestScreen As screen:
                 IsBlank(locProdTypeFilter) Or
                     !IsEmpty(
                         Filter(
-                            AVCentralDepositMediaItems,
+                            colMyMedia,
                             ParentRequest = RequestNumber And First(MediaType).Value = locProdTypeFilter
                         )
                     )
@@ -327,7 +329,7 @@ MyRequestScreen As screen:
             Height: =59
             OnSelect: =Select(Parent)
             Size: =10
-            Text: =Text(CountRows(Filter(AVCentralDepositMediaItems, ParentRequest exactin ThisItem.RequestNumber)))
+            Text: =Text(CountRows(Filter(colMyMedia, ParentRequest exactin ThisItem.RequestNumber)))
             Width: =65
             X: =603
             ZIndex: =5
