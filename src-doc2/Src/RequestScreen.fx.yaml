@@ -900,6 +900,35 @@ RequestScreen As screen:
             Y: =720
             ZIndex: =31
 
+        RS_BtnPublish As button:
+            DisabledColor: =RGBA(255, 255, 255, 1)
+            DisabledFill: =RGBA(186, 196, 214, 1)
+            DisplayMode: =DisplayMode.Edit
+            Fill: =RGBA(122, 48, 160, 1)
+            Height: =40
+            HoverFill: =RGBA(80, 30, 110, 1)
+            OnSelect: |-
+                        =IfError(
+                            With(
+                                { savedReq: Patch(AVCentralDepositRequests,
+                                    LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
+                                    { Status: {Value: "Published"}, PublishedDate: Now() }) },
+                                Set(varCurrentRequest, savedReq);
+                                Notify("Request published on " & Text(Now(), "dd-mm-yyyy") & ".", NotificationType.Success);
+                                Navigate(MyRequestScreen)
+                            ),
+                            Notify("Error publishing: " & FirstError.Message, NotificationType.Error)
+                        )
+            Size: =14
+            Text: ="Publish  ✓"
+            Visible: |-
+                        =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+                        And varCurrentRequest.Status.Value = "Approved"
+            Width: =200
+            X: =1134
+            Y: =720
+            ZIndex: =31
+
         RS_BtnResubmitRequest As button:
             DisabledColor: =RGBA(255, 255, 255, 1)
             DisabledFill: =RGBA(186, 196, 214, 1)
