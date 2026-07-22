@@ -2,22 +2,23 @@ DashboardScreen As screen:
     Fill: =RGBA(247, 248, 250, 1)
     OnVisible: |-
         =Set(varMonthStart, Date(Year(Now()), Month(Now()), 1));
+        ClearCollect(colDashReqs, AVCentralDepositRequests);
         Set(varKpiRejectedAll,
-            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Rejected")));
+            CountRows(Filter(colDashReqs, Status.Value = "Rejected")));
         Set(varKpiRejectedMonth,
-            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Rejected", Created >= varMonthStart)));
+            CountRows(Filter(colDashReqs, Status.Value = "Rejected", Created >= varMonthStart)));
         Set(varKpiPendingAll,
-            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Pending")));
+            CountRows(Filter(colDashReqs, Status.Value = "Pending")));
         Set(varKpiPendingMonth,
-            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Pending", Created >= varMonthStart)));
+            CountRows(Filter(colDashReqs, Status.Value = "Pending", Created >= varMonthStart)));
         Set(varKpiMyMonthTotal,
-            CountRows(Filter(AVCentralDepositRequests, Created >= varMonthStart, Status.Value = "Published")));
+            CountRows(Filter(colDashReqs, Created >= varMonthStart, Status.Value = "Published")));
         Set(varKpiMyMonthSuccess,
-            CountRows(Filter(AVCentralDepositRequests, 'Created By'.Email = User().Email, Created >= varMonthStart, Status.Value = "Approved")));
+            CountRows(Filter(colDashReqs, 'Created By'.Email = User().Email, Created >= varMonthStart, Status.Value = "Approved")));
         Set(varKpiAllMonthTotal,
-            CountRows(Filter(AVCentralDepositRequests, Created >= varMonthStart, Status.Value = "Published")));
+            CountRows(Filter(colDashReqs, Created >= varMonthStart, Status.Value = "Published")));
         Set(varKpiAllMonthSuccess,
-            CountRows(Filter(AVCentralDepositRequests, Created >= varMonthStart, Status.Value = "Approved")));
+            CountRows(Filter(colDashReqs, Created >= varMonthStart, Status.Value = "Approved")));
         /*Set(varKpiAvgPublishDays,
             With(
                 {approved: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)))},
