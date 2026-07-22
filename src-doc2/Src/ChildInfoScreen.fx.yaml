@@ -252,6 +252,7 @@ ChildInfoScreen As screen:
             ZIndex: =12
 
         CI_CaptureDate As datepicker:
+            Format: ="dd-mm-yyyy"
             DefaultDate: =varChildCaptureDate
             OnChange: =Set(varChildCaptureDate, Self.SelectedDate)
             Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
@@ -356,6 +357,7 @@ ChildInfoScreen As screen:
             ZIndex: =28
 
         CI_ProductionEndDate As datepicker:
+            Format: ="dd-mm-yyyy"
             DefaultDate: =varChildProductionEndDate
             OnChange: =Set(varChildProductionEndDate, Self.SelectedDate)
             Visible: =false
@@ -376,6 +378,7 @@ ChildInfoScreen As screen:
             ZIndex: =30
 
         CI_PubStartDate As datepicker:
+            Format: ="dd-mm-yyyy"
             DefaultDate: =varChildPublicationStartDate
             OnChange: =Set(varChildPublicationStartDate, Self.SelectedDate)
             Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
@@ -396,6 +399,7 @@ ChildInfoScreen As screen:
             ZIndex: =32
 
         CI_PubEndDate As datepicker:
+            Format: ="dd-mm-yyyy"
             DefaultDate: =varChildPublicationEndDate
             OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
             Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"

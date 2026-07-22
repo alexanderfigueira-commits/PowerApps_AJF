@@ -97,7 +97,7 @@ HomePrintScreen As screen:
         Color: =RGBA(96, 104, 120, 1)
         Size: =12
         Text: |-
-            =Text(CountRows(colPrintData)) & If(CountRows(colPrintData) = 1, " request", " requests") & "   ·   exported " & Text(Now(), "dd/mm/yyyy hh:mm")
+            =Text(CountRows(colPrintData)) & If(CountRows(colPrintData) = 1, " request", " requests") & "   ·   exported " & Text(Now(), "dd-mm-yyyy hh:mm")
         Width: =700
         X: =148
         Y: =68
@@ -249,7 +249,7 @@ HomePrintScreen As screen:
             Color: =RGBA(96, 104, 120, 1)
             Height: =52
             Size: =12
-            Text: =If(IsBlank(ThisItem.StartRequestDate), "—", Text(ThisItem.StartRequestDate, "dd/mm/yyyy"))
+            Text: =If(IsBlank(ThisItem.StartRequestDate), "—", Text(ThisItem.StartRequestDate, "dd-mm-yyyy"))
             Width: =160
             X: =620
             ZIndex: =6
@@ -288,7 +288,7 @@ HomePrintScreen As screen:
         Color: =RGBA(140, 148, 160, 1)
         Height: =28
         Size: =10
-        Text: ="AV Central Deposit Ticket System  ·  Audiovisual Service, DG COMM  ·  " & Text(Today(), "dd/mm/yyyy")
+        Text: ="AV Central Deposit Ticket System  ·  Audiovisual Service, DG COMM  ·  " & Text(Today(), "dd-mm-yyyy")
         Width: =1302
         X: =32
         Y: =158 + Max(52, 52 * CountRows(colPrintData)) + 12
@@ -308,7 +308,7 @@ HomePrintScreen As screen:
                         "<head><meta charset='utf-8'><title>AV Central Deposit - Requests</title></head><body>" &
                         "<h1 style='font-family:Arial;color:#00126B;'>AV Central Deposit - Requests</h1>" &
                         "<p style='font-family:Arial;font-size:10pt;color:#606878;'>" &
-                            Text(CountRows(colPrintData)) & " request(s)  -  exported " & Text(Now(), "dd/mm/yyyy hh:mm") & "</p>" &
+                            Text(CountRows(colPrintData)) & " request(s)  -  exported " & Text(Now(), "dd-mm-yyyy hh:mm") & "</p>" &
                         "<table border='1' cellspacing='0' cellpadding='6' style='border-collapse:collapse;font-family:Arial;font-size:10pt;'>" &
                         "<tr style='background:#F0F2F6;font-weight:bold;'>" &
                             "<td>Request</td><td>DG</td><td>Archives</td><td>Status</td><td>Submitted</td><td>Description</td></tr>" &
@@ -318,13 +318,13 @@ HomePrintScreen As screen:
                             "</td><td>" & Coalesce(DG.Value, "-") &
                             "</td><td>" & Text(CountRows(Filter(colPrintMedia, ParentRequest = RequestNumber))) &
                             "</td><td>" & Coalesce(Status.Value, "Draft") &
-                            "</td><td>" & If(IsBlank(StartRequestDate), "-", Text(StartRequestDate, "dd/mm/yyyy")) &
+                            "</td><td>" & If(IsBlank(StartRequestDate), "-", Text(StartRequestDate, "dd-mm-yyyy")) &
                             "</td><td>" & Substitute(Substitute(Coalesce(Description, "-"), "&", "&amp;"), "<", "&lt;") &
                             "</td></tr>"
                         ) &
                         "</table>" &
                         "<p style='font-family:Arial;font-size:8pt;color:#8C94A0;'>AV Central Deposit Ticket System  -  Audiovisual Service, DG COMM  -  " &
-                            Text(Today(), "dd/mm/yyyy") & "</p>" &
+                            Text(Today(), "dd-mm-yyyy") & "</p>" &
                         "</body></html>"
                 },
                 Download("data:application/msword;charset=utf-8," & EncodeUrl(wordHtml))

@@ -462,6 +462,7 @@ ChildMetaScreen As screen:
             ZIndex: =42
 
         CM_ShootDate As datepicker:
+            Format: ="dd-mm-yyyy"
             DefaultDate: =varChildCaptureDate
             OnChange: =Set(varChildCaptureDate, Self.SelectedDate)
             Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
@@ -643,6 +644,7 @@ ChildMetaScreen As screen:
             ZIndex: =55
 
         CM_ProdEnd As datepicker:
+            Format: ="dd-mm-yyyy"
             DefaultDate: =varChildProductionEndDate
             OnChange: =Set(varChildProductionEndDate, Self.SelectedDate)
             Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
@@ -663,6 +665,7 @@ ChildMetaScreen As screen:
             ZIndex: =57
 
         CM_PubStartV As datepicker:
+            Format: ="dd-mm-yyyy"
             DefaultDate: =varChildPublicationStartDate
             OnChange: =Set(varChildPublicationStartDate, Self.SelectedDate)
             Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
@@ -683,6 +686,7 @@ ChildMetaScreen As screen:
             ZIndex: =59
 
         CM_PubEndV As datepicker:
+            Format: ="dd-mm-yyyy"
             DefaultDate: =varChildPublicationEndDate
             OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
             Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"

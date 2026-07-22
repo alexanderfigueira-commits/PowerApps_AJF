@@ -3992,7 +3992,7 @@
         {
           "AFDDataSourceName": "",
           "AutoRuleBindingEnabled": false,
-          "AutoRuleBindingString": "If(IsBlank(ThisItem.StartRequestDate), \"—\", Text(ThisItem.StartRequestDate, \"dd/mm/yyyy\"))",
+          "AutoRuleBindingString": "If(IsBlank(ThisItem.StartRequestDate), \"—\", Text(ThisItem.StartRequestDate, \"dd-mm-yyyy\"))",
           "InvariantPropertyName": "Text",
           "IsLockable": false,
           "NameMapSourceSchema": "?"
