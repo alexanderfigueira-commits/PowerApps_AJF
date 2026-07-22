@@ -253,14 +253,7 @@ HelpScreen As screen:
             DisplayMode: =If(varRating > 0, DisplayMode.Edit, DisplayMode.Disabled)
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
-                =Patch(AVCentralDepositReports,
-                    Defaults(AVCentralDepositReports),
-                    {
-                        Title: "Feedback — " & User().FullName,
-                        Rating: varRating,
-                        Description: varFeedbackText
-                    }
-                );
+                =Notify("Thank you for your feedback!", NotificationType.Success);
                 Set(varFeedbackSent, true);
                 Set(varRating, 0);
                 Set(varFeedbackText, "")
