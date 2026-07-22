@@ -545,7 +545,22 @@ RequestScreen As screen:
             Height: =36
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
-                =Set(varCurrentChildId, Text(GUID()));
+                =IfError(
+                    If(
+                        IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0,
+                        Set(varCurrentRequest,
+                            Patch(AVCentralDepositRequests, Defaults(AVCentralDepositRequests),
+                                {
+                                    RequestNumber: Coalesce(varRequestTitle, varRequestTitle1),
+                                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
+                                    DG: {Value: varRequestDG},
+                                    Description: varRequestDescription,
+                                    Status: {Value: "Draft"}
+                                }
+                            )
+                        )
+                    );
+                Set(varCurrentChildId, Text(GUID()));
                 Set(varChildTitle, Blank());
                 Set(varChildTitle1, "");
                 Set(varChildProductType, "");
@@ -579,7 +594,9 @@ RequestScreen As screen:
                 Set(varChildLinks1, "");
                 Set(varChildTags1, "");
                 Set(varChildFTPPath1, "");
-                Navigate(ChildInfoScreen)
+                Navigate(ChildInfoScreen),
+                    Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
+                )
             Size: =13
             Text: ="+  Add new media"
             X: =1154
