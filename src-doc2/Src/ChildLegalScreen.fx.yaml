@@ -157,7 +157,7 @@ ChildLegalScreen As screen:
         Width: =220
         X: =1110
         Y: =720
-        ZIndex: =9
+        ZIndex: =18
 
     CL_Gallery As gallery:
         Fill: =RGBA(247, 248, 250, 1)
