@@ -497,7 +497,7 @@ ChildValidScreen As screen:
                                         LookUp(AVCentralDepositMediaItems, ID = spId)
                                     ),
                                     {
-                                        Title: If(spId = 0, Text(Coalesce(Max(AVCentralDepositMediaItems, IfError(Value(CD_MediaNumber), 0)), 0) + 1, "0"), LookUp(AVCentralDepositMediaItems, ID = spId).CD_MediaNumber),
+                                        Title: If(spId = 0, With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter(AVCentralDepositMediaItems, StartsWith(CD_MediaNumber, yr & "-")), CD_MediaNumber, SortOrder.Descending)).CD_MediaNumber, yr & "-0000"), 4)) + 1), 4)), LookUp(AVCentralDepositMediaItems, ID = spId).CD_MediaNumber),
                                         Description: varChildDescription1,
                                         // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
                                         MediaType: Table({Value: varChildMediaType}),
@@ -534,7 +534,7 @@ ChildValidScreen As screen:
                                         PreexistingRightsProvided: varChildPreexistingProvided,
                                         ModelReleaseProvided: varChildModelReleaseProvided,
                                         DepositStatus: Table({Value: "Pending Approval"}),
-                                        ParentRequest: Text(varCurrentRequest.RequestNumber, "0")
+                                        ParentRequest: varCurrentRequest.RequestNumber
                                     }
                                 )
                             },

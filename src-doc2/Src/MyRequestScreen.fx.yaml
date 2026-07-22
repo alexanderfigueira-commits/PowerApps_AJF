@@ -256,7 +256,7 @@ MyRequestScreen As screen:
                     !IsEmpty(
                         Filter(
                             colMyMedia,
-                            ParentRequest = Text(RequestNumber, "0") And First(MediaType).Value = locProdTypeFilter
+                            ParentRequest = RequestNumber And First(MediaType).Value = locProdTypeFilter
                         )
                     )
             )
@@ -329,7 +329,7 @@ MyRequestScreen As screen:
             Height: =59
             OnSelect: =Select(Parent)
             Size: =10
-            Text: =Text(CountRows(Filter(colMyMedia, ParentRequest exactin Text(ThisItem.RequestNumber, "0"))))
+            Text: =Text(CountRows(Filter(colMyMedia, ParentRequest exactin ThisItem.RequestNumber)))
             Width: =65
             X: =603
             ZIndex: =5

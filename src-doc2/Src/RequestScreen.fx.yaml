@@ -10,7 +10,7 @@ RequestScreen As screen:
             Refresh(AVCentralDepositMediaItems);
             ForAll(
                 Sort(
-                    Filter(AVCentralDepositMediaItems, ParentRequest = Text(varCurrentRequest.RequestNumber, "0")),
+                    Filter(AVCentralDepositMediaItems, ParentRequest = varCurrentRequest.RequestNumber),
                     Modified,
                     SortOrder.Descending
                 ),
@@ -466,7 +466,7 @@ RequestScreen As screen:
                                 LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID)
                             ),
                             {
-                                RequestNumber: If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0, Coalesce(Max(AVCentralDepositRequests, IfError(Value(RequestNumber), 0)), 0) + 1, varCurrentRequest.RequestNumber),
+                                RequestNumber: If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0, With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter(AVCentralDepositRequests, StartsWith(RequestNumber, yr & "-")), RequestNumber, SortOrder.Descending)).RequestNumber, yr & "-0000"), 4)) + 1), 4)), varCurrentRequest.RequestNumber),
                                 RequestTitle: varRequestTitle,
                                 DG: {Value: varRequestDG},
                                 Description: varRequestDescription,
@@ -551,7 +551,7 @@ RequestScreen As screen:
                         Set(varCurrentRequest,
                             Patch(AVCentralDepositRequests, Defaults(AVCentralDepositRequests),
                                 {
-                                    RequestNumber: Coalesce(Max(AVCentralDepositRequests, IfError(Value(RequestNumber), 0)), 0) + 1,
+                                    RequestNumber: With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter(AVCentralDepositRequests, StartsWith(RequestNumber, yr & "-")), RequestNumber, SortOrder.Descending)).RequestNumber, yr & "-0000"), 4)) + 1), 4)),
                                     RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
                                     DG: {Value: varRequestDG},
                                     Description: varRequestDescription,

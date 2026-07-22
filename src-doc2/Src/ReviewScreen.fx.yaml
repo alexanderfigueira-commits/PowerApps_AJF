@@ -262,7 +262,7 @@ ReviewScreen As screen:
                 IsBlank(varReviewProject),
                 Filter(AVCentralDepositMediaItems, 1 = 2),
                 Sort(
-                    Filter(AVCentralDepositMediaItems, ParentRequest = Text(varReviewProject.RequestNumber, "0")),
+                    Filter(AVCentralDepositMediaItems, ParentRequest = varReviewProject.RequestNumber),
                     Modified, SortOrder.Descending
                 )
             )

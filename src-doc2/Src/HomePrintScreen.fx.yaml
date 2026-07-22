@@ -225,7 +225,7 @@ HomePrintScreen As screen:
             Color: =RGBA(96, 104, 120, 1)
             Height: =52
             Size: =12
-            Text: =Text(CountRows(Filter(colPrintMedia, ParentRequest = Text(ThisItem.RequestNumber, "0"))))
+            Text: =Text(CountRows(Filter(colPrintMedia, ParentRequest = ThisItem.RequestNumber)))
             Width: =65
             X: =408
             ZIndex: =4
@@ -316,7 +316,7 @@ HomePrintScreen As screen:
                             colPrintData,
                             "<tr><td>" & If(IsBlank(RequestTitle), "Untitled request", RequestTitle) &
                             "</td><td>" & Coalesce(DG.Value, "-") &
-                            "</td><td>" & Text(CountRows(Filter(colPrintMedia, ParentRequest = Text(RequestNumber, "0")))) &
+                            "</td><td>" & Text(CountRows(Filter(colPrintMedia, ParentRequest = RequestNumber))) &
                             "</td><td>" & Coalesce(Status.Value, "Draft") &
                             "</td><td>" & If(IsBlank(StartRequestDate), "-", Text(StartRequestDate, "dd-mm-yyyy")) &
                             "</td><td>" & Substitute(Substitute(Coalesce(Description, "-"), "&", "&amp;"), "<", "&lt;") &
