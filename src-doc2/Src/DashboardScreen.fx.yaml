@@ -19,14 +19,14 @@ DashboardScreen As screen:
             CountRows(Filter(colDashReqs, Created >= varMonthStart, Status.Value = "Published")));
         Set(varKpiAllMonthSuccess,
             CountRows(Filter(colDashReqs, Created >= varMonthStart, Status.Value = "Approved")));
-        /*Set(varKpiAvgPublishDays,
+        Set(varKpiAvgPublishDays,
             With(
-                {approved: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)))},
+                {approved: Filter(AVCentralDepositRequests, Status.Value = "Published", Not(IsBlank(PublishedDate)))},
                 If(CountRows(approved) = 0,
                     Blank(),
                     Round(
                         Average(AddColumns(approved, "durHours",
-                            DateDiff(Created, PublicationDate, TimeUnit.Hours)),
+                            DateDiff(Created, PublishedDate, TimeUnit.Hours)),
                             durHours) / 24,
                         1))));
         Set(varShowTrend, false);
@@ -34,13 +34,13 @@ DashboardScreen As screen:
             ForAll(Sequence(12) As Mo,
                 With(
                     {
-                        curSet: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)), Year(PublicationDate) = Year(Now()), Month(PublicationDate) = Mo.Value),
-                        prevSet: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)), Year(PublicationDate) = Year(Now()) - 1, Month(PublicationDate) = Mo.Value)
+                        curSet: Filter(AVCentralDepositRequests, Status.Value = "Published", Not(IsBlank(PublishedDate)), Year(PublishedDate) = Year(Now()), Month(PublishedDate) = Mo.Value),
+                        prevSet: Filter(AVCentralDepositRequests, Status.Value = "Published", Not(IsBlank(PublishedDate)), Year(PublishedDate) = Year(Now()) - 1, Month(PublishedDate) = Mo.Value)
                     },
                     {
                         month: Mo.Value,
-                        cur: If(CountRows(curSet) = 0, 0, Round(Average(curSet, DateDiff(Created, PublicationDate, TimeUnit.Hours)) / 24, 1)),
-                        prev: If(CountRows(prevSet) = 0, 0, Round(Average(prevSet, DateDiff(Created, PublicationDate, TimeUnit.Hours)) / 24, 1))
+                        cur: If(CountRows(curSet) = 0, 0, Round(Average(curSet, DateDiff(Created, PublishedDate, TimeUnit.Hours)) / 24, 1)),
+                        prev: If(CountRows(prevSet) = 0, 0, Round(Average(prevSet, DateDiff(Created, PublishedDate, TimeUnit.Hours)) / 24, 1))
                     }
                 )
             )
@@ -61,7 +61,7 @@ DashboardScreen As screen:
                 "<polyline fill='none' stroke='#00126b' stroke-width='3' points='" & Concat(Filter(colPublishTrend, cur > 0), Text(Round(56 + (month - 1) / 11 * 644, 0)) & "," & Text(Round(270 - (cur / varTrendMax) * 246, 0)) & " ") & "'/>" &
                 "</svg>"
             )
-        )*/
+        )
 
     Header_1 As group:
         Height: =5
@@ -373,7 +373,7 @@ DashboardScreen As screen:
         Color: =RGBA(60, 66, 80, 1)
         Height: =48
         Size: =11
-        Text: ="Average from request creation to PublicationDate, across Approved requests"
+        Text: ="Average time from request creation to publication, across Published requests"
         Width: =248
         X: =720
         Y: =330
