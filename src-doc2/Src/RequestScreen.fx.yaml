@@ -247,11 +247,11 @@ RequestScreen As screen:
         InputTextPlaceholder: ="Search the DG official responsible"
         IsSearchable: =true
         Items: |-
-            =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+            =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
         OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
         SearchFields: =["DisplayName"]
         SearchItems: |-
-            =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+            =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
         Width: =380
         X: =56
         Y: =191
@@ -274,11 +274,11 @@ RequestScreen As screen:
         InputTextPlaceholder: ="Search the contractor / production company"
         IsSearchable: =true
         Items: |-
-            =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+            =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
         OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
         SearchFields: =["DisplayName"]
         SearchItems: |-
-            =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+            =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
         Width: =380
         X: =460
         Y: =191

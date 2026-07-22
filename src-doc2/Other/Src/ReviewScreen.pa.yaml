@@ -342,7 +342,7 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search people to add as assignee…"
             Items: |-
-              =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+              =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
             SearchFields: =["DisplayName"]

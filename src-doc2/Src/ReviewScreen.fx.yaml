@@ -353,10 +353,10 @@ ReviewScreen As screen:
         InputTextPlaceholder: ="Search people to add as assignee…"
         IsSearchable: =true
         Items: |-
-            =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+            =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
         SearchFields: =["DisplayName"]
         SearchItems: |-
-            =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+            =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
         Visible: =Not(IsBlank(varReviewProject))
         Width: =380
         X: =460

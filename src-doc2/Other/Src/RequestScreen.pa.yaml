@@ -227,7 +227,7 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search the DG official responsible"
             Items: |-
-              =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+              =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
             OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
             PressedColor: =Self.Color
             PressedFill: =Self.Fill
@@ -267,7 +267,7 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search the contractor / production company"
             Items: |-
-              =Office365Users.SearchUser({searchTerm: Self.SearchText, top: 20})
+              =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
             OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
             PressedColor: =Self.Color
             PressedFill: =Self.Fill
