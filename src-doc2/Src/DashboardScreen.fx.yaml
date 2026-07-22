@@ -1,0 +1,685 @@
+DashboardScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+    OnVisible: |-
+        =Set(varMonthStart, Date(Year(Now()), Month(Now()), 1));
+        Set(varKpiRejectedAll,
+            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Rejected")));
+        Set(varKpiRejectedMonth,
+            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Rejected", Created >= varMonthStart)));
+        Set(varKpiPendingAll,
+            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Pending")));
+        Set(varKpiPendingMonth,
+            CountRows(Filter(AVCentralDepositRequests, Status.Value = "Pending", Created >= varMonthStart)));
+        Set(varKpiMyMonthTotal,
+            CountRows(Filter(AVCentralDepositRequests, Created >= varMonthStart, Status.Value = "Published")));
+        Set(varKpiMyMonthSuccess,
+            CountRows(Filter(AVCentralDepositRequests, 'Created By'.Email = User().Email, Created >= varMonthStart, Status.Value = "Approved")));
+        Set(varKpiAllMonthTotal,
+            CountRows(Filter(AVCentralDepositRequests, Created >= varMonthStart, Status.Value = "Published")));
+        Set(varKpiAllMonthSuccess,
+            CountRows(Filter(AVCentralDepositRequests, Created >= varMonthStart, Status.Value = "Approved")));
+        /*Set(varKpiAvgPublishDays,
+            With(
+                {approved: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)))},
+                If(CountRows(approved) = 0,
+                    Blank(),
+                    Round(
+                        Average(AddColumns(approved, "durHours",
+                            DateDiff(Created, PublicationDate, TimeUnit.Hours)),
+                            durHours) / 24,
+                        1))));
+        Set(varShowTrend, false);
+        ClearCollect(colPublishTrend,
+            ForAll(Sequence(12) As Mo,
+                With(
+                    {
+                        curSet: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)), Year(PublicationDate) = Year(Now()), Month(PublicationDate) = Mo.Value),
+                        prevSet: Filter(AVCentralDepositRequests, Status.Value = "Approved", Not(IsBlank(PublicationDate)), Year(PublicationDate) = Year(Now()) - 1, Month(PublicationDate) = Mo.Value)
+                    },
+                    {
+                        month: Mo.Value,
+                        cur: If(CountRows(curSet) = 0, 0, Round(Average(curSet, DateDiff(Created, PublicationDate, TimeUnit.Hours)) / 24, 1)),
+                        prev: If(CountRows(prevSet) = 0, 0, Round(Average(prevSet, DateDiff(Created, PublicationDate, TimeUnit.Hours)) / 24, 1))
+                    }
+                )
+            )
+        );
+        Set(varTrendMax, Max(1, Max(Max(colPublishTrend, cur), Max(colPublishTrend, prev))));
+        Set(varTrendSvg,
+            "data:image/svg+xml;utf8," & EncodeUrl(
+                "<svg xmlns='http://www.w3.org/2000/svg' width='720' height='300' viewBox='0 0 720 300'>" &
+                "<rect width='720' height='300' fill='#ffffff'/>" &
+                "<line x1='56' y1='270' x2='700' y2='270' stroke='#d7dce4' stroke-width='1'/>" &
+                "<line x1='56' y1='147' x2='700' y2='147' stroke='#eef0f4' stroke-width='1'/>" &
+                "<line x1='56' y1='24' x2='700' y2='24' stroke='#eef0f4' stroke-width='1'/>" &
+                "<text x='48' y='274' font-size='11' fill='#7a8394' text-anchor='end'>0</text>" &
+                "<text x='48' y='151' font-size='11' fill='#7a8394' text-anchor='end'>" & Text(Round(varTrendMax / 2, 1)) & "</text>" &
+                "<text x='48' y='30' font-size='11' fill='#7a8394' text-anchor='end'>" & Text(Round(varTrendMax, 1)) & "</text>" &
+                Concat(colPublishTrend, "<text x='" & Text(Round(56 + (month - 1) / 11 * 644, 0)) & "' y='288' font-size='11' fill='#7a8394' text-anchor='middle'>" & Mid("JFMAMJJASOND", month, 1) & "</text>") &
+                "<polyline fill='none' stroke='#ED7D31' stroke-width='2.5' points='" & Concat(Filter(colPublishTrend, prev > 0), Text(Round(56 + (month - 1) / 11 * 644, 0)) & "," & Text(Round(270 - (prev / varTrendMax) * 246, 0)) & " ") & "'/>" &
+                "<polyline fill='none' stroke='#00126b' stroke-width='3' points='" & Concat(Filter(colPublishTrend, cur > 0), Text(Round(56 + (month - 1) / 11 * 644, 0)) & "," & Text(Round(270 - (cur / varTrendMax) * 246, 0)) & " ") & "'/>" &
+                "</svg>"
+            )
+        )*/
+
+    Header_1 As group:
+        Height: =5
+        minimumHeight: =5
+        minimumWidth: =5
+        Visible: =true
+        Width: =5
+        X: =8
+        Y: =20
+
+        HomeAppTitle_1 As label:
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+            ZIndex: =37
+
+        HomeUserName_1 As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+            ZIndex: =38
+
+        Logo_EC_Form_6 As image:
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+            ZIndex: =39
+
+        CD_Logo_1 As image:
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+            ZIndex: =40
+
+        HomeAppSubtitle_1 As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+            ZIndex: =41
+
+        Image1_6 As image:
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+            ZIndex: =42
+
+    DB_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =56
+        Width: =1366
+        ZIndex: =8
+
+    DB_PageTitle As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Size: =22
+        Text: ="Administrator Dashboard"
+        Width: =600
+        X: =48
+        Y: =84
+        ZIndex: =10
+
+    DB_PageSub As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =24
+        Text: ="Key indicators "
+        Width: =700
+        X: =48
+        Y: =126
+        ZIndex: =11
+
+    DB_Card1 As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =440
+        Width: =304
+        X: =48
+        Y: =166
+        ZIndex: =12
+
+    DB_Card1Accent As rectangle:
+        Fill: =RGBA(193, 40, 40, 1)
+        Height: =6
+        Width: =304
+        X: =48
+        Y: =166
+        ZIndex: =13
+
+    DB_Card1Title As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =24
+        Size: =12
+        Text: ="REJECTED REQUESTS"
+        Width: =248
+        X: =76
+        Y: =194
+        ZIndex: =14
+
+    DB_Card1Big As label:
+        Color: =RGBA(193, 40, 40, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =90
+        Size: =60
+        Text: =Text(Coalesce(varKpiRejectedAll, 0))
+        Width: =248
+        X: =76
+        Y: =232
+        ZIndex: =15
+
+    DB_Card1BigLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =29
+        Size: =11
+        Text: ="All Rejected Requests "
+        Width: =264
+        X: =76
+        Y: =330
+        ZIndex: =16
+
+    DB_Card1Divider As rectangle:
+        Fill: =RGBA(230, 232, 238, 1)
+        Height: =1
+        Width: =248
+        X: =76
+        Y: =374
+        ZIndex: =17
+
+    DB_Card1Month As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =50
+        Size: =32
+        Text: =Text(Coalesce(varKpiRejectedMonth, 0))
+        Width: =248
+        X: =76
+        Y: =392
+        ZIndex: =18
+
+    DB_Card1MonthLbl As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =24
+        Size: =11
+        Text: ="All Rejected Requests this month"
+        Width: =248
+        X: =76
+        Y: =448
+        ZIndex: =19
+
+    DB_Card2 As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =440
+        Width: =304
+        X: =370
+        Y: =166
+        ZIndex: =20
+
+    DB_Card2Accent As rectangle:
+        Height: =6
+        Width: =304
+        X: =370
+        Y: =166
+        ZIndex: =21
+
+    DB_Card2Title As label:
+        Align: =Align.Center
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =34
+        Size: =12
+        Text: |-
+            ="SUCCESS RATE 
+            (Published vs Approved)"
+        Width: =248
+        X: =398
+        Y: =194
+        ZIndex: =22
+
+    DB_Card2My As label:
+        Color: =RGBA(56, 96, 178, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =70
+        Size: =44
+        Text: |-
+            =If(Coalesce(varKpiMyMonthTotal, 0) = 0,
+                "No data",
+                Text(Round(100 * varKpiMyMonthSuccess / varKpiMyMonthTotal, 0)) & " %")
+        Width: =248
+        X: =398
+        Y: =228
+        ZIndex: =23
+
+    DB_Card2MyLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Size: =11
+        Text: ="All Published Requests this month"
+        Width: =248
+        X: =398
+        Y: =300
+        ZIndex: =24
+
+    DB_Card2Divider As rectangle:
+        Fill: =RGBA(230, 232, 238, 1)
+        Height: =1
+        Width: =248
+        X: =398
+        Y: =358
+        ZIndex: =25
+
+    DB_Card2All As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =70
+        Size: =44
+        Text: |-
+            =If(Coalesce(varKpiAllMonthTotal, 0) = 0,
+                "No data",
+                Text(Round(100 * varKpiAllMonthSuccess / varKpiAllMonthTotal, 0)) & " %")
+        Width: =248
+        X: =398
+        Y: =372
+        ZIndex: =26
+
+    DB_Card2AllLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Size: =11
+        Text: ="All Approved Requests this month"
+        Width: =248
+        X: =398
+        Y: =444
+        ZIndex: =27
+
+    DB_Card3 As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =440
+        Width: =304
+        X: =692
+        Y: =166
+        ZIndex: =29
+
+    DB_Card3Accent As rectangle:
+        Fill: =RGBA(22, 128, 80, 1)
+        Height: =6
+        Width: =304
+        X: =692
+        Y: =166
+        ZIndex: =30
+
+    DB_Card3Title As label:
+        Align: =Align.Center
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =34
+        Size: =12
+        Text: ="AVG TIME TO PUBLISHED MEDIA"
+        Width: =248
+        X: =720
+        Y: =194
+        ZIndex: =31
+
+    DB_Card3Big As label:
+        Color: =RGBA(22, 128, 80, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =90
+        Size: =44
+        Text: |-
+            =If(IsBlank(varKpiAvgPublishDays),
+                "No data",
+                If(varKpiAvgPublishDays < 1,
+                    Text(Round(varKpiAvgPublishDays * 24, 0)) & " h",
+                    Text(varKpiAvgPublishDays) & " days"))
+        Width: =248
+        X: =720
+        Y: =232
+        ZIndex: =32
+
+    DB_Card3BigLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =48
+        Size: =11
+        Text: ="Average from request creation to PublicationDate, across Approved requests"
+        Width: =248
+        X: =720
+        Y: =330
+        ZIndex: =33
+
+    DB_BtnEnter As button:
+        Height: =48
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(MyRequestScreen)
+        Text: ="Requests Management"
+        Width: =280
+        X: =478
+        Y: =648
+        ZIndex: =35
+
+    DB_BtnHelp As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =48
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(HelpScreen)
+        Size: =13
+        Text: ="Help"
+        Width: =110
+        X: =778
+        Y: =648
+        ZIndex: =36
+
+    Label12_4 As label:
+        Align: =Align.Center
+        AutoHeight: =true
+        Color: =RGBA(149, 149, 149, 1)
+        FontWeight: =FontWeight.Semibold
+        Size: =11
+        Text: |-
+            ="Audiovisual Service - DG COMM
+            This site is managed by the Directorate-General for Communication"
+        Width: =691
+        X: =265
+        Y: =717
+        ZIndex: =43
+
+    NoInternetIcon_4 As icon:
+        Color: =RGBA(255, 0, 0, 1)
+        DisplayMode: =DisplayMode.View
+        FocusedBorderThickness: =0
+        Height: =44
+        Icon: =Icon.GlobeNotConnected
+        PaddingBottom: =5
+        PaddingLeft: =5
+        PaddingRight: =5
+        PaddingTop: =5
+        Tooltip: ="No internet connection detected. Please verify your connection and try again."
+        Visible: =!Connection.Connected
+        X: =16
+        Y: =719
+        ZIndex: =44
+
+    Pending_Card As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =440
+        Width: =304
+        X: =1014
+        Y: =166
+        ZIndex: =45
+
+    Pending_CardAccent As rectangle:
+        Fill: =RGBA(237, 125, 49, 1)
+        Height: =6
+        Width: =304
+        X: =1014
+        Y: =166
+        ZIndex: =46
+
+    Pending_CardTitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =24
+        Size: =12
+        Text: ="PENDING REQUESTS"
+        Width: =248
+        X: =1042
+        Y: =194
+        ZIndex: =47
+
+    Pending_CardBig As label:
+        Color: =RGBA(237, 125, 49, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =90
+        Size: =60
+        Text: =Text(Coalesce(varKpiPendingAll, 0))
+        Width: =248
+        X: =1042
+        Y: =232
+        ZIndex: =48
+
+    Pending_CardBigLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =24
+        Size: =11
+        Text: ="All Pending Requests"
+        Width: =248
+        X: =1042
+        Y: =330
+        ZIndex: =49
+
+    Pending_CardDivider As rectangle:
+        Fill: =RGBA(230, 232, 238, 1)
+        Height: =1
+        Width: =248
+        X: =1042
+        Y: =374
+        ZIndex: =50
+
+    Pending_CardMonth As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =50
+        Size: =32
+        Text: =Text(Coalesce(varKpiPendingMonth, 0))
+        Width: =248
+        X: =1042
+        Y: =392
+        ZIndex: =51
+
+    Pending_CardMonthLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =36
+        Size: =11
+        Text: ="All Pending Requests this month"
+        Width: =248
+        X: =1042
+        Y: =448
+        ZIndex: =52
+
+    Pending_CardBtn As button:
+        BorderThickness: =0
+        Color: =RGBA(0, 0, 0, 0)
+        Fill: =RGBA(0, 0, 0, 0)
+        Height: =440
+        HoverFill: =RGBA(237, 125, 49, 0.06)
+        OnSelect: =Set(varNavFilter, "Pending"); Navigate(MyRequestScreen, ScreenTransition.Cover)
+        PressedFill: =RGBA(237, 125, 49, 0.12)
+        Tooltip: ="View all pending requests"
+        Width: =304
+        X: =1014
+        Y: =166
+        ZIndex: =59
+
+    DB_TrendBtn As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(0, 18, 107, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =34
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: =Set(varShowTrend, true)
+        RadiusBottomLeft: =8
+        RadiusBottomRight: =8
+        RadiusTopLeft: =8
+        RadiusTopRight: =8
+        Text: ="📈"
+        Tooltip: ="View monthly publish-time trend (this year vs previous)"
+        Width: =34
+        X: =958
+        Y: =176
+        ZIndex: =60
+
+    Pending_ValidateBtn As button:
+        BorderColor: =RGBA(237, 125, 49, 1)
+        BorderThickness: =1
+        Color: =RGBA(237, 125, 49, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =30
+        HoverFill: =RGBA(253, 237, 224, 1)
+        OnSelect: =Set(varReviewMineOnly, true); Navigate(ReviewScreen, ScreenTransition.Cover)
+        RadiusBottomLeft: =8
+        RadiusBottomRight: =8
+        RadiusTopLeft: =8
+        RadiusTopRight: =8
+        Size: =13
+        Text: ="✅"
+        Tooltip: ="Validate my assigned pending requests"
+        Width: =30
+        X: =1284
+        Y: =176
+        ZIndex: =60
+
+    DB_TrendOverlay As rectangle:
+        Fill: =RGBA(0, 18, 107, 0.45)
+        Height: =768
+        OnSelect: =Set(varShowTrend, false)
+        Visible: =varShowTrend
+        Width: =1366
+        ZIndex: =61
+
+    DB_TrendPanel As rectangle:
+        BorderColor: =RGBA(230, 234, 240, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =440
+        Visible: =varShowTrend
+        Width: =780
+        X: =293
+        Y: =150
+        ZIndex: =62
+
+    DB_TrendAccent As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =6
+        Visible: =varShowTrend
+        Width: =780
+        X: =293
+        Y: =150
+        ZIndex: =63
+
+    DB_TrendTitle As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =28
+        Size: =16
+        Text: ="Average time to published media - monthly trend"
+        Visible: =varShowTrend
+        Width: =680
+        X: =317
+        Y: =176
+        ZIndex: =64
+
+    DB_TrendSubtitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Height: =20
+        Size: =11
+        Text: ="Days from request creation to publication, by publication month."
+        Visible: =varShowTrend
+        Width: =680
+        X: =317
+        Y: =204
+        ZIndex: =65
+
+    DB_TrendClose As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =36
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varShowTrend, false)
+        RadiusBottomLeft: =18
+        RadiusBottomRight: =18
+        RadiusTopLeft: =18
+        RadiusTopRight: =18
+        Text: ="✕"
+        Visible: =varShowTrend
+        Width: =36
+        X: =1031
+        Y: =160
+        ZIndex: =66
+
+    DB_TrendImage As image:
+        Height: =300
+        Image: =varTrendSvg
+        Visible: =varShowTrend
+        Width: =720
+        X: =323
+        Y: =232
+        ZIndex: =67
+
+    DB_TrendLegendCur As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =12
+        Visible: =varShowTrend
+        Width: =24
+        X: =340
+        Y: =548
+        ZIndex: =68
+
+    DB_TrendLegendCurLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =20
+        Size: =11
+        Text: ="This year (" & Text(Year(Now())) & ")"
+        Visible: =varShowTrend
+        Width: =160
+        X: =370
+        Y: =544
+        ZIndex: =69
+
+    DB_TrendLegendPrev As rectangle:
+        Fill: =RGBA(237, 125, 49, 1)
+        Height: =12
+        Visible: =varShowTrend
+        Width: =24
+        X: =540
+        Y: =548
+        ZIndex: =70
+
+    DB_TrendLegendPrevLbl As label:
+        Color: =RGBA(60, 66, 80, 1)
+        Height: =20
+        Size: =11
+        Text: ="Previous year (" & Text(Year(Now()) - 1) & ")"
+        Visible: =varShowTrend
+        Width: =200
+        X: =570
+        Y: =544
+        ZIndex: =71
+

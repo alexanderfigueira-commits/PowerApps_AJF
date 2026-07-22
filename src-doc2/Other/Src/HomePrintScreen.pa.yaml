@@ -1,0 +1,431 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  HomePrintScreen:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
+    Children:
+      - HP_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+      - HP_BtnBack:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(MyRequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="←  Back"
+            Width: =100
+            X: =32
+            Y: =68
+      - HP_SubTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Size: =12
+            Text: =Text(CountRows(colPrintData)) & If(CountRows(colPrintData) = 1, " request", " requests") & "   ·   exported " & Text(Now(), "dd/mm/yyyy hh:mm")
+            Width: =700
+            X: =148
+            Y: =68
+      - HP_BtnDownload:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |
+              =Set(varPDF, PDF(HomePrintScreen));
+              Download(varPDF, "MyDocument.pdf")
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="⬇  Download PDF"
+            Width: =180
+            X: =1154
+            Y: =68
+      - HP_TableHeader:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(240, 242, 246, 1)
+            Height: =40
+            Width: =1302
+            X: =32
+            Y: =118
+      - HP_ThRequest:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: ="REQUEST"
+            Width: =380
+            X: =48
+            Y: =118
+      - HP_ThDG:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: ="DG"
+            Width: =160
+            X: =148
+            Y: =118
+      - HP_ThArchives:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: ="Nº Media"
+            Width: =78
+            X: =440
+            Y: =118
+      - HP_ThStatus:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: ="STATUS"
+            Width: =160
+            X: =537
+            Y: =118
+      - HP_ThSubmitted:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: ="SUBMITTED"
+            Width: =160
+            X: =650
+            Y: =118
+      - HP_ThDescription:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: ="TITLE"
+            Width: =206
+            X: =1010
+            Y: =118
+      - HP_Gallery:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DelayItemLoading: =false
+            Height: =Max(52, 52 * CountRows(colPrintData))
+            Items: =colPrintData
+            LoadingSpinner: =LoadingSpinner.None
+            ShowScrollbar: =false
+            TemplatePadding: =0
+            TemplateSize: =52
+            Width: =1302
+            X: =32
+            Y: =158
+          Children:
+            - HP_RowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(220, 224, 230, 1)
+                  Height: =1
+                  Width: =1302
+                  Y: =51
+            - HP_RowRequest:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =52
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.RequestNumber), "Untitled request", ThisItem.RequestNumber)
+                  Width: =380
+                  X: =16
+            - HP_RowDG:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =52
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.DG.Value), "—", ThisItem.DG.Value)
+                  Width: =280
+                  X: =116
+            - HP_RowArchives:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =52
+                  Size: =12
+                  Text: =Text(CountRows(Filter(AVCentralDepositMediaItems, ParentRequest = ThisItem.RequestNumber)))
+                  Width: =65
+                  X: =408
+            - HP_RowStatus:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =Switch(ThisItem.Status.Value,
+                        "Approved", RGBA(22, 128, 80, 1),
+                        "Submitted", RGBA(56, 96, 178, 1),
+                        "Rejected", RGBA(193, 40, 40, 1),
+                        RGBA(96, 104, 120, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =52
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", ThisItem.Status.Value)
+                  Width: =160
+                  X: =508
+            - HP_RowDate:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =52
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.StartRequestDate), "—", Text(ThisItem.StartRequestDate, "dd/mm/yyyy"))
+                  Width: =160
+                  X: =620
+            - HP_RowDescription:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =52
+                  Size: =11
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "—", ThisItem.RequestTitle)
+                  Width: =206
+                  X: =977
+            - HP_RowDate_1:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =52
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.Assignee.DisplayName), "—", ThisItem.Assignee.DisplayName)
+                  Width: =160
+                  X: =775
+      - HP_EmptyState:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Size: =14
+            Text: ="No requests to export."
+            Visible: =CountRows(colPrintData) = 0
+            Width: =1302
+            X: =32
+            Y: =220
+      - HP_Footer:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Size: =10
+            Text: ="AV Central Deposit Ticket System  ·  Audiovisual Service, DG COMM  ·  " & Text(Today(), "dd/mm/yyyy")
+            Width: =1302
+            X: =32
+            Y: =158 + Max(52, 52 * CountRows(colPrintData)) + 12
+      - HP_BtnWord:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 96, 178, 1)
+            BorderThickness: =1
+            Color: =RGBA(56, 96, 178, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =With(
+                  {
+                      wordHtml:
+                          "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'>" &
+                          "<head><meta charset='utf-8'><title>AV Central Deposit - Requests</title></head><body>" &
+                          "<h1 style='font-family:Arial;color:#00126B;'>AV Central Deposit - Requests</h1>" &
+                          "<p style='font-family:Arial;font-size:10pt;color:#606878;'>" &
+                              Text(CountRows(colPrintData)) & " request(s)  -  exported " & Text(Now(), "dd/mm/yyyy hh:mm") & "</p>" &
+                          "<table border='1' cellspacing='0' cellpadding='6' style='border-collapse:collapse;font-family:Arial;font-size:10pt;'>" &
+                          "<tr style='background:#F0F2F6;font-weight:bold;'>" &
+                              "<td>Request</td><td>DG</td><td>Archives</td><td>Status</td><td>Submitted</td><td>Description</td></tr>" &
+                          Concat(
+                              colPrintData,
+                              "<tr><td>" & If(IsBlank(RequestNumber), "Untitled request", RequestNumber) &
+                              "</td><td>" & Coalesce(DG.Value, "-") &
+                              "</td><td>" & Text(CountRows(Filter(AVCentralDepositMediaItems, ParentRequest = RequestNumber))) &
+                              "</td><td>" & Coalesce(Status.Value, "Draft") &
+                              "</td><td>" & If(IsBlank(StartRequestDate), "-", Text(StartRequestDate, "dd/mm/yyyy")) &
+                              "</td><td>" & Substitute(Substitute(Coalesce(Description, "-"), "&", "&amp;"), "<", "&lt;") &
+                              "</td></tr>"
+                          ) &
+                          "</table>" &
+                          "<p style='font-family:Arial;font-size:8pt;color:#8C94A0;'>AV Central Deposit Ticket System  -  Audiovisual Service, DG COMM  -  " &
+                              Text(Today(), "dd/mm/yyyy") & "</p>" &
+                          "</body></html>"
+                  },
+                  Download(
+                      "data:application/msword;charset=utf-8," & EncodeUrl(wordHtml),
+                      "CentralDeposit-Requests.doc"
+                  )
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="⬇  Download Word"
+            Width: =180
+            X: =960
+            Y: =68
+      - HomeAppTitle_HP:
+          Control: Label@2.5.1
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+      - HomeUserName_HP:
+          Control: Label@2.5.1
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+      - Logo_EC_HP:
+          Control: Image@2.2.3
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+      - CD_Logo_HP:
+          Control: Image@2.2.3
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+      - HomeAppSubtitle_HP:
+          Control: Label@2.5.1
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+      - Image1_HP:
+          Control: Image@2.2.3
+          Group: Header_HP
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+      - HP_ThDescription_1:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: ="ASSIGNEE"
+            Width: =206
+            X: =802
+            Y: =118

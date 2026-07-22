@@ -1,0 +1,905 @@
+ChildInfoScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+
+    Header_CI As group:
+        Height: =5
+        minimumHeight: =5
+        minimumWidth: =5
+        Visible: =true
+        Width: =5
+        X: =8
+        Y: =20
+        ZIndex: =1
+
+        HomeAppTitle_CI As label:
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =35
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =213
+            X: =81
+            Y: =5
+            ZIndex: =28
+
+        HomeUserName_CI As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+            ZIndex: =29
+
+        Logo_EC_CI As image:
+            Height: =57
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =218
+            X: =564
+            ZIndex: =30
+
+        CD_Logo_CI As image:
+            Height: =47
+            Image: =cd_badge_play
+            Width: =44
+            X: =25
+            Y: =6
+            ZIndex: =31
+
+        HomeAppSubtitle_CI As label:
+            Color: =RGBA(186, 202, 226, 1)
+            Height: =25
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            Width: =149
+            X: =111
+            Y: =28
+            ZIndex: =32
+
+        Image1_CI As image:
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+                =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+                Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1299
+            ZIndex: =33
+
+    CI_Breadcrumb As label:
+        Color: =RGBA(186, 202, 226, 1)
+        Height: =52
+        Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+        Width: =700
+        X: =200
+        ZIndex: =2
+
+    CI_TabsBg As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =50
+        Width: =1366
+        Y: =52
+        ZIndex: =3
+
+    CI_Tab1 As button:
+        BorderThickness: =0
+        Color: =RGBA(0, 18, 107, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(255, 255, 255, 1)
+        Size: =13
+        Text: ="1.  Info"
+        Width: =150
+        X: =16
+        Y: =52
+        ZIndex: =4
+
+    CI_Tab1Line As rectangle:
+        Height: =3
+        X: =16
+        Y: =99
+        ZIndex: =5
+
+    CI_Tab2 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildMetaScreen)
+        Size: =13
+        Text: ="2.  Metadata"
+        Width: =170
+        X: =176
+        Y: =52
+        ZIndex: =6
+
+    CI_Tab3 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildLegalScreen)
+        Size: =13
+        Text: ="3.  Legal & Docs"
+        Width: =180
+        X: =356
+        Y: =52
+        ZIndex: =7
+
+    CI_Tab4 As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(ChildValidScreen)
+        Size: =13
+        Text: ="4.  Validations"
+        Width: =170
+        X: =546
+        Y: =52
+        ZIndex: =8
+
+    CI_Gallery As gallery:
+        Fill: =RGBA(247, 248, 250, 1)
+        Height: =610
+        Items: |-
+            =[{id: 1}]
+        Layout: =Layout.Vertical
+        TemplatePadding: =0
+        TemplateSize: =If(varChildMediaType = "Photo", 440, If(varChildMediaType = "Video", 490, If(varChildMediaType = "Podcast", 560, 816)))
+        Width: =1366
+        Y: =102
+        ZIndex: =9
+
+        CI_Card As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =If(varChildMediaType = "Photo", 420, If(varChildMediaType = "Video", 470, If(varChildMediaType = "Podcast", 540, 796)))
+            Width: =1302
+            X: =32
+            Y: =6
+            ZIndex: =1
+
+        CI_SectionHeader As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =18
+            Text: ="Media details"
+            Width: =840
+            X: =56
+            Y: =26
+            ZIndex: =2
+
+        CI_ProductTypeDisplay As label:
+            BorderColor: =RGBA(186, 202, 226, 1)
+            BorderThickness: =1
+            Color: =RGBA(56, 96, 178, 1)
+            Fill: =RGBA(230, 236, 245, 1)
+            FontWeight: =FontWeight.Semibold
+            PaddingLeft: =12
+            Size: =14
+            Text: |-
+                ="Product type:  " & If(varChildMediaType = "Photo", "Photo / Reportage", varChildMediaType)
+            Width: =500
+            X: =56
+            Y: =66
+            ZIndex: =3
+
+        CI_LblTitle As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Archive / production title *"
+            Visible: =varChildMediaType <> "Podcast"
+            Width: =800
+            X: =56
+            Y: =122
+            ZIndex: =8
+
+        CI_Title As text:
+            Default: =varChildTitle1
+            HintText: ="Descriptive name of this specific archive item"
+            OnChange: =Set(varChildTitle1, Self.Text)
+            Visible: =varChildMediaType <> "Podcast"
+            Width: =900
+            X: =56
+            Y: =148
+            ZIndex: =9
+
+        CI_LblDescription As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: =If(varChildMediaType = "Photo", "Description *", "Description")
+            Visible: =varChildMediaType <> "Podcast"
+            Width: =800
+            X: =56
+            Y: =204
+            ZIndex: =10
+
+        CI_Description As text:
+            Default: =varChildDescription1
+            Height: =64
+            HintText: ="Brief description of the content"
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varChildDescription1, Self.Text)
+            Visible: =varChildMediaType <> "Podcast"
+            Width: =900
+            X: =56
+            Y: =230
+            ZIndex: =11
+
+        CI_LblCaptureDate As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Capture / production date *"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =300
+            X: =56
+            Y: =310
+            ZIndex: =12
+
+        CI_CaptureDate As datepicker:
+            DefaultDate: =varChildCaptureDate
+            OnChange: =Set(varChildCaptureDate, Self.SelectedDate)
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =300
+            X: =56
+            Y: =336
+            ZIndex: =13
+
+        CI_LblPlace As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Production place"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =300
+            X: =388
+            Y: =310
+            ZIndex: =14
+
+        CI_Place As text:
+            Default: =varChildProductionPlace1
+            HintText: ="City, country or venue"
+            OnChange: =Set(varChildProductionPlace1, Self.Text)
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =300
+            X: =388
+            Y: =336
+            ZIndex: =15
+
+        CI_LblProductType As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Type of product *"
+            Visible: =varChildMediaType = "Video"
+            Width: =600
+            X: =56
+            Y: =310
+            ZIndex: =16
+
+        CI_ProductType As dropdown:
+            Default: =varChildProductType1
+            Items: =["Clip", "Social Media Clip", "Animation", "Teaser", "Others"]
+            OnChange: =Set(varChildProductType, Self.Selected.Value)
+            Visible: =varChildMediaType = "Video"
+            Width: =400
+            X: =56
+            Y: =336
+            ZIndex: =17
+
+        CI_LblSeriesTitle As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Series title"
+            Visible: =false
+            Width: =600
+            X: =56
+            Y: =392
+            ZIndex: =18
+
+        CI_SeriesTitle As text:
+            Default: =varChildSeriesTitle1
+            HintText: ="Name of the podcast series"
+            OnChange: =Set(varChildSeriesTitle1, Self.Text)
+            Visible: =false
+            Width: =600
+            X: =56
+            Y: =418
+            ZIndex: =19
+
+        CI_LblEpisodeTitle As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Episode title"
+            Visible: =false
+            Width: =390
+            X: =56
+            Y: =474
+            ZIndex: =20
+
+        CI_EpisodeTitle As text:
+            Default: =varChildEpisodeTitle1
+            HintText: ="Episode or segment title"
+            OnChange: =Set(varChildEpisodeTitle, Self.Text)
+            Visible: =false
+            Width: =390
+            X: =56
+            Y: =500
+            ZIndex: =21
+
+        CI_LblProductionEndDate As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Production end date"
+            Visible: =false
+            Width: =300
+            X: =56
+            Y: =392 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0)
+            ZIndex: =28
+
+        CI_ProductionEndDate As datepicker:
+            DefaultDate: =varChildProductionEndDate
+            OnChange: =Set(varChildProductionEndDate, Self.SelectedDate)
+            Visible: =false
+            Width: =300
+            X: =56
+            Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0)
+            ZIndex: =29
+
+        CI_LblPubStartDate As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Publication start date"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =300
+            X: =56
+            Y: =392 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            ZIndex: =30
+
+        CI_PubStartDate As datepicker:
+            DefaultDate: =varChildPublicationStartDate
+            OnChange: =Set(varChildPublicationStartDate, Self.SelectedDate)
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =300
+            X: =56
+            Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            ZIndex: =31
+
+        CI_LblPubEndDate As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Publication end date"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =300
+            X: =388
+            Y: =392 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            ZIndex: =32
+
+        CI_PubEndDate As datepicker:
+            DefaultDate: =varChildPublicationEndDate
+            OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =300
+            X: =388
+            Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            ZIndex: =33
+
+        CI_LblLinks As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Reference links"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =800
+            X: =56
+            Y: =472 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            ZIndex: =34
+
+        CI_Links As text:
+            Default: =varChildLinks1
+            HintText: ="Relevant URLs or SharePoint references"
+            OnChange: =Set(varChildLinks1, Self.Text)
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =900
+            X: =56
+            Y: =498 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            ZIndex: =35
+
+        CI_LblTags As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Pertinent tags"
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =800
+            X: =56
+            Y: =552 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            ZIndex: =36
+
+        CI_Tags As text:
+            Default: =varChildTags1
+            HintText: ="Comma-separated keywords for discoverability"
+            OnChange: =Set(varChildTags, Self.Text)
+            Visible: =varChildMediaType <> "Photo" And varChildMediaType <> "Video" And varChildMediaType <> "Podcast"
+            Width: =900
+            X: =56
+            Y: =578 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0) + If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", 80, 0)
+            ZIndex: =37
+
+        CI_LblFTPPath As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="FTP delivery path"
+            Visible: =varChildMediaType = "Photo"
+            Width: =800
+            X: =56
+            Y: =310
+            ZIndex: =38
+
+        CI_FTPPath As text:
+            Default: =varChildFTPPath1
+            HintText: |-
+                ="ftp://avdeposit.ec.europa.eu/incoming/2026/…"
+            OnChange: =Set(varChildFTPPath1, Self.Text)
+            Visible: =varChildMediaType = "Photo"
+            Width: =900
+            X: =56
+            Y: =336
+            ZIndex: =39
+
+        CI_LblLanguage As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Language version(s) *"
+            Visible: =varChildMediaType = "Video"
+            Width: =400
+            X: =56
+            Y: =392
+            ZIndex: =45
+
+        CI_Language As dropdown:
+            Default: =varChildLanguageVersions
+            Items: =["EN", "FR", "DE", "IT", "ES", "PT", "NL", "PL", "RO", "EL", "CS", "SV", "HU", "BG", "DA", "FI", "SK", "HR", "LT", "SL", "LV", "ET", "MT", "GA", "Other"]
+            OnChange: =Set(varChildLanguageVersions, Self.Selected.Value)
+            Visible: =varChildMediaType = "Video"
+            Width: =400
+            X: =56
+            Y: =418
+            ZIndex: =46
+
+        CI_PodcastNote As rectangle:
+            BorderColor: =RGBA(186, 202, 226, 1)
+            BorderThickness: =1
+            Fill: =RGBA(230, 236, 245, 1)
+            Height: =40
+            Visible: =varChildMediaType = "Podcast"
+            Width: =1220
+            X: =56
+            Y: =116
+            ZIndex: =50
+
+        CI_PodcastNoteText As label:
+            Color: =RGBA(56, 96, 178, 1)
+            Italic: =true
+            Size: =12
+            Text: ="This section captures the general information of the podcast, which applies to all episodes."
+            Visible: =varChildMediaType = "Podcast"
+            Width: =1196
+            X: =68
+            Y: =116
+            ZIndex: =51
+
+        CI_LblPodcastTitle As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Title of the podcast *"
+            Visible: =varChildMediaType = "Podcast"
+            Width: =800
+            X: =56
+            Y: =172
+            ZIndex: =52
+
+        CI_PodcastTitle As text:
+            Default: =Coalesce(varRequestTitle, varRequestTitle1)
+            HintText: ="Overall title of this podcast"
+            OnChange: =Set(varRequestTitle, Self.Text); Set(varRequestTitle1, Self.Text)
+            Visible: =varChildMediaType = "Podcast"
+            Width: =900
+            X: =56
+            Y: =198
+            ZIndex: =53
+
+        CI_LblPodcastDesc As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Description of the podcast *"
+            Visible: =varChildMediaType = "Podcast"
+            Width: =800
+            X: =56
+            Y: =254
+            ZIndex: =54
+
+        CI_PodcastDesc As text:
+            Default: =Coalesce(varRequestDescription, varRequestDescription1)
+            Height: =64
+            HintText: ="General description of the podcast, applies to all episodes"
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varRequestDescription, Self.Text); Set(varRequestDescription1, Self.Text)
+            Visible: =varChildMediaType = "Podcast"
+            Width: =900
+            X: =56
+            Y: =280
+            ZIndex: =55
+
+        CI_LblPodcastVisual As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Podcast visual *"
+            Visible: =varChildMediaType = "Podcast"
+            Width: =800
+            X: =56
+            Y: =360
+            ZIndex: =56
+
+        CI_HintPodcastVisual As label:
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =20
+            Size: =11
+            Text: ="Square format, 1400x1400 px min to 3000x3000 px max, JPEG or PNG only, RGB colour space."
+            Visible: =varChildMediaType = "Podcast"
+            Width: =900
+            X: =56
+            Y: =382
+            ZIndex: =57
+
+        CI_PodcastVisual As attachments:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =110
+            MaxAttachments: =1
+            Visible: =varChildMediaType = "Podcast"
+            Width: =900
+            X: =56
+            Y: =404
+            ZIndex: =58
+
+    CI_BottomBar As rectangle:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =56
+        Width: =1366
+        Y: =712
+        ZIndex: =10
+
+    CI_BtnSave As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: |-
+            =Notify("Fields saved: complete all tabs then press Save media on the Validations tab.", NotificationType.Information)
+        Size: =13
+        Text: ="ⓘ  Note"
+        Width: =140
+        X: =32
+        Y: =720
+        ZIndex: =11
+
+    CI_BtnNext As button:
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: =Navigate(ChildMetaScreen)
+        Size: =14
+        Text: |-
+            ="Next: Metadata  →"
+        Width: =200
+        X: =1142
+        Y: =720
+        ZIndex: =12
+
+    CI_BtnTemplate As button:
+        BorderColor: =RGBA(56, 96, 178, 1)
+        BorderThickness: =1
+        Color: =RGBA(56, 96, 178, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =34
+        HoverFill: =RGBA(230, 236, 245, 1)
+        OnSelect: |-
+            =Set(varTplSearch1, "");
+            Set(varTplCandidate, Blank());
+            Set(varShowTplConfirm, false);
+            Set(varShowTemplatePicker, true)
+        Size: =12
+        Text: ="Use previous archive as template"
+        Width: =300
+        X: =1011
+        Y: =125
+        ZIndex: =13
+
+    CI_TplOverlay As rectangle:
+        Fill: =RGBA(0, 18, 107, 0.45)
+        Height: =768
+        OnSelect: =Set(varShowTemplatePicker, false)
+        Visible: =varShowTemplatePicker
+        Width: =1366
+        ZIndex: =14
+
+    CI_TplPanel As rectangle:
+        BorderColor: =RGBA(186, 202, 226, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =540
+        Visible: =varShowTemplatePicker
+        Width: =760
+        X: =303
+        Y: =114
+        ZIndex: =15
+
+    CI_TplTitle As label:
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Bold
+        Height: =30
+        Size: =16
+        Text: ="Use previous archive as template"
+        Visible: =varShowTemplatePicker
+        Width: =600
+        X: =327
+        Y: =130
+        ZIndex: =16
+
+    CI_TplSubtitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        Size: =12
+        Text: ="Showing only Photo/Reportage media files, newest first. Selecting one pre-fills this form and never modifies the original."
+        Visible: =varShowTemplatePicker
+        Width: =712
+        X: =327
+        Y: =162
+        ZIndex: =17
+
+    CI_TplClose As button:
+        BorderThickness: =0
+        Color: =RGBA(96, 104, 120, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        HoverColor: =RGBA(0, 18, 107, 1)
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varShowTemplatePicker, false)
+        Size: =16
+        Text: ="X"
+        Visible: =varShowTemplatePicker
+        Width: =40
+        X: =1011
+        Y: =122
+        ZIndex: =18
+
+    CI_TplSearch As text:
+        Default: =varTplSearch1
+        Height: =36
+        HintText: ="Search by title or media ID..."
+        OnChange: =Set(varTplSearch, Self.Text)
+        Visible: =varShowTemplatePicker
+        Width: =712
+        X: =327
+        Y: =208
+        ZIndex: =19
+
+    CI_TplGallery As gallery.galleryVertical:
+        DelayItemLoading: =true
+        Height: =316
+        Items: |-
+            =SortByColumns(
+                Filter(
+                    AVCentralDepositMediaItems,
+                    varChildMediaType in MediaType.Value,
+                    IsBlank(varTplSearch)
+                        Or varTplSearch in Title
+                        Or varTplSearch in Text(ID)
+                ),
+                "ID", SortOrder.Descending
+            )
+        Layout: =Layout.Vertical
+        LoadingSpinner: =LoadingSpinner.Data
+        TemplatePadding: =0
+        TemplateSize: =56
+        Visible: =varShowTemplatePicker
+        Width: =712
+        X: =327
+        Y: =250
+        ZIndex: =20
+
+        CI_TplRowBg As rectangle:
+            Fill: =RGBA(0, 0, 0, 0)
+            Height: =55
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+                =Set(varTplCandidate, ThisItem);
+                If(
+                    varChildTitle <> "" Or varChildDescription1 <> "",
+                    Set(varShowTplConfirm, true),
+                    Set(varChildTitle, Coalesce(varTplCandidate.Title, ""));
+                    Set(varChildDescription1, Coalesce(varTplCandidate.Description, ""));
+                    Set(varChildCredits1, Coalesce(First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
+                    Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, ""));
+                    Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
+                    Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
+                    Set(varChildContractRef1, Coalesce(varTplCandidate.ContractReference, ""));
+                    Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
+                    Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
+                    Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
+                    Set(varChildMusicLicenceProvided, Coalesce(varTplCandidate.MusicLicenseProvided, false));
+                    Set(varChildPreexistingProvided, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+                    Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+                    Set(varChildAIVoiceover, varTplCandidate.AIVoiceover = "Yes");
+                    Set(varShowTemplatePicker, false)
+                )
+            Width: =712
+            ZIndex: =1
+
+        CI_TplRowTitle As label:
+            Color: =RGBA(32, 31, 30, 1)
+            Height: =28
+            OnSelect: =Select(Parent)
+            Text: =If(IsBlank(ThisItem.Title), "Untitled archive", ThisItem.Title)
+            Width: =500
+            X: =12
+            Y: =4
+            ZIndex: =2
+
+        CI_TplRowMeta As label:
+            Color: =RGBA(96, 104, 120, 1)
+            Height: =22
+            OnSelect: =Select(Parent)
+            Size: =11
+            Text: ="ID " & Text(ThisItem.ID) & If(IsBlank(First(ThisItem.ContractCase).Value), "", "   |   " & Left(First(ThisItem.ContractCase).Value, 30))
+            Width: =560
+            X: =12
+            Y: =30
+            ZIndex: =3
+
+        CI_TplRowUse As label:
+            Align: =Align.Right
+            Color: =RGBA(56, 96, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =55
+            OnSelect: =Select(Parent)
+            Size: =12
+            Text: ="Use"
+            Width: =100
+            X: =600
+            ZIndex: =4
+
+        CI_TplRowDivider As rectangle:
+            Fill: =RGBA(230, 232, 238, 1)
+            Height: =1
+            Width: =712
+            Y: =55
+            ZIndex: =5
+
+    CI_TplEmpty As label:
+        Align: =Align.Center
+        Color: =RGBA(140, 148, 160, 1)
+        Height: =60
+        Text: ="No previous " & If(varChildMediaType="Photo", "Photo/Reportage", varChildMediaType) & " archives yet."
+        Visible: =varShowTemplatePicker And CountRows(CI_TplGallery.AllItems) = 0
+        Width: =712
+        X: =327
+        Y: =380
+        ZIndex: =21
+
+    CI_TplConfirmShade As rectangle:
+        Fill: =RGBA(0, 18, 107, 0.35)
+        Height: =768
+        Visible: =varShowTplConfirm
+        Width: =1366
+        ZIndex: =22
+
+    CI_TplConfirmPanel As rectangle:
+        BorderColor: =RGBA(186, 202, 226, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =170
+        Visible: =varShowTplConfirm
+        Width: =520
+        X: =423
+        Y: =290
+        ZIndex: =23
+
+    CI_TplConfirmText As label:
+        Color: =RGBA(32, 31, 30, 1)
+        Height: =60
+        Text: ="You already started filling this form. Pre-filling from the selected template will overwrite your current entries. Continue?"
+        Visible: =varShowTplConfirm
+        Width: =472
+        X: =447
+        Y: =306
+        ZIndex: =24
+
+    CI_TopBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =56
+        Width: =1366
+        ZIndex: =25
+
+    CI_TplConfirmCancel As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =54
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Set(varShowTplConfirm, false)
+        Size: =13
+        Text: ="Keep my entries"
+        Visible: =varShowTplConfirm
+        Width: =166
+        X: =581
+        Y: =380
+        ZIndex: =26
+
+    CI_TplConfirmOK As button:
+        Height: =54
+        HoverFill: =RGBA(0, 18, 107, 1)
+        OnSelect: |-
+            =Set(varChildTitle, Coalesce(varTplCandidate.Title, ""));
+            Set(varChildDescription1, Coalesce(varTplCandidate.Description, ""));
+            Set(varChildCredits1, Coalesce(First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
+            Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, ""));
+            Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
+            Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
+            Set(varChildContractRef1, Coalesce(varTplCandidate.ContractReference, ""));
+            Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
+            Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
+            Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
+            Set(varChildMusicLicenceProvided, Coalesce(varTplCandidate.MusicLicenseProvided, false));
+            Set(varChildPreexistingProvided, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+            Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+            Set(varChildAIVoiceover, varTplCandidate.AIVoiceover = "Yes");
+            Set(varShowTplConfirm, false);
+            Set(varShowTemplatePicker, false)
+        Size: =13
+        Text: ="Overwrite and pre-fill"
+        Visible: =varShowTplConfirm
+        Width: =168
+        X: =759
+        Y: =380
+        ZIndex: =27
+
+    RS_Back_1 As button:
+        BorderColor: =RGBA(220, 224, 230, 1)
+        BorderThickness: =1
+        Color: =RGBA(60, 66, 80, 1)
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =36
+        HoverFill: =RGBA(247, 248, 250, 1)
+        OnSelect: =Navigate(RequestScreen)
+        Size: =13
+        Text: ="< No Saving"
+        Width: =154
+        X: =192
+        Y: =724
+        ZIndex: =34
+
