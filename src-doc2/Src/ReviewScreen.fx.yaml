@@ -113,7 +113,7 @@ ReviewScreen As screen:
         Items: |-
             =Sort(
                 Filter(colRevReqs,
-                    If(varReviewQueueMine, Status.Value = "Pending", Status.Value = "Submitted"),
+                    If(varReviewQueueMine, Status.Value = "Pending", Status.Value = "Pending"),
                     Not(varReviewQueueMine) Or Not(IsEmpty(Filter(DG_Agency_Contact, Lower(Email) = Lower(User().Email))))
                 ),
                 Modified, SortOrder.Descending

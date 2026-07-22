@@ -285,7 +285,7 @@ ChildMetaScreen As screen:
             ZIndex: =8
 
         CM_Desc As text:
-            Default: =varChildDescription1
+            Default: =If(StartsWith(Trim(varChildDescription1),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(varChildDescription1,">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),varChildDescription1)
             Height: =88
             HintText: ="Editorial description, context and keywords"
             Mode: =TextMode.MultiLine

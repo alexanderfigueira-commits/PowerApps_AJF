@@ -683,7 +683,7 @@ RequestScreen As screen:
                     =Set(varCurrentChildId, ThisItem.ArchiveId);
                     Set(varChildTitle1, If(ThisItem.Title = "New archive", "", ThisItem.Title));
                     Set(varChildMediaType, If(IsBlank(ThisItem.MediaType), "Photo", ThisItem.MediaType));
-                    Set(varChildDescription1, Coalesce(ThisItem.Description, ""));
+                    Set(varChildDescription1, If(StartsWith(Trim(Coalesce(ThisItem.Description, "")),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(Coalesce(ThisItem.Description, ""),">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),Coalesce(ThisItem.Description, "")));
                     Set(varChildCaptureDate, ThisItem.CaptureDate);
                     Set(varChildProductionPlace1, Coalesce(ThisItem.ProductionPlace, ""));
                     Set(varChildCredits1, Coalesce(ThisItem.Credits, ""));
@@ -871,7 +871,7 @@ RequestScreen As screen:
                                     Description: varRequestDescription,
                                     DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                     Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                    Status: {Value: "Submitted"}
+                                    Status: {Value: "Pending"}
                                 }
                             )
                         },
@@ -932,7 +932,7 @@ RequestScreen As screen:
                                     Description: varRequestDescription,
                                     DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                     Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                    Status: {Value: "Submitted"}
+                                    Status: {Value: "Pending"}
                                 }
                             )
                         },
