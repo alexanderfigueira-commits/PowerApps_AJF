@@ -97,7 +97,7 @@ ChildValidScreen As screen:
              Pass: Not(varChildPreexisting) Or varChildPreexistingProvided,
              Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
             {Check: "FTP delivery path set on this archive (Photo only)",
-             Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath)) And varChildFTPPath <> ""),
+             Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath1)) And varChildFTPPath1 <> ""),
              Note: "Enter the FTP path on the Info tab."},
             {Check: "Owner / point of contact set on the request",
              Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "",
@@ -333,7 +333,7 @@ ChildValidScreen As screen:
                 {Check: "Model release: if persons appear → forms provided", Pass: Not(varChildModelRelease) Or varChildModelReleaseProvided, Note: "Recognisable persons declared but model release not confirmed. Attach forms on Legal & Docs."},
                 {Check: "Music licence: if music used → documentation provided", Pass: Not(varChildMusicUsed) Or varChildMusicLicenceProvided, Note: "Music declared but licence/annex not confirmed. Attach on Legal & Docs."},
                 {Check: "Pre-existing rights: if declared → annex provided", Pass: Not(varChildPreexisting) Or varChildPreexistingProvided, Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
-                {Check: "FTP delivery path set on this archive (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath)) And varChildFTPPath <> ""), Note: "Enter the FTP path on the Info tab."},
+                {Check: "FTP delivery path set on this archive (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath1)) And varChildFTPPath1 <> ""), Note: "Enter the FTP path on the Info tab."},
                 {Check: "Owner / point of contact set on the request", Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "", Note: "Set the owner on the Request screen."}
             )
         Size: =12
@@ -462,7 +462,7 @@ ChildValidScreen As screen:
                     PublicationEndDate: varChildPublicationEndDate,
                     ReferenceLinks: varChildLinks1,
                     Tags: varChildTags,
-                    FTPPath: varChildFTPPath,
+                    FTPPath: varChildFTPPath1,
                     LanguageVersions: varChildLanguageVersions,
                     AIVoiceover: varChildAIVoiceover,
                     ContractCase: varChildContractCase,
@@ -511,7 +511,7 @@ ChildValidScreen As screen:
                                         PublicationEndDate: varChildPublicationEndDate,
                                         ReferenceLinks: varChildLinks1,
                                         Tags: varChildTags,
-                                        FTPPath: varChildFTPPath,
+                                        FTPPath: varChildFTPPath1,
                                         LanguageVersions: Table({Value: varChildLanguageVersions}),
                                         // AIVoiceover column is TEXT; var is Boolean by convention, converted here only.
                                         AIVoiceover: If(varChildAIVoiceover, "Yes", "No"),
