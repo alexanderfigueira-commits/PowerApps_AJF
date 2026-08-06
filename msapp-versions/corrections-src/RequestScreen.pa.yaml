@@ -797,14 +797,14 @@ Screens:
                   HoverColor: =RGBA(255, 255, 255, 1)
                   HoverFill: =RGBA(253, 235, 235, 1)
                   OnSelect: |-
-                    =If(
-                        Coalesce(ThisItem.SPId, 0) > 0,
-                        IfError(
-                            Remove(AVCentralDepositMediaItems, LookUp(AVCentralDepositMediaItems, ID = ThisItem.SPId));
-                            RemoveIf(colArchives, ArchiveId = ThisItem.ArchiveId),
-                            Notify("Could not delete the media item: " & FirstError.Message, NotificationType.Error)
-                        ),
-                        RemoveIf(colArchives, ArchiveId = ThisItem.ArchiveId)
+                    =IfError(
+                        If(
+                            Coalesce(ThisItem.SPId, 0) > 0,
+                            Remove(AVCentralDepositMediaItems, LookUp(AVCentralDepositMediaItems, ID = ThisItem.SPId))
+                        );
+                        RemoveIf(colArchives, ArchiveId = ThisItem.ArchiveId);
+                        Notify("Media item removed.", NotificationType.Success),
+                        Notify("Could not delete the media item: " & FirstError.Message, NotificationType.Error)
                     )
                   PressedBorderColor: =Self.Fill
                   PressedColor: =Self.Fill
