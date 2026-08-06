@@ -62,7 +62,7 @@
       {
         "Property": "OnStart",
         "Category": "Behavior",
-        "InvariantScript": "// Initialize the Office365Connected variable\r\nSet(Office365Connected, true);\r\n\r\n//Set the pop message\r\nSet(varShowPopup, false);\r\n\r\n// Check Office 365 profile access and update the Office365Connected variable\r\nIfError(\r\n    Set(MyProfile, Office365Users.MyProfile()),\r\n    Set(Office365Connected, false)\r\n);\r\n\r\nSet(VideoCoverageSelected, false);\r\nSet(OnlyConferenceEventSelected, false);\r\nSet(ConferenceEventSelected, false);\r\nSet(ResetCheckboxes, false);\r\n\r\nSet(varCollegeMember, Blank());\r\nSet(varEventTitle, Blank());\r\nSet(varStartDateTime, Blank());\r\nSet(varStartDate, Blank());\r\nSet(varStartHour, Blank());\r\nSet(varStartMinute, Blank());\r\nSet(varEndDateTime, Blank());\r\nSet(varEndDate, Blank());\r\nSet(varEndHour, Blank());\r\nSet(varEndMinute, Blank());\r\nSet(varLocation, Blank());\r\nSet(varAddress, Blank());\r\nSet(varEventTypes, Blank());\r\nSet(otherEventValue, Blank());\r\nSet(VIPEventValue, Blank());\r\nSet(varCoverageTypes, Blank());\r\nSet(varEventCoverageType, Blank());\r\nSet(varWebstreamed, Blank());\r\nSet(varWebstreamedOrganizer, Blank());\r\nSet(varPublicationType, Blank());\r\nSet(varContacts, Blank());\r\n\r\n\r\nSet(varComments, Blank());\r\n\r\n\r\n\r\nNewForm(CoverageFormRequest);",
+        "InvariantScript": "Set(varUserRole, Coalesce(LookUp(RolesPermissionsList, UserEmail.Email = User().Email, Role.Value), \"REQUESTOR\"));\nSet(MyProfile, IfError(Office365Users.MyProfile(), Blank()));\nSet(varCurrentRequest, Defaults(AVCentralDepositRequests));\nSet(varFilter, \"All\");\nSet(varFilterDG, \"\");\nSet(varFilterStartDate, Blank());\nSet(varFilterEndDate, Blank());\nSet(varRequestTitle, \"\");\nSet(varRequestDG, \"\");\nSet(varRequestDescription, \"\");\nSet(varRequestOwnerContact, \"\");\nSet(varRequestOwnerEmail, User().Email);\nSet(varRequestMediaType, \"\");\nSet(varRequestAIDeclared, false);\nSet(varCurrentChildId, \"\");\nSet(varChildTitle, \"\");\nSet(varChildMediaType, \"Photo\");\nSet(varChildDescription, \"\");\nSet(varChildCaptureDate, Blank());\nSet(varChildProductionPlace, \"\");\nSet(varChildCredits, \"\");\nSet(varChildLanguageVersions, \"\");\nSet(varChildEpisodeTitle, \"\");\nSet(varChildEpisodeSummary, \"\");\nSet(varChildSeasonNumber, 0);\nSet(varChildEpisodeNumber, 0);\nSet(varChildSeriesTitle, \"\");\nSet(varChildProductType, \"\");\nSet(varChildProductionEndDate, Blank());\nSet(varChildPublicationStartDate, Blank());\nSet(varChildPublicationEndDate, Blank());\nSet(varChildLinks, \"\");\nSet(varChildTags, \"\");\nSet(varChildFTPPath, \"\");\nSet(varChildAIVoiceover, false);\nSet(varChildContractCase, \"\");\nSet(varChildContractCase1Sub, \"\");\nSet(varChildModelRelease, false);\nSet(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, \"\"); Set(varChildExecProducer, \"\"); Set(varChildProducer, \"\"); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, \"\"); Set(varCurrentChildSPId, 0);\nSet(varChildModelReleaseProvided, false);\nSet(varChildMusicUsed, false);\nSet(varChildMusicLicenceProvided, false);\nSet(varChildPreexisting, false);\nSet(varChildPreexistingProvided, false);\nSet(varReviewComment, \"\");\nSet(varReviewProject, Blank());\nSet(varShowTemplatePicker, false);\nSet(varShowTplConfirm, false);\nSet(varTplSearch, \"\");\nSet(varTplCandidate, Blank());\nSet(varShowTypeConfirm, false);\nSet(varPendingMediaType, \"\");\nSet(varConfirmed, false);\nSet(varRating, 0);\nSet(varFeedbackText, \"\");\nSet(varFeedbackSent, false);\nSet(varMonthStart, Blank());\nSet(varKpiRejectedAll, 0);\nSet(varKpiRejectedMonth, 0);\nSet(varKpiMyMonthTotal, 0);\nSet(varKpiMyMonthSuccess, 0);\nSet(varKpiAllMonthTotal, 0);\nSet(varKpiAllMonthSuccess, 0);\nSet(varKpiAvgPublishDays, If(false, 0));\nSet(varNavArm, \"\")",
         "RuleProviderType": "User"
       },
       {
@@ -93,7 +93,14 @@
         "IsLockable": false,
         "AFDDataSourceName": ""
       },
-      "StartScreen"
+      {
+        "InvariantPropertyName": "StartScreen",
+        "AutoRuleBindingEnabled": false,
+        "AutoRuleBindingString": "If(varUserRole = \"ADMINISTRATOR\", DashboardScreen, MyRequestScreen)",
+        "NameMapSourceSchema": "?",
+        "IsLockable": false,
+        "AFDDataSourceName": ""
+      }
     ],
     "IsLocked": false,
     "ControlUniqueId": "1",
