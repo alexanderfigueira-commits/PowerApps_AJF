@@ -837,7 +837,7 @@ Screens:
                   Size: =12
                   Text: ="Review  →"
                   Tooltip: ="Open in review queue to approve or reject"
-                  Visible: =ThisItem.Status.Value = "Pending"
+                  Visible: =ThisItem.Status.Value = "Pending" And varUserRole = "ADMINISTRATOR"
                   Width: =78
                   X: =1174
                   Y: =13
@@ -990,7 +990,7 @@ Screens:
                   Filter(colRequestorOptions, Value = varMyRequestorName)
               )
             DisplayFields: =["Value"]
-            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =DisplayMode.Edit
             Font: =Font.'Open Sans'
             Height: =35
             HoverFill: =RGBA(186, 202, 226, 1)
@@ -999,7 +999,7 @@ Screens:
               =If(
                   varUserRole = "ADMINISTRATOR",
                   colRequestorOptions,
-                  Filter(colRequestorOptions, Value = varMyRequestorName)
+                  Filter(colRequestorOptions, Value = "All" Or Value = varMyRequestorName)
               )
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
@@ -1043,7 +1043,13 @@ Screens:
       - HomeFilterStart:
           Control: Classic/DatePicker@2.6.0
           Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
+            BorderColor: |-
+              =If(
+                  Not(IsBlank(Self.SelectedDate)) And Not(IsBlank(HomeFilterEnd.SelectedDate))
+                  And Self.SelectedDate > HomeFilterEnd.SelectedDate,
+                  RGBA(168, 0, 0, 1),
+                  RGBA(0, 18, 107, 1)
+              )
             DateTimeZone: =%DateTimeZone.RESERVED%.Local
             DefaultDate: =Today()-31
             DisplayMode: =%DisplayMode.RESERVED%.Edit
@@ -1052,7 +1058,13 @@ Screens:
             Height: =35
             IconBackground: =RGBA(56, 96, 178, 1)
             IconFill: =RGBA(255, 255, 255, 1)
-            OnChange: =Set(varFilterStartDate, Self.SelectedDate)
+            OnChange: |-
+              =Set(varFilterStartDate, Self.SelectedDate);
+              If(
+                  Not(IsBlank(Self.SelectedDate)) And Not(IsBlank(HomeFilterEnd.SelectedDate))
+                  And Self.SelectedDate > HomeFilterEnd.SelectedDate,
+                  Notify("The From date cannot be after the To date.", NotificationType.Warning)
+              )
             Size: =13
             StartOfWeek: =%StartOfWeek.RESERVED%.Sunday
             Visible: =locShowFilters
@@ -1062,7 +1074,13 @@ Screens:
       - HomeFilterEnd:
           Control: Classic/DatePicker@2.6.0
           Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
+            BorderColor: |-
+              =If(
+                  Not(IsBlank(HomeFilterStart.SelectedDate)) And Not(IsBlank(Self.SelectedDate))
+                  And HomeFilterStart.SelectedDate > Self.SelectedDate,
+                  RGBA(168, 0, 0, 1),
+                  RGBA(0, 18, 107, 1)
+              )
             DateTimeZone: =%DateTimeZone.RESERVED%.Local
             DisplayMode: =%DisplayMode.RESERVED%.Edit
             Font: =Font.'Open Sans'
@@ -1070,7 +1088,13 @@ Screens:
             Height: =33
             IconBackground: =RGBA(56, 96, 178, 1)
             IconFill: =RGBA(255, 255, 255, 1)
-            OnChange: =Set(varFilterEndDate, Self.SelectedDate)
+            OnChange: |-
+              =Set(varFilterEndDate, Self.SelectedDate);
+              If(
+                  Not(IsBlank(HomeFilterStart.SelectedDate)) And Not(IsBlank(Self.SelectedDate))
+                  And HomeFilterStart.SelectedDate > Self.SelectedDate,
+                  Notify("The To date cannot be before the From date.", NotificationType.Warning)
+              )
             Size: =13
             StartOfWeek: =%StartOfWeek.RESERVED%.Sunday
             Visible: =locShowFilters

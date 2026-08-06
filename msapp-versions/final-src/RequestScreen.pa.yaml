@@ -185,6 +185,22 @@ Screens:
             )
         );
         Set(varRequestDG, HomeFilterDG.Selected.Value);
+        Set(locShowContactPopup, false);
+        If(
+            Not(IsBlank(varCurrentRequest))
+            And varCurrentRequest.Status.Value = "Rejected"
+            And Not(IsBlank(varCurrentRequest.ReviewerComments)),
+            Notify(
+                "Rejected by " & Coalesce(First(varCurrentRequest.ReviewedByContact).DisplayName, "the reviewer")
+                & If(
+                    IsBlank(varCurrentRequest.ReviewedDate),
+                    "",
+                    " on " & Text(varCurrentRequest.ReviewedDate, DateTimeFormat.ShortDate)
+                )
+                & ": " & varCurrentRequest.ReviewerComments,
+                NotificationType.Warning
+            )
+        )
     Children:
       - RS_TopBar:
           Control: Rectangle@2.3.0
