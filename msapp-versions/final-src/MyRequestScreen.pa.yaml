@@ -31,10 +31,10 @@ Screens:
         
         
         
-        //ClearCollect(colAssignees, {Value: "All"});
-        ForAll(
-            Distinct(Filter(RolesPermissionsList, Role.Value = "ADMINISTRATOR"), UserEmail.DisplayName),
-            Collect(colAssignees, {Value: ThisRecord.Value})
+        ClearCollect(colAssignees, {Value: "All"});
+        Collect(
+            colAssignees,
+            Sort(Distinct(Filter(RolesPermissionsList, Role.Value = "ADMINISTRATOR"), UserEmail.DisplayName), Value)
         );
         
         Set(varFilter, Coalesce(varNavFilter, "All"));
@@ -45,6 +45,15 @@ Screens:
         Set(varFilterEndDate, Blank());
         ClearCollect(colMyReqs, AVCentralDepositRequests);
         ClearCollect(colMyMedia, AVCentralDepositMediaItems);
+        Set(
+            varMyRequestorName,
+            LookUp(colMyReqs, 'Created By'.Email = User().Email, 'Created By'.DisplayName)
+        );
+        ClearCollect(colRequestorOptions, {Value: "All"});
+        Collect(
+            colRequestorOptions,
+            Sort(Distinct(colMyReqs, 'Created By'.DisplayName), Value)
+        );
         If(
             CountRows(colMyReqs) >= 2000 Or CountRows(colMyMedia) >= 2000,
             Notify(
@@ -974,6 +983,12 @@ Screens:
             ChevronFill: =RGBA(255, 255, 255, 1)
             ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             ChevronHoverFill: =RGBA(255, 255, 255, 1)
+            DefaultSelectedItems: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  Table({Value: "All"}),
+                  Filter(colRequestorOptions, Value = varMyRequestorName)
+              )
             DisplayFields: =["Value"]
             DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.Disabled)
             Font: =Font.'Open Sans'
@@ -981,9 +996,10 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Filter by requestor"
             Items: |-
-              =Sort(
-                  Distinct(AVCentralDepositRequests, 'Created By'.DisplayName),
-                  Value
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  colRequestorOptions,
+                  Filter(colRequestorOptions, Value = varMyRequestorName)
               )
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
@@ -1347,7 +1363,7 @@ Screens:
             ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             ChevronHoverFill: =RGBA(255, 255, 255, 1)
             DisplayFields: =["Value"]
-            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =DisplayMode.Edit
             Font: =Font.'Open Sans'
             Height: =35
             HoverFill: =RGBA(186, 202, 226, 1)
