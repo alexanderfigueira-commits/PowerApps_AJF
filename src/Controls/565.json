@@ -80,7 +80,7 @@
       {
         "Property": "OnVisible",
         "Category": "Behavior",
-        "InvariantScript": "ClearCollect(colDGOptions, {Value: \"All\"});\nCollect(colDGOptions, Choices(AVCentralDepositRequests.DG));\nSet(\n    varUserRole,\n    If( \n        !IsEmpty(\n            Filter(\n                RolesPermissionsList,\n                Role.Value = \"ADMINISTRATOR\",\n                UserEmail.Email = User().Email\n            )\n        ),\n        \"ADMINISTRATOR\",\n        \"USER\"\n    )\n);\n\n\n\n//ClearCollect(colAssignees, {Value: \"All\"});\nForAll(\n    Distinct(Filter(RolesPermissionsList, Role.Value = \"ADMINISTRATOR\"), UserEmail.DisplayName),\n    Collect(colAssignees, {Value: ThisRecord.Value})\n);\n\nSet(varFilter, Coalesce(varNavFilter, \"All\"));\nSet(varNavFilter, Blank());\nSet(varFilterDG, \"\");\nSet(varFilterRequestName, \"\");\nSet(varFilterStartDate, Blank());\nSet(varFilterEndDate, Blank());\nClearCollect(colMyReqs, AVCentralDepositRequests);\nClearCollect(colMyMedia, AVCentralDepositMediaItems);\nIf(\n    CountRows(colMyReqs) >= 2000 Or CountRows(colMyMedia) >= 2000,\n    Notify(\n        \"Only the first 2000 requests are loaded, so older ones may be missing. Narrow your search - status, production type, date range, ID or title - to work with a smaller set.\",\n        NotificationType.Warning\n    )\n);\nUpdateContext({locProdTypeFilter: Blank()});\n",
+        "InvariantScript": "ClearCollect(colDGOptions, {Value: \"All\"});\nCollect(colDGOptions, Choices(AVCentralDepositRequests.DG));\nSet(\n    varUserRole,\n    If( \n        !IsEmpty(\n            Filter(\n                RolesPermissionsList,\n                Role.Value = \"ADMINISTRATOR\",\n                UserEmail.Email = User().Email\n            )\n        ),\n        \"ADMINISTRATOR\",\n        \"USER\"\n    )\n);\n\n\n\n//ClearCollect(colAssignees, {Value: \"All\"});\nForAll(\n    Distinct(Filter(RolesPermissionsList, Role.Value = \"ADMINISTRATOR\"), UserEmail.DisplayName),\n    Collect(colAssignees, {Value: ThisRecord.Value})\n);\n\nSet(varFilter, Coalesce(varNavFilter, \"All\"));\nSet(varNavFilter, Blank());\nSet(varFilterDG, \"\");\nSet(varFilterRequestName, \"\");\nSet(varFilterStartDate, Blank());\nSet(varFilterEndDate, Blank());\nClearCollect(colMyReqs, AVCentralDepositRequests);\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));\nClearCollect(colMyMedia, AVCentralDepositMediaItems);\nIf(\n    CountRows(colMyReqs) >= 2000 Or CountRows(colMyMedia) >= 2000,\n    Notify(\n        \"Only the first 2000 requests are loaded, so older ones may be missing. Narrow your search - status, production type, date range, ID or title - to work with a smaller set.\",\n        NotificationType.Warning\n    )\n);\nUpdateContext({locProdTypeFilter: Blank()});\n",
         "RuleProviderType": "User"
       }
     ],
@@ -8973,7 +8973,7 @@
           {
             "Property": "OnSelect",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilter, \"All\")",
+            "InvariantScript": "Set(varFilter, \"All\");\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "Unknown"
           }
         ],
@@ -9354,7 +9354,7 @@
           {
             "Property": "OnSelect",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilter, \"Draft\")",
+            "InvariantScript": "Set(varFilter, \"Draft\");\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "Unknown"
           }
         ],
@@ -9735,7 +9735,7 @@
           {
             "Property": "OnSelect",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilter, \"Pending\")",
+            "InvariantScript": "Set(varFilter, \"Pending\");\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "User"
           }
         ],
@@ -10130,7 +10130,7 @@
           {
             "Property": "OnSelect",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilter, \"Approved\")",
+            "InvariantScript": "Set(varFilter, \"Approved\");\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "Unknown"
           }
         ],
@@ -10511,7 +10511,7 @@
           {
             "Property": "OnSelect",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilter, \"Rejected\")",
+            "InvariantScript": "Set(varFilter, \"Rejected\");\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "Unknown"
           }
         ],
@@ -10892,7 +10892,7 @@
           {
             "Property": "OnSelect",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilter, \"Published\")",
+            "InvariantScript": "Set(varFilter, \"Published\");\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "Unknown"
           }
         ],
@@ -12638,7 +12638,7 @@
           {
             "Property": "OnChange",
             "Category": "Behavior",
-            "InvariantScript": "false",
+            "InvariantScript": "false;\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "Unknown"
           }
         ],
@@ -12976,7 +12976,7 @@
           {
             "Property": "OnChange",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilterStartDate, Self.SelectedDate)",
+            "InvariantScript": "Set(varFilterStartDate, Self.SelectedDate);\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "User"
           }
         ],
@@ -13422,7 +13422,7 @@
           {
             "Property": "OnChange",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilterRequestName, Self.Text)",
+            "InvariantScript": "Set(varFilterRequestName, Self.Text);\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "Unknown"
           },
           {
@@ -14923,7 +14923,7 @@
           {
             "Property": "OnChange",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilterEndDate, Self.SelectedDate)",
+            "InvariantScript": "Set(varFilterEndDate, Self.SelectedDate);\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "Unknown"
           }
         ],
@@ -15447,7 +15447,7 @@
           {
             "Property": "OnChange",
             "Category": "Behavior",
-            "InvariantScript": "false",
+            "InvariantScript": "false;\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "Unknown"
           }
         ],
@@ -15924,7 +15924,7 @@
           {
             "Property": "OnChange",
             "Category": "Behavior",
-            "InvariantScript": "Set(varFilterRequestName, Self.Text)",
+            "InvariantScript": "Set(varFilterRequestName, Self.Text);\nSet(varFilteredCount, CountRows(Filter(colMyReqs,(varFilter = \"All\" Or varFilter = Status.Value),(IsBlank(varFilterProductionType) Or varFilterProductionType = \"\" Or MediaType = varFilterProductionType),(IsBlank(varFilterRequestName) Or \"\" = varFilterRequestName Or SearchFn(Title, varFilterRequestName)),(IsBlank(varFilterRequestID) Or \"\" = varFilterRequestID Or SearchFn(Text(ID), varFilterRequestID)),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterRequestor.Value) Or cmbFilterRequestor.Value = \"\" Or 'Created By'.Email = cmbFilterRequestor.Value),(varUserRole <> \"ADMINISTRATOR\" Or IsBlank(cmbFilterAssignee_1.Value) Or cmbFilterAssignee_1.Value = \"\" Or 'Assigned To'.Email = cmbFilterAssignee_1.Value),(IsBlank(varFilterStartDate) Or Created >= varFilterStartDate),(IsBlank(varFilterEndDate) Or Created <= varFilterEndDate))));",
             "RuleProviderType": "User"
           },
           {
