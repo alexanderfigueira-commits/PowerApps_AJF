@@ -909,6 +909,8 @@ Screens:
             OnSelect: |-
               =Set(varFilterDG, "");
               Set(varFilterRequestName, "");
+              Set(varFilterStartDate, Blank());
+              Set(varFilterEndDate, Blank());
               Reset(HomeFilterRequestID);
               Reset(HomeFilterRequestName);
               Reset(cmbFilterRequestor);
@@ -1015,12 +1017,24 @@ Screens:
           Properties:
             Align: =Align.Center
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
+            Color: |-
+              =If(
+                  Not(IsBlank(HomeFilterStart.SelectedDate)) And Not(IsBlank(HomeFilterEnd.SelectedDate))
+                  And HomeFilterStart.SelectedDate > HomeFilterEnd.SelectedDate,
+                  RGBA(168, 0, 0, 1),
+                  RGBA(96, 104, 120, 1)
+              )
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =25
             Size: =10
-            Text: ="DATE RANGE"
+            Text: |-
+              =If(
+                  Not(IsBlank(HomeFilterStart.SelectedDate)) And Not(IsBlank(HomeFilterEnd.SelectedDate))
+                  And HomeFilterStart.SelectedDate > HomeFilterEnd.SelectedDate,
+                  "DATE RANGE - FROM IS AFTER TO",
+                  "DATE RANGE"
+              )
             Visible: =locShowFilters
             Width: =157
             X: =1118
@@ -1059,11 +1073,14 @@ Screens:
             IconBackground: =RGBA(56, 96, 178, 1)
             IconFill: =RGBA(255, 255, 255, 1)
             OnChange: |-
-              =Set(varFilterStartDate, Self.SelectedDate);
-              If(
+              =If(
                   Not(IsBlank(Self.SelectedDate)) And Not(IsBlank(HomeFilterEnd.SelectedDate))
                   And Self.SelectedDate > HomeFilterEnd.SelectedDate,
-                  Notify("The From date cannot be after the To date.", NotificationType.Warning)
+                  Notify(
+                      "From cannot be after To. The date filter was left unchanged.",
+                      NotificationType.Warning
+                  ),
+                  Set(varFilterStartDate, Self.SelectedDate)
               )
             Size: =13
             StartOfWeek: =%StartOfWeek.RESERVED%.Sunday
@@ -1089,11 +1106,14 @@ Screens:
             IconBackground: =RGBA(56, 96, 178, 1)
             IconFill: =RGBA(255, 255, 255, 1)
             OnChange: |-
-              =Set(varFilterEndDate, Self.SelectedDate);
-              If(
+              =If(
                   Not(IsBlank(HomeFilterStart.SelectedDate)) And Not(IsBlank(Self.SelectedDate))
                   And HomeFilterStart.SelectedDate > Self.SelectedDate,
-                  Notify("The To date cannot be before the From date.", NotificationType.Warning)
+                  Notify(
+                      "To cannot be before From. The date filter was left unchanged.",
+                      NotificationType.Warning
+                  ),
+                  Set(varFilterEndDate, Self.SelectedDate)
               )
             Size: =13
             StartOfWeek: =%StartOfWeek.RESERVED%.Sunday
