@@ -48,7 +48,7 @@ Screens:
         If(
             CountRows(colMyReqs) >= 2000 Or CountRows(colMyMedia) >= 2000,
             Notify(
-                "Only the first 2000 rows could be loaded, so this list and its counts may be incomplete. Please tell the app owner.",
+                "Only the first 2000 requests are loaded, so older ones may be missing. Narrow your search - status, production type, date range, ID or title - to work with a smaller set.",
                 NotificationType.Warning
             )
         );

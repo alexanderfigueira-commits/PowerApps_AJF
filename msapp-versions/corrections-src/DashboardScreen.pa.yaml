@@ -17,7 +17,7 @@ Screens:
         If(
             CountRows(colDashReqs) >= 2000,
             Notify(
-                "Only the first 2000 requests could be loaded, so the figures below are incomplete. Please tell the app owner.",
+                "These figures cover only the first 2000 requests, so they are incomplete. Ask the app owner to archive older requests.",
                 NotificationType.Warning
             )
         );
