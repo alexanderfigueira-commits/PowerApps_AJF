@@ -308,7 +308,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                           IsBlank(locProdTypeFilter) Or
@@ -352,7 +352,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                           IsBlank(locProdTypeFilter) Or
@@ -397,7 +397,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                           IsBlank(locProdTypeFilter) Or
@@ -442,7 +442,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                           IsBlank(locProdTypeFilter) Or
@@ -487,7 +487,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                           IsBlank(locProdTypeFilter) Or
@@ -688,7 +688,7 @@ Screens:
                       (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                       (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                       IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                      IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                      IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                       IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                       IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                       IsBlank(locProdTypeFilter) Or
@@ -1155,7 +1155,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                           IsBlank(locProdTypeFilter) Or
@@ -1202,7 +1202,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                           !IsEmpty(
@@ -1247,7 +1247,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                           !IsEmpty(
@@ -1292,7 +1292,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate,
                           !IsEmpty(
@@ -1337,7 +1337,7 @@ Screens:
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
                           IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
-                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Not(IsEmpty(Filter(AssignedTo, DisplayName in cmbFilterAssignee_1.SelectedItems.Value))),
+                          IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
                           IsBlank(varFilterStartDate) Or StartRequestDate >= varFilterStartDate,
                           IsBlank(varFilterEndDate) Or EndRequestDate <= varFilterEndDate
                       )

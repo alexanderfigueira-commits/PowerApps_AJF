@@ -330,7 +330,19 @@ Screens:
             ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             ChevronHoverFill: =RGBA(255, 255, 255, 1)
             DefaultSelectedItems: |-
-              =ForAll(varReviewProject.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
+              =Filter(
+                  Table({
+                      DisplayName: Coalesce(
+                          varReviewProject.Assignee.DisplayName,
+                          First(varReviewProject.DG_Agency_Contact).DisplayName
+                      ),
+                      Mail: Coalesce(
+                          varReviewProject.Assignee.Email,
+                          First(varReviewProject.DG_Agency_Contact).Email
+                      )
+                  }),
+                  Not(IsBlank(DisplayName))
+              )
             DisplayFields: =["DisplayName"]
             Font: =Font.'Open Sans'
             HoverFill: =RGBA(186, 202, 226, 1)
@@ -340,6 +352,7 @@ Screens:
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
             SearchFields: =["DisplayName"]
+            SelectMultiple: =false
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(56, 96, 178, 1)
             Visible: =Not(IsBlank(varReviewProject))
@@ -450,15 +463,19 @@ Screens:
                       LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
                       {
                           Status: {Value: "Approved"},
-                          AssignedTo: ForAll(RV_Assignee.SelectedItems As u, {
-                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
-                              Claims: "i:0#.f|membership|" & Lower(u.Mail),
-                              DisplayName: u.DisplayName,
-                              Email: u.Mail,
-                              Department: "",
-                              JobTitle: "",
-                              Picture: ""
-                          }),
+                          Assignee: If(
+                              IsBlank(RV_Assignee.Selected.Mail),
+                              Blank(),
+                              {
+                                  '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                                  Claims: "i:0#.f|membership|" & Lower(RV_Assignee.Selected.Mail),
+                                  DisplayName: RV_Assignee.Selected.DisplayName,
+                                  Email: RV_Assignee.Selected.Mail,
+                                  Department: "",
+                                  JobTitle: "",
+                                  Picture: ""
+                              }
+                          ),
                           ReviewedByContact: Table({
                               '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                               Claims: "i:0#.f|membership|" & Lower(User().Email),
