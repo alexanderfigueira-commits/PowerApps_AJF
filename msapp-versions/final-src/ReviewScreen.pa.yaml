@@ -450,6 +450,15 @@ Screens:
                       LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
                       {
                           Status: {Value: "Approved"},
+                          AssignedTo: ForAll(RV_Assignee.SelectedItems As u, {
+                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                              Claims: "i:0#.f|membership|" & Lower(u.Mail),
+                              DisplayName: u.DisplayName,
+                              Email: u.Mail,
+                              Department: "",
+                              JobTitle: "",
+                              Picture: ""
+                          }),
                           ReviewedByContact: Table({
                               '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                               Claims: "i:0#.f|membership|" & Lower(User().Email),
