@@ -16,16 +16,9 @@ Screens:
         Collect(colDGOptions, Choices(AVCentralDepositRequests.DG));
         Set(
             varUserRole,
-            If( 
-                !IsEmpty(
-                    Filter(
-                        RolesPermissionsList,
-                        Role.Value = "ADMINISTRATOR",
-                        UserEmail.Email = User().Email
-                    )
-                ),
-                "ADMINISTRATOR",
-                "USER"
+            Coalesce(
+                LookUp(RolesPermissionsList, UserEmail.Email = User().Email, Role.Value),
+                "REQUESTOR"
             )
         );
         
@@ -412,7 +405,7 @@ Screens:
                   )
               ) & ")"
             Width: =112
-            X: =819
+            X: =955
             Y: =146
       - HomeChipApproved:
           Control: Classic/Button@2.2.0
@@ -457,7 +450,7 @@ Screens:
                   )
               ) & ")"
             Width: =120
-            X: =939
+            X: =1075
             Y: =146
       - HomeChipRejected:
           Control: Classic/Button@2.2.0
@@ -502,7 +495,7 @@ Screens:
                   )
               ) & ")"
             Width: =112
-            X: =1067
+            X: =1203
             Y: =146
       - HomeTableCard:
           Control: Rectangle@2.3.0
@@ -802,7 +795,7 @@ Screens:
                        "Pending" in ThisItem.Status.Value, Color.Orange,
                        "Draft" in ThisItem.Status.Value, Color.Gray,
                        "Rejected" in ThisItem.Status.Value, Color.Red,
-                       "Published" in ThisItem.Status.Value, Color.DarkOrchid,
+                       "Processing" in ThisItem.Status.Value, Color.DarkOrchid,
                        Color.Gray)
                   Font: =Font.'Open Sans'
                   HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
@@ -843,7 +836,7 @@ Screens:
                   Size: =12
                   Text: ="Review  →"
                   Tooltip: ="Open in review queue to approve or reject"
-                  Visible: =ThisItem.Status.Value = "Pending" And varUserRole = "ADMINISTRATOR"
+                  Visible: =ThisItem.Status.Value = "Processing" And varUserRole = "ADMINISTRATOR"
                   Width: =78
                   X: =1174
                   Y: =13
@@ -998,7 +991,7 @@ Screens:
                   Filter(colRequestorOptions, Value = varMyRequestorName)
               )
             DisplayFields: =["Value"]
-            DisplayMode: =DisplayMode.Edit
+            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.Disabled)
             Font: =Font.'Open Sans'
             Height: =35
             HoverFill: =RGBA(186, 202, 226, 1)
@@ -1007,7 +1000,7 @@ Screens:
               =If(
                   varUserRole = "ADMINISTRATOR",
                   colRequestorOptions,
-                  Filter(colRequestorOptions, Value = "All" Or Value = varMyRequestorName)
+                  Filter(colRequestorOptions, Value = varMyRequestorName)
               )
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
@@ -1130,23 +1123,23 @@ Screens:
       - HomeChipPublished:
           Control: Classic/Button@2.2.0
           Properties:
-            BorderColor: =If(varFilter="Published", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderColor: =If(varFilter="Processing", RGBA(0,18,107,1), RGBA(220,224,230,1))
             BorderThickness: =1
-            Color: =If(varFilter="Published", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            Color: =If(varFilter="Processing", RGBA(0,18,107,1), RGBA(96,104,120,1))
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(varFilter="Published", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Fill: =If(varFilter="Processing", RGBA(255,255,255,1), RGBA(247,248,250,1))
             Font: =Font.'Open Sans'
             Height: =34
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
-            OnSelect: =Set(varFilter, "Published")
+            OnSelect: =Set(varFilter, "Processing")
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
             Size: =12
             Text: |-
-              ="Published  (" & Text(
+              ="Processing  (" & Text(
                   CountRows(
                       Filter(
                           colMyReqs,
@@ -1165,12 +1158,12 @@ Screens:
                                       ParentRequest = RequestNumber And First(MediaType).Value = locProdTypeFilter
                                   )
                               ),
-                          Status.Value = "Published"
+                          Status.Value = "Processing"
                       )
                   )
               ) & ")"
-            Width: =118
-            X: =1187
+            Width: =128
+            X: =819
             Y: =146
       - HomeTypePhoto:
           Control: Classic/Button@2.2.0

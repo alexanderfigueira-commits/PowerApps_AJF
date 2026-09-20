@@ -188,7 +188,8 @@ Screens:
         Set(locShowContactPopup, false);
         If(
             Not(IsBlank(varCurrentRequest))
-            And varCurrentRequest.Status.Value = "Rejected"
+            And (varCurrentRequest.Status.Value = "Rejected"
+                 Or varCurrentRequest.Status.Value = "Pending")
             And Not(IsBlank(varCurrentRequest.ReviewerComments)),
             Notify(
                 "Rejected by " & Coalesce(First(varCurrentRequest.ReviewedByContact).DisplayName, "the reviewer")
@@ -217,7 +218,7 @@ Screens:
             Color: |-
               =Switch(varCurrentRequest.Status.Value,
                   "Approved", RGBA(22, 128, 80, 1),
-                  "Published", RGBA(255, 255, 255, 1),
+                  "Processing", RGBA(255, 255, 255, 1),
                   "Pending", RGBA(180, 95, 6, 1),
                   "Submitted", RGBA(56, 96, 178, 1),
                   "Rejected", RGBA(193, 40, 40, 1),
@@ -228,7 +229,7 @@ Screens:
             Fill: |-
               =Switch(varCurrentRequest.Status.Value,
                   "Approved", RGBA(223, 245, 233, 1),
-                  "Published", RGBA(122, 48, 160, 1),
+                  "Processing", RGBA(122, 48, 160, 1),
                   "Pending", RGBA(255, 243, 224, 1),
                   "Submitted", RGBA(230, 236, 245, 1),
                   "Rejected", RGBA(253, 235, 235, 1),
@@ -805,7 +806,14 @@ Screens:
                   BorderThickness: =1
                   Color: =RGBA(193, 40, 40, 1)
                   DisabledBorderColor: =RGBA(166, 166, 166, 1)
-                  DisplayMode: =If(IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft", DisplayMode.Edit, DisplayMode.Disabled)
+                  DisplayMode: |-
+                    =If(
+                        IsBlank(varCurrentRequest.Status.Value)
+                        Or varCurrentRequest.Status.Value = "Draft"
+                        Or varCurrentRequest.Status.Value = "Pending",
+                        DisplayMode.Edit,
+                        DisplayMode.Disabled
+                    )
                   Fill: =RGBA(255, 255, 255, 1)
                   Font: =Font.'Open Sans'
                   Height: =32
@@ -904,7 +912,7 @@ Screens:
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                  Status: {Value: "Pending"}
+                                  Status: {Value: "Processing"}
                               }
                           )
                       },
@@ -964,9 +972,7 @@ Screens:
             PressedFill: =Self.Color
             Size: =14
             Text: ="Publish  ✓"
-            Visible: |-
-              =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0 And varCurrentRequest.Status.Value = "Approved"
-              And varUserRole = "ADMINISTRATOR"
+            Visible: =false
             Width: =200
             X: =1134
             Y: =720
@@ -981,7 +987,9 @@ Screens:
             DisabledFill: =RGBA(240, 242, 246, 1)
             DisplayMode: |-
               =If(
-                  IsBlank(varCurrentRequest) Or IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft",
+                  IsBlank(varCurrentRequest) Or IsBlank(varCurrentRequest.Status.Value)
+                  Or varCurrentRequest.Status.Value = "Draft"
+                  Or varCurrentRequest.Status.Value = "Pending",
                   DisplayMode.Edit,
                   DisplayMode.Disabled
               )
@@ -1074,7 +1082,7 @@ Screens:
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                  Status: {Value: "Pending"}
+                                  Status: {Value: "Processing"}
                               }
                           )
                       },
@@ -1100,7 +1108,7 @@ Screens:
             Text: ="Resubmit for review  →"
             Visible: |-
               =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
-              And varCurrentRequest.Status.Value = "Rejected"
+              And (varCurrentRequest.Status.Value = "Rejected" Or varCurrentRequest.Status.Value = "Pending")
             Width: =220
             X: =1094
             Y: =731
@@ -1151,7 +1159,9 @@ Screens:
             DisplayMode: |-
               =If(
                   IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0
-                  Or (Not(IsBlank(varCurrentRequest.Status.Value)) And varCurrentRequest.Status.Value <> "Draft"),
+                  Or (Not(IsBlank(varCurrentRequest.Status.Value))
+                      And varCurrentRequest.Status.Value <> "Draft"
+                      And varCurrentRequest.Status.Value <> "Pending"),
                   DisplayMode.Disabled,
                   DisplayMode.Edit
               )
@@ -2013,24 +2023,23 @@ Screens:
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Published", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
+            DisabledFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Processing", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
             DisplayMode: =DisplayMode.View
-            Fill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(230, 236, 245, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Published", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
+            Fill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(230, 236, 245, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Processing", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
             Font: =Font.'Open Sans'
             Height: =32
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Published", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
+            HoverFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Processing", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
             PressedBorderColor: =Self.Fill
             PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Published", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
+            PressedFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Processing", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
             RadiusBottomLeft: =8
             RadiusBottomRight: =8
             RadiusTopLeft: =8
             RadiusTopRight: =8
             Size: =18
-            Text: |-
-              =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", "🆕", "Draft", "📝", "Pending", "⏳", "Approved", "✅", "Rejected", "⛔", "Published", "🌐", "📝")
+            Text: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", "🆕", "Draft", "📝", "Pending", "⏳", "Approved", "✅", "Rejected", "⛔", "Processing", "🌐", "📝")
             Tooltip: |-
               ="Status: " & If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")) & If(Not(IsBlank(varCurrentRequest)) And Coalesce(varCurrentRequest.ID, 0) > 0 And Not(IsBlank(varCurrentRequest.Modified)), "  (" & Text(varCurrentRequest.Modified, "dd-mm-yyyy") & ")", "")
             Width: =41

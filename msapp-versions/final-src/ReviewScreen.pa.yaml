@@ -64,7 +64,7 @@ Screens:
             Items: |-
               =Sort(
                   Filter(colRevReqs,
-                      If(varReviewQueueMine, Status.Value = "Pending", Status.Value = "Pending"),
+                      If(varReviewQueueMine, Status.Value = "Processing", Status.Value = "Processing"),
                       Not(varReviewQueueMine) Or Not(IsEmpty(Filter(DG_Agency_Contact, Lower(Email) = Lower(User().Email)))),
                       Lower('Created By'.Email) <> Lower(User().Email)
                   ),
@@ -873,3 +873,61 @@ Screens:
             Width: =83
             X: =948
             Y: =5
+
+      - RV_BtnNeedInfo:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(224, 134, 0, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: |-
+              =If(
+                  Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
+                  And Lower(varReviewProject.'Created By'.Email) <> Lower(User().Email)
+                  And Not(IsBlank(varReviewComment)) And varReviewComment <> "",
+                  DisplayMode.Edit,
+                  DisplayMode.Disabled
+              )
+            Fill: =RGBA(224, 134, 0, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(224, 134, 0, 1), -20%)
+            OnSelect: |-
+              =IfError(
+                  Patch(AVCentralDepositRequests,
+                      LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
+                      {
+                          Status: {Value: "Pending"},
+                          ReviewerComments: varReviewComment,
+                          ReviewedByContact: Table({
+                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                              Claims: "i:0#.f|membership|" & Lower(User().Email),
+                              DisplayName: User().FullName,
+                              Email: User().Email,
+                              Department: "",
+                              JobTitle: "",
+                              Picture: ""
+                          }),
+                          ReviewedDate: Now()
+                      }
+                  );
+                  Notify("Sent back to the requestor for more information.", NotificationType.Success);
+                  Set(varReviewProject, Blank());
+                  Set(varReviewComment, ""),
+                  Notify("Could not send it back: " & FirstError.Message, NotificationType.Error)
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="↩  Need info"
+            Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
+            Width: =200
+            X: =852
+            Y: =680
+          Children: []
