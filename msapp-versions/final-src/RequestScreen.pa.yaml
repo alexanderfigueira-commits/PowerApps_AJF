@@ -987,9 +987,11 @@ Screens:
             DisabledFill: =RGBA(240, 242, 246, 1)
             DisplayMode: |-
               =If(
-                  IsBlank(varCurrentRequest) Or IsBlank(varCurrentRequest.Status.Value)
-                  Or varCurrentRequest.Status.Value = "Draft"
-                  Or varCurrentRequest.Status.Value = "Pending",
+                  (IsBlank(varCurrentRequest) Or IsBlank(varCurrentRequest.Status.Value)
+                      Or varCurrentRequest.Status.Value = "Draft"
+                      Or varCurrentRequest.Status.Value = "Pending")
+                  And Not(IsBlank(Trim(RS_Title.Text)))
+                  And Not(IsBlank(HomeFilterDG.Selected.Value)),
                   DisplayMode.Edit,
                   DisplayMode.Disabled
               )
@@ -1150,12 +1152,12 @@ Screens:
       - RS_BtnSaveRequest_2:
           Control: Classic/Button@2.2.0
           Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =1
-            Color: =RGBA(60, 66, 80, 1)
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledColor: =RGBA(186, 196, 214, 1)
-            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisabledColor: =RGBA(255, 255, 255, 1)
+            DisabledFill: =RGBA(186, 196, 214, 1)
             DisplayMode: |-
               =If(
                   IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0
@@ -1165,12 +1167,12 @@ Screens:
                   DisplayMode.Disabled,
                   DisplayMode.Edit
               )
-            Fill: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(56, 96, 178, 1)
             Font: =Font.'Open Sans'
             Height: =36
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(230, 236, 245, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
               =If(
                   IsBlank(Coalesce(varRequestTitle)) Or Coalesce(varRequestTitle) = ""
@@ -1237,10 +1239,10 @@ Screens:
             PressedBorderColor: =RGBA(0, 0, 0, 1)
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
-            Size: =11
+            Size: =14
             Text: ="➕ Media"
             Tooltip: ="Add new media"
-            Width: =73
+            Width: =100
             X: =828
             Y: =If(locShowDetails,403,100)
       - RS_MediaLockHint:
