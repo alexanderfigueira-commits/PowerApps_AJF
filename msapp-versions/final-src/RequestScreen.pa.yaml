@@ -13,6 +13,11 @@ Screens:
       LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
       OnVisible: |-
         =Set(
+            varRequestorLocked,
+            varUserRole <> "ADMINISTRATOR"
+            And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+        );
+        Set(
             varUserDept,
             Office365Users.MyProfile().Department
         );
@@ -350,6 +355,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Default: =varRequestTitle
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =44
             HintText: ="e.g. EU Climate Action Week 2026 - opening session"
@@ -399,6 +405,7 @@ Screens:
             DefaultSelectedItems: |-
               =ForAll(varCurrentRequest.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
             DisplayFields: =["DisplayName"]
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
@@ -441,6 +448,7 @@ Screens:
             DefaultSelectedItems: |-
               =ForAll(varCurrentRequest.Contractor_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
             DisplayFields: =["DisplayName"]
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
@@ -485,6 +493,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Default: =varRequestDescription1
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =75
             HintText: ="Describe the purpose, context and scope of this request"
@@ -1125,6 +1134,7 @@ Screens:
             ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
             ChevronHoverFill: =Self.ChevronFill
             Default: =
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =44
             HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -1312,6 +1322,7 @@ Screens:
             CheckboxBorderColor: =RGBA(0, 18, 107, 1)
             CheckmarkFill: =RGBA(0, 0, 0, 1)
             Default: =varRequestAIDeclared
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =30
             HoverColor: =RGBA(0, 18, 107, 1)
@@ -2120,6 +2131,7 @@ Screens:
             ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
             ChevronHoverFill: =Self.ChevronFill
             Default: =locContactPopupType
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =44
             HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -2158,6 +2170,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Default: =""
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =44
             HintText: ="name@domain.com"
@@ -2245,4 +2258,39 @@ Screens:
             X: =759
             Y: =440
             ZIndex: =97
+          Children: []
+      - RS_LblMissing:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Left
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(224, 134, 0, 1)
+            Font: =Font.Arial
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =12
+            Text: |-
+              =With(
+                  {miss:
+                      Concat(
+                          Filter(
+                              Table(
+                              {lbl: RS_LblTitle.Text, gone: RS_LblTitle.Visible And IsBlank(Trim(RS_Title.Text))},
+                              {lbl: RS_LblDG.Text, gone: RS_LblDG.Visible And IsBlank(HomeFilterDG.Selected.Value)},
+                              {lbl: RS_LblOwner.Text, gone: RS_LblOwner.Visible And IsEmpty(RS_Owner.SelectedItems)},
+                              {lbl: RS_LblContractor.Text, gone: RS_LblContractor.Visible And IsEmpty(RS_Contractor.SelectedItems)},
+                              {lbl: "Media files", gone: RS_ArchivesSection.Visible And CountRows(colArchives) = 0}
+                              ),
+                              gone
+                          ),
+                          ", " & Trim(Substitute(lbl, "*", ""))
+                      )
+                  },
+                  If(IsBlank(miss), "", "Still to complete:  " & Mid(miss, 3))
+              )
+            Visible: =Not(IsBlank(Self.Text))
+            Width: =1040
+            X: =64
+            Y: =668
+            ZIndex: =900
           Children: []
