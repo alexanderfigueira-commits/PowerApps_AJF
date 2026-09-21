@@ -80,8 +80,8 @@ Screens:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =208
             Visible: =locShowFilters
-            Width: =1265
-            X: =49
+            Width: =1328
+            X: =19
             Y: =113
       - HomeTopBar:
           Control: Rectangle@2.3.0
@@ -505,8 +505,8 @@ Screens:
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
             Height: =If(locShowFilters,375,500)
-            Width: =1265
-            X: =48
+            Width: =1328
+            X: =19
             Y: =If(locShowFilters,330,200)
       - NoInternetIcon_3:
           Control: Classic/Icon@2.5.0
@@ -537,7 +537,7 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             OnChange: =Set(varFilterRequestName, Self.Text)
             Visible: =locShowFilters
-            Width: =579
+            Width: =280
             X: =99
             Y: =272
       - HomeBtnMoreFilters:
@@ -570,8 +570,8 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Fill: =RGBA(240, 242, 246, 1)
             Height: =50
-            Width: =1262
-            X: =50
+            Width: =1324
+            X: =21
             Y: =If(locShowFilters,330,200)
       - HomeThRequest:
           Control: Label@2.5.1
@@ -911,6 +911,7 @@ Screens:
               Set(varFilterStartDate, Blank());
               Set(varFilterEndDate, Blank());
               Reset(HomeFilterRequestID);
+              Reset(HomeFilterBeluga);
               Reset(HomeFilterRequestName);
               Reset(cmbFilterRequestor);
               Reset(cmbFilterAssignee_1);
@@ -1458,8 +1459,8 @@ Screens:
             Size: =10
             Text: ="ID"
             Visible: =locShowFilters
-            Width: =317
-            X: =208
+            Width: =280
+            X: =99
             Y: =252
       - HomeLblArchive_2:
           Control: Label@2.5.1
@@ -1625,3 +1626,36 @@ Screens:
             Width: =174
             X: =1139
             Y: =6
+
+      - HomeLblBeluga:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =10
+            Text: ="BELUGA REFERENCE"
+            Visible: =locShowFilters
+            Width: =279
+            X: =399
+            Y: =252
+          Children: []
+      - HomeFilterBeluga:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =""
+            Font: =Font.'Open Sans'
+            Height: =31
+            HintText: ="Search by Beluga Reference..."
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =false
+            Visible: =locShowFilters
+            Width: =279
+            X: =399
+            Y: =272
+          Children: []
