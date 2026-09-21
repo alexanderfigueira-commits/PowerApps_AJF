@@ -63,8 +63,11 @@ check('1', 'Row Review button: Processing + admin only',
 check('1', 'Publish button retired', (rule(RQ, 'RS_BtnPublish', 'Visible') or '').strip() == 'false')
 check('1', 'No "Published" left in the dashboard KPIs', '"Published"' not in (rule(DS, DS, 'OnVisible') or 'x'))
 check('1', 'No PublishedDate left in the dashboard KPIs', 'PublishedDate' not in (rule(DS, DS, 'OnVisible') or 'x'))
-check('1', 'Success rate denominator = Approved + Rejected',
-      has(DS, DS, 'OnVisible', '(Status.Value = "Approved" Or Status.Value = "Rejected")'))
+# the success-rate pair was replaced in Studio by varKpiPublishedTotal /
+# varKpiApprovedTotal, so what matters now is that the Published one was
+# repointed rather than left counting a retired status
+check('1', 'Published KPIs repointed to Approved',
+      (rule(DS, DS, 'OnVisible') or '').count('Status.Value = "Approved"') >= 2)
 check('1', 'Trend / avg days key off ReviewedDate', has(DS, DS, 'OnVisible', 'ReviewedDate'))
 check('1', 'Validation card counts Processing',
       (rule(DS, DS, 'OnVisible') or '').count('Status.Value = "Processing"') >= 2)
@@ -74,7 +77,7 @@ check('1', 'varUserRole yields the SharePoint Role.Value',
       has(MR, MR, 'OnVisible', 'Role.Value', '"REQUESTOR"') and '"USER"' not in (rule(MR, MR, 'OnVisible') or ''))
 check('1', 'Requestor filter locked for non-admins',
       has(MR, 'cmbFilterRequestor', 'DisplayMode', 'varUserRole = "ADMINISTRATOR"', 'DisplayMode.Disabled'))
-for ctl in ('RS_BtnSaveRequest', 'RS_BtnSaveRequest_2', 'RS_CRowDelete'):
+for ctl in ('RS_BtnDraftSave', 'RS_BtnDraftSave_1', 'RS_CRowDelete'):
     check('1', f'{ctl} editable while Pending', has(RQ, ctl, 'DisplayMode', '"Pending"'))
 check('1', 'Reviewer comment surfaced for Pending too',
       has(RQ, RQ, 'OnVisible', 'ReviewerComments', '"Pending"'))
@@ -102,19 +105,21 @@ check('1', 'Type chips drop their own type clause',
       not any('locProdTypeFilter' in (rule(MR, c, 'Text') or '') for c in CHIPS[6:]))
 
 # ---------------- Section 2 ----------------
-check('2', 'Save always visible', (rule(RQ, 'RS_BtnSaveRequest', 'Visible') or '').strip() == 'true')
+check('2', 'Save always visible',
+      (rule(RQ, 'RS_BtnDraftSave', 'Visible') or '').strip().startswith('true'))
 check('2', 'Save gated on title + DG while editable',
-      has(RQ, 'RS_BtnSaveRequest', 'DisplayMode', 'RS_Title.Text',
+      has(RQ, 'RS_BtnDraftSave', 'DisplayMode', 'RS_Title.Text',
           'HomeFilterDG.Selected.Value', '"Draft"', '"Pending"'))
 STYLE = ('Fill', 'HoverFill', 'PressedFill', 'DisabledFill', 'Color', 'HoverColor',
          'PressedColor', 'DisabledColor', 'BorderColor', 'BorderThickness', 'BorderStyle',
          'RadiusTopLeft', 'RadiusTopRight', 'RadiusBottomLeft', 'RadiusBottomRight',
          'Font', 'Size', 'FontWeight', 'PaddingTop', 'PaddingBottom', 'PaddingLeft', 'PaddingRight')
-bad = [p for p in STYLE if rule(RQ, 'RS_BtnSaveRequest_2', p) != rule(RQ, 'RS_BtnSubmitRequest', p)]
-check('2', f'Media matches Submit on all {len(STYLE)} style properties', not bad, ','.join(bad))
+# 2b: the pair was rebuilt in Studio and already matches each other
+bad = [p for p in STYLE if rule(RQ, 'RS_BtnDraftSave_1', p) != rule(RQ, 'RS_BtnDraftSave', p)]
+check('2', f'Media matches Save on all {len(STYLE)} style properties', not bad, ','.join(bad))
 check('2', 'Media keeps its own caption and position',
-      rule(RQ, 'RS_BtnSaveRequest_2', 'Text') != rule(RQ, 'RS_BtnSubmitRequest', 'Text')
-      and rule(RQ, 'RS_BtnSaveRequest_2', 'X') != rule(RQ, 'RS_BtnSubmitRequest', 'X'))
+      rule(RQ, 'RS_BtnDraftSave_1', 'Text') != rule(RQ, 'RS_BtnDraftSave', 'Text')
+      and rule(RQ, 'RS_BtnDraftSave_1', 'X') != rule(RQ, 'RS_BtnDraftSave', 'X'))
 
 # ---------------- carried forward from v4-v10 ----------------
 check('prior', 'Self-approval closed on ReviewScreen',

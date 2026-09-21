@@ -330,19 +330,7 @@ Screens:
             ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             ChevronHoverFill: =RGBA(255, 255, 255, 1)
             DefaultSelectedItems: |-
-              =Filter(
-                  Table({
-                      DisplayName: Coalesce(
-                          varReviewProject.Assignee.DisplayName,
-                          First(varReviewProject.DG_Agency_Contact).DisplayName
-                      ),
-                      Mail: Coalesce(
-                          varReviewProject.Assignee.Email,
-                          First(varReviewProject.DG_Agency_Contact).Email
-                      )
-                  }),
-                  Not(IsBlank(DisplayName))
-              )
+              =ForAll(varReviewProject.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
             DisplayFields: =["DisplayName"]
             Font: =Font.'Open Sans'
             HoverFill: =RGBA(186, 202, 226, 1)
@@ -352,7 +340,6 @@ Screens:
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
             SearchFields: =["DisplayName"]
-            SelectMultiple: =false
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(56, 96, 178, 1)
             Visible: =Not(IsBlank(varReviewProject))
@@ -463,7 +450,7 @@ Screens:
                       LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
                       {
                           Status: {Value: "Approved"},
-                          Assignee: If(
+                         Assignee: If(
                               IsBlank(RV_Assignee.Selected.Mail),
                               Blank(),
                               {

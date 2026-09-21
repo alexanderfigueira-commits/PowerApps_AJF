@@ -22,31 +22,60 @@ Screens:
             )
         );
         Set(varKpiRejectedAll,
-            CountRows(Filter(colDashReqs, Status.Value = "Rejected")));
+            CountRows(Filter(colDashReqs, 
+                Status.Value = "Rejected",
+                If(varUserRole = "ADMINISTRATOR", true, 'Created By'.Email = User().Email)
+            )));
         Set(varKpiRejectedMonth,
-            CountRows(Filter(colDashReqs, Status.Value = "Rejected", Created >= varMonthStart)));
+            CountRows(Filter(colDashReqs, 
+                Status.Value = "Rejected", 
+                Created >= varMonthStart,
+                If(varUserRole = "ADMINISTRATOR", true, 'Created By'.Email = User().Email)
+            )));
         Set(varKpiPendingAll,
-            CountRows(Filter(colDashReqs, Status.Value = "Processing")));
+            CountRows(Filter(colDashReqs, 
+                Status.Value = "Processing",
+                If(varUserRole = "ADMINISTRATOR", true, 'Created By'.Email = User().Email)
+            )));
         Set(varKpiPendingMonth,
-            CountRows(Filter(colDashReqs, Status.Value = "Processing", Created >= varMonthStart)));
-        Set(varKpiMyMonthTotal,
-            CountRows(Filter(colDashReqs, 'Created By'.Email = User().Email, Created >= varMonthStart, (Status.Value = "Approved" Or Status.Value = "Rejected"))));
-        Set(varKpiMyMonthSuccess,
-            CountRows(Filter(colDashReqs, 'Created By'.Email = User().Email, Created >= varMonthStart, Status.Value = "Approved")));
-        Set(varKpiAllMonthTotal,
-            CountRows(Filter(colDashReqs, Created >= varMonthStart, (Status.Value = "Approved" Or Status.Value = "Rejected"))));
-        Set(varKpiAllMonthSuccess,
-            CountRows(Filter(colDashReqs, Created >= varMonthStart, Status.Value = "Approved")));
+            CountRows(Filter(colDashReqs, 
+                Status.Value = "Processing", 
+                Created >= varMonthStart,
+                If(varUserRole = "ADMINISTRATOR", true, 'Created By'.Email = User().Email)
+            )));
+        Set(varKpiPublishedTotal,
+            CountRows(Filter(colDashReqs, 
+                Status.Value = "Approved",
+                If(varUserRole = "ADMINISTRATOR", true, 'Created By'.Email = User().Email)
+            )));
+        
+        Set(varKpiApprovedTotal,
+            CountRows(Filter(colDashReqs, 
+                Status.Value = "Approved",
+                If(varUserRole = "ADMINISTRATOR", true, 'Created By'.Email = User().Email)
+            )));
+        
         Set(varKpiAvgPublishDays,
             With(
                 {approved: Filter(colDashReqs, Status.Value = "Approved", Not(IsBlank(ReviewedDate)))},
                 If(CountRows(approved) = 0,
                     Blank(),
                     Round(
-                        Average(AddColumns(approved, "durHours",
-                            DateDiff(Created, ReviewedDate, TimeUnit.Hours)),
-                            durHours) / 24,
-                        1))));
+                        Sum(
+                            AddColumns(approved, durHours,
+                                DateDiff(Created, ReviewedDate, TimeUnit.Hours)
+                            ),
+                            durHours
+                        ) / CountRows(approved) / 24,
+                        1
+                    )
+                )
+            )
+        );
+        Set(varShowTrend, false);
+        Set(varShowTrend, false);
+        Set(varShowTrend, false);
+        Set(varShowTrend, false);
         Set(varShowTrend, false);
         ClearCollect(colPublishTrend,
             ForAll(Sequence(12) As Mo,
@@ -116,7 +145,7 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             Height: =24
-            Text: ="Key indicators "
+            Text: ="Key indicators"
             Width: =700
             X: =48
             Y: =126
@@ -170,7 +199,7 @@ Screens:
             Text: =Text(Coalesce(varKpiRejectedAll, 0))
             Width: =304
             X: =If(varUserRole = "ADMINISTRATOR",55,166)
-            Y: =232
+            Y: =222
       - DB_Card1BigLbl:
           Control: Label@2.5.1
           Group: Rejeced Requests
@@ -193,8 +222,8 @@ Screens:
             Fill: =RGBA(230, 232, 238, 1)
             Height: =1
             Width: =250
-            X: =If(varUserRole = "ADMINISTRATOR",55,185)
-            Y: =374
+            X: =85
+            Y: =383
       - DB_Card1Month:
           Control: Label@2.5.1
           Group: Rejeced Requests
@@ -205,7 +234,7 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Bold
             Height: =50
-            Size: =30
+            Size: =20
             Text: =Text(Coalesce(varKpiRejectedMonth, 0))
             Width: =304
             X: =If(varUserRole = "ADMINISTRATOR",55,166)
@@ -259,7 +288,7 @@ Screens:
             Size: =12
             Text: |-
               ="SUCCESS RATE 
-              (Published vs Approved)"
+              (Published ÷ Approved)"
             Width: =302
             X: =If(varUserRole = "ADMINISTRATOR",376,540)
             Y: =194
@@ -275,12 +304,12 @@ Screens:
             Height: =67
             Size: =40
             Text: |-
-              =If(Coalesce(varKpiMyMonthTotal, 0) = 0,
+              =If(Coalesce(varKpiPublishedTotal,varKpiApprovedTotal, 0) = 0,
                   "0",
-                  Text(Round(100 * varKpiMyMonthSuccess / varKpiMyMonthTotal, 0)) & " %")
+                  Text(Round(100 * (varKpiPublishedTotal /(varKpiApprovedTotal+varKpiPublishedTotal) ), 0)) & " %")
             Width: =306
-            X: =If(varUserRole = "ADMINISTRATOR",376,540)
-            Y: =234
+            X: =372
+            Y: =239
       - DB_Card2MyLbl:
           Control: Label@2.5.1
           Group: Success Card
@@ -291,10 +320,10 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =43
             Size: =11
-            Text: ="All Published Requests this month"
+            Text: ="Approved Requests"
             Width: =302
-            X: =If(varUserRole = "ADMINISTRATOR",381,540)
-            Y: =320
+            X: =384
+            Y: =471
       - DB_Card2Divider:
           Control: Rectangle@2.3.0
           Group: Success Card
@@ -303,8 +332,8 @@ Screens:
             Fill: =RGBA(230, 232, 238, 1)
             Height: =1
             Width: =250
-            X: =If(varUserRole = "ADMINISTRATOR",376,565)
-            Y: =381
+            X: =403
+            Y: =323
       - DB_Card2All:
           Control: Label@2.5.1
           Group: Success Card
@@ -315,11 +344,11 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Bold
             Height: =70
-            Size: =30
+            Size: =20
             Text: |-
-              =If(Coalesce(varKpiAllMonthTotal, 0) = 0,
+              =If(Coalesce(varKpiPublishedTotal, 0) = 0,
                   "0",
-                  Text(Round(100 * varKpiAllMonthSuccess / varKpiAllMonthTotal, 0)) & " %")
+                  Text(varKpiPublishedTotal & " Total"))
             Width: =306
             X: =If(varUserRole = "ADMINISTRATOR",376,537)
             Y: =385
@@ -332,10 +361,10 @@ Screens:
             Color: =RGBA(60, 66, 80, 1)
             Font: =Font.'Open Sans'
             Size: =11
-            Text: ="All Approved Requests this month"
+            Text: ="Published Requests"
             Width: =306
-            X: =If(varUserRole = "ADMINISTRATOR",376,540)
-            Y: =444
+            X: =380
+            Y: =352
       - DB_Card3:
           Control: Rectangle@2.3.0
           Group: avg GROUP
@@ -395,7 +424,7 @@ Screens:
             Visible: =If(varUserRole = "ADMINISTRATOR",true,false)
             Width: =248
             X: =1056
-            Y: =233
+            Y: =313
       - DB_Card3BigLbl:
           Control: Label@2.5.1
           Group: avg GROUP
@@ -406,11 +435,11 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =48
             Size: =11
-            Text: ="Average time from request creation to publication, across Published requests"
+            Text: ="Average time from Request Creation to Publication"
             Visible: =If(varUserRole = "ADMINISTRATOR",true,false)
             Width: =248
-            X: =1056
-            Y: =331
+            X: =1057
+            Y: =410
       - HomeUserName_1:
           Control: Label@2.5.1
           Group: Header_1
@@ -580,8 +609,8 @@ Screens:
             Fill: =RGBA(230, 232, 238, 1)
             Height: =1
             Width: =250
-            X: =If(varUserRole = "ADMINISTRATOR",706,930)
-            Y: =374
+            X: =726
+            Y: =375
       - Pending_CardMonth:
           Control: Label@2.5.1
           Group: Pending Requests
@@ -592,7 +621,7 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Bold
             Height: =50
-            Size: =32
+            Size: =20
             Text: =Text(Coalesce(varKpiPendingMonth, 0))
             Width: =302
             X: =If(varUserRole = "ADMINISTRATOR",706,906)
@@ -662,145 +691,6 @@ Screens:
             Width: =30
             X: =If(varUserRole = "ADMINISTRATOR",978,1178)
             Y: =180
-      - DB_TrendOverlay:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(0, 18, 107, 0.45)
-            Height: =768
-            OnSelect: =Set(varShowTrend, false)
-            Visible: =varShowTrend
-            Width: =1366
-      - DB_TrendPanel:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(230, 234, 240, 1)
-            BorderThickness: =1
-            Fill: =RGBA(255, 255, 255, 1)
-            Height: =440
-            Visible: =varShowTrend
-            Width: =780
-            X: =293
-            Y: =150
-      - DB_TrendAccent:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(0, 18, 107, 1)
-            Height: =6
-            Visible: =varShowTrend
-            Width: =780
-            X: =293
-            Y: =150
-      - DB_TrendTitle:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Bold
-            Height: =28
-            Size: =16
-            Text: ="Average time to published media - monthly trend"
-            Visible: =varShowTrend
-            Width: =680
-            X: =317
-            Y: =176
-      - DB_TrendSubtitle:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            Height: =20
-            Size: =11
-            Text: ="Days from request creation to publication, by publication month."
-            Visible: =varShowTrend
-            Width: =680
-            X: =317
-            Y: =204
-      - DB_TrendClose:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(96, 104, 120, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            Height: =36
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(240, 242, 246, 1)
-            OnSelect: =Set(varShowTrend, false)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            RadiusBottomLeft: =18
-            RadiusBottomRight: =18
-            RadiusTopLeft: =18
-            RadiusTopRight: =18
-            Text: ="✕"
-            Visible: =varShowTrend
-            Width: =36
-            X: =1031
-            Y: =160
-      - DB_TrendImage:
-          Control: Image@2.2.3
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =300
-            Image: =varTrendSvg
-            Visible: =varShowTrend
-            Width: =720
-            X: =323
-            Y: =232
-      - DB_TrendLegendCur:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(0, 18, 107, 1)
-            Height: =12
-            Visible: =varShowTrend
-            Width: =24
-            X: =340
-            Y: =548
-      - DB_TrendLegendCurLbl:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(60, 66, 80, 1)
-            Font: =Font.'Open Sans'
-            Height: =20
-            Size: =11
-            Text: ="This year (" & Text(Year(Now())) & ")"
-            Visible: =varShowTrend
-            Width: =160
-            X: =370
-            Y: =544
-      - DB_TrendLegendPrev:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(237, 125, 49, 1)
-            Height: =12
-            Visible: =varShowTrend
-            Width: =24
-            X: =540
-            Y: =548
-      - DB_TrendLegendPrevLbl:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(60, 66, 80, 1)
-            Font: =Font.'Open Sans'
-            Height: =20
-            Size: =11
-            Text: ="Previous year (" & Text(Year(Now()) - 1) & ")"
-            Visible: =varShowTrend
-            Width: =200
-            X: =570
-            Y: =544
       - HomeAppTitle_4:
           Control: Label@2.5.1
           Group: Group4_1
@@ -1024,3 +914,170 @@ Screens:
             Width: =83
             X: =947
             Y: =10
+      - DB_Card2All_1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =70
+            Size: =20
+            Text: |-
+              =If(Coalesce(varKpiApprovedTotal, 0) = 0,
+                  "0",
+                  Text(varKpiApprovedTotal &" Total"))
+            Width: =306
+            X: =378
+            Y: =504
+      - DB_TrendOverlay:
+          Control: Rectangle@2.3.0
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.45)
+            Height: =768
+            OnSelect: =Set(varShowTrend, false)
+            Visible: =varShowTrend
+            Width: =1366
+      - DB_TrendPanel:
+          Control: Rectangle@2.3.0
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(230, 234, 240, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =440
+            Visible: =varShowTrend
+            Width: =780
+            X: =293
+            Y: =150
+      - DB_TrendAccent:
+          Control: Rectangle@2.3.0
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =6
+            Visible: =varShowTrend
+            Width: =780
+            X: =293
+            Y: =150
+      - DB_TrendTitle:
+          Control: Label@2.5.1
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =16
+            Text: ="Average time to published media - monthly trend"
+            Visible: =varShowTrend
+            Width: =680
+            X: =317
+            Y: =176
+      - DB_TrendSubtitle:
+          Control: Label@2.5.1
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            Size: =11
+            Text: ="Days from request creation to publication, by publication month."
+            Visible: =varShowTrend
+            Width: =680
+            X: =317
+            Y: =204
+      - DB_TrendClose:
+          Control: Classic/Button@2.2.0
+          Group: TrendGraph
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: =Set(varShowTrend, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Text: ="✕"
+            Visible: =varShowTrend
+            Width: =36
+            X: =1031
+            Y: =160
+      - DB_TrendImage:
+          Control: Image@2.2.3
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =300
+            Image: =varTrendSvg
+            Visible: =varShowTrend
+            Width: =720
+            X: =323
+            Y: =232
+      - DB_TrendLegendCur:
+          Control: Rectangle@2.3.0
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =12
+            Visible: =varShowTrend
+            Width: =24
+            X: =340
+            Y: =548
+      - DB_TrendLegendCurLbl:
+          Control: Label@2.5.1
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            Size: =11
+            Text: ="This year (" & Text(Year(Now())) & ")"
+            Visible: =varShowTrend
+            Width: =160
+            X: =370
+            Y: =544
+      - DB_TrendLegendPrev:
+          Control: Rectangle@2.3.0
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(237, 125, 49, 1)
+            Height: =12
+            Visible: =varShowTrend
+            Width: =24
+            X: =540
+            Y: =548
+      - DB_TrendLegendPrevLbl:
+          Control: Label@2.5.1
+          Group: TrendGraph
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            Size: =11
+            Text: ="Previous year (" & Text(Year(Now()) - 1) & ")"
+            Visible: =varShowTrend
+            Width: =200
+            X: =570
+            Y: =544
