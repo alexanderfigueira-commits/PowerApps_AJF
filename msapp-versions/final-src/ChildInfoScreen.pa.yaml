@@ -1388,7 +1388,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Beluga reference"
-            Visible: =Coalesce(varCurrentRequest.Status.Value, "") = "Approved"
+            Visible: =Coalesce(varCurrentRequest.Status.Value, "") = "Approved" And varUserRole = "ADMINISTRATOR"
             Width: =400
             X: =56
             Y: =560
@@ -1404,7 +1404,7 @@ Screens:
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             OnChange: =Set(varChildBelugaRef, Self.Text)
-            Visible: =Coalesce(varCurrentRequest.Status.Value, "") = "Approved"
+            Visible: =Coalesce(varCurrentRequest.Status.Value, "") = "Approved" And varUserRole = "ADMINISTRATOR"
             Width: =400
             X: =56
             Y: =584
