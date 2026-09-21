@@ -68,6 +68,10 @@ Screens:
                         ArchiveId: Text(ID),
                         SPId: ID,
                         Title: CD_MediaNumber,
+                        BelugaReference: Coalesce(
+                            BelugaReference,
+                            ""
+                        ),
                         ProductionTitle: Coalesce(
                             ProductionTitle,
                             ""
@@ -701,6 +705,7 @@ Screens:
                     Set(varChildLinks1, Coalesce(ThisItem.ReferenceLinks, ""));
                     Set(varChildTags1, Coalesce(ThisItem.Tags, ""));
                     Set(varChildFTPPath1, Coalesce(ThisItem.FTPPath, ""));
+                    Set(varChildBelugaRef, Coalesce(ThisItem.BelugaReference, ""));
                     Navigate(ChildInfoScreen)
                   Width: =1300
             - RS_CRowDivider:
@@ -1241,6 +1246,7 @@ Screens:
               Set(varChildLinks1, "");
               Set(varChildTags1, "");
               Set(varChildFTPPath1, "");
+              Set(varChildBelugaRef, "");
               Navigate(ChildInfoScreen),
                   Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
               )

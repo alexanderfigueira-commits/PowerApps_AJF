@@ -1379,3 +1379,33 @@ Screens:
             Y: =720
             ZIndex: =900
           Children: []
+      - CI_LblBeluga:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Beluga reference"
+            Visible: =Coalesce(varCurrentRequest.Status.Value, "") = "Approved"
+            Width: =400
+            X: =56
+            Y: =560
+          Children: []
+      - CI_BelugaRef:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =varChildBelugaRef
+            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+            Font: =Font.'Open Sans'
+            HintText: ="Assigned by Central Deposit"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =Set(varChildBelugaRef, Self.Text)
+            Visible: =Coalesce(varCurrentRequest.Status.Value, "") = "Approved"
+            Width: =400
+            X: =56
+            Y: =584
+          Children: []
