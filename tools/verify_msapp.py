@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v25-typepicker.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v26-saverepick.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -426,6 +426,22 @@ for _c, _want in (('RS_TypePickerClose', 'false'), ('RS_TypePickerOverlay', 'fal
                     rule(RQ, _c, 'OnSelect') or '') is not None)
 check('picker', 'RS_LblMissing follows the locShowDetails collapse idiom',
       (rule(RQ, 'RS_LblMissing', 'Y') or '') == 'If(locShowDetails,403,110)')
+
+# ---------------- picker reopens after a media save ----------------
+_save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''
+_navc = _save.count('Navigate(RequesDetailtScreen)')
+check('save-repick', 'Save has exactly 2 success paths, both navigating back',
+      _navc == 2, str(_navc))
+check('save-repick', 'Both success paths clear the saved type',
+      _save.count('Set(varRequestMediaType, "")') == 2)
+check('save-repick', 'Both success paths reopen the picker',
+      _save.count('Set(varShowTypeConfirm, true)') == 2)
+_FAIL = 'Notify("Save failed: " & FirstError.Message, NotificationType.Error)'
+check('save-repick', 'The failure path is untouched and does not reset the form',
+      _save.count(_FAIL) == 1)
+check('save-repick', 'Cards unlock once the type is cleared (unchanged precondition)',
+      all('varRequestMediaType <> ""' in (rule(RQ, c, 'DisplayMode') or '')
+          for c in ('RS_CardPhotoBtn', 'RS_CardVideoBtn', 'RS_CardPodcastBtn')))
 
 # ---------------- package integrity ----------------
 total, missing = 0, []

@@ -582,12 +582,18 @@ Screens:
                               },
                               UpdateIf(colArchives, ArchiveId = varCurrentChildId, {SPId: savedMedia.ID});
                               Notify("Media saved to SharePoint.", NotificationType.Success);
+                              Set(varRequestMediaType, "");
+                              Set(varConfirmed, false);
+                              Set(varShowTypeConfirm, true);
                               Navigate(RequesDetailtScreen)
                           )
                       ),
                       Notify("Save failed: " & FirstError.Message, NotificationType.Error)
                   ),
                   Notify("Media added to request. Save or submit the request to persist media to SharePoint.", NotificationType.Success);
+                  Set(varRequestMediaType, "");
+                  Set(varConfirmed, false);
+                  Set(varShowTypeConfirm, true);
                   Navigate(RequesDetailtScreen)
               )
             PressedBorderColor: =Self.Fill
