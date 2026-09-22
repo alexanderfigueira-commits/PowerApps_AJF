@@ -749,7 +749,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   Height: =20
                   Size: =11
-                  Text: ="Square format, 1400x1400 px min to 3000x3000 px max, JPEG or PNG only, RGB colour space. Read-only preview -- add or remove files from the Attachments box on the Legal & Docs tab."
+                  Text: ="Square format, 1400x1400 px min to 3000x3000 px max, JPEG or PNG only, RGB colour space."
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
                   X: =56
@@ -758,7 +758,7 @@ Screens:
                 Control: Attachments@2.3.0
                 Properties:
                   BorderColor: =RGBA(220, 224, 230, 1)
-                  DisplayMode: =DisplayMode.View
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
                   Height: =110
                   HoverFill: =RGBA(186, 202, 226, 1)
@@ -769,9 +769,42 @@ Screens:
                   Items.Name: =DisplayName
                   Items.Value: =Id
                   MaxAttachments: =1
-                  OnAddFile: =false
-                  OnRemoveFile: =false
-                  OnUndoRemoveFile: =false
+                  OnAddFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CI_PodcastVisual.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CI_PodcastVisual.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnUndoRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CI_PodcastVisual.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
                   PressedColor: =RGBA(255, 255, 255, 1)
                   PressedFill: =RGBA(0, 18, 107, 1)
                   Visible: =varChildMediaType = "Podcast"

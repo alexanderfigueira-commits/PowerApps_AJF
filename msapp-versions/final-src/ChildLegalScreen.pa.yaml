@@ -212,7 +212,7 @@ Screens:
               =[{id: 1}]
             LoadingSpinner: =LoadingSpinner.None
             TemplatePadding: =0
-            TemplateSize: =If(varChildMediaType = "Video", 1206, 1008)
+            TemplateSize: =If(varChildMediaType = "Video", 1276, 1078)
             Width: =1366
             Y: =102
           Children:
@@ -277,7 +277,7 @@ Screens:
                   PressedFill: =RGBA(0, 18, 107, 1)
                   SelectionColor: =RGBA(255, 255, 255, 1)
                   SelectionFill: =RGBA(56, 96, 178, 1)
-                  Width: =587
+                  Width: =900
                   X: =32
                   Y: =90
             - CL_LblCase1Sub:
@@ -287,12 +287,12 @@ Screens:
                   Color: =RGBA(60, 66, 80, 1)
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
-                  Height: =17
-                  Text: ="Case 1 - required documents"
+                  Height: =22
+                  Text: ="Case 1 — required documents"
                   Visible: =Left(varChildContractCase, 6) = "Case 1"
-                  Width: =314
-                  X: =886
-                  Y: =176
+                  Width: =520
+                  X: =32
+                  Y: =148
             - CL_Divider1:
                 Control: Rectangle@2.3.0
                 Properties:
@@ -301,7 +301,7 @@ Screens:
                   Height: =1
                   Width: =1302
                   X: =32
-                  Y: =316
+                  Y: =310
             - CL_LblRights:
                 Control: Label@2.5.1
                 Properties:
@@ -314,7 +314,7 @@ Screens:
                   Text: ="Rights & declarations"
                   Width: =600
                   X: =32
-                  Y: =170
+                  Y: =322
             - CL_ChkModel:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -330,7 +330,7 @@ Screens:
                   Text: ="Recognisable private persons appear in this production"
                   Width: =900
                   X: =28
-                  Y: =263
+                  Y: =394
             - CL_ChkNoThirdParty:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -347,7 +347,7 @@ Screens:
                   Text: ="No third-party rights in this production"
                   Width: =900
                   X: =28
-                  Y: =217
+                  Y: =356
             - CL_ChkModelProvided:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -440,8 +440,8 @@ Screens:
                   Fill: =RGBA(230, 232, 238, 1)
                   Height: =1
                   Width: =1302
-                  X: =28
-                  Y: =160
+                  X: =32
+                  Y: =610
             - CL_LblAttachments:
                 Control: Label@2.5.1
                 Properties:
@@ -454,19 +454,43 @@ Screens:
                   Text: ="Legal annexes & supporting documents"
                   Width: =800
                   X: =32
-                  Y: =332
+                  Y: =620
             - CL_AttachHint:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =RGBA(96, 104, 120, 1)
                   Font: =Font.'Open Sans'
-                  Height: =56
+                  Height: =22
                   Size: =12
-                  Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles using the Attachments box below. All files attached to this media file share one list; the VTT subtitles box further down mirrors it and is read-only."
+                  Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles in the box below. A media file has one shared set of attachments; the VTT box further down mirrors it and is read-only."
                   Width: =1302
                   X: =32
-                  Y: =361
+                  Y: =652
+            - CL_Annex:
+                Control: Attachments@2.3.0
+                Properties:
+                  BorderColor: =RGBA(220, 224, 230, 1)
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =140
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  ItemColor: =RGBA(255, 255, 255, 1)
+                  ItemFill: =RGBA(56, 96, 178, 1)
+                  ItemHoverFill: =RGBA(186, 202, 226, 1)
+                  Items: =LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)).Attachments
+                  Items.Name: =DisplayName
+                  Items.Value: =Id
+                  MaxAttachments: =20
+                  OnAddFile: =false
+                  OnRemoveFile: =false
+                  OnUndoRemoveFile: =false
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(0, 18, 107, 1)
+                  Visible: =false
+                  Width: =1302
+                  X: =32
+                  Y: =678
             - CL_ChkSubtitles:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -483,7 +507,7 @@ Screens:
                   Visible: =varChildMediaType = "Video"
                   Width: =900
                   X: =28
-                  Y: =1008
+                  Y: =1078
             - CL_LblVTT:
                 Control: Label@2.5.1
                 Properties:
@@ -496,7 +520,7 @@ Screens:
                   Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
                   Width: =800
                   X: =32
-                  Y: =1050
+                  Y: =1120
             - CL_VTTUpload:
                 Control: Attachments@2.3.0
                 Properties:
@@ -520,7 +544,7 @@ Screens:
                   Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
                   Width: =1302
                   X: =32
-                  Y: =1076
+                  Y: =1146
             - CL_ChkFramework:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -530,15 +554,15 @@ Screens:
                   Default: =varDocFramework
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
-                  Height: =40
+                  Height: =36
                   HoverColor: =RGBA(0, 18, 107, 1)
                   OnCheck: =Set(varDocFramework, true)
                   OnUncheck: =Set(varDocFramework, false)
                   Text: ="Signed framework contract *"
                   Visible: =Left(varChildContractCase, 6) = "Case 1"
-                  Width: =393
-                  X: =885
-                  Y: =196
+                  Width: =600
+                  X: =28
+                  Y: =176
             - CL_ChkSpecific:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -548,15 +572,15 @@ Screens:
                   Default: =varDocSpecific
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
-                  Height: =40
+                  Height: =36
                   HoverColor: =RGBA(0, 18, 107, 1)
                   OnCheck: =Set(varDocSpecific, true)
                   OnUncheck: =Set(varDocSpecific, false)
                   Text: ="Signed specific contract *"
                   Visible: =Left(varChildContractCase, 6) = "Case 1"
-                  Width: =393
-                  X: =885
-                  Y: =226
+                  Width: =600
+                  X: =28
+                  Y: =206
             - CL_ChkOffer:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -566,15 +590,15 @@ Screens:
                   Default: =varDocOffer
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
-                  Height: =40
+                  Height: =36
                   HoverColor: =RGBA(0, 18, 107, 1)
                   OnCheck: =Set(varDocOffer, true)
                   OnUncheck: =Set(varDocOffer, false)
                   Text: ="Offer (optional)"
                   Visible: =Left(varChildContractCase, 6) = "Case 1"
-                  Width: =393
-                  X: =885
-                  Y: =256
+                  Width: =600
+                  X: =28
+                  Y: =236
             - CL_LblCase1Req:
                 Control: Label@2.5.1
                 Properties:
@@ -582,13 +606,13 @@ Screens:
                   Color: =RGBA(200, 30, 30, 1)
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
-                  Height: =52
-                  Size: =8
+                  Height: =22
+                  Size: =12
                   Text: ="⚠  Both mandatory contracts must be confirmed"
                   Visible: =Left(varChildContractCase, 6) = "Case 1" And (Not(varDocFramework) Or Not(varDocSpecific))
-                  Width: =385
-                  X: =887
-                  Y: =279
+                  Width: =700
+                  X: =32
+                  Y: =266
             - AttachementCard:
                 Control: Form@2.4.4
                 Variant: Classic
@@ -597,7 +621,7 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   DataSource: ='AV-CD-Mediafiles'
                   DefaultMode: =If(varRequestorLocked, FormMode.View, FormMode.Edit)
-                  Height: =370
+                  Height: =380
                   Item: |-
                     =If(
                         Coalesce(varCurrentChildSPId, 0) > 0,
@@ -607,7 +631,7 @@ Screens:
                   NumberOfColumns: =1
                   Width: =1160
                   X: =39
-                  Y: =618
+                  Y: =678
                 Children:
                   - Attachments_DataCard2:
                       Control: TypedDataCard@1.0.7
@@ -618,6 +642,7 @@ Screens:
                         DataField: ="{Attachments}"
                         Default: =ThisItem.Attachments
                         DisplayName: =DataSourceInfo([@'AV-CD-Mediafiles'],DataSourceInfo.DisplayName,'{Attachments}')
+                        Height: =372
                         Required: =false
                         Update: =DataCardValue50.Attachments
                         Width: =1160
@@ -782,6 +807,15 @@ Screens:
                               Width: =30
                               Wrap: =false
                               Y: =DataCardKey59.Y
+      - CL_BottomBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =56
+            Width: =1366
+            Y: =712
       - CL_BtnPrev:
           Control: Classic/Button@2.2.0
           Properties:

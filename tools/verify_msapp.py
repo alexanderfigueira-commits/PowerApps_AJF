@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v28-attachcard.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v29-attachform.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -231,8 +231,46 @@ check('3a', 'Resubmit still covers Rejected and Pending',
 
 # ---------------- attachments: one writable card, three read-only previews ----------------
 CI2, CM2, CL2, CV2 = 'ChildInfoScreen', 'ChildMetaScreen', 'ChildLegalScreen', 'ChildValidScreen'
-PREVIEWS = [(CI2, 'CI_PodcastVisual'), (CM2, 'CM_EpisodeVisual'), (CL2, 'CL_VTTUpload')]
-check('attach', 'CL_Annex is gone (replaced by AttachementCard)', (CL2, 'CL_Annex') not in R)
+# Only ChildLegalScreen's own boxes are in scope. CI_PodcastVisual (ChildInfoScreen)
+# and CM_EpisodeVisual (ChildMetaScreen) still carry the v22 direct-Patch pattern that
+# cannot write SharePoint attachments -- left alone deliberately, and recorded below so
+# the gap is visible rather than forgotten.
+PREVIEWS = [(CL2, 'CL_VTTUpload')]
+_still_broken = [c for (s_, c) in R
+                 if c in ('CI_PodcastVisual', 'CM_EpisodeVisual')
+                 and 'Patch(' in (rule(s_, c, 'OnAddFile') or '')]
+check('attach', 'KNOWN GAP (out of scope): CI_PodcastVisual/CM_EpisodeVisual still '
+      'use the direct-Patch pattern that cannot save attachments',
+      sorted(_still_broken) == ['CI_PodcastVisual', 'CM_EpisodeVisual'],
+      ','.join(sorted(_still_broken)))
+check('attach', 'CL_Annex is hidden -- the form owns the annex slot now',
+      (rule(CL2, 'CL_Annex', 'Visible') or '').strip() == 'false')
+check('attach', 'CL_Annex keeps no dead write handler, but stays readable for the checklist',
+      all((rule(CL2, 'CL_Annex', p_) or '').strip() == 'false'
+          for p_ in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile'))
+      and 'Attachments' in (rule(CL2, 'CL_Annex', 'Items') or ''))
+check('attach', f'All 11 AttachementCard nodes sit inside CL_Gallery',
+      (lambda names: all(n in names for n in
+          ('AttachementCard', 'Attachments_DataCard2', 'DataCardValue50',
+           'CD_MediaNumber_DataCard2', 'DataCardValue51', 'StarVisible58',
+           'DataCardKey58', 'ErrorMessage58', 'StarVisible59', 'DataCardKey59',
+           'ErrorMessage59')))(
+          (lambda acc: acc)(
+              [k['Name'] for c in S[CL2]['Children'] if c['Name'] == 'CL_Gallery'
+               for k in __import__('itertools').chain.from_iterable(
+                   [[x] + [y for y in x.get('Children', [])] +
+                    [z for y in x.get('Children', []) for z in y.get('Children', [])]
+                    for x in c.get('Children', [])])])))
+_sb = '\n'.join(l for l in (rule(RQ, 'RS_BtnSubmitRequest', 'OnSelect') or '').split('\n')
+                if not l.strip().startswith('//'))
+check('attach', 'Submit catches attachments staged but never saved',
+      'AttachementCard.Unsaved' in _sb and 'SubmitForm(AttachementCard)' in _sb
+      and _sb.index('AttachementCard.Unsaved') < _sb.index('Clear(colArchives)'))
+check('attach', 'Submit warns about unsaved media files instead of discarding them',
+      'were never saved to SharePoint' in _sb
+      and _sb.index('were never saved to SharePoint') < _sb.index('Clear(colArchives)'))
+check('attach', 'Submit still flips DepositStatus for the saved media files',
+      'DepositStatus: Table({Value: "Pending Approval"})' in _sb)
 _form_scr = [c for (s_, c) in R if c == 'AttachementCard']
 check('attach', 'AttachementCard exists exactly once', _form_scr == ['AttachementCard'])
 check('attach', 'AttachementCard lives inside CL_Gallery, not the bare screen',

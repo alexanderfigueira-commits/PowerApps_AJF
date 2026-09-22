@@ -911,12 +911,28 @@ Screens:
                           )
                       },
                       Set(varCurrentRequest, savedReq);
+                      // If the Legal tab still holds attachments that were never saved,
+                      // write them now rather than losing them to Clear(colArchives).
+                      If(
+                          Coalesce(varCurrentChildSPId, 0) > 0 And AttachementCard.Unsaved,
+                          SubmitForm(AttachementCard)
+                      );
                       ForAll(
                           Filter(colArchives, SPId > 0),
                           Patch(
                               'AV-CD-Mediafiles',
                               LookUp('AV-CD-Mediafiles', ID = SPId),
                               {DepositStatus: Table({Value: "Pending Approval"})}
+                          )
+                      );
+                      With(
+                          {locUnsaved: CountRows(Filter(colArchives, Coalesce(SPId, 0) <= 0))},
+                          If(
+                              locUnsaved > 0,
+                              Notify(
+                                  Text(locUnsaved) & " media file(s) were never saved to SharePoint and are not part of this submission. Open each one and press Save.",
+                                  NotificationType.Warning
+                              )
                           )
                       );
                       Clear(colArchives);
