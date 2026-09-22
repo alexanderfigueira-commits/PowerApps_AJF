@@ -11,9 +11,8 @@ Screens:
     Properties:
       Fill: =RGBA(247, 248, 250, 1)
       LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
-      OnVisible: |
-        =ClearCollect(colDGOptions, {Value: "All"});
-        Collect(colDGOptions, Choices('AV-CD-Requests'.DG));
+      OnVisible: |-
+        =// varUserRole gates the gallery's role clause, so it is always set.
         Set(
             varUserRole,
             Coalesce(
@@ -21,43 +20,59 @@ Screens:
                 "REQUESTOR"
             )
         );
-
-
-
-        ClearCollect(colAssignees, {Value: "All"});
-        Collect(
-            colAssignees,
-            Sort(Distinct(Filter('AV-CD-RolesPermissionsList', Role.Value = "ADMINISTRATOR"), UserEmail.DisplayName), Value)
-        );
-
-        Set(varFilter, Coalesce(varNavFilter, "All"));
-        Set(varNavFilter, Blank());
-        Set(varFilterDG, "");
-        Set(varFilterRequestName, "");
-        Set(varFilterStartDate, Today()-31);
-        Set(varFilterEndDate, Today());
-        Refresh('AV-CD-Requests');
-        Refresh('AV-CD-Mediafiles');
-        ClearCollect(colMyReqs, 'AV-CD-Requests');
-        ClearCollect(colMyMedia, 'AV-CD-Mediafiles');
-        Set(
-            varMyRequestorName,
-            LookUp(colMyReqs, 'Created By'.Email = User().Email, 'Created By'.DisplayName)
-        );
-
-        ClearCollect(colRequestorOptions, {Value: "All"});
-        Collect(
-            colRequestorOptions,
-            Sort(Distinct(colMyReqs, 'Created By'.DisplayName), Value)
-        );
+        
+        // Data loads once per session, or whenever the cache is empty (self-heal),
+        // instead of on every visit. Use HomeBtnRefresh to reload on demand.
         If(
-            CountRows(colMyReqs) >= 2000 Or CountRows(colMyMedia) >= 2000,
-            Notify(
-                "Only the first 2000 requests are loaded, so older ones may be missing. Narrow your search - status, production type, date range, ID or title - to work with a smaller set.",
-                NotificationType.Warning
-            )
+            Not(varReqDataLoaded) Or IsEmpty(colMyReqs),
+            ClearCollect(colDGOptions, {Value: "All"});
+            Collect(colDGOptions, Choices('AV-CD-Requests'.DG));
+            ClearCollect(colAssignees, {Value: "All"});
+            Collect(
+                colAssignees,
+                Sort(Distinct(Filter('AV-CD-RolesPermissionsList', Role.Value = "ADMINISTRATOR"), UserEmail.DisplayName), Value)
+            );
+            Refresh('AV-CD-Requests');
+            Refresh('AV-CD-Mediafiles');
+            ClearCollect(colMyReqs, 'AV-CD-Requests');
+            ClearCollect(colMyMedia, 'AV-CD-Mediafiles');
+            Set(
+                varMyRequestorName,
+                LookUp(colMyReqs, 'Created By'.Email = User().Email, 'Created By'.DisplayName)
+            );
+            ClearCollect(colRequestorOptions, {Value: "All"});
+            Collect(
+                colRequestorOptions,
+                Sort(Distinct(colMyReqs, 'Created By'.DisplayName), Value)
+            );
+            If(
+                CountRows(colMyReqs) >= 2000 Or CountRows(colMyMedia) >= 2000,
+                Notify(
+                    "Only the first 2000 requests are loaded, so older ones may be missing. Narrow your search - status, production type, date range, ID or title - to work with a smaller set.",
+                    NotificationType.Warning
+                )
+            );
+            Set(varReqDataLoaded, true)
         );
-        UpdateContext({locProdTypeFilter: Blank()});
+        
+        // Filters initialise once, so the selection survives navigating away and back.
+        If(
+            Not(varReqFiltersInit),
+            Set(varFilter, "All");
+            Set(varFilterDG, "");
+            Set(varFilterRequestName, "");
+            Set(varFilterStartDate, Today()-31);
+            Set(varFilterEndDate, Today());
+            UpdateContext({locProdTypeFilter: Blank()});
+            Set(varReqFiltersInit, true)
+        );
+        
+        // A status handed over from the dashboard still wins on every visit.
+        If(
+            Not(IsBlank(varNavFilter)),
+            Set(varFilter, varNavFilter)
+        );
+        Set(varNavFilter, Blank())
     Children:
       - Label12_3:
           Control: Label@2.5.1
@@ -762,12 +777,31 @@ Screens:
                   OnSelect: =Select(Parent)
                   Size: =10
                   Text: |-
-                    =Switch(
-                        locProdTypeFilter,
-                     "Photo", "📷 " & ThisItem.RequestNumber,
-                        "Podcast", "🎙️ " & ThisItem.RequestNumber,
-                        "Video", "🎬 " & ThisItem.RequestNumber,
-                        ThisItem.RequestNumber
+                    =If(
+                        IsBlank(locProdTypeFilter),
+                        // "All media": each row shows the icon of its own first media file
+                        Switch(
+                            First(
+                                First(
+                                    Filter(
+                                    colMyMedia,
+                                    ParentRequest = ThisItem.RequestNumber
+                                )
+                                ).MediaType
+                            ).Value,
+                            "Photo", "📷 " & ThisItem.RequestNumber,
+                            "Podcast", "🎙️ " & ThisItem.RequestNumber,
+                            "Video", "🎬 " & ThisItem.RequestNumber,
+                            ThisItem.RequestNumber
+                        ),
+                        // a specific type is selected: unchanged behaviour
+                        Switch(
+                            locProdTypeFilter,
+                            "Photo", "📷 " & ThisItem.RequestNumber,
+                            "Podcast", "🎙️ " & ThisItem.RequestNumber,
+                            "Video", "🎬 " & ThisItem.RequestNumber,
+                            ThisItem.RequestNumber
+                        )
                     )
                   Width: =108
             - HomeRowName:
@@ -806,7 +840,15 @@ Screens:
                   Height: =59
                   OnSelect: =Select(Parent)
                   Size: =10
-                  Text: =ThisItem.RequestTitle
+                  Text: |-
+                    =Text(
+                        CountRows(
+                            Filter(
+                                colMyMedia,
+                                ParentRequest = ThisItem.RequestNumber
+                            )
+                        )
+                    )
                   Width: =65
                   X: =559
             - HomeRowBadge:
@@ -1679,3 +1721,42 @@ Screens:
             Width: =174
             X: =1139
             Y: =6
+      - HomeBtnRefresh:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(247, 248, 250, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =Refresh('AV-CD-Requests');
+              Refresh('AV-CD-Mediafiles');
+              ClearCollect(colMyReqs, 'AV-CD-Requests');
+              ClearCollect(colMyMedia, 'AV-CD-Mediafiles');
+              Set(
+                  varMyRequestorName,
+                  LookUp(colMyReqs, 'Created By'.Email = User().Email, 'Created By'.DisplayName)
+              );
+              ClearCollect(colRequestorOptions, {Value: "All"});
+              Collect(
+                  colRequestorOptions,
+                  Sort(Distinct(colMyReqs, 'Created By'.DisplayName), Value)
+              );
+              Set(varReqDataLoaded, true);
+              Notify("Requests reloaded from SharePoint.", NotificationType.Success)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="⟳  Reload"
+            Tooltip: ="Reload requests and media files from SharePoint"
+            Width: =108
+            X: =945
+            Y: =72
+          Children: []

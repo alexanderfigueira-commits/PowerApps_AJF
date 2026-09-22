@@ -382,6 +382,19 @@ Screens:
             ChevronFill: =RGBA(255, 255, 255, 1)
             ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
             ChevronHoverFill: =Self.ChevronFill
+            DefaultSelectedItems: |-
+              =With(
+                  {locManual: Last(
+                          Filter(
+                              colManualContacts,
+                              ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber
+                          )
+                      ).EmailContact},
+                  Filter(
+                      Table({DisplayName: locManual, Mail: locManual}),
+                      Not(IsBlank(DisplayName))
+                  )
+              )
             DisplayFields: =["DisplayName"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
@@ -389,9 +402,31 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search the DG official responsible"
             Items: |-
-              =Filter(
-                  Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value,
-                  Not(IsBlank(DisplayName)) And Not(StartsWith(DisplayName, "'"))
+              =With(
+                  {locManual: Last(
+                          Filter(
+                              colManualContacts,
+                              ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber
+                          )
+                      ).EmailContact},
+                  Ungroup(
+                      Table(
+                          {rows:
+                              ForAll(
+                                  Filter(
+                                      Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value,
+                                      Not(IsBlank(DisplayName)) And Not(StartsWith(DisplayName, "'"))
+                                  ) As o,
+                                  {DisplayName: o.DisplayName, Mail: o.Mail}
+                              )
+                          },
+                          {rows: Filter(
+                              Table({DisplayName: locManual, Mail: locManual}),
+                              Not(IsBlank(DisplayName))
+                          )}
+                      ),
+                      "rows"
+                  )
               )
             OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
             PressedColor: =Self.Color
@@ -426,6 +461,19 @@ Screens:
             ChevronFill: =RGBA(255, 255, 255, 1)
             ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
             ChevronHoverFill: =Self.ChevronFill
+            DefaultSelectedItems: |-
+              =With(
+                  {locManual: Last(
+                          Filter(
+                              colManualContacts,
+                              ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber
+                          )
+                      ).EmailContact},
+                  Filter(
+                      Table({DisplayName: locManual, Mail: locManual}),
+                      Not(IsBlank(DisplayName))
+                  )
+              )
             DisplayFields: =["DisplayName"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
@@ -433,9 +481,31 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search the contractor / production company"
             Items: |-
-              =Filter(
-                  Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value,
-                  Not(StartsWith(DisplayName, "'"))
+              =With(
+                  {locManual: Last(
+                          Filter(
+                              colManualContacts,
+                              ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber
+                          )
+                      ).EmailContact},
+                  Ungroup(
+                      Table(
+                          {rows:
+                              ForAll(
+                                  Filter(
+                                      Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value,
+                                      Not(StartsWith(DisplayName, "'"))
+                                  ) As o,
+                                  {DisplayName: o.DisplayName, Mail: o.Mail}
+                              )
+                          },
+                          {rows: Filter(
+                              Table({DisplayName: locManual, Mail: locManual}),
+                              Not(IsBlank(DisplayName))
+                          )}
+                      ),
+                      "rows"
+                  )
               )
             OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
             PressedColor: =Self.Color
@@ -911,28 +981,12 @@ Screens:
                           )
                       },
                       Set(varCurrentRequest, savedReq);
-                      // If the Legal tab still holds attachments that were never saved,
-                      // write them now rather than losing them to Clear(colArchives).
-                      If(
-                          Coalesce(varCurrentChildSPId, 0) > 0 And AttachementCard.Unsaved,
-                          SubmitForm(AttachementCard)
-                      );
                       ForAll(
                           Filter(colArchives, SPId > 0),
                           Patch(
                               'AV-CD-Mediafiles',
                               LookUp('AV-CD-Mediafiles', ID = SPId),
                               {DepositStatus: Table({Value: "Pending Approval"})}
-                          )
-                      );
-                      With(
-                          {locUnsaved: CountRows(Filter(colArchives, Coalesce(SPId, 0) <= 0))},
-                          If(
-                              locUnsaved > 0,
-                              Notify(
-                                  Text(locUnsaved) & " media file(s) were never saved to SharePoint and are not part of this submission. Open each one and press Save.",
-                                  NotificationType.Warning
-                              )
                           )
                       );
                       Clear(colArchives);
@@ -1936,12 +1990,12 @@ Screens:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =280
+            Height: =580
             OnSelect: =
             Visible: =locShowContactPopup
-            Width: =600
-            X: =383
-            Y: =250
+            Width: =1000
+            X: =183
+            Y: =94
       - RS_LblContactType:
           Control: Label@2.5.1
           Group: Pop-up Contact Extra
@@ -1954,8 +2008,8 @@ Screens:
             Text: ="Contact type"
             Visible: =locShowContactPopup
             Width: =260
-            X: =407
-            Y: =296
+            X: =215
+            Y: =182
       - RS_drpContactType:
           Control: Classic/DropDown@2.3.1
           Group: Pop-up Contact Extra
@@ -1983,8 +2037,8 @@ Screens:
             SelectionFill: =RGBA(0, 176, 240, 1)
             Visible: =locShowContactPopup
             Width: =260
-            X: =407
-            Y: =320
+            X: =215
+            Y: =206
       - RS_LblEmailContact:
           Control: Label@2.5.1
           Group: Pop-up Contact Extra
@@ -1996,9 +2050,9 @@ Screens:
             Height: =22
             Text: ="Contact email"
             Visible: =locShowContactPopup
-            Width: =268
-            X: =691
-            Y: =296
+            Width: =400
+            X: =499
+            Y: =182
       - RS_txtEmailContact:
           Control: Classic/TextInput@2.3.2
           Group: Pop-up Contact Extra
@@ -2013,9 +2067,9 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             OnChange: =
             Visible: =locShowContactPopup
-            Width: =268
-            X: =691
-            Y: =320
+            Width: =400
+            X: =499
+            Y: =206
       - RS_btnCancelContact:
           Control: Classic/Button@2.2.0
           Group: Pop-up Contact Extra
@@ -2043,8 +2097,8 @@ Screens:
             Tooltip: ="Save draft"
             Visible: =locShowContactPopup
             Width: =200
-            X: =472
-            Y: =435
+            X: =683
+            Y: =598
       - RS_btnSaveContact:
           Control: Classic/Button@2.2.0
           Group: Pop-up Contact Extra
@@ -2091,8 +2145,8 @@ Screens:
             Tooltip: ="Save draft"
             Visible: =locShowContactPopup
             Width: =200
-            X: =697
-            Y: =432
+            X: =899
+            Y: =598
       - RS_BtnDraftSave:
           Control: Classic/Button@2.2.0
           Properties:
@@ -2362,3 +2416,154 @@ Screens:
             Width: =587
             X: =38
             Y: =If(locShowDetails,403,110)
+      - RS_ContactTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =34
+            Size: =18
+            Text: ="Contact Extra"
+            Visible: =locShowContactPopup
+            Width: =940
+            X: =215
+            Y: =122
+          Children: []
+      - RS_LblSavedHead:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =26
+            Text: ="Saved contacts for this request"
+            Visible: =locShowContactPopup
+            Width: =940
+            X: =215
+            Y: =290
+          Children: []
+      - RS_SavedCardContractor:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(247, 248, 250, 1)
+            Height: =48
+            Visible: =locShowContactPopup
+            Width: =940
+            X: =215
+            Y: =330
+          Children: []
+      - RS_SavedTypeContractor:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Contractor"
+            Visible: =locShowContactPopup
+            Width: =280
+            X: =235
+            Y: =343
+          Children: []
+      - RS_SavedEmailContractor:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: |-
+              =If(
+                  IsBlank(
+                      Last(
+                          Filter(
+                              colManualContacts,
+                              ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber
+                          )
+                      ).EmailContact
+                  ),
+                  RGBA(150, 155, 165, 1),
+                  RGBA(30, 34, 44, 1)
+              )
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =22
+            Text: |-
+              =With(
+                  {locSaved: Last(
+                          Filter(
+                              colManualContacts,
+                              ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber
+                          )
+                      ).EmailContact},
+                  If(IsBlank(locSaved), "Not defined", locSaved)
+              )
+            Visible: =locShowContactPopup
+            Width: =600
+            X: =535
+            Y: =343
+          Children: []
+      - RS_SavedCardDGAgency:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(247, 248, 250, 1)
+            Height: =48
+            Visible: =locShowContactPopup
+            Width: =940
+            X: =215
+            Y: =386
+          Children: []
+      - RS_SavedTypeDGAgency:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="DG/Agency"
+            Visible: =locShowContactPopup
+            Width: =280
+            X: =235
+            Y: =399
+          Children: []
+      - RS_SavedEmailDGAgency:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: |-
+              =If(
+                  IsBlank(
+                      Last(
+                          Filter(
+                              colManualContacts,
+                              ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber
+                          )
+                      ).EmailContact
+                  ),
+                  RGBA(150, 155, 165, 1),
+                  RGBA(30, 34, 44, 1)
+              )
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =22
+            Text: |-
+              =With(
+                  {locSaved: Last(
+                          Filter(
+                              colManualContacts,
+                              ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber
+                          )
+                      ).EmailContact},
+                  If(IsBlank(locSaved), "Not defined", locSaved)
+              )
+            Visible: =locShowContactPopup
+            Width: =600
+            X: =535
+            Y: =399
+          Children: []

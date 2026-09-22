@@ -212,7 +212,7 @@ Screens:
               =[{id: 1}]
             LoadingSpinner: =LoadingSpinner.None
             TemplatePadding: =0
-            TemplateSize: =If(varChildMediaType = "Video", 1276, 1078)
+            TemplateSize: =If(varChildMediaType = "Video", 1040, 830)
             Width: =1366
             Y: =102
           Children:
@@ -315,22 +315,6 @@ Screens:
                   Width: =600
                   X: =32
                   Y: =322
-            - CL_ChkModel:
-                Control: Classic/CheckBox@2.1.0
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
-                  CheckmarkFill: =RGBA(0, 0, 0, 1)
-                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
-                  Font: =Font.'Open Sans'
-                  Height: =36
-                  HoverColor: =RGBA(0, 18, 107, 1)
-                  OnCheck: =Set(varChildModelRelease, true)
-                  OnUncheck: =Set(varChildModelRelease, false); Set(varChildModelReleaseProvided, false)
-                  Text: ="Recognisable private persons appear in this production"
-                  Width: =900
-                  X: =28
-                  Y: =394
             - CL_ChkNoThirdParty:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -348,6 +332,22 @@ Screens:
                   Width: =900
                   X: =28
                   Y: =356
+            - CL_ChkModel:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildModelRelease, true)
+                  OnUncheck: =Set(varChildModelRelease, false); Set(varChildModelReleaseProvided, false)
+                  Text: ="Recognisable private persons appear in this production"
+                  Width: =900
+                  X: =28
+                  Y: =394
             - CL_ChkModelProvided:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -463,7 +463,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   Height: =22
                   Size: =12
-                  Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles in the box below. A media file has one shared set of attachments; the VTT box further down mirrors it and is read-only."
+                  Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles here. All files attached to this media file are listed in both boxes below - a SharePoint item has a single set of attachments."
                   Width: =1302
                   X: =32
                   Y: =652
@@ -482,12 +482,44 @@ Screens:
                   Items.Name: =DisplayName
                   Items.Value: =Id
                   MaxAttachments: =20
-                  OnAddFile: =false
-                  OnRemoveFile: =false
-                  OnUndoRemoveFile: =false
+                  OnAddFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_Annex.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_Annex.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnUndoRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_Annex.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
                   PressedColor: =RGBA(255, 255, 255, 1)
                   PressedFill: =RGBA(0, 18, 107, 1)
-                  Visible: =false
                   Width: =1302
                   X: =32
                   Y: =678
@@ -507,7 +539,7 @@ Screens:
                   Visible: =varChildMediaType = "Video"
                   Width: =900
                   X: =28
-                  Y: =1078
+                  Y: =814
             - CL_LblVTT:
                 Control: Label@2.5.1
                 Properties:
@@ -520,12 +552,12 @@ Screens:
                   Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
                   Width: =800
                   X: =32
-                  Y: =1120
+                  Y: =856
             - CL_VTTUpload:
                 Control: Attachments@2.3.0
                 Properties:
                   BorderColor: =RGBA(220, 224, 230, 1)
-                  DisplayMode: =DisplayMode.View
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
                   Height: =110
                   HoverFill: =RGBA(186, 202, 226, 1)
@@ -536,15 +568,48 @@ Screens:
                   Items.Name: =DisplayName
                   Items.Value: =Id
                   MaxAttachments: =5
-                  OnAddFile: =false
-                  OnRemoveFile: =false
-                  OnUndoRemoveFile: =false
+                  OnAddFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_VTTUpload.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_VTTUpload.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnUndoRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_VTTUpload.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
                   PressedColor: =RGBA(255, 255, 255, 1)
                   PressedFill: =RGBA(0, 18, 107, 1)
                   Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
                   Width: =1302
                   X: =32
-                  Y: =1146
+                  Y: =882
             - CL_ChkFramework:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -613,200 +678,6 @@ Screens:
                   Width: =700
                   X: =32
                   Y: =266
-            - AttachementCard:
-                Control: Form@2.4.4
-                Variant: Classic
-                Layout: Vertical
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  DataSource: ='AV-CD-Mediafiles'
-                  DefaultMode: =If(varRequestorLocked, FormMode.View, FormMode.Edit)
-                  Height: =380
-                  Item: |-
-                    =If(
-                        Coalesce(varCurrentChildSPId, 0) > 0,
-                        LookUp('AV-CD-Mediafiles', ID = varCurrentChildSPId),
-                        Defaults('AV-CD-Mediafiles')
-                    )
-                  NumberOfColumns: =1
-                  Width: =1160
-                  X: =39
-                  Y: =678
-                Children:
-                  - Attachments_DataCard2:
-                      Control: TypedDataCard@1.0.7
-                      Variant: ClassicAttachmentsEdit
-                      IsLocked: true
-                      Properties:
-                        BorderColor: =RGBA(0, 18, 107, 1)
-                        DataField: ="{Attachments}"
-                        Default: =ThisItem.Attachments
-                        DisplayName: =DataSourceInfo([@'AV-CD-Mediafiles'],DataSourceInfo.DisplayName,'{Attachments}')
-                        Height: =372
-                        Required: =false
-                        Update: =DataCardValue50.Attachments
-                        Width: =1160
-                        X: =0
-                        Y: =0
-                      Children:
-                        - DataCardKey58:
-                            Control: Label@2.5.1
-                            MetadataKey: FieldName
-                            Properties:
-                              AutoHeight: =true
-                              BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(0, 18, 107, 1)
-                              Font: =Font.'Open Sans'
-                              Height: =34
-                              Text: =Parent.DisplayName
-                              Width: =Parent.Width - 60
-                              Wrap: =false
-                              X: =30
-                              Y: =10
-                        - DataCardValue50:
-                            Control: Attachments@2.3.0
-                            MetadataKey: FieldValue
-                            Properties:
-                              BorderColor: =If(IsBlank(Parent.Error), Parent.BorderColor, Color.Red)
-                              DisplayMode: =Parent.DisplayMode
-                              Font: =Font.'Open Sans'
-                              HoverFill: =RGBA(186, 202, 226, 1)
-                              ItemColor: =RGBA(255, 255, 255, 1)
-                              ItemFill: =RGBA(56, 96, 178, 1)
-                              ItemHoverFill: =RGBA(186, 202, 226, 1)
-                              Items: =Parent.Default
-                              PaddingBottom: =5
-                              PaddingLeft: =If(Self.DisplayMode = DisplayMode.Edit, 5, 0)
-                              PaddingRight: =5
-                              PaddingTop: =5
-                              PressedColor: =RGBA(255, 255, 255, 1)
-                              PressedFill: =RGBA(0, 18, 107, 1)
-                              Tooltip: =Parent.DisplayName
-                              Width: =Parent.Width - 60
-                              X: =30
-                              Y: =59
-                        - ErrorMessage58:
-                            Control: Label@2.5.1
-                            MetadataKey: ErrorMessage
-                            Properties:
-                              AutoHeight: =true
-                              BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(168, 0, 0, 1)
-                              Font: =Font.'Open Sans'
-                              FontWeight: =FontWeight.Semibold
-                              Height: =10
-                              Live: =Live.Assertive
-                              PaddingBottom: =0
-                              PaddingLeft: =0
-                              PaddingRight: =0
-                              PaddingTop: =0
-                              Size: =14
-                              Text: =Parent.Error
-                              Visible: =Parent.DisplayMode=DisplayMode.Edit
-                              Width: =Parent.Width - 60
-                              X: =30
-                              Y: =DataCardValue50.Y + DataCardValue50.Height
-                        - StarVisible58:
-                            Control: Label@2.5.1
-                            MetadataKey: FieldRequired
-                            Properties:
-                              Align: =Align.Center
-                              BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(0, 18, 107, 1)
-                              Font: =Font.'Open Sans'
-                              Height: =DataCardKey58.Height
-                              Text: ="*"
-                              Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
-                              Width: =30
-                              Wrap: =false
-                              Y: =DataCardKey58.Y
-                  - CD_MediaNumber_DataCard2:
-                      Control: TypedDataCard@1.0.7
-                      Variant: ClassicTextualEdit
-                      IsLocked: true
-                      Properties:
-                        BorderColor: =RGBA(0, 18, 107, 1)
-                        DataField: ="Title"
-                        Default: =ThisItem.CD_MediaNumber
-                        DisplayName: =DataSourceInfo([@'AV-CD-Mediafiles'],DataSourceInfo.DisplayName,'Title')
-                        MaxLength: =DataSourceInfo([@'AV-CD-Mediafiles'], DataSourceInfo.MaxLength, 'Title')
-                        Required: =true
-                        Update: =DataCardValue51.Text
-                        Visible: =false
-                        Width: =1160
-                        X: =0
-                        Y: =1
-                      Children:
-                        - DataCardKey59:
-                            Control: Label@2.5.1
-                            MetadataKey: FieldName
-                            Properties:
-                              AutoHeight: =true
-                              BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(0, 18, 107, 1)
-                              Font: =Font.'Open Sans'
-                              Height: =34
-                              Text: =Parent.DisplayName
-                              Width: =Parent.Width - 60
-                              Wrap: =false
-                              X: =30
-                              Y: =10
-                        - DataCardValue51:
-                            Control: Classic/TextInput@2.3.2
-                            MetadataKey: FieldValue
-                            Properties:
-                              BorderColor: =If(IsBlank(Parent.Error), Parent.BorderColor, Color.Red)
-                              Default: =Parent.Default
-                              DelayOutput: =true
-                              DisplayMode: =Parent.DisplayMode
-                              Font: =Font.'Open Sans'
-                              HoverBorderColor: =RGBA(0, 18, 107, 1)
-                              HoverFill: =RGBA(186, 202, 226, 1)
-                              MaxLength: =Parent.MaxLength
-                              PaddingLeft: =5
-                              RadiusBottomLeft: =0
-                              RadiusBottomRight: =0
-                              RadiusTopLeft: =0
-                              RadiusTopRight: =0
-                              Tooltip: =Parent.DisplayName
-                              Width: =Parent.Width - 60
-                              X: =30
-                              Y: =DataCardKey59.Y + DataCardKey59.Height + 5
-                        - ErrorMessage59:
-                            Control: Label@2.5.1
-                            MetadataKey: ErrorMessage
-                            Properties:
-                              AutoHeight: =true
-                              BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(168, 0, 0, 1)
-                              Font: =Font.'Open Sans'
-                              FontWeight: =FontWeight.Semibold
-                              Height: =10
-                              Live: =Live.Assertive
-                              PaddingBottom: =0
-                              PaddingLeft: =0
-                              PaddingRight: =0
-                              PaddingTop: =0
-                              Size: =14
-                              Text: =Parent.Error
-                              Visible: =Parent.DisplayMode=DisplayMode.Edit
-                              Width: =Parent.Width - 60
-                              X: =30
-                              Y: =DataCardValue51.Y + DataCardValue51.Height
-                        - StarVisible59:
-                            Control: Label@2.5.1
-                            MetadataKey: FieldRequired
-                            Properties:
-                              Align: =Align.Center
-                              BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(0, 18, 107, 1)
-                              Font: =Font.'Open Sans'
-                              Height: =DataCardKey59.Height
-                              Text: ="*"
-                              Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
-                              Width: =30
-                              Wrap: =false
-                              Y: =DataCardKey59.Y
       - CL_BottomBar:
           Control: Rectangle@2.3.0
           Properties:

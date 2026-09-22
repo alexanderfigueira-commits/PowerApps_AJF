@@ -517,19 +517,6 @@ Screens:
                       PreexistingProvided: varChildPreexistingProvided
                   })
               );
-              // Attachments can only reach SharePoint through the form that owns them,
-              // and only while it still holds the staged files -- so it happens here.
-              If(
-                  Coalesce(varCurrentChildSPId, 0) > 0,
-                  SubmitForm(AttachementCard);
-                  If(
-                      Not(IsBlank(AttachementCard.Error)) And AttachementCard.Error <> "",
-                      Notify(
-                          "Attachments could not be saved: " & AttachementCard.Error,
-                          NotificationType.Error
-                      )
-                  )
-              );
               If(
                   Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
                   IfError(

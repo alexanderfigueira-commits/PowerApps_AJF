@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v30-reviewvisible.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v31-mgmt-contact.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -244,75 +244,85 @@ check('3a', 'Resubmit still covers Rejected and Pending',
       all(x in (rule(RQ, 'RS_BtnResubmitRequest', 'Visible') or '')
           for x in ('"Rejected"', '"Pending"')))
 
-# ---------------- attachments: one writable card, three read-only previews ----------------
-CI2, CM2, CL2, CV2 = 'ChildInfoScreen', 'ChildMetaScreen', 'ChildLegalScreen', 'ChildValidScreen'
-# Only ChildLegalScreen's own boxes are in scope. CI_PodcastVisual (ChildInfoScreen)
-# and CM_EpisodeVisual (ChildMetaScreen) still carry the v22 direct-Patch pattern that
-# cannot write SharePoint attachments -- left alone deliberately, and recorded below so
-# the gap is visible rather than forgotten.
-PREVIEWS = [(CL2, 'CL_VTTUpload')]
-_still_broken = [c for (s_, c) in R
-                 if c in ('CI_PodcastVisual', 'CM_EpisodeVisual')
-                 and 'Patch(' in (rule(s_, c, 'OnAddFile') or '')]
-check('attach', 'KNOWN GAP (out of scope): CI_PodcastVisual/CM_EpisodeVisual still '
-      'use the direct-Patch pattern that cannot save attachments',
-      sorted(_still_broken) == ['CI_PodcastVisual', 'CM_EpisodeVisual'],
-      ','.join(sorted(_still_broken)))
-check('attach', 'CL_Annex is hidden -- the form owns the annex slot now',
-      (rule(CL2, 'CL_Annex', 'Visible') or '').strip() == 'false')
-check('attach', 'CL_Annex keeps no dead write handler, but stays readable for the checklist',
-      all((rule(CL2, 'CL_Annex', p_) or '').strip() == 'false'
-          for p_ in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile'))
-      and 'Attachments' in (rule(CL2, 'CL_Annex', 'Items') or ''))
-check('attach', f'All 11 AttachementCard nodes sit inside CL_Gallery',
-      (lambda names: all(n in names for n in
-          ('AttachementCard', 'Attachments_DataCard2', 'DataCardValue50',
-           'CD_MediaNumber_DataCard2', 'DataCardValue51', 'StarVisible58',
-           'DataCardKey58', 'ErrorMessage58', 'StarVisible59', 'DataCardKey59',
-           'ErrorMessage59')))(
-          (lambda acc: acc)(
-              [k['Name'] for c in S[CL2]['Children'] if c['Name'] == 'CL_Gallery'
-               for k in __import__('itertools').chain.from_iterable(
-                   [[x] + [y for y in x.get('Children', [])] +
-                    [z for y in x.get('Children', []) for z in y.get('Children', [])]
-                    for x in c.get('Children', [])])])))
-_sb = '\n'.join(l for l in (rule(RQ, 'RS_BtnSubmitRequest', 'OnSelect') or '').split('\n')
-                if not l.strip().startswith('//'))
-check('attach', 'Submit catches attachments staged but never saved',
-      'AttachementCard.Unsaved' in _sb and 'SubmitForm(AttachementCard)' in _sb
-      and _sb.index('AttachementCard.Unsaved') < _sb.index('Clear(colArchives)'))
-check('attach', 'Submit warns about unsaved media files instead of discarding them',
-      'were never saved to SharePoint' in _sb
-      and _sb.index('were never saved to SharePoint') < _sb.index('Clear(colArchives)'))
-check('attach', 'Submit still flips DepositStatus for the saved media files',
-      'DepositStatus: Table({Value: "Pending Approval"})' in _sb)
-_form_scr = [c for (s_, c) in R if c == 'AttachementCard']
-check('attach', 'AttachementCard exists exactly once', _form_scr == ['AttachementCard'])
-check('attach', 'AttachementCard lives inside CL_Gallery, not the bare screen',
-      any(k['Name'] == 'AttachementCard'
-          for c in S[CL2]['Children'] if c['Name'] == 'CL_Gallery'
-          for k in c.get('Children', [])))
-check('attach', "AttachementCard.Item resolves the current media file by varCurrentChildSPId",
-      all(x in (rule(CL2, 'AttachementCard', 'Item') or '')
-          for x in ('varCurrentChildSPId', "LookUp('AV-CD-Mediafiles'", "Defaults('AV-CD-Mediafiles')")))
-check('attach', "AttachementCard.Height fits its own attachments dropzone (was 184, clips at ~359)",
-      (lambda h: h is not None and int(h) >= 360)(rule(CL2, 'AttachementCard', 'Height')))
-check('attach', 'AttachementCard.DefaultMode respects the Processing lock',
-      (rule(CL2, 'AttachementCard', 'DefaultMode') or '') ==
-      'If(varRequestorLocked, FormMode.View, FormMode.Edit)')
-_save = rule(CV2, 'CV_BtnSaveArchive', 'OnSelect') or ''
-check('attach', 'CV_BtnSaveArchive calls SubmitForm(AttachementCard), guarded on a real media ID',
-      'SubmitForm(AttachementCard)' in _save and 'varCurrentChildSPId, 0) > 0' in _save)
-check('attach', 'CV_BtnSaveArchive checks AttachementCard.Error after submitting',
-      'AttachementCard.Error' in _save)
-for scr, ctl in PREVIEWS:
-    check('attach', f'{ctl} is a read-only preview (no working write mechanism exists for it)',
-          (rule(scr, ctl, 'DisplayMode') or '').strip() == 'DisplayMode.View')
-    check('attach', f'{ctl} carries no leftover write handler',
-          all((rule(scr, ctl, p) or '').strip() == 'false'
-              for p in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile')))
-    check('attach', f'{ctl} still reads the shared bag live (only the write side was ever broken)',
-          'Attachments' in (rule(scr, ctl, 'Items') or '') and 'Patch(' not in (rule(scr, ctl, 'Items') or ''))
+# ---------------- attachments ----------------
+# This export is a lineage that does not carry the v29 AttachementCard work
+# (no form controls at all, CL_Annex back with its dead Patch handlers). Rather
+# than report 12 failures for work the file never had, the form checks run only
+# when the form is present, and its absence is recorded as one explicit finding.
+_ATTACH_PRESENT = any(c == 'AttachementCard' for (_s, c) in R)
+check('attach', 'LINEAGE NOTE: AttachementCard present (v29 attachments work carried forward)',
+      _ATTACH_PRESENT,
+      'absent in this export -- Save does not persist attachments; re-port needed')
+if _ATTACH_PRESENT:
+    CI2, CM2, CL2, CV2 = 'ChildInfoScreen', 'ChildMetaScreen', 'ChildLegalScreen', 'ChildValidScreen'
+    # Only ChildLegalScreen's own boxes are in scope. CI_PodcastVisual (ChildInfoScreen)
+    # and CM_EpisodeVisual (ChildMetaScreen) still carry the v22 direct-Patch pattern that
+    # cannot write SharePoint attachments -- left alone deliberately, and recorded below so
+    # the gap is visible rather than forgotten.
+    PREVIEWS = [(CL2, 'CL_VTTUpload')]
+    _still_broken = [c for (s_, c) in R
+                     if c in ('CI_PodcastVisual', 'CM_EpisodeVisual')
+                     and 'Patch(' in (rule(s_, c, 'OnAddFile') or '')]
+    check('attach', 'KNOWN GAP (out of scope): CI_PodcastVisual/CM_EpisodeVisual still '
+          'use the direct-Patch pattern that cannot save attachments',
+          sorted(_still_broken) == ['CI_PodcastVisual', 'CM_EpisodeVisual'],
+          ','.join(sorted(_still_broken)))
+    check('attach', 'CL_Annex is hidden -- the form owns the annex slot now',
+          (rule(CL2, 'CL_Annex', 'Visible') or '').strip() == 'false')
+    check('attach', 'CL_Annex keeps no dead write handler, but stays readable for the checklist',
+          all((rule(CL2, 'CL_Annex', p_) or '').strip() == 'false'
+              for p_ in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile'))
+          and 'Attachments' in (rule(CL2, 'CL_Annex', 'Items') or ''))
+    check('attach', f'All 11 AttachementCard nodes sit inside CL_Gallery',
+          (lambda names: all(n in names for n in
+              ('AttachementCard', 'Attachments_DataCard2', 'DataCardValue50',
+               'CD_MediaNumber_DataCard2', 'DataCardValue51', 'StarVisible58',
+               'DataCardKey58', 'ErrorMessage58', 'StarVisible59', 'DataCardKey59',
+               'ErrorMessage59')))(
+              (lambda acc: acc)(
+                  [k['Name'] for c in S[CL2]['Children'] if c['Name'] == 'CL_Gallery'
+                   for k in __import__('itertools').chain.from_iterable(
+                       [[x] + [y for y in x.get('Children', [])] +
+                        [z for y in x.get('Children', []) for z in y.get('Children', [])]
+                        for x in c.get('Children', [])])])))
+    _sb = '\n'.join(l for l in (rule(RQ, 'RS_BtnSubmitRequest', 'OnSelect') or '').split('\n')
+                    if not l.strip().startswith('//'))
+    check('attach', 'Submit catches attachments staged but never saved',
+          'AttachementCard.Unsaved' in _sb and 'SubmitForm(AttachementCard)' in _sb
+          and _sb.index('AttachementCard.Unsaved') < _sb.index('Clear(colArchives)'))
+    check('attach', 'Submit warns about unsaved media files instead of discarding them',
+          'were never saved to SharePoint' in _sb
+          and _sb.index('were never saved to SharePoint') < _sb.index('Clear(colArchives)'))
+    check('attach', 'Submit still flips DepositStatus for the saved media files',
+          'DepositStatus: Table({Value: "Pending Approval"})' in _sb)
+    _form_scr = [c for (s_, c) in R if c == 'AttachementCard']
+    check('attach', 'AttachementCard exists exactly once', _form_scr == ['AttachementCard'])
+    check('attach', 'AttachementCard lives inside CL_Gallery, not the bare screen',
+          any(k['Name'] == 'AttachementCard'
+              for c in S[CL2]['Children'] if c['Name'] == 'CL_Gallery'
+              for k in c.get('Children', [])))
+    check('attach', "AttachementCard.Item resolves the current media file by varCurrentChildSPId",
+          all(x in (rule(CL2, 'AttachementCard', 'Item') or '')
+              for x in ('varCurrentChildSPId', "LookUp('AV-CD-Mediafiles'", "Defaults('AV-CD-Mediafiles')")))
+    check('attach', "AttachementCard.Height fits its own attachments dropzone (was 184, clips at ~359)",
+          (lambda h: h is not None and int(h) >= 360)(rule(CL2, 'AttachementCard', 'Height')))
+    check('attach', 'AttachementCard.DefaultMode respects the Processing lock',
+          (rule(CL2, 'AttachementCard', 'DefaultMode') or '') ==
+          'If(varRequestorLocked, FormMode.View, FormMode.Edit)')
+    _save = rule(CV2, 'CV_BtnSaveArchive', 'OnSelect') or ''
+    check('attach', 'CV_BtnSaveArchive calls SubmitForm(AttachementCard), guarded on a real media ID',
+          'SubmitForm(AttachementCard)' in _save and 'varCurrentChildSPId, 0) > 0' in _save)
+    check('attach', 'CV_BtnSaveArchive checks AttachementCard.Error after submitting',
+          'AttachementCard.Error' in _save)
+    for scr, ctl in PREVIEWS:
+        check('attach', f'{ctl} is a read-only preview (no working write mechanism exists for it)',
+              (rule(scr, ctl, 'DisplayMode') or '').strip() == 'DisplayMode.View')
+        check('attach', f'{ctl} carries no leftover write handler',
+              all((rule(scr, ctl, p) or '').strip() == 'false'
+                  for p in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile')))
+        check('attach', f'{ctl} still reads the shared bag live (only the write side was ever broken)',
+              'Attachments' in (rule(scr, ctl, 'Items') or '') and 'Patch(' not in (rule(scr, ctl, 'Items') or ''))
+
 
 # ---------------- layout: nothing clipped, nothing stranded outside its scroll panel ----------------
 def _ev(expr, mt):
@@ -417,12 +427,18 @@ check('print', 'Clear resets both variables and both inputs',
                     'Reset(HP_TxtTitle)', 'Reset(HP_TxtRequestID)')))
 check('print', 'Empty state reads as a filter message',
       'match these filters' in (rule(HPS, 'HP_EmptyState', 'Text') or ''))
-_nav = rule(HPS, 'HP_Gallery', 'OnSelect') or ''
-check('print', 'Row select stores the request', 'Set(gblPrintRequest, ThisItem)' in _nav)
-check('print', 'Row select routes to all three detail screens',
-      all(f'Navigate({x}, ScreenTransition.None)' in _nav for x in (PHOTO_S, VIDEO_S, POD_S)))
-check('print', 'Mixed/untyped requests are told, not silently ignored',
-      'NotificationType.Warning' in _nav)
+_nav = rule(HPS, 'HP_Gallery', 'OnSelect')
+# Studio has now dropped this rule on export twice while keeping its siblings
+# (HoverFill/PressedFill/Transition/Selectable), so its absence is reported as
+# one finding instead of three.
+check('print', 'LINEAGE NOTE: HP_Gallery.OnSelect present (print rows clickable)',
+      _nav is not None, 'absent in this export -- Studio dropped it again')
+if _nav is not None:
+    check('print', 'Row select stores the request', 'Set(gblPrintRequest, ThisItem)' in _nav)
+    check('print', 'Row select routes to all three detail screens',
+          all(f'Navigate({x}, ScreenTransition.None)' in _nav for x in (PHOTO_S, VIDEO_S, POD_S)))
+    check('print', 'Mixed/untyped requests are told, not silently ignored',
+          'NotificationType.Warning' in _nav)
 check('print', 'Row has a hover cue distinct from its fill',
       (rule(HPS, 'HP_Gallery', 'HoverFill') or '') != (rule(HPS, 'HP_Gallery', 'Fill') or 'x'))
 check('print', 'Row has a chevron', (HPS, 'HP_RowChevron') in R)
@@ -522,6 +538,95 @@ check('refresh', "Media files are refreshed before their ClearCollect",
 check('refresh', "Neither refresh is duplicated",
       _mr_ov.count("Refresh('AV-CD-Requests')") == 1
       and _mr_ov.count("Refresh('AV-CD-Mediafiles')") == 1)
+
+# ---------------- Section 1: management screen row data + no reset ----------------
+_arch = rule(MR, 'HomeRowArchives', 'Text') or ''
+check('mgmt', '1.1 HomeRowArchives counts the row\'s media files',
+      'CountRows(' in _arch and 'colMyMedia' in _arch and 'RequestTitle' not in _arch)
+check('mgmt', '1.1 counts the local collection, so no delegation warning',
+      "'AV-CD-Mediafiles'" not in _arch)
+_rr = rule(MR, 'HomeRowRequest', 'Text') or ''
+check('mgmt', '1.2 Per-row icon when no production-type filter is applied',
+      'IsBlank(locProdTypeFilter)' in _rr and 'colMyMedia' in _rr)
+check('mgmt', '1.2 Keeps the filter-based icon when a type is selected',
+      _rr.count('ThisItem.RequestNumber') >= 8)
+check('mgmt', '1.2 Does not reference a ProductionType column that does not exist',
+      'ProductionType' not in _rr)
+_ov = ' '.join((rule(MR, MR, 'OnVisible') or '').split())
+check('mgmt', '1.3 Data loads once per session, self-healing when empty',
+      'Not(varReqDataLoaded) Or IsEmpty(colMyReqs)' in _ov)
+check('mgmt', '1.3 Filters initialise once, so they survive navigating away',
+      'Not(varReqFiltersInit)' in _ov)
+check('mgmt', '1.3 varUserRole is set outside the load gate',
+      'Set( varUserRole,' in _ov
+      and _ov.index('Set( varUserRole,') < _ov.index('Not(varReqDataLoaded)'))
+check('mgmt', '1.3 A dashboard status jump still applies every visit',
+      'Not(IsBlank(varNavFilter))' in _ov and 'Set(varNavFilter, Blank())' in _ov)
+check('mgmt', '1.3 All five collections are still built',
+      all(c in _ov for c in ('colDGOptions', 'colAssignees', 'colMyReqs',
+                             'colMyMedia', 'colRequestorOptions')))
+check('mgmt', '1.3 The 2000-row ceiling warning survives', '2000' in _ov)
+_rf = rule(MR, 'HomeBtnRefresh', 'OnSelect') or ''
+check('mgmt', '1.3 Explicit reload button reloads both lists and clears the gate',
+      all(x in _rf for x in ("Refresh('AV-CD-Requests')", 'ClearCollect(colMyReqs',
+                             'Set(varReqDataLoaded, true)')))
+check('mgmt', '1.3 Reload button clear of its neighbours in the action row',
+      (lambda x, w: x >= 648 and x + w <= 1059)
+      (int(rule(MR, 'HomeBtnRefresh', 'X')), int(rule(MR, 'HomeBtnRefresh', 'Width'))))
+
+# ---------------- Section 2: contact popup + manual email ----------------
+_pw, _ph = int(rule(RQ, 'RS_ContactPopup', 'Width')), int(rule(RQ, 'RS_ContactPopup', 'Height'))
+_px, _py = int(rule(RQ, 'RS_ContactPopup', 'X')), int(rule(RQ, 'RS_ContactPopup', 'Y'))
+check('contact', '2.1 Popup is 70-80% of the screen on both axes',
+      0.70 <= _pw / 1366 <= 0.80 and 0.70 <= _ph / 768 <= 0.80,
+      f'{_pw / 1366:.0%} x {_ph / 768:.0%}')
+check('contact', '2.1 Popup is centred',
+      abs(_px - (1366 - _pw) / 2) <= 1 and abs(_py - (768 - _ph) / 2) <= 1)
+check('contact', '2.1 Overlay still follows the popup flag',
+      (rule(RQ, 'RS_ContactBackdrop', 'Visible') or '').strip() == 'locShowContactPopup')
+_POPUP_KIDS = ['RS_LblContactType', 'RS_drpContactType', 'RS_LblEmailContact',
+               'RS_txtEmailContact', 'RS_btnSaveContact', 'RS_btnCancelContact',
+               'RS_ContactTitle', 'RS_LblSavedHead', 'RS_SavedCardContractor',
+               'RS_SavedTypeContractor', 'RS_SavedEmailContractor',
+               'RS_SavedCardDGAgency', 'RS_SavedTypeDGAgency', 'RS_SavedEmailDGAgency']
+_out = []
+for _c in _POPUP_KIDS:
+    try:
+        _cx, _cy = int(rule(RQ, _c, 'X')), int(rule(RQ, _c, 'Y'))
+        _cw, _ch = int(rule(RQ, _c, 'Width')), int(rule(RQ, _c, 'Height'))
+    except (TypeError, ValueError):
+        _out.append(f'{_c}:unreadable')
+        continue
+    if _cx < _px or _cy < _py or _cx + _cw > _px + _pw or _cy + _ch > _py + _ph:
+        _out.append(_c)
+check('contact', f'2.1 All {len(_POPUP_KIDS)} popup controls sit inside the popup',
+      not _out, ','.join(_out))
+check('contact', '2.1 Every popup control is tied to locShowContactPopup',
+      all((rule(RQ, _c, 'Visible') or '').strip() == 'locShowContactPopup'
+          for _c in _POPUP_KIDS))
+for _slug, _kind, _other in (('Contractor', 'Contractor', 'DG/Agency'),
+                             ('DGAgency', 'DG/Agency', 'Contractor')):
+    _t = rule(RQ, f'RS_SavedEmail{_slug}', 'Text') or ''
+    check('contact', f'2.1 {_kind} row reads only its own type, newest first',
+          f'ContactType = "{_kind}"' in _t and f'ContactType = "{_other}"' not in _t
+          and 'Last(' in _t)
+    check('contact', f'2.1 {_kind} row falls back to a placeholder',
+          'Not defined' in _t)
+    check('contact', f'2.1 {_kind} row greys the placeholder',
+          'IsBlank(' in (rule(RQ, f'RS_SavedEmail{_slug}', 'Color') or ''))
+for _ctl, _kind in (('RS_Owner', 'DG/Agency'), ('RS_Contractor', 'Contractor')):
+    _it = rule(RQ, _ctl, 'Items') or ''
+    check('contact', f'2.2 {_ctl} unions the directory with its {_kind} manual email',
+          all(x in _it for x in ('SearchUserV2', 'colManualContacts', 'Ungroup(',
+                                 f'ContactType = "{_kind}"')))
+    check('contact', f'2.2 {_ctl} projects both sides to one schema so the types unify',
+          '{DisplayName: o.DisplayName, Mail: o.Mail}' in _it
+          and '{DisplayName: locManual, Mail: locManual}' in _it)
+    check('contact', f'2.2 {_ctl} pre-selects the manual email when there is one',
+          'colManualContacts' in (rule(RQ, _ctl, 'DefaultSelectedItems') or ''))
+    check('contact', f'2.2 {_ctl} still displays and searches on DisplayName',
+          (rule(RQ, _ctl, 'DisplayFields') or '').strip() == '["DisplayName"]'
+          and (rule(RQ, _ctl, 'SearchFields') or '').strip() == '["DisplayName"]')
 
 # ---------------- package integrity ----------------
 total, missing = 0, []

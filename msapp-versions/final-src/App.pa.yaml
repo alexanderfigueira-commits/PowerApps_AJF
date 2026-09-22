@@ -10,7 +10,9 @@ App:
   Properties:
     BackEnabled: =false
     OnStart: |-
-      =Set(varUserRole, Coalesce(LookUp('AV-CD-RolesPermissionsList', UserEmail.Email = User().Email, Role.Value), "REQUESTOR"));
+      =Set(varReqDataLoaded, false);
+      Set(varReqFiltersInit, false);
+      Set(varUserRole, Coalesce(LookUp('AV-CD-RolesPermissionsList', UserEmail.Email = User().Email, Role.Value), "REQUESTOR"));
       Set(MyProfile, IfError(Office365Users.MyProfile(), Blank()));
       Set(varCurrentRequest, Defaults('AV-CD-Requests'));
       Set(varFilter, "All");
