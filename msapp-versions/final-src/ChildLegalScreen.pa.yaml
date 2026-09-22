@@ -860,3 +860,22 @@ Screens:
             Width: =900
             X: =190
             Y: =720
+
+      - CL_ChkNoThirdParty:
+          Control: Classic/CheckBox@2.1.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+            CheckmarkFill: =RGBA(0, 0, 0, 1)
+            Default: =varChildNoThirdParty
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverColor: =RGBA(0, 18, 107, 1)
+            OnCheck: =Set(varChildNoThirdParty, true)
+            OnUncheck: =Set(varChildNoThirdParty, false)
+            Text: ="No third-party rights in this production"
+            Width: =384
+            X: =950
+            Y: =356
+          Children: []

@@ -165,6 +165,10 @@ Screens:
                             ""
                         ),
                         ModelRelease: false,
+                        NoThirdPartyRights: Coalesce(
+                            NoThirdPartyRights,
+                            false
+                        ),
                         ModelReleaseProvided: Coalesce(
                             ModelReleaseProvided,
                             false
@@ -661,6 +665,7 @@ Screens:
                     Set(varChildProducer, Concat(ThisItem.Producer, DisplayName, ", "));
                     Set(varChildPhotoCaption, Coalesce(ThisItem.PhotoCaption, ""));
                     Set(varChildModelRelease, Coalesce(ThisItem.ModelRelease, false));
+                    Set(varChildNoThirdParty, Coalesce(ThisItem.NoThirdPartyRights, false));
                     Set(varChildModelReleaseProvided, Coalesce(ThisItem.ModelReleaseProvided, false));
                     Set(varChildMusicUsed, Coalesce(ThisItem.MusicUsed, false));
                     Set(varChildMusicLicenceProvided, Coalesce(ThisItem.MusicLicenceProvided, false));
@@ -2268,6 +2273,7 @@ Screens:
               Set(varChildContractCase, "");
               Set(varChildContractCase1Sub, "");
               Set(varChildModelRelease, false);
+              Set(varChildNoThirdParty, false);
               Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, "");
               Set(varChildModelReleaseProvided, false);
               Set(varChildMusicUsed, false);
