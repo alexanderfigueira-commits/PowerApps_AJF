@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v24-printdetails.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v25-typepicker.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -399,6 +399,33 @@ for (_sc, _cn), _rules in RAW.items():
         if _r['Property'] in _BEH and _r.get('Category') != 'Behavior':
             _miscat.append(f"{_sc}.{_cn}.{_r['Property']}={_r.get('Category')}")
 check('print', 'Every behaviour rule is filed as Behavior', not _miscat, ','.join(_miscat[:5]))
+
+# ---------------- production-type picker on entry ----------------
+_ov_rq = rule(RQ, RQ, 'OnVisible') or ''
+check('picker', 'Picker opens on entry to the request screen',
+      re.search(r'Set\(\s*varShowTypeConfirm\s*,\s*true\s*\)', _ov_rq) is not None)
+check('picker', 'Nothing hides it again on entry',
+      re.search(r'Set\(\s*varShowTypeConfirm\s*,\s*false\s*\)', _ov_rq) is None)
+check('picker', 'Exactly one assignment on entry, so order cannot matter',
+      _ov_rq.count('varShowTypeConfirm') == 1, str(_ov_rq.count('varShowTypeConfirm')))
+_grp = [c for c in S[RQ]['Children'] if c['Name'] == 'grpProductionTypePicker']
+check('picker', 'grpProductionTypePicker exists', len(_grp) == 1)
+if _grp:
+    check('picker', 'The group is still a classic group with no Visible of its own',
+          not any(r['Property'] == 'Visible' for r in _grp[0]['Rules']))
+    _mem = _grp[0]['GroupedControlsKey'] or []
+    _off = [m for m in _mem
+            if (rule(RQ, m, 'Visible') or '').strip() != 'varShowTypeConfirm']
+    check('picker', f'All {len(_mem)} members follow varShowTypeConfirm',
+          not _off, ','.join(_off))
+for _c, _want in (('RS_TypePickerClose', 'false'), ('RS_TypePickerOverlay', 'false'),
+                  ('RS_CardPhotoBtn', 'false'), ('RS_CardVideoBtn', 'false'),
+                  ('RS_CardPodcastBtn', 'false'), ('RS_TypeIconBtn', 'true')):
+    check('picker', f'{_c} still sets it {_want}',
+          re.search(r'Set\(\s*varShowTypeConfirm\s*,\s*' + _want,
+                    rule(RQ, _c, 'OnSelect') or '') is not None)
+check('picker', 'RS_LblMissing follows the locShowDetails collapse idiom',
+      (rule(RQ, 'RS_LblMissing', 'Y') or '') == 'If(locShowDetails,403,110)')
 
 # ---------------- package integrity ----------------
 total, missing = 0, []

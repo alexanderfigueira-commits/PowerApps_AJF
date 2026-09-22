@@ -23,7 +23,7 @@ Screens:
         );
         Set(
             varShowTypeConfirm,
-            false
+            true
         );
         UpdateContext(
             {
@@ -31,16 +31,11 @@ Screens:
                 locShowMedia: true
             }
         );
-        If(
-            (IsBlank(varRequestMediaType) Or varRequestMediaType = "") And (IsBlank(varCurrentRequest) Or Coalesce(
-                varCurrentRequest.ID,
-                0
-            ) <= 0),
-            Set(
-                varShowTypeConfirm,
-                true
-            )
-        );
+        // The picker now opens on every entry. It previously opened only when
+        // (IsBlank(varRequestMediaType) Or varRequestMediaType = "") And
+        // (IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0),
+        // which never fired for a saved request and also failed on a new one
+        // because varRequestMediaType is a global that nothing clears.
         Set(
             varConfirmed,
             false
@@ -2351,4 +2346,4 @@ Screens:
             Visible: =Not(IsBlank(Self.Text))
             Width: =587
             X: =38
-            Y: =403
+            Y: =If(locShowDetails,403,110)
