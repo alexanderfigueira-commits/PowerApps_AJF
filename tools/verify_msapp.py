@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v27-galleryrefresh.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v28-attachcard.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -60,8 +60,13 @@ check('1', 'Need-info is admin-only, author-excluded, requires a comment',
       has(RV, 'RV_BtnNeedInfo', 'DisplayMode', 'varUserRole = "ADMINISTRATOR"',
           "<> Lower(User().Email)", 'varReviewComment <> ""'))
 check('1', 'Need-info stores the reviewer comment', has(RV, 'RV_BtnNeedInfo', 'OnSelect', 'ReviewerComments'))
-check('1', 'Review queue lists Processing, not Pending',
-      has(RV, 'RV_QueueGallery', 'Items', '"Processing"') and '"Pending"' not in (rule(RV, 'RV_QueueGallery', 'Items') or ''))
+check('1', 'Review queue lists both Processing and Pending',
+      has(RV, 'RV_QueueGallery', 'Items', 'Status.Value = "Processing"', 'Status.Value = "Pending"'))
+check('1', 'The dead If(x, same, same) status clause is gone',
+      'If(varReviewQueueMine, Status.Value' not in (rule(RV, 'RV_QueueGallery', 'Items') or ''))
+for _rvbtn in ('RV_BtnApprove', 'RV_BtnReject', 'RV_BtnNeedInfo'):
+    check('1', f'{_rvbtn} requires Processing, so a listed Pending row is visible but not actionable',
+          'varReviewProject.Status.Value = "Processing"' in (rule(RV, _rvbtn, 'DisplayMode') or ''))
 check('1', 'Row Review button: Processing + admin only',
       has(MR, 'HomeRowReview', 'Visible', '"Processing"', 'varUserRole = "ADMINISTRATOR"'))
 check('1', 'Publish button retired', (rule(RQ, 'RS_BtnPublish', 'Visible') or '').strip() == 'false')
@@ -173,9 +178,18 @@ for scr in LOCKED_SCREENS:
         if s_ != scr or _tmpl.get((s_, c_)) not in INPUT_T:
             continue
         dm = rule(scr, c_, 'DisplayMode') or ''
+        # DataCardValue50/51 (inside AttachementCard) don't reference the lock in
+        # their OWN DisplayMode -- it's 'Parent.DisplayMode', inherited from the
+        # form's DefaultMode = If(varRequestorLocked, FormMode.View, FormMode.Edit).
+        # Verified directly, not by string match, since the lock's real here.
+        if c_ in ('DataCardValue50', 'DataCardValue51') and dm.strip() == 'Parent.DisplayMode':
+            nlocked += 1
+            continue
         if LOCKVAR in dm:
             nlocked += 1
-        elif not (c_ == 'CI_Notes' or 'varUserRole' in dm or c_ == 'CI_TplSearch'):
+        elif not (c_ == 'CI_Notes' or 'varUserRole' in dm or c_ == 'CI_TplSearch'
+                  or (c_ in ('CI_PodcastVisual', 'CM_EpisodeVisual', 'CL_VTTUpload')
+                      and dm.strip() == 'DisplayMode.View')):
             unlocked.append(c_)
 check('3a', f'Every request input carries the lock ({nlocked} of them)',
       not unlocked, ','.join(unlocked))
@@ -215,36 +229,37 @@ check('3a', 'Resubmit still covers Rejected and Pending',
       all(x in (rule(RQ, 'RS_BtnResubmitRequest', 'Visible') or '')
           for x in ('"Rejected"', '"Pending"')))
 
-# ---------------- attachments ----------------
+# ---------------- attachments: one writable card, three read-only previews ----------------
 CI2, CM2, CL2, CV2 = 'ChildInfoScreen', 'ChildMetaScreen', 'ChildLegalScreen', 'ChildValidScreen'
-BOXES = [(CI2, 'CI_PodcastVisual'), (CM2, 'CM_EpisodeVisual'),
-         (CL2, 'CL_Annex'), (CL2, 'CL_VTTUpload')]
-REC = "LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0))"
-for scr, ctl in BOXES:
-    check('attach', f'{ctl} loads the item\'s attachments',
-          (rule(scr, ctl, 'Items') or '') == f'{REC}.Attachments')
-    check('attach', f'{ctl} persists add/remove/undo',
-          all(f'{{Attachments: {ctl}.Attachments}}' in (rule(scr, ctl, p) or '')
-              and 'IfError(' in (rule(scr, ctl, p) or '')
+PREVIEWS = [(CI2, 'CI_PodcastVisual'), (CM2, 'CM_EpisodeVisual'), (CL2, 'CL_VTTUpload')]
+check('attach', 'CL_Annex is gone (replaced by AttachementCard)', (CL2, 'CL_Annex') not in R)
+_form_scr = [c for (s_, c) in R if c == 'AttachementCard']
+check('attach', 'AttachementCard exists exactly once', _form_scr == ['AttachementCard'])
+check('attach', 'AttachementCard lives inside CL_Gallery, not the bare screen',
+      any(k['Name'] == 'AttachementCard'
+          for c in S[CL2]['Children'] if c['Name'] == 'CL_Gallery'
+          for k in c.get('Children', [])))
+check('attach', "AttachementCard.Item resolves the current media file by varCurrentChildSPId",
+      all(x in (rule(CL2, 'AttachementCard', 'Item') or '')
+          for x in ('varCurrentChildSPId', "LookUp('AV-CD-Mediafiles'", "Defaults('AV-CD-Mediafiles')")))
+check('attach', "AttachementCard.Height fits its own attachments dropzone (was 184, clips at ~359)",
+      (lambda h: h is not None and int(h) >= 360)(rule(CL2, 'AttachementCard', 'Height')))
+check('attach', 'AttachementCard.DefaultMode respects the Processing lock',
+      (rule(CL2, 'AttachementCard', 'DefaultMode') or '') ==
+      'If(varRequestorLocked, FormMode.View, FormMode.Edit)')
+_save = rule(CV2, 'CV_BtnSaveArchive', 'OnSelect') or ''
+check('attach', 'CV_BtnSaveArchive calls SubmitForm(AttachementCard), guarded on a real media ID',
+      'SubmitForm(AttachementCard)' in _save and 'varCurrentChildSPId, 0) > 0' in _save)
+check('attach', 'CV_BtnSaveArchive checks AttachementCard.Error after submitting',
+      'AttachementCard.Error' in _save)
+for scr, ctl in PREVIEWS:
+    check('attach', f'{ctl} is a read-only preview (no working write mechanism exists for it)',
+          (rule(scr, ctl, 'DisplayMode') or '').strip() == 'DisplayMode.View')
+    check('attach', f'{ctl} carries no leftover write handler',
+          all((rule(scr, ctl, p) or '').strip() == 'false'
               for p in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile')))
-    check('attach', f'{ctl} still locked while Processing',
-          'varRequestorLocked' in (rule(scr, ctl, 'DisplayMode') or ''))
-# every box writes only its own output, never a sibling's
-crossed = []
-for scr, ctl in BOXES:
-    for p in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile'):
-        v = rule(scr, ctl, p) or ''
-        crossed += [f'{ctl}.{p}->{o}' for _, o in BOXES if o != ctl and o in v]
-check('attach', 'No box overwrites another box\'s output', not crossed, ','.join(crossed))
-# a shared bag makes an unfiltered CountRows meaningless, so none may remain
-vacuous = []
-for scr, ctl, prop in ((CV2, CV2, 'OnVisible'), (CV2, 'CV_BtnRefresh', 'OnSelect'),
-                       (CI2, 'CI_LblMissing', 'Text'), (CL2, 'CL_LblMissing', 'Text')):
-    v = rule(scr, ctl, prop) or ''
-    for _, box in BOXES:
-        if f'CountRows({box}.Attachments)' in v:
-            vacuous.append(f'{ctl}.{prop}:{box}')
-check('attach', 'No rule counts the whole shared bag unfiltered', not vacuous, ','.join(vacuous))
+    check('attach', f'{ctl} still reads the shared bag live (only the write side was ever broken)',
+          'Attachments' in (rule(scr, ctl, 'Items') or '') and 'Patch(' not in (rule(scr, ctl, 'Items') or ''))
 
 # ---------------- layout: nothing clipped, nothing stranded outside its scroll panel ----------------
 def _ev(expr, mt):

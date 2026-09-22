@@ -930,10 +930,9 @@ Screens:
             PressedFill: =Self.Color
             Size: =14
             Text: ="Submit request ➤"
-            Visible: |-
+            Visible: |
               =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
               And (IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft")
-              
             Width: =180
             X: =1134
             Y: =719

@@ -518,6 +518,17 @@ Screens:
                   })
               );
               If(
+                  Coalesce(varCurrentChildSPId, 0) > 0,
+                  SubmitForm(AttachementCard);
+                  If(
+                      Not(IsBlank(AttachementCard.Error)) And AttachementCard.Error <> "",
+                      Notify(
+                          "Could not save attachments: " & AttachementCard.Error,
+                          NotificationType.Error
+                      )
+                  )
+              );
+              If(
                   Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
                   IfError(
                       With(
