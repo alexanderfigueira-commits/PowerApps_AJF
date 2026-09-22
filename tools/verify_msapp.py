@@ -7,12 +7,12 @@ wired the way it was described, which is the part that can be checked without
 Studio. Anything depending on data or on a SharePoint column is listed in the
 manual matrix instead.
 """
-import io, json, sys, zipfile
+import io, json, re, sys, zipfile
 import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v23-viewmode.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v24-printdetails.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -21,8 +21,11 @@ for n in [i.filename for i in z.infolist()]:
         tp = d['TopParent']
         S[tp['Name']] = tp
 
+        RAW = globals().setdefault('RAW', {})
+
         def walk(c, scr):
             R[(scr, c['Name'])] = {r['Property']: r['InvariantScript'] for r in c['Rules']}
+            RAW[(scr, c['Name'])] = c['Rules']
             for k in c.get('Children', []):
                 walk(k, scr)
         walk(tp, tp['Name'])
@@ -307,6 +310,95 @@ for scr, ctl, par in (('ChildLegalScreen', 'CL_ChkNoThirdParty', 'CL_Gallery'),
     gal = [c for c in S[scr]['Children'] if c['Name'] == par][0]
     check('layout', f'{ctl} lives inside {par}',
           any(k['Name'] == ctl and k.get('Parent') == par for k in gal.get('Children', [])))
+
+# ---------------- HomePrintScreen: filters, navigation, detail screens ----------------
+HPS = 'HomePrintScreen'
+PHOTO_S, VIDEO_S, POD_S = ('PrintPhotoDetailScreen', 'PrintVideoDetailScreen',
+                           'PrintPodcastDetailScreen')
+for _s in (PHOTO_S, VIDEO_S, POD_S):
+    check('print', f'{_s} exists', _s in S)
+_hp_items = rule(HPS, 'HP_Gallery', 'Items') or ''
+check('print', 'Gallery still filters colPrintData, so role logic is kept',
+      'colPrintData' in _hp_items)
+for _n, _needle in (('production type', 'First(MediaType).Value = locHPProductionType'),
+                    ('status', 'Status.Value = locHPStatus'),
+                    ('title (StartsWith)', 'StartsWith(RequestTitle, HP_TxtTitle.Text)'),
+                    ('request id (numeric)', 'ID = Value(HP_TxtRequestID.Text)')):
+    check('print', f'Gallery filters on {_n}', _needle in _hp_items)
+check('print', 'Blank/All filters are skipped rather than applied',
+      _hp_items.count('IsBlank(') >= 2 and 'locHPProductionType = "All" Or' in _hp_items)
+_ov = rule(HPS, HPS, 'OnVisible') or ''
+check('print', 'Both filter variables initialise to All',
+      'locHPProductionType: "All"' in _ov and 'locHPStatus: "All"' in _ov)
+check('print', 'OnVisible still builds colPrintMedia', 'colPrintMedia' in _ov)
+_CHIPS = ['HP_BtnAllMedia', 'HP_BtnPhoto', 'HP_BtnVideo', 'HP_BtnPodcast',
+          'HP_BtnStatusAll', 'HP_BtnStatusDraft', 'HP_BtnStatusProcessing',
+          'HP_BtnStatusPending', 'HP_BtnStatusApproved', 'HP_BtnStatusRejected']
+check('print', f'All {len(_CHIPS)} chips exist', all((HPS, c) in R for c in _CHIPS))
+check('print', 'Every chip shows a live count',
+      all('CountRows(' in (rule(HPS, c, 'Text') or '') for c in _CHIPS))
+_selfapplied = [c for c in _CHIPS[:4] if 'locHPProductionType' in (rule(HPS, c, 'Text') or '')] \
+    + [c for c in _CHIPS[4:] if 'locHPStatus' in (rule(HPS, c, 'Text') or '')]
+check('print', 'Each chip count drops its own dimension', not _selfapplied,
+      ','.join(_selfapplied))
+check('print', 'No chip offers the retired Published status',
+      not any('Published' in (rule(HPS, c, 'Text') or '') for c in _CHIPS))
+check('print', 'Clear resets both variables and both inputs',
+      all(x in (rule(HPS, 'HP_BtnClear', 'OnSelect') or '')
+          for x in ('locHPProductionType: "All"', 'locHPStatus: "All"',
+                    'Reset(HP_TxtTitle)', 'Reset(HP_TxtRequestID)')))
+check('print', 'Empty state reads as a filter message',
+      'match these filters' in (rule(HPS, 'HP_EmptyState', 'Text') or ''))
+_nav = rule(HPS, 'HP_Gallery', 'OnSelect') or ''
+check('print', 'Row select stores the request', 'Set(gblPrintRequest, ThisItem)' in _nav)
+check('print', 'Row select routes to all three detail screens',
+      all(f'Navigate({x}, ScreenTransition.None)' in _nav for x in (PHOTO_S, VIDEO_S, POD_S)))
+check('print', 'Mixed/untyped requests are told, not silently ignored',
+      'NotificationType.Warning' in _nav)
+check('print', 'Row has a hover cue distinct from its fill',
+      (rule(HPS, 'HP_Gallery', 'HoverFill') or '') != (rule(HPS, 'HP_Gallery', 'Fill') or 'x'))
+check('print', 'Row has a chevron', (HPS, 'HP_RowChevron') in R)
+for _s, _p in ((PHOTO_S, 'PPD'), (VIDEO_S, 'PVD'), (POD_S, 'PPoD')):
+    check('print', f'{_p}: Back and Print hide while printing',
+          (rule(_s, f'{_p}_BtnBack', 'Visible') or '').strip() == 'Not(locPrinting)'
+          and (rule(_s, f'{_p}_BtnPrint', 'Visible') or '').strip() == 'Not(locPrinting)')
+    check('print', f'{_p}: Print toggles locPrinting around Print()',
+          all(x in (rule(_s, f'{_p}_BtnPrint', 'OnSelect') or '')
+              for x in ('locPrinting: true', 'Print()', 'locPrinting: false')))
+    check('print', f'{_p}: reads gblPrintRequest',
+          'gblPrintRequest' in (rule(_s, f'{_p}_Title', 'Text') or ''))
+    check('print', f'{_p}: media gallery is scoped to the request',
+          'ParentRequest = gblPrintRequest.RequestNumber' in (rule(_s, f'{_p}_Gallery', 'Items') or ''))
+    _vals = [c for (sc, c) in R if sc == _s and c.startswith(f'{_p}_Val')]
+    check('print', f'{_p}: {len(_vals)} field values, all with a Not provided fallback',
+          _vals and all('Not provided' in (rule(_s, v, 'Text') or '')
+                        or 'Yes' in (rule(_s, v, 'Text') or '') for v in _vals))
+    check('print', f'{_p}: blank values are greyed, not left looking filled',
+          all('If(' in (rule(_s, v, 'Color') or '') for v in _vals))
+    _edit = [c for (sc, c) in R if sc == _s
+             and any(p in R[(sc, c)] for p in ('HintText', 'OnCheck', 'SelectedDate'))]
+    check('print', f'{_p}: no editable controls on a read-only print view',
+          not _edit, ','.join(_edit))
+check('print', 'Podcast episodes come from the media list',
+      'colPrintMedia' in (rule(POD_S, 'PPoD_Gallery', 'Items') or ''))
+check('print', 'Video screen carries the legal section',
+      any('Legal & Documents' in (rule(VIDEO_S, c, 'Text') or '')
+          for (sc, c) in R if sc == VIDEO_S))
+# every screen ScreensOrder names must exist and vice versa
+_es = z.read('Src\\_EditorState.pa.yaml').decode('utf-8')
+_listed = set(re.findall(r'^\s*- (\w+)\s*$', _es, re.M)) if 're' in dir() else set()
+check('print', 'New screens are registered in ScreensOrder',
+      all(x in _es for x in (PHOTO_S, VIDEO_S, POD_S)))
+
+# behaviour properties must not be filed as data, or ";" chaining is invalid
+_BEH = ('OnSelect', 'OnVisible', 'OnChange', 'OnAddFile', 'OnRemoveFile',
+        'OnUndoRemoveFile', 'OnCheck', 'OnUncheck', 'OnStart')
+_miscat = []
+for (_sc, _cn), _rules in RAW.items():
+    for _r in _rules:
+        if _r['Property'] in _BEH and _r.get('Category') != 'Behavior':
+            _miscat.append(f"{_sc}.{_cn}.{_r['Property']}={_r.get('Category')}")
+check('print', 'Every behaviour rule is filed as Behavior', not _miscat, ','.join(_miscat[:5]))
 
 # ---------------- package integrity ----------------
 total, missing = 0, []

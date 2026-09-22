@@ -18,3 +18,6 @@ EditorState:
     - ReviewScreen
     - HomePrintScreen
     - DashboardScreen
+    - PrintPhotoDetailScreen
+    - PrintVideoDetailScreen
+    - PrintPodcastDetailScreen

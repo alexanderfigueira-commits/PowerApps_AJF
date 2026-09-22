@@ -1,0 +1,939 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  PrintPodcastDetailScreen:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
+    Children:
+      - PPoD_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+          Children: []
+      - PPoD_Heading:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =36
+            Size: =16
+            Text: ="🎙️  Podcast"
+            Width: =500
+            X: =32
+            Y: =10
+          Children: []
+      - PPoD_BtnBack:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Back()
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="← Back"
+            Visible: =Not(locPrinting)
+            Width: =100
+            X: =32
+            Y: =68
+          Children: []
+      - PPoD_BtnPrint:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |-
+              =UpdateContext({locPrinting: true});
+              Print();
+              UpdateContext({locPrinting: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="🖨  Print"
+            Visible: =Not(locPrinting)
+            Width: =130
+            X: =1204
+            Y: =68
+          Children: []
+      - PPoD_HeaderCard:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(247, 248, 250, 1)
+            Height: =124
+            Width: =1302
+            X: =32
+            Y: =116
+          Children: []
+      - PPoD_Title:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =34
+            Size: =18
+            Text: =If(IsBlank(gblPrintRequest.RequestTitle), "Untitled request", gblPrintRequest.RequestTitle)
+            Width: =900
+            X: =56
+            Y: =126
+          Children: []
+      - PPoD_Badge:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =34
+            Size: =14
+            Text: =Switch(Coalesce(gblPrintRequest.Status.Value, "Draft"), "New", "🆕", "Draft", "📝", "Pending", "⏳", "Approved", "✅", "Rejected", "⛔", "Processing", "🌐", "📝") & "  " & Coalesce(gblPrintRequest.Status.Value, "Draft")
+            Width: =330
+            X: =980
+            Y: =126
+          Children: []
+      - PPoD_HdrLbl0:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(150, 155, 165, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =9
+            Text: ="Request"
+            Width: =290
+            X: =56
+            Y: =170
+          Children: []
+      - PPoD_HdrVal0:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: =Coalesce(gblPrintRequest.RequestNumber, "—")
+            Width: =290
+            X: =56
+            Y: =186
+          Children: []
+      - PPoD_HdrLbl1:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(150, 155, 165, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =9
+            Text: ="Request ID"
+            Width: =290
+            X: =356
+            Y: =170
+          Children: []
+      - PPoD_HdrVal1:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: =Text(gblPrintRequest.ID)
+            Width: =290
+            X: =356
+            Y: =186
+          Children: []
+      - PPoD_HdrLbl2:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(150, 155, 165, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =9
+            Text: ="Production type"
+            Width: =290
+            X: =656
+            Y: =170
+          Children: []
+      - PPoD_HdrVal2:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: ="🎙️  Podcast"
+            Width: =290
+            X: =656
+            Y: =186
+          Children: []
+      - PPoD_HdrLbl3:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(150, 155, 165, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =9
+            Text: ="Created by"
+            Width: =290
+            X: =956
+            Y: =170
+          Children: []
+      - PPoD_HdrVal3:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: =Coalesce(gblPrintRequest.'Created By'.DisplayName, "Not provided")
+            Width: =290
+            X: =956
+            Y: =186
+          Children: []
+      - PPoD_HdrLbl4:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(150, 155, 165, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =9
+            Text: ="Department (DG)"
+            Width: =290
+            X: =56
+            Y: =206
+          Children: []
+      - PPoD_HdrVal4:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: =Coalesce(gblPrintRequest.DG.Value, "Not provided")
+            Width: =290
+            X: =56
+            Y: =222
+          Children: []
+      - PPoD_HdrLbl5:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(150, 155, 165, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =9
+            Text: ="Submitted"
+            Width: =290
+            X: =356
+            Y: =206
+          Children: []
+      - PPoD_HdrVal5:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: =If(IsBlank(gblPrintRequest.StartRequestDate), "Not provided", Text(gblPrintRequest.StartRequestDate, "dd-mm-yyyy"))
+            Width: =290
+            X: =356
+            Y: =222
+          Children: []
+      - PPoD_HdrLbl6:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(150, 155, 165, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =16
+            Size: =9
+            Text: ="Assignee"
+            Width: =290
+            X: =656
+            Y: =206
+          Children: []
+      - PPoD_HdrVal6:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(30, 34, 44, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: =Coalesce(gblPrintRequest.Assignee.DisplayName, "Not assigned")
+            Width: =290
+            X: =656
+            Y: =222
+          Children: []
+      - PPoD_PodLbl0:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(150, 155, 165, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =10
+            Text: ="Title of the podcast"
+            Width: =270
+            X: =56
+            Y: =252
+          Children: []
+      - PPoD_PodVal0:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: |-
+              =If(IsBlank(First(Filter(
+                      colPrintMedia,
+                      ParentRequest = gblPrintRequest.RequestNumber
+                  )).ProductionTitle), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: |-
+              =If(IsBlank(First(Filter(
+                      colPrintMedia,
+                      ParentRequest = gblPrintRequest.RequestNumber
+                  )).ProductionTitle), "Not provided", First(Filter(
+                      colPrintMedia,
+                      ParentRequest = gblPrintRequest.RequestNumber
+                  )).ProductionTitle)
+            Width: =980
+            X: =310
+            Y: =252
+          Children: []
+      - PPoD_PodLbl1:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(150, 155, 165, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =10
+            Text: ="Description of the podcast"
+            Width: =270
+            X: =56
+            Y: =292
+          Children: []
+      - PPoD_PodVal1:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: |-
+              =If(IsBlank(First(Filter(
+                      colPrintMedia,
+                      ParentRequest = gblPrintRequest.RequestNumber
+                  )).Description), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: |-
+              =If(IsBlank(First(Filter(
+                      colPrintMedia,
+                      ParentRequest = gblPrintRequest.RequestNumber
+                  )).Description), "Not provided", First(Filter(
+                      colPrintMedia,
+                      ParentRequest = gblPrintRequest.RequestNumber
+                  )).Description)
+            Width: =980
+            X: =310
+            Y: =292
+          Children: []
+      - PPoD_Gallery:
+          Control: Gallery@2.15.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DelayItemLoading: =false
+            Fill: =RGBA(0, 0, 0, 0)
+            Height: =384
+            Items: |-
+              =Sort(
+                  Filter(
+                      colPrintMedia,
+                      ParentRequest = gblPrintRequest.RequestNumber
+                  ),
+                  ID,
+                  SortOrder.Ascending
+              )
+            LoadingSpinner: =LoadingSpinner.None
+            ShowScrollbar: =false
+            TemplatePadding: =0
+            TemplateSize: =700
+            Width: =1302
+            X: =32
+            Y: =344
+          Children:
+            - PPoD_RowCaption:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =26
+                  Size: =13
+                  Text: ="■  " & Coalesce(ThisItem.CD_MediaNumber, "Media file") & If(IsBlank(ThisItem.EpisodeTitle), "", "  —  " & ThisItem.EpisodeTitle)
+                  Width: =1200
+                  X: =24
+                  Y: =0
+                Children: []
+            - PPoD_Sec0:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =24
+                  Size: =11
+                  Text: ="Episodes"
+                  Width: =1200
+                  X: =24
+                  Y: =34
+                Children: []
+            - PPoD_Lbl1:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Title of the episode"
+                  Width: =270
+                  X: =24
+                  Y: =68
+                Children: []
+            - PPoD_Val1:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.EpisodeTitle), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.EpisodeTitle), "Not provided", ThisItem.EpisodeTitle)
+                  Width: =980
+                  X: =310
+                  Y: =68
+                Children: []
+            - PPoD_Lbl2:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Season nr."
+                  Width: =270
+                  X: =24
+                  Y: =108
+                Children: []
+            - PPoD_Val2:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.SeasonNumber), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.SeasonNumber), "Not provided", Text(ThisItem.SeasonNumber))
+                  Width: =980
+                  X: =310
+                  Y: =108
+                Children: []
+            - PPoD_Lbl3:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Episode nr."
+                  Width: =270
+                  X: =24
+                  Y: =148
+                Children: []
+            - PPoD_Val3:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.EpisodeNumber), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.EpisodeNumber), "Not provided", Text(ThisItem.EpisodeNumber))
+                  Width: =980
+                  X: =310
+                  Y: =148
+                Children: []
+            - PPoD_Lbl4:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Summary of the episode"
+                  Width: =270
+                  X: =24
+                  Y: =188
+                Children: []
+            - PPoD_Val4:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.EpisodeSummary), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.EpisodeSummary), "Not provided", ThisItem.EpisodeSummary)
+                  Width: =980
+                  X: =310
+                  Y: =188
+                Children: []
+            - PPoD_Lbl5:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Language version(s)"
+                  Width: =270
+                  X: =24
+                  Y: =228
+                Children: []
+            - PPoD_Val5:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsEmpty(ThisItem.LanguageVersions), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsEmpty(ThisItem.LanguageVersions), "Not provided", Concat(ThisItem.LanguageVersions, Value, ", "))
+                  Width: =980
+                  X: =310
+                  Y: =228
+                Children: []
+            - PPoD_Lbl6:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Credits"
+                  Width: =270
+                  X: =24
+                  Y: =268
+                Children: []
+            - PPoD_Val6:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.CreditContact), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.CreditContact), "Not provided", ThisItem.CreditContact)
+                  Width: =980
+                  X: =310
+                  Y: =268
+                Children: []
+            - PPoD_Lbl7:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Executive producer"
+                  Width: =270
+                  X: =24
+                  Y: =308
+                Children: []
+            - PPoD_Val7:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.ExecProducerName), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.ExecProducerName), "Not provided", ThisItem.ExecProducerName)
+                  Width: =980
+                  X: =310
+                  Y: =308
+                Children: []
+            - PPoD_Lbl8:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Producer"
+                  Width: =270
+                  X: =24
+                  Y: =348
+                Children: []
+            - PPoD_Val8:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsEmpty(ThisItem.Producer), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsEmpty(ThisItem.Producer), "Not provided", Concat(ThisItem.Producer, DisplayName, ", "))
+                  Width: =980
+                  X: =310
+                  Y: =348
+                Children: []
+            - PPoD_Lbl9:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Recording date"
+                  Width: =270
+                  X: =24
+                  Y: =388
+                Children: []
+            - PPoD_Val9:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.CaptureDate), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.CaptureDate), "Not provided", Text(ThisItem.CaptureDate, "dd-mm-yyyy"))
+                  Width: =980
+                  X: =310
+                  Y: =388
+                Children: []
+            - PPoD_Lbl10:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Production end date"
+                  Width: =270
+                  X: =24
+                  Y: =428
+                Children: []
+            - PPoD_Val10:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.ProductionEndDate), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.ProductionEndDate), "Not provided", Text(ThisItem.ProductionEndDate, "dd-mm-yyyy"))
+                  Width: =980
+                  X: =310
+                  Y: =428
+                Children: []
+            - PPoD_Lbl11:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Publication start date"
+                  Width: =270
+                  X: =24
+                  Y: =468
+                Children: []
+            - PPoD_Val11:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.PublicationStartDate), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.PublicationStartDate), "Not provided", Text(ThisItem.PublicationStartDate, "dd-mm-yyyy"))
+                  Width: =980
+                  X: =310
+                  Y: =468
+                Children: []
+            - PPoD_Lbl12:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Publication end date"
+                  Width: =270
+                  X: =24
+                  Y: =508
+                Children: []
+            - PPoD_Val12:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.PublicationEndDate), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.PublicationEndDate), "Not provided", Text(ThisItem.PublicationEndDate, "dd-mm-yyyy"))
+                  Width: =980
+                  X: =310
+                  Y: =508
+                Children: []
+            - PPoD_Lbl13:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Production place"
+                  Width: =270
+                  X: =24
+                  Y: =548
+                Children: []
+            - PPoD_Val13:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.ProductionPlace), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.ProductionPlace), "Not provided", ThisItem.ProductionPlace)
+                  Width: =980
+                  X: =310
+                  Y: =548
+                Children: []
+            - PPoD_Lbl14:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Links"
+                  Width: =270
+                  X: =24
+                  Y: =588
+                Children: []
+            - PPoD_Val14:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.ReferenceLinks), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.ReferenceLinks), "Not provided", ThisItem.ReferenceLinks)
+                  Width: =980
+                  X: =310
+                  Y: =588
+                Children: []
+            - PPoD_Lbl15:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Pertinent tags"
+                  Width: =270
+                  X: =24
+                  Y: =628
+                Children: []
+            - PPoD_Val15:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.Tags), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.Tags), "Not provided", ThisItem.Tags)
+                  Width: =980
+                  X: =310
+                  Y: =628
+                Children: []
+            - PPoD_Lbl16:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  Size: =10
+                  Text: ="Notes"
+                  Width: =270
+                  X: =24
+                  Y: =668
+                Children: []
+            - PPoD_Val16:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.Notes), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Normal
+                  Height: =20
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.Notes), "Not provided", ThisItem.Notes)
+                  Width: =980
+                  X: =310
+                  Y: =668
+                Children: []
+            - PPoD_RowRule:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(220, 224, 230, 1)
+                  Height: =1
+                  Width: =1302
+                  Y: =698
+                Children: []
+      - PPoD_Empty:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Size: =14
+            Text: ="No podcast media files on this request"
+            Visible: |-
+              =CountRows(
+                  Filter(
+                      colPrintMedia,
+                      ParentRequest = gblPrintRequest.RequestNumber
+                  )
+              ) = 0
+            Width: =1302
+            X: =32
+            Y: =364
+          Children: []
+      - PPoD_Footer:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Size: =10
+            Text: ="AV Central Deposit Ticket System  ·  Audiovisual Service, DG COMM  ·  " & Text(Today(), "dd-mm-yyyy")
+            Width: =1302
+            X: =32
+            Y: =735
+          Children: []

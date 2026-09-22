@@ -11,7 +11,9 @@ Screens:
     Properties:
       Fill: =RGBA(255, 255, 255, 1)
       LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
-      OnVisible: =ClearCollect(colPrintMedia, 'AV-CD-Mediafiles')
+      OnVisible: |-
+        =UpdateContext({locHPProductionType: "All", locHPStatus: "All"});
+        ClearCollect(colPrintMedia, 'AV-CD-Mediafiles')
     Children:
       - HP_TopBar:
           Control: Rectangle@2.3.0
@@ -48,7 +50,34 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             Size: =12
-            Text: =Text(CountRows(colPrintData)) & If(CountRows(colPrintData) = 1, " request", " requests") & "   ·   exported " & Text(Now(), "dd-mm-yyyy hh:mm")
+            Text: |-
+              =Text(CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )
+              )) & If(CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )
+              ) = 1, " request", " requests") & "   ·   exported " & Text(Now(), "dd-mm-yyyy hh:mm")
             Width: =700
             X: =148
             Y: =68
@@ -82,7 +111,7 @@ Screens:
             Height: =40
             Width: =1302
             X: =32
-            Y: =118
+            Y: =264
       - HP_ThRequest:
           Control: Label@2.5.1
           Properties:
@@ -94,7 +123,7 @@ Screens:
             Text: ="REQUEST"
             Width: =380
             X: =48
-            Y: =118
+            Y: =264
       - HP_ThDG:
           Control: Label@2.5.1
           Properties:
@@ -106,7 +135,7 @@ Screens:
             Text: ="DG"
             Width: =160
             X: =148
-            Y: =118
+            Y: =264
       - HP_ThArchives:
           Control: Label@2.5.1
           Properties:
@@ -118,7 +147,7 @@ Screens:
             Text: ="Nº Media"
             Width: =78
             X: =440
-            Y: =118
+            Y: =264
       - HP_ThStatus:
           Control: Label@2.5.1
           Properties:
@@ -130,7 +159,7 @@ Screens:
             Text: ="STATUS"
             Width: =160
             X: =537
-            Y: =118
+            Y: =264
       - HP_ThSubmitted:
           Control: Label@2.5.1
           Properties:
@@ -142,7 +171,7 @@ Screens:
             Text: ="SUBMITTED"
             Width: =160
             X: =650
-            Y: =118
+            Y: =264
       - HP_ThDescription:
           Control: Label@2.5.1
           Properties:
@@ -154,22 +183,75 @@ Screens:
             Text: ="TITLE"
             Width: =206
             X: =1010
-            Y: =118
+            Y: =264
       - HP_Gallery:
           Control: Gallery@2.15.0
           Variant: Vertical
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             DelayItemLoading: =false
-            Height: =Max(52, 52 * CountRows(colPrintData))
-            Items: =colPrintData
+            Height: |-
+              =Max(52, 52 * CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )
+              ))
+            HoverFill: =RGBA(240, 244, 250, 1)
+            Items: |-
+              =Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )
             LoadingSpinner: =LoadingSpinner.None
+            OnSelect: |-
+              =Set(gblPrintRequest, ThisItem);
+              Set(
+                  gblPrintType,
+                  First(
+                      First(
+                          Filter(
+                          colPrintMedia,
+                          ParentRequest = ThisItem.RequestNumber
+                      )
+                      ).MediaType
+                  ).Value
+              );
+              Switch(
+                  gblPrintType,
+                  "Photo", Navigate(PrintPhotoDetailScreen, ScreenTransition.None),
+                  "Video", Navigate(PrintVideoDetailScreen, ScreenTransition.None),
+                  "Podcast", Navigate(PrintPodcastDetailScreen, ScreenTransition.None),
+                  Notify(
+                      "This request has no media file with a production type yet.",
+                      NotificationType.Warning
+                  )
+              )
+            PressedFill: =RGBA(230, 236, 245, 1)
+            Selectable: =true
             ShowScrollbar: =false
             TemplatePadding: =0
             TemplateSize: =52
+            Transition: =Transition.Pop
             Width: =1302
             X: =32
-            Y: =158
+            Y: =304
           Children:
             - HP_RowDivider:
                 Control: Rectangle@2.3.0
@@ -263,6 +345,20 @@ Screens:
                   Text: =If(IsBlank(ThisItem.Assignee.DisplayName), "—", ThisItem.Assignee.DisplayName)
                   Width: =160
                   X: =775
+            - HP_RowChevron:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(120, 128, 145, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =52
+                  Size: =22
+                  Text: ="›"
+                  Width: =36
+                  X: =1250
+                Children: []
       - HP_EmptyState:
           Control: Label@2.5.1
           Properties:
@@ -271,11 +367,25 @@ Screens:
             Color: =RGBA(140, 148, 160, 1)
             Font: =Font.'Open Sans'
             Size: =14
-            Text: ="No requests to export."
-            Visible: =CountRows(colPrintData) = 0
+            Text: ="No requests match these filters"
+            Visible: |-
+              =CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )
+              ) = 0
             Width: =1302
             X: =32
-            Y: =220
+            Y: =366
       - HP_Footer:
           Control: Label@2.5.1
           Properties:
@@ -300,7 +410,7 @@ Screens:
             Text: ="ASSIGNEE"
             Width: =206
             X: =802
-            Y: =118
+            Y: =264
       - HomeAppTitle_7:
           Control: Label@2.5.1
           Group: Group4_4
@@ -557,3 +667,464 @@ Screens:
             Width: =174
             X: =1139
             Y: =6
+      - HP_FilterContainer:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(247, 248, 250, 1)
+            Height: =140
+            Width: =1302
+            X: =32
+            Y: =116
+          Children: []
+      - HP_BtnAllMedia:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPProductionType = "All", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(locHPProductionType = "All", 2, 1)
+            Color: =If(locHPProductionType = "All", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPProductionType = "All", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locHPProductionType: "All"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(230, 236, 245, 1)
+            Size: =12
+            Text: |-
+              ="🗂️  All Media  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )
+                  )
+              ) & ")"
+            Width: =141
+            X: =48
+            Y: =126
+          Children: []
+      - HP_BtnPhoto:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPProductionType = "Photo", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(locHPProductionType = "Photo", 2, 1)
+            Color: =If(locHPProductionType = "Photo", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPProductionType = "Photo", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locHPProductionType: "Photo"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(230, 236, 245, 1)
+            Size: =12
+            Text: |-
+              ="📷 Photo  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = "Photo"
+                          )
+                      )
+                  )
+                  )
+              ) & ")"
+            Width: =125
+            X: =197
+            Y: =126
+          Children: []
+      - HP_BtnVideo:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPProductionType = "Video", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(locHPProductionType = "Video", 2, 1)
+            Color: =If(locHPProductionType = "Video", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPProductionType = "Video", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locHPProductionType: "Video"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(230, 236, 245, 1)
+            Size: =12
+            Text: |-
+              ="🎬  Video  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = "Video"
+                          )
+                      )
+                  )
+                  )
+              ) & ")"
+            Width: =120
+            X: =330
+            Y: =126
+          Children: []
+      - HP_BtnPodcast:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPProductionType = "Podcast", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(locHPProductionType = "Podcast", 2, 1)
+            Color: =If(locHPProductionType = "Podcast", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPProductionType = "Podcast", RGBA(230, 236, 245, 1), RGBA(250, 251, 253, 1))
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locHPProductionType: "Podcast"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(230, 236, 245, 1)
+            Size: =12
+            Text: |-
+              ="🎙️  Podcast  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = "Podcast"
+                          )
+                      )
+                  )
+                  )
+              ) & ")"
+            Width: =130
+            X: =458
+            Y: =126
+          Children: []
+      - HP_TxtTitle:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =""
+            Font: =Font.'Open Sans'
+            Height: =36
+            HintText: ="Search by request title..."
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =Set(varFilterRequestName, Self.Text)
+            Visible: =true
+            Width: =300
+            X: =640
+            Y: =126
+          Children: []
+      - HP_TxtRequestID:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =""
+            Font: =Font.'Open Sans'
+            Height: =36
+            HintText: ="Search by request ID..."
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =Set(varFilterRequestName, Self.Text)
+            Visible: =true
+            Width: =240
+            X: =950
+            Y: =126
+          Children: []
+      - HP_BtnClear:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(247, 248, 250, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =UpdateContext({locHPProductionType: "All", locHPStatus: "All"});
+              Reset(HP_TxtTitle);
+              Reset(HP_TxtRequestID)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="Clear filters"
+            Width: =118
+            X: =1200
+            Y: =126
+          Children: []
+      - HP_BtnStatusAll:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPStatus = "All", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(locHPStatus = "All", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPStatus = "All", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext({locHPStatus: "All"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: |-
+              ="All  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )
+                  )
+              ) & ")"
+            Width: =86
+            X: =48
+            Y: =178
+          Children: []
+      - HP_BtnStatusDraft:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPStatus = "Draft", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(locHPStatus = "Draft", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPStatus = "Draft", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext({locHPStatus: "Draft"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: |-
+              ="Draft  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      Status.Value = "Draft"
+                  )
+                  )
+              ) & ")"
+            Width: =96
+            X: =142
+            Y: =178
+          Children: []
+      - HP_BtnStatusProcessing:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPStatus = "Processing", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(locHPStatus = "Processing", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPStatus = "Processing", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext({locHPStatus: "Processing"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: |-
+              ="Processing  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      Status.Value = "Processing"
+                  )
+                  )
+              ) & ")"
+            Width: =128
+            X: =246
+            Y: =178
+          Children: []
+      - HP_BtnStatusPending:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPStatus = "Pending", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(locHPStatus = "Pending", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPStatus = "Pending", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext({locHPStatus: "Pending"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: |-
+              ="Pending  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      Status.Value = "Pending"
+                  )
+                  )
+              ) & ")"
+            Width: =112
+            X: =382
+            Y: =178
+          Children: []
+      - HP_BtnStatusApproved:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPStatus = "Approved", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(locHPStatus = "Approved", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPStatus = "Approved", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext({locHPStatus: "Approved"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: |-
+              ="Approved  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      Status.Value = "Approved"
+                  )
+                  )
+              ) & ")"
+            Width: =120
+            X: =502
+            Y: =178
+          Children: []
+      - HP_BtnStatusRejected:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(locHPStatus = "Rejected", RGBA(0,18,107,1), RGBA(220,224,230,1))
+            BorderThickness: =1
+            Color: =If(locHPStatus = "Rejected", RGBA(0,18,107,1), RGBA(96,104,120,1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(locHPStatus = "Rejected", RGBA(255,255,255,1), RGBA(247,248,250,1))
+            Font: =Font.'Open Sans'
+            Height: =34
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext({locHPStatus: "Rejected"})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: |-
+              ="Rejected  (" & Text(
+                  CountRows(
+                  Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      Status.Value = "Rejected"
+                  )
+                  )
+              ) & ")"
+            Width: =112
+            X: =630
+            Y: =178
+          Children: []
