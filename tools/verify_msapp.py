@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v26-saverepick.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v27-galleryrefresh.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -442,6 +442,18 @@ check('save-repick', 'The failure path is untouched and does not reset the form'
 check('save-repick', 'Cards unlock once the type is cleared (unchanged precondition)',
       all('varRequestMediaType <> ""' in (rule(RQ, c, 'DisplayMode') or '')
           for c in ('RS_CardPhotoBtn', 'RS_CardVideoBtn', 'RS_CardPodcastBtn')))
+
+# ---------------- fresh read of colMyReqs/colMyMedia on RequestManagementScreen ----------------
+_mr_ov = rule(MR, MR, 'OnVisible') or ''
+check('refresh', "Requests are refreshed before the ClearCollect that feeds the gallery",
+      "Refresh('AV-CD-Requests')" in _mr_ov
+      and _mr_ov.find("Refresh('AV-CD-Requests')") < _mr_ov.find("ClearCollect(colMyReqs"))
+check('refresh', "Media files are refreshed before their ClearCollect",
+      "Refresh('AV-CD-Mediafiles')" in _mr_ov
+      and _mr_ov.find("Refresh('AV-CD-Mediafiles')") < _mr_ov.find("ClearCollect(colMyMedia"))
+check('refresh', "Neither refresh is duplicated",
+      _mr_ov.count("Refresh('AV-CD-Requests')") == 1
+      and _mr_ov.count("Refresh('AV-CD-Mediafiles')") == 1)
 
 # ---------------- package integrity ----------------
 total, missing = 0, []
