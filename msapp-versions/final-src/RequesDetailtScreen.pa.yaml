@@ -21,21 +21,26 @@ Screens:
             varUserDept,
             Office365Users.MyProfile().Department
         );
-        Set(
-            varShowTypeConfirm,
-            true
-        );
         UpdateContext(
             {
                 locShowDetails: true,
                 locShowMedia: true
             }
         );
-        // The picker now opens on every entry. It previously opened only when
-        // (IsBlank(varRequestMediaType) Or varRequestMediaType = "") And
-        // (IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0),
-        // which never fired for a saved request and also failed on a new one
-        // because varRequestMediaType is a global that nothing clears.
+        // locShowTypePicker arrives with Navigate: true only from HomeBtnNew
+        // ("New request"), false from every other entry. It is not set here,
+        // so the value handed over is never overwritten.
+        //
+        // Opening a request from RequestManagementScreen (New or a gallery row)
+        // also passes locResetContacts: true, so the contact pickers drop what the
+        // previously opened request left selected. Returns from the media tabs
+        // pass false and keep the selection.
+        If(
+            locResetContacts,
+            Reset(RS_Owner);
+            Reset(RS_Contractor);
+            UpdateContext({locResetContacts: false})
+        );
         Set(
             varConfirmed,
             false
@@ -241,8 +246,10 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisplayMode: |-
-              =If(
-                  IsEmpty(RS_Owner.SelectedItems) && IsEmpty(RS_Contractor.SelectedItems),
+              =// enabled while RS_Owner is empty (a manual email counts as filled);
+              // never in view mode, where the popup cannot save
+              If(
+                  IsEmpty(RS_Owner.SelectedItems) And Not(varRequestorLocked),
                   DisplayMode.Edit,
                   DisplayMode.Disabled
               )
@@ -290,8 +297,10 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisplayMode: |-
-              =If(
-                  IsEmpty(RS_Owner.SelectedItems) && IsEmpty(RS_Contractor.SelectedItems),
+              =// enabled while RS_Contractor is empty (a manual email counts as filled);
+              // never in view mode, where the popup cannot save
+              If(
+                  IsEmpty(RS_Contractor.SelectedItems) And Not(varRequestorLocked),
                   DisplayMode.Edit,
                   DisplayMode.Disabled
               )
@@ -1181,7 +1190,8 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
-            OnSelect: =Set(varShowTypeConfirm, true)
+            OnSelect: |-
+              =UpdateContext({locShowTypePicker: true})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -1242,8 +1252,9 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Fill: =RGBA(0, 18, 107, 0.45)
             Height: =928
-            OnSelect: =Set(varShowTypeConfirm, false)
-            Visible: =varShowTypeConfirm
+            OnSelect: |-
+              =UpdateContext({locShowTypePicker: false})
+            Visible: =locShowTypePicker
             Width: =1366
       - RS_TypePickerPanel:
           Control: Rectangle@2.3.0
@@ -1253,7 +1264,7 @@ Screens:
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
             Height: =380
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =600
             X: =383
             Y: =250
@@ -1264,7 +1275,7 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Fill: =RGBA(0, 18, 107, 1)
             Height: =6
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =600
             X: =383
             Y: =250
@@ -1279,7 +1290,7 @@ Screens:
             Height: =30
             Size: =17
             Text: ="Choose production type"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =520
             X: =407
             Y: =280
@@ -1293,7 +1304,7 @@ Screens:
             Height: =22
             Size: =11
             Text: ="One request = one media type. Pick the format for this request."
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =520
             X: =407
             Y: =310
@@ -1311,7 +1322,8 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
-            OnSelect: =Set(varShowTypeConfirm, false)
+            OnSelect: |-
+              =UpdateContext({locShowTypePicker: false})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -1321,7 +1333,7 @@ Screens:
             RadiusTopRight: =18
             Text: ="✕"
             Tooltip: ="Close pop-up"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =36
             X: =933
             Y: =264
@@ -1339,19 +1351,20 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
-            OnSelect: |
+            OnSelect: |-
               =If(
                   CountRows(RS_ChildrenGallery.AllItems) = 0,
-
+              
                   // No media files yet, just reset
                   Set(varRequestMediaType, "");
                   Set(varConfirmed, false);
-                  Set(varShowTypeConfirm, true);
+                  UpdateContext({locShowTypePicker: true});
                   Notify("Selection cleared - choose a production type.", NotificationType.Information),
-
+              
                   // Media files already exist, delete them first, then reset
                   Notify("Existing media files removed. Choose a production type.", NotificationType.Information)
               )
+              
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -1363,7 +1376,7 @@ Screens:
               ="🔄"
             Tooltip: |-
               =If(CountRows(colArchives) = 0, "Restart: clear the selected type", "Remove all media items before changing the type")
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =36
             X: =901
             Y: =263
@@ -1402,7 +1415,7 @@ Screens:
             BorderThickness: =If(varRequestMediaType = "Photo", 2, 1)
             Fill: =If(varRequestMediaType = "Photo", RGBA(230, 236, 245, 1), If(varRequestMediaType <> "" And Not(IsBlank(varRequestMediaType)), RGBA(242, 243, 245, 1), RGBA(250, 251, 253, 1)))
             Height: =210
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =407
             Y: =350
@@ -1417,7 +1430,7 @@ Screens:
             Size: =40
             Text: |-
               ="📷"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =407
             Y: =380
@@ -1448,7 +1461,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =24
             Text: ="Photo / Reportage"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =407
             Y: =462
@@ -1463,7 +1476,7 @@ Screens:
             Height: =46
             Size: =10
             Text: ="Still images, photo reportage"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =154
             X: =415
             Y: =492
@@ -1485,7 +1498,7 @@ Screens:
             OnSelect: |-
               =Set(varRequestMediaType, "Photo");
               Set(varConfirmed, true);
-              Set(varShowTypeConfirm, false)
+              UpdateContext({locShowTypePicker: false})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =RGBA(0, 18, 107, 0.10)
@@ -1494,7 +1507,7 @@ Screens:
             RadiusTopLeft: =14
             RadiusTopRight: =14
             Text: =""
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =407
             Y: =350
@@ -1506,7 +1519,7 @@ Screens:
             BorderThickness: =If(varRequestMediaType = "Video", 2, 1)
             Fill: =If(varRequestMediaType = "Video", RGBA(230, 236, 245, 1), If(varRequestMediaType <> "" And Not(IsBlank(varRequestMediaType)), RGBA(242, 243, 245, 1), RGBA(250, 251, 253, 1)))
             Height: =210
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =593
             Y: =350
@@ -1521,7 +1534,7 @@ Screens:
             Size: =40
             Text: |-
               ="🎬"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =593
             Y: =380
@@ -1536,7 +1549,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =24
             Text: ="Video"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =593
             Y: =462
@@ -1551,7 +1564,7 @@ Screens:
             Height: =46
             Size: =10
             Text: ="Films, clips and motion content"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =154
             X: =601
             Y: =492
@@ -1573,7 +1586,7 @@ Screens:
             OnSelect: |-
               =Set(varRequestMediaType, "Video");
               Set(varConfirmed, true);
-              Set(varShowTypeConfirm, false)
+              UpdateContext({locShowTypePicker: false})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =RGBA(0, 18, 107, 0.10)
@@ -1582,7 +1595,7 @@ Screens:
             RadiusTopLeft: =14
             RadiusTopRight: =14
             Text: =""
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =593
             Y: =350
@@ -1594,7 +1607,7 @@ Screens:
             BorderThickness: =If(varRequestMediaType = "Podcast", 2, 1)
             Fill: =If(varRequestMediaType = "Podcast", RGBA(230, 236, 245, 1), If(varRequestMediaType <> "" And Not(IsBlank(varRequestMediaType)), RGBA(242, 243, 245, 1), RGBA(250, 251, 253, 1)))
             Height: =210
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =779
             Y: =350
@@ -1609,7 +1622,7 @@ Screens:
             Size: =40
             Text: |-
               ="🎙️"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =779
             Y: =380
@@ -1624,7 +1637,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =24
             Text: ="Podcast"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =779
             Y: =462
@@ -1639,7 +1652,7 @@ Screens:
             Height: =46
             Size: =10
             Text: ="Audio episodes/series"
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =154
             X: =787
             Y: =492
@@ -1661,7 +1674,7 @@ Screens:
             OnSelect: |-
               =Set(varRequestMediaType, "Podcast");
               Set(varConfirmed, true);
-              Set(varShowTypeConfirm, false)
+              UpdateContext({locShowTypePicker: false})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =RGBA(0, 18, 107, 0.10)
@@ -1670,7 +1683,7 @@ Screens:
             RadiusTopLeft: =14
             RadiusTopRight: =14
             Text: =""
-            Visible: =varShowTypeConfirm
+            Visible: =locShowTypePicker
             Width: =170
             X: =779
             Y: =350
@@ -2175,7 +2188,7 @@ Screens:
               =If(
                   IsBlank(varRequestTitle) Or IsBlank(varRequestDG),
                   Notify("Enter the request title and select a DG/Agency before saving.", NotificationType.Warning),
-
+              
                   IfError(
                       Set(varCurrentRequest,
                           Patch('AV-CD-Requests',
@@ -2231,8 +2244,15 @@ Screens:
                               }
                           )
                       );
+                      // Manual contacts typed before the first save are keyed to a blank request
+                      // number; move them onto the number this save assigned.
+                      UpdateIf(
+                          colManualContacts,
+                          IsBlank(ParentRequest) Or ParentRequest = "",
+                          {ParentRequest: varCurrentRequest.RequestNumber}
+                      );
                       Notify("Draft saved.", NotificationType.Success),
-
+              
                       Notify("Error saving draft: " & FirstError.Message, NotificationType.Error)
                   )
               )
@@ -2306,6 +2326,13 @@ Screens:
                           )
                       )
                   );
+              // Manual contacts typed before the first save are keyed to a blank request
+              // number; move them onto the number this save assigned.
+              UpdateIf(
+                  colManualContacts,
+                  IsBlank(ParentRequest) Or ParentRequest = "",
+                  {ParentRequest: varCurrentRequest.RequestNumber}
+              );
               Set(varCurrentChildId, Text(GUID()));
               Set(varCurrentChildSPId,
                   IfError(

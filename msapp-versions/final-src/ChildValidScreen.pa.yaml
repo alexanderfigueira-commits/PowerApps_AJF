@@ -599,8 +599,7 @@ Screens:
                                   Notify("Media saved to SharePoint.", NotificationType.Success);
                                   Set(varRequestMediaType, "");
                                   Set(varConfirmed, false);
-                                  Set(varShowTypeConfirm, true);
-                                  Navigate(RequesDetailtScreen)
+                                  Navigate(RequesDetailtScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
                               )
                           )
                       ),
@@ -609,8 +608,7 @@ Screens:
                   Notify("Media added to request. Save or submit the request to persist media to SharePoint.", NotificationType.Success);
                   Set(varRequestMediaType, "");
                   Set(varConfirmed, false);
-                  Set(varShowTypeConfirm, true);
-                  Navigate(RequesDetailtScreen)
+                  Navigate(RequesDetailtScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
               )
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill

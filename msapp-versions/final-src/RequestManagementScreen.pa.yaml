@@ -281,7 +281,9 @@ Screens:
               Set(varRequestOwnerContact, "");
               Set(varRequestOwnerEmail, User().Email);
               Set(varRequestMediaType, "");
-              Navigate(RequesDetailtScreen)
+              // drop manual contacts left by a new request that was never saved
+              RemoveIf(colManualContacts, IsBlank(ParentRequest) Or ParentRequest = "");
+              Navigate(RequesDetailtScreen, ScreenTransition.None, {locShowTypePicker: true, locResetContacts: true})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -756,7 +758,7 @@ Screens:
                     Set(varRequestDescription1, Coalesce(ThisItem.Description, ""));
                     Set(varRequestOwnerContact, Coalesce(First(ThisItem.DG_Agency_Contact).DisplayName, ""));
                     Set(varRequestMediaType, "");
-                    Navigate(RequesDetailtScreen, ScreenTransition.Cover)
+                    Navigate(RequesDetailtScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
                   Width: =1323
             - HomeRowDivider:
                 Control: Rectangle@2.3.0

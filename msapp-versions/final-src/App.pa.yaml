@@ -65,7 +65,6 @@ App:
       Set(varShowTplConfirm, false);
       Set(varTplSearch, "");
       Set(varTplCandidate, Blank());
-      Set(varShowTypeConfirm, false);
       Set(varPendingMediaType, "");
       Set(varConfirmed, false);
       Set(varRating, 0);

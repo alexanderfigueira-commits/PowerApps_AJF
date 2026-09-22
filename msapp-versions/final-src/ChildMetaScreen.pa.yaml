@@ -41,7 +41,8 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: =Navigate(RequesDetailtScreen)
+            OnSelect: |-
+              =Navigate(RequesDetailtScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color

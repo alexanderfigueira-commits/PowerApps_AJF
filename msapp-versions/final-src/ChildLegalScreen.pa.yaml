@@ -961,8 +961,7 @@ Screens:
               // the same finish CV_BtnSaveArchive has always had
               Set(varRequestMediaType, "");
               Set(varConfirmed, false);
-              Set(varShowTypeConfirm, true);
-              Navigate(RequesDetailtScreen)
+              Navigate(RequesDetailtScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
             Width: =484
             X: =862
             Y: =If(IsBlank(varAttachRecord), 278, 250)

@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v32-attachform.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v33-typepicker-contacts.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -313,11 +313,11 @@ check('attach', 'Save: SubmitForm(CL_FormAttach) exactly once, after the Patch o
 check('attach', 'Save submits only for an item that already had an ID and is loaded in the form',
       'spId > 0 And Coalesce(varAttachRecord.ID, 0) = spId' in _save)
 check('attach', 'Save without attachments to send still finishes exactly as before',
-      _save.count('Navigate(RequesDetailtScreen)') == 2 and _save.count('Set(varShowTypeConfirm, true)') == 2)
+      _save.count('Navigate(RequesDetailtScreen') == 2 and _save.count('Set(varRequestMediaType, "")') == 2)
 _ok = code_only(rule(CL2, 'CL_FormAttach', 'OnSuccess'))
 check('attach', 'OnSuccess: success notification, refresh, then the usual finish',
       all(x in _ok for x in ('NotificationType.Success', "Refresh('AV-CD-Mediafiles')",
-                             'Set(varShowTypeConfirm, true)', 'Navigate(RequesDetailtScreen)'))
+                             'Set(varRequestMediaType, "")', 'Navigate(RequesDetailtScreen'))
       and _ok.index("Refresh(") < _ok.index('Navigate('))
 _ko = code_only(rule(CL2, 'CL_FormAttach', 'OnFailure'))
 check('attach', 'OnFailure: shows the form error and does not continue',
@@ -593,48 +593,94 @@ for (_sc, _cn), _rules in RAW.items():
             _miscat.append(f"{_sc}.{_cn}.{_r['Property']}={_r.get('Category')}")
 check('print', 'Every behaviour rule is filed as Behavior', not _miscat, ','.join(_miscat[:5]))
 
-# ---------------- production-type picker on entry ----------------
+# ---------------- production-type picker: only from "New request" (v33) ----------------
 _ov_rq = rule(RQ, RQ, 'OnVisible') or ''
-check('picker', 'Picker opens on entry to the request screen',
-      re.search(r'Set\(\s*varShowTypeConfirm\s*,\s*true\s*\)', _ov_rq) is not None)
-check('picker', 'Nothing hides it again on entry',
-      re.search(r'Set\(\s*varShowTypeConfirm\s*,\s*false\s*\)', _ov_rq) is None)
-check('picker', 'Exactly one assignment on entry, so order cannot matter',
-      _ov_rq.count('varShowTypeConfirm') == 1, str(_ov_rq.count('varShowTypeConfirm')))
+_navs = []
+for (_s, _c), _g in R.items():
+    for _p, _v in _g.items():
+        for _m in re.finditer(r'Navigate\(\s*RequesDetailtScreen[^)]*\)', _v):
+            _navs.append((_s, _c, _p, _m.group(0)))
+check('picker', f'Every Navigate into RequesDetailtScreen passes locShowTypePicker ({len(_navs)} found)',
+      len(_navs) == 7 and all('locShowTypePicker' in n_[3] for n_ in _navs),
+      ','.join(n_[1] for n_ in _navs if 'locShowTypePicker' not in n_[3]))
+check('picker', 'Only HomeBtnNew passes true',
+      [n_[1] for n_ in _navs if 'locShowTypePicker: true' in n_[3]] == ['HomeBtnNew'])
+check('picker', 'HomeRowSelect (gallery row: edit and view) passes false',
+      any(n_[1] == 'HomeRowSelect' and 'locShowTypePicker: false' in n_[3] for n_ in _navs))
+check('picker', 'Returns from the media tabs and the save paths pass false',
+      all('locShowTypePicker: false' in n_[3] for n_ in _navs
+          if n_[1] in ('CM_BtnPrev_1', 'CM_Back', 'CV_BtnSaveArchive', 'CL_FormAttach')))
+check('picker', 'HomeBtnNew keeps its new-request setup before navigating',
+      all(x in (rule(MR, 'HomeBtnNew', 'OnSelect') or '')
+          for x in ("Set(varCurrentRequest, Defaults('AV-CD-Requests'))", 'Set(varRequestMediaType, "")')))
+check('picker', 'OnVisible never assigns locShowTypePicker, so the value passed in survives',
+      re.search(r'locShowTypePicker\s*:', _ov_rq) is None and 'Set(locShowTypePicker' not in _ov_rq)
+check('picker', 'The old global varShowTypeConfirm is gone from the whole app',
+      not any('varShowTypeConfirm' in v_ for g_ in R.values() for v_ in g_.values()))
 _grp = [c for c in S[RQ]['Children'] if c['Name'] == 'grpProductionTypePicker']
 check('picker', 'grpProductionTypePicker exists', len(_grp) == 1)
 if _grp:
     check('picker', 'The group is still a classic group with no Visible of its own',
           not any(r['Property'] == 'Visible' for r in _grp[0]['Rules']))
-    _mem = _grp[0]['GroupedControlsKey'] or []
-    _off = [m for m in _mem
-            if (rule(RQ, m, 'Visible') or '').strip() != 'varShowTypeConfirm']
-    check('picker', f'All {len(_mem)} members follow varShowTypeConfirm',
-          not _off, ','.join(_off))
+    _mem = (_grp[0]['GroupedControlsKey'] or []) + ['RS_TypePickerRestart']
+    _off = [m for m in _mem if (rule(RQ, m, 'Visible') or '').strip() != 'locShowTypePicker']
+    check('picker', f'RS_TypePickerPanel and all {len(_mem) - 1} other picker controls follow locShowTypePicker',
+          not _off and 'RS_TypePickerPanel' in _mem, ','.join(_off))
 for _c, _want in (('RS_TypePickerClose', 'false'), ('RS_TypePickerOverlay', 'false'),
                   ('RS_CardPhotoBtn', 'false'), ('RS_CardVideoBtn', 'false'),
-                  ('RS_CardPodcastBtn', 'false'), ('RS_TypeIconBtn', 'true')):
-    check('picker', f'{_c} still sets it {_want}',
-          re.search(r'Set\(\s*varShowTypeConfirm\s*,\s*' + _want,
-                    rule(RQ, _c, 'OnSelect') or '') is not None)
+                  ('RS_CardPodcastBtn', 'false'), ('RS_TypeIconBtn', 'true'),
+                  ('RS_TypePickerRestart', 'true')):
+    check('picker', f'{_c} sets it {_want} with UpdateContext',
+          f'UpdateContext({{locShowTypePicker: {_want}}})' in (rule(RQ, _c, 'OnSelect') or ''))
+for _c, _t in (('RS_CardPhotoBtn', 'Photo'), ('RS_CardVideoBtn', 'Video'), ('RS_CardPodcastBtn', 'Podcast')):
+    check('picker', f'{_c} keeps its selection logic',
+          all(x in (rule(RQ, _c, 'OnSelect') or '')
+              for x in (f'Set(varRequestMediaType, "{_t}")', 'Set(varConfirmed, true)')))
 check('picker', 'RS_LblMissing follows the locShowDetails collapse idiom',
       (rule(RQ, 'RS_LblMissing', 'Y') or '') == 'If(locShowDetails,403,110)')
 
-# ---------------- picker reopens after a media save ----------------
+# ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''
-_navc = _save.count('Navigate(RequesDetailtScreen)')
-check('save-repick', 'Save has exactly 2 success paths, both navigating back',
-      _navc == 2, str(_navc))
-check('save-repick', 'Both success paths clear the saved type',
-      _save.count('Set(varRequestMediaType, "")') == 2)
-check('save-repick', 'Both success paths reopen the picker',
-      _save.count('Set(varShowTypeConfirm, true)') == 2)
+_navc = _save.count('Navigate(RequesDetailtScreen')
+check('save-return', 'Save has exactly 2 direct success paths, both navigating back', _navc == 2, str(_navc))
+check('save-return', 'Both clear the saved type', _save.count('Set(varRequestMediaType, "")') == 2)
 _FAIL = 'Notify("Save failed: " & FirstError.Message, NotificationType.Error)'
-check('save-repick', 'The failure path is untouched and does not reset the form',
-      _save.count(_FAIL) == 1)
-check('save-repick', 'Cards unlock once the type is cleared (unchanged precondition)',
+check('save-return', 'The failure path is untouched and does not reset the form', _save.count(_FAIL) == 1)
+check('save-return', 'OnVisible restores the type from the saved media, so no picker is needed',
+      'Set(\n        varRequestMediaType,\n        First(colArchives).MediaType\n    )' in _ov_rq
+      and _ov_rq.index('Clear(colArchives)') < _ov_rq.index('First(colArchives).MediaType'))
+check('save-return', 'Cards unlock once the type is cleared (unchanged precondition)',
       all('varRequestMediaType <> ""' in (rule(RQ, c, 'DisplayMode') or '')
           for c in ('RS_CardPhotoBtn', 'RS_CardVideoBtn', 'RS_CardPodcastBtn')))
+
+# ---------------- contact "+" buttons follow their own combo box (v33) ----------------
+for _b, _cb in (('RS_DetailsToggle_contrator_1', 'RS_Owner'), ('RS_DetailsToggle_contrator', 'RS_Contractor')):
+    _dm = code_only(rule(RQ, _b, 'DisplayMode'))
+    _other = 'RS_Contractor' if _cb == 'RS_Owner' else 'RS_Owner'
+    check('contact+', f'{_b} is enabled while {_cb} is empty, and only its own combo box counts',
+          f'IsEmpty({_cb}.SelectedItems)' in _dm and _other not in _dm)
+    check('contact+', f'{_b} stays disabled in view mode', 'Not(varRequestorLocked)' in _dm)
+check('contact+', 'The pairing matches the popup type each button opens',
+      '"DG/Agency"' in (rule(RQ, 'RS_DetailsToggle_contrator_1', 'OnSelect') or '')
+      and '"Contractor"' in (rule(RQ, 'RS_DetailsToggle_contrator', 'OnSelect') or ''))
+for _cb, _k in (('RS_Owner', 'DG/Agency'), ('RS_Contractor', 'Contractor')):
+    check('contact+', f'{_cb} still pre-selects its manual email (so it counts as filled)',
+          f'ContactType = "{_k}"' in (rule(RQ, _cb, 'DefaultSelectedItems') or ''))
+check('contact+', 'Only the management-screen entries reset the contact pickers',
+      sorted(n_[1] for n_ in _navs if 'locResetContacts: true' in n_[3]) == ['HomeBtnNew', 'HomeRowSelect']
+      and all('locResetContacts' in n_[3] for n_ in _navs))
+check('contact+', 'OnVisible resets both combo boxes on that flag, then clears it',
+      all(x in _ov_rq for x in ('locResetContacts,', 'Reset(RS_Owner)', 'Reset(RS_Contractor)',
+                                'UpdateContext({locResetContacts: false})')))
+for _c in ('RS_BtnDraftSave', 'RS_BtnDraftSave_1'):
+    _t = rule(RQ, _c, 'OnSelect') or ''
+    check('contact+', f'{_c} moves manual contacts onto the request number it just created',
+          'UpdateIf(\n' in _t and 'colManualContacts' in _t
+          and _t.index('Set(varCurrentRequest') < _t.index('colManualContacts'))
+_hn = rule(MR, 'HomeBtnNew', 'OnSelect') or ''
+check('contact+', 'New request drops manual contacts left by an abandoned new request',
+      'RemoveIf(colManualContacts, IsBlank(ParentRequest)' in _hn
+      and _hn.index('RemoveIf(colManualContacts') < _hn.index('Navigate('))
 
 # ---------------- fresh read of colMyReqs/colMyMedia on RequestManagementScreen ----------------
 _mr_ov = rule(MR, MR, 'OnVisible') or ''
