@@ -493,6 +493,7 @@ Screens:
                                   Producer: varChildProducerSel,
                       FTPPath: varChildFTPPath1,
                       BelugaReference: varChildBelugaRef,
+                      Notes: varChildNotes,
                       LanguageVersions: varChildLanguageVersions,
                       AIVoiceover: varChildAIVoiceover,
                       ContractCase: varChildContractCase,
@@ -524,6 +525,7 @@ Screens:
                                           CD_MediaNumber: If(spId = 0, With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter('AV-CD-Mediafiles', StartsWith(CD_MediaNumber, yr & "-")), CD_MediaNumber, SortOrder.Descending)).CD_MediaNumber, yr & "-0000"), 4)) + 1), 4)), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
                                           Description: varChildDescription1,
                                           BelugaReference: varChildBelugaRef,
+                                          Notes: varChildNotes,
                                           // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
                                           MediaType: Table({Value: varChildMediaType}),
                                                               CaptureDate: varChildCaptureDate,

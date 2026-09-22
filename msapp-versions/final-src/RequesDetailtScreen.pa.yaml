@@ -72,6 +72,10 @@ Screens:
                             BelugaReference,
                             ""
                         ),
+                        Notes: Coalesce(
+                            Notes,
+                            ""
+                        ),
                         ProductionTitle: Coalesce(
                             ProductionTitle,
                             ""
@@ -686,6 +690,7 @@ Screens:
                     Set(varChildTags1, Coalesce(ThisItem.Tags, ""));
                     Set(varChildFTPPath1, Coalesce(ThisItem.FTPPath, ""));
                     Set(varChildBelugaRef, Coalesce(ThisItem.BelugaReference, ""));
+                    Set(varChildNotes, Coalesce(ThisItem.Notes, ""));
                     Navigate(ChildInfoScreen)
                   Width: =1300
             - RS_CRowDivider:
@@ -2293,6 +2298,7 @@ Screens:
               Set(varChildTags1, "");
               Set(varChildFTPPath1, "");
               Set(varChildBelugaRef, "");
+              Set(varChildNotes, "");
               Navigate(ChildInfoScreen),
                   Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
               )

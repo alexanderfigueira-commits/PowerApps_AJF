@@ -45,6 +45,7 @@ App:
       Set(varChildTags, "");
       Set(varChildFTPPath, "");
       Set(varChildBelugaRef, "");
+      Set(varChildNotes, "");
       Set(varChildAIVoiceover, false);
       Set(varChildContractCase, "");
       Set(varChildContractCase1Sub, "");
