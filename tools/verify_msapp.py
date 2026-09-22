@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v22-attachments.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v23-viewmode.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -143,6 +143,74 @@ check('prior', 'Clear clears both date variables',
           'Set(varFilterEndDate, Blank())'))
 check('prior', 'Contact popup present (8 controls)',
       sum(1 for (s, c) in R if s == RQ and 'Contact' in c and c.startswith('RS_')) >= 8)
+
+# ---------------- Section 3a: Processing is view-only for a requestor, bar Notes ----------------
+LOCKVAR = 'varRequestorLocked'
+LOCKED_SCREENS = ['RequesDetailtScreen', 'ChildInfoScreen', 'ChildMetaScreen',
+                  'ChildLegalScreen', 'ChildValidScreen']
+import re as _re3
+_setter = _re3.compile(r'Set\(\s*' + LOCKVAR + r'\s*,\s*varUserRole <> "ADMINISTRATOR"\s*'
+                       r'And Coalesce\(varCurrentRequest\.Status\.Value, ""\) = "Processing"\s*\)')
+missing = [scr for scr in LOCKED_SCREENS
+           if not _setter.search(' '.join((rule(scr, scr, 'OnVisible') or '').split()))]
+check('3a', 'All 5 request screens compute the lock identically', not missing, ','.join(missing))
+
+INPUT_T = {'text', 'checkbox', 'combobox', 'datepicker', 'dropdown', 'attachments'}
+_tmpl = {}
+for _sn, _stp in S.items():
+    def _wt(c, sn):
+        _tmpl[(sn, c['Name'])] = c['Template']['Name']
+        for k in c.get('Children', []):
+            _wt(k, sn)
+    _wt(_stp, _sn)
+unlocked = []
+nlocked = 0
+for scr in LOCKED_SCREENS:
+    for (s_, c_) in R:
+        if s_ != scr or _tmpl.get((s_, c_)) not in INPUT_T:
+            continue
+        dm = rule(scr, c_, 'DisplayMode') or ''
+        if LOCKVAR in dm:
+            nlocked += 1
+        elif not (c_ == 'CI_Notes' or 'varUserRole' in dm or c_ == 'CI_TplSearch'):
+            unlocked.append(c_)
+check('3a', f'Every request input carries the lock ({nlocked} of them)',
+      not unlocked, ','.join(unlocked))
+check('3a', 'Notes is the one editable field',
+      (rule('ChildInfoScreen', 'CI_Notes', 'DisplayMode') or '').strip() == 'DisplayMode.Edit')
+check('3a', 'Notes persists by itself, not via the archive save',
+      '{Notes: Self.Text}' in (rule('ChildInfoScreen', 'CI_Notes', 'OnChange') or ''))
+check('3a', 'The Notes save is not itself gated by the lock',
+      LOCKVAR not in (rule('ChildInfoScreen', 'CI_Notes', 'OnChange') or ''))
+for _c in ('CI_TplConfirmOK',):
+    check('3a', f'{_c} cannot overwrite fields while locked',
+          LOCKVAR in (rule('ChildInfoScreen', _c, 'DisplayMode') or ''))
+check('3a', 'RS_btnSaveContact gated by the lock',
+      LOCKVAR in (rule(RQ, 'RS_btnSaveContact', 'DisplayMode') or ''))
+check('3a', 'CV_BtnSaveArchive gated by the lock',
+      LOCKVAR in (rule('ChildValidScreen', 'CV_BtnSaveArchive', 'DisplayMode') or ''))
+# no button that writes request data is reachable by a locked requestor
+open_btns = []
+for scr in LOCKED_SCREENS:
+    for (s_, c_) in R:
+        if s_ != scr or _tmpl.get((s_, c_)) != 'button':
+            continue
+        g = R[(s_, c_)]
+        if not _re3.search(r'Set\(\s*varChild|Patch\(', g.get('OnSelect', '')):
+            continue
+        vis = ' '.join(g.get('Visible', 'true').split())
+        dm = ' '.join(g.get('DisplayMode', '').split())
+        if not (LOCKVAR in dm or _re3.search(r'"Draft"|"Pending"|"Rejected"', dm + vis)
+                or vis == 'false'):
+            open_btns.append(f'{scr}.{c_}')
+check('3a', 'No data-writing button is open to a locked requestor',
+      not open_btns, ','.join(open_btns))
+check('3a', 'Submit offered only on blank status or Draft',
+      '"Draft"' in (rule(RQ, 'RS_BtnSubmitRequest', 'Visible') or '')
+      and '"Processing"' not in (rule(RQ, 'RS_BtnSubmitRequest', 'Visible') or ''))
+check('3a', 'Resubmit still covers Rejected and Pending',
+      all(x in (rule(RQ, 'RS_BtnResubmitRequest', 'Visible') or '')
+          for x in ('"Rejected"', '"Pending"')))
 
 # ---------------- attachments ----------------
 CI2, CM2, CL2, CV2 = 'ChildInfoScreen', 'ChildMetaScreen', 'ChildLegalScreen', 'ChildValidScreen'

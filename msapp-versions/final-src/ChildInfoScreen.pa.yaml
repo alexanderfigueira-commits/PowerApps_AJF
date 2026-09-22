@@ -796,7 +796,19 @@ Screens:
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
                   Mode: =TextMode.MultiLine
-                  OnChange: =Set(varChildNotes, Self.Text)
+                  OnChange: |-
+                    =Set(varChildNotes, Self.Text);
+                    IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Notes: Self.Text}
+                        ),
+                        Notify(
+                            "Could not save the note: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
                   Visible: =true
                   Width: =900
                   X: =56
@@ -1134,6 +1146,7 @@ Screens:
             BorderColor: =ColorFade(Self.Fill, -15%)
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: =If(varRequestorLocked, DisplayMode.Disabled, DisplayMode.Edit)
             Fill: =RGBA(56, 96, 178, 1)
             Font: =Font.'Open Sans'
             Height: =54

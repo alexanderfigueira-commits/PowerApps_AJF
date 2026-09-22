@@ -935,9 +935,10 @@ Screens:
             PressedFill: =Self.Color
             Size: =14
             Text: ="Submit request ➤"
-            Visible: |
+            Visible: |-
               =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
-              And (IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value <> "Rejected")
+              And (IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft")
+              
             Width: =180
             X: =1134
             Y: =719
@@ -2046,10 +2047,14 @@ Screens:
             DisabledFill: =RGBA(240, 242, 246, 1)
             DisplayMode: |-
               =If(
+                  varRequestorLocked,
+                  DisplayMode.Disabled,
+                  If(
                   !IsBlank(RS_drpContactType.Selected.Value)
                   && IsMatch(RS_txtEmailContact.Text, Match.Email),
                   DisplayMode.Edit,
                   DisplayMode.Disabled
+              )
               )
             Fill: =RGBA(56, 96, 178, 1)
             Font: =Font.'Open Sans'
