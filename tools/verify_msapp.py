@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v31-mgmt-contact.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v32-attachform.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -193,11 +193,11 @@ for scr in LOCKED_SCREENS:
         if s_ != scr or _tmpl.get((s_, c_)) not in INPUT_T:
             continue
         dm = rule(scr, c_, 'DisplayMode') or ''
-        # DataCardValue50/51 (inside AttachementCard) don't reference the lock in
-        # their OWN DisplayMode -- it's 'Parent.DisplayMode', inherited from the
+        # CL_DCAttachValue (inside CL_FormAttach) doesn't reference the lock in
+        # its OWN DisplayMode -- it's 'Parent.DisplayMode', inherited from the
         # form's DefaultMode = If(varRequestorLocked, FormMode.View, FormMode.Edit).
         # Verified directly, not by string match, since the lock's real here.
-        if c_ in ('DataCardValue50', 'DataCardValue51') and dm.strip() == 'Parent.DisplayMode':
+        if c_ == 'CL_DCAttachValue' and dm.strip() == 'Parent.DisplayMode':
             nlocked += 1
             continue
         if LOCKVAR in dm:
@@ -244,84 +244,193 @@ check('3a', 'Resubmit still covers Rejected and Pending',
       all(x in (rule(RQ, 'RS_BtnResubmitRequest', 'Visible') or '')
           for x in ('"Rejected"', '"Pending"')))
 
-# ---------------- attachments ----------------
-# This export is a lineage that does not carry the v29 AttachementCard work
-# (no form controls at all, CL_Annex back with its dead Patch handlers). Rather
-# than report 12 failures for work the file never had, the form checks run only
-# when the form is present, and its absence is recorded as one explicit finding.
-_ATTACH_PRESENT = any(c == 'AttachementCard' for (_s, c) in R)
-check('attach', 'LINEAGE NOTE: AttachementCard present (v29 attachments work carried forward)',
-      _ATTACH_PRESENT,
-      'absent in this export -- Save does not persist attachments; re-port needed')
-if _ATTACH_PRESENT:
-    CI2, CM2, CL2, CV2 = 'ChildInfoScreen', 'ChildMetaScreen', 'ChildLegalScreen', 'ChildValidScreen'
-    # Only ChildLegalScreen's own boxes are in scope. CI_PodcastVisual (ChildInfoScreen)
-    # and CM_EpisodeVisual (ChildMetaScreen) still carry the v22 direct-Patch pattern that
-    # cannot write SharePoint attachments -- left alone deliberately, and recorded below so
-    # the gap is visible rather than forgotten.
-    PREVIEWS = [(CL2, 'CL_VTTUpload')]
-    _still_broken = [c for (s_, c) in R
-                     if c in ('CI_PodcastVisual', 'CM_EpisodeVisual')
-                     and 'Patch(' in (rule(s_, c, 'OnAddFile') or '')]
-    check('attach', 'KNOWN GAP (out of scope): CI_PodcastVisual/CM_EpisodeVisual still '
-          'use the direct-Patch pattern that cannot save attachments',
-          sorted(_still_broken) == ['CI_PodcastVisual', 'CM_EpisodeVisual'],
-          ','.join(sorted(_still_broken)))
-    check('attach', 'CL_Annex is hidden -- the form owns the annex slot now',
-          (rule(CL2, 'CL_Annex', 'Visible') or '').strip() == 'false')
-    check('attach', 'CL_Annex keeps no dead write handler, but stays readable for the checklist',
-          all((rule(CL2, 'CL_Annex', p_) or '').strip() == 'false'
-              for p_ in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile'))
-          and 'Attachments' in (rule(CL2, 'CL_Annex', 'Items') or ''))
-    check('attach', f'All 11 AttachementCard nodes sit inside CL_Gallery',
-          (lambda names: all(n in names for n in
-              ('AttachementCard', 'Attachments_DataCard2', 'DataCardValue50',
-               'CD_MediaNumber_DataCard2', 'DataCardValue51', 'StarVisible58',
-               'DataCardKey58', 'ErrorMessage58', 'StarVisible59', 'DataCardKey59',
-               'ErrorMessage59')))(
-              (lambda acc: acc)(
-                  [k['Name'] for c in S[CL2]['Children'] if c['Name'] == 'CL_Gallery'
-                   for k in __import__('itertools').chain.from_iterable(
-                       [[x] + [y for y in x.get('Children', [])] +
-                        [z for y in x.get('Children', []) for z in y.get('Children', [])]
-                        for x in c.get('Children', [])])])))
-    _sb = '\n'.join(l for l in (rule(RQ, 'RS_BtnSubmitRequest', 'OnSelect') or '').split('\n')
-                    if not l.strip().startswith('//'))
-    check('attach', 'Submit catches attachments staged but never saved',
-          'AttachementCard.Unsaved' in _sb and 'SubmitForm(AttachementCard)' in _sb
-          and _sb.index('AttachementCard.Unsaved') < _sb.index('Clear(colArchives)'))
-    check('attach', 'Submit warns about unsaved media files instead of discarding them',
-          'were never saved to SharePoint' in _sb
-          and _sb.index('were never saved to SharePoint') < _sb.index('Clear(colArchives)'))
-    check('attach', 'Submit still flips DepositStatus for the saved media files',
-          'DepositStatus: Table({Value: "Pending Approval"})' in _sb)
-    _form_scr = [c for (s_, c) in R if c == 'AttachementCard']
-    check('attach', 'AttachementCard exists exactly once', _form_scr == ['AttachementCard'])
-    check('attach', 'AttachementCard lives inside CL_Gallery, not the bare screen',
-          any(k['Name'] == 'AttachementCard'
-              for c in S[CL2]['Children'] if c['Name'] == 'CL_Gallery'
-              for k in c.get('Children', [])))
-    check('attach', "AttachementCard.Item resolves the current media file by varCurrentChildSPId",
-          all(x in (rule(CL2, 'AttachementCard', 'Item') or '')
-              for x in ('varCurrentChildSPId', "LookUp('AV-CD-Mediafiles'", "Defaults('AV-CD-Mediafiles')")))
-    check('attach', "AttachementCard.Height fits its own attachments dropzone (was 184, clips at ~359)",
-          (lambda h: h is not None and int(h) >= 360)(rule(CL2, 'AttachementCard', 'Height')))
-    check('attach', 'AttachementCard.DefaultMode respects the Processing lock',
-          (rule(CL2, 'AttachementCard', 'DefaultMode') or '') ==
-          'If(varRequestorLocked, FormMode.View, FormMode.Edit)')
-    _save = rule(CV2, 'CV_BtnSaveArchive', 'OnSelect') or ''
-    check('attach', 'CV_BtnSaveArchive calls SubmitForm(AttachementCard), guarded on a real media ID',
-          'SubmitForm(AttachementCard)' in _save and 'varCurrentChildSPId, 0) > 0' in _save)
-    check('attach', 'CV_BtnSaveArchive checks AttachementCard.Error after submitting',
-          'AttachementCard.Error' in _save)
-    for scr, ctl in PREVIEWS:
-        check('attach', f'{ctl} is a read-only preview (no working write mechanism exists for it)',
-              (rule(scr, ctl, 'DisplayMode') or '').strip() == 'DisplayMode.View')
-        check('attach', f'{ctl} carries no leftover write handler',
-              all((rule(scr, ctl, p) or '').strip() == 'false'
-                  for p in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile')))
-        check('attach', f'{ctl} still reads the shared bag live (only the write side was ever broken)',
-              'Attachments' in (rule(scr, ctl, 'Items') or '') and 'Patch(' not in (rule(scr, ctl, 'Items') or ''))
+# ---------------- attachments: one Edit Form, CL_FormAttach (v32) ----------------
+CI2, CM2, CL2, CV2 = 'ChildInfoScreen', 'ChildMetaScreen', 'ChildLegalScreen', 'ChildValidScreen'
+
+
+def code_only(script):
+    return '\n'.join(l for l in (script or '').split('\n') if not l.strip().startswith('//'))
+
+
+def _node(scr, name):
+    st = [S[scr]]
+    while st:
+        c = st.pop()
+        if c['Name'] == name:
+            return c
+        st.extend(c.get('Children', []))
+
+
+_all_rules = [(s_, c_, p_, v_) for (s_, c_), g in R.items() for p_, v_ in g.items()]
+check('attach', 'CL_Annex is deleted and nothing anywhere still reads it',
+      (CL2, 'CL_Annex') not in R and not any('CL_Annex' in v_ for (*_, v_) in _all_rules))
+_form = _node(CL2, 'CL_FormAttach')
+check('attach', 'CL_FormAttach exists once, on the screen itself (a form cannot live in a gallery)',
+      _form is not None and _form['Parent'] == CL2
+      and [c for (s_, c) in R if c == 'CL_FormAttach'] == ['CL_FormAttach'])
+_tj = json.loads(z.read('References\\Templates.json').decode('utf-8'))
+check('attach', 'The form template is registered in References/Templates.json',
+      any(t['Name'] == 'form' and t['Version'] == '2.4.4' for t in _tj['UsedTemplates']))
+check('attach', "CL_FormAttach edits the media items list ('AV-CD-Mediafiles' = AV-CD-MediaItems)",
+      (rule(CL2, 'CL_FormAttach', 'DataSource') or '').strip() == "'AV-CD-Mediafiles'")
+check('attach', 'CL_FormAttach.Item is the open media item, Defaults() only when none exists',
+      all(x in (rule(CL2, 'CL_FormAttach', 'Item') or '')
+          for x in ('varAttachRecord', "Defaults('AV-CD-Mediafiles')")))
+check('attach', 'CL_FormAttach.DefaultMode respects the Processing lock',
+      (rule(CL2, 'CL_FormAttach', 'DefaultMode') or '') ==
+      'If(varRequestorLocked, FormMode.View, FormMode.Edit)')
+_cards = [k['Name'] for k in (_form or {}).get('Children', [])]
+check('attach', 'Exactly two cards: CL_DCId then CL_DCAttach', _cards == ['CL_DCId', 'CL_DCAttach'])
+_idc = _node(CL2, 'CL_DCId') or {}
+check('attach', 'CL_DCId is a custom card with no DataField/Update, so the read-only ID is never written',
+      _idc.get('VariantName') == 'blankCard'
+      and not any(p_ in R.get((CL2, 'CL_DCId'), {}) for p_ in ('DataField', 'Update', 'Default')))
+check('attach', 'CL_DCIdValue shows ThisItem.ID', 'ThisItem.ID' in (rule(CL2, 'CL_DCIdValue', 'Text') or ''))
+check('attach', 'CL_DCAttach is the standard attachments card, written from its own box',
+      (rule(CL2, 'CL_DCAttach', 'DataField') or '') == '"{Attachments}"'
+      and (rule(CL2, 'CL_DCAttach', 'Update') or '') == 'CL_DCAttachValue.Attachments'
+      and (_node(CL2, 'CL_DCAttach') or {}).get('VariantName') == 'attachmentsEditCard')
+check('attach', 'CL_DCAttach is disabled while the media item has no SharePoint record',
+      has(CL2, 'CL_DCAttach', 'DisplayMode', 'IsBlank(varAttachRecord)', 'DisplayMode.Disabled',
+          'Parent.DisplayMode'))
+check('attach', 'The "save first" message shows exactly when there is no record',
+      (rule(CL2, 'CL_AttachNeedSave', 'Visible') or '') == 'IsBlank(varAttachRecord)'
+      and 'Save the media item first' in (rule(CL2, 'CL_AttachNeedSave', 'Text') or ''))
+check('attach', 'The panel header names the media item the form refers to',
+      has(CL2, 'CL_AttachFor', 'Text', 'varChildTitle1', 'CD_MediaNumber'))
+for _scr in (CL2, CV2):
+    _ov = rule(_scr, _scr, 'OnVisible') or ''
+    check('attach', f'{_scr}.OnVisible re-reads the snapshot only when a different item is open',
+          'Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0)' in _ov
+          and "LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0))" in _ov)
+_cvov = code_only(rule(CV2, CV2, 'OnVisible'))
+check('attach', 'ChildValidScreen takes the snapshot before building the checklist',
+      _cvov.index('Set(varAttachRecord') < _cvov.index('ClearCollect(colValidations'))
+_save = code_only(rule(CV2, 'CV_BtnSaveArchive', 'OnSelect'))
+check('attach', 'Save: SubmitForm(CL_FormAttach) exactly once, after the Patch of the other fields',
+      _save.count('SubmitForm(CL_FormAttach)') == 1
+      and _save.index('savedMedia: Patch(') < _save.index('SubmitForm(CL_FormAttach)'))
+check('attach', 'Save submits only for an item that already had an ID and is loaded in the form',
+      'spId > 0 And Coalesce(varAttachRecord.ID, 0) = spId' in _save)
+check('attach', 'Save without attachments to send still finishes exactly as before',
+      _save.count('Navigate(RequesDetailtScreen)') == 2 and _save.count('Set(varShowTypeConfirm, true)') == 2)
+_ok = code_only(rule(CL2, 'CL_FormAttach', 'OnSuccess'))
+check('attach', 'OnSuccess: success notification, refresh, then the usual finish',
+      all(x in _ok for x in ('NotificationType.Success', "Refresh('AV-CD-Mediafiles')",
+                             'Set(varShowTypeConfirm, true)', 'Navigate(RequesDetailtScreen)'))
+      and _ok.index("Refresh(") < _ok.index('Navigate('))
+_ko = code_only(rule(CL2, 'CL_FormAttach', 'OnFailure'))
+check('attach', 'OnFailure: shows the form error and does not continue',
+      'CL_FormAttach.Error' in _ko and 'NotificationType.Error' in _ko and 'Navigate(' not in _ko)
+for _scr, _ctl, _prop in ((CV2, CV2, 'OnVisible'), (CV2, 'CV_BtnRefresh', 'OnSelect'),
+                          (CL2, 'CL_LblMissing', 'Text')):
+    _v = rule(_scr, _ctl, _prop) or ''
+    check('attach', f'{_ctl}.{_prop}: VTT/SRT checks read the form\'s attachments box',
+          'CL_DCAttachValue.Attachments' in _v and 'CL_VTTUpload.Attachments' not in _v)
+check('attach', 'CL_VTTUpload is a read-only list of the .vtt files in the form',
+      (rule(CL2, 'CL_VTTUpload', 'DisplayMode') or '').strip() == 'DisplayMode.View'
+      and 'CL_DCAttachValue.Attachments' in (rule(CL2, 'CL_VTTUpload', 'Items') or '')
+      and not any(p_ in R.get((CL2, 'CL_VTTUpload'), {})
+                  for p_ in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile')))
+check('attach', 'CL_VTTUpload name map matches the rows it now lists (Name/Value)',
+      [r for r in RAW[(CL2, 'CL_VTTUpload')] if r['Property'] == 'Items'][0].get('NameMap')
+      == '{"Name":"Name","Value":"Value"}')
+check('attach', 'Nothing on ChildLegalScreen Patches {Attachments: ...} any more',
+      not any(s_ == CL2 and '{Attachments:' in v_ for (s_, c_, p_, v_) in _all_rules))
+_still_broken = [c for (s_, c) in R
+                 if c in ('CI_PodcastVisual', 'CM_EpisodeVisual')
+                 and 'Patch(' in (rule(s_, c, 'OnAddFile') or '')]
+check('attach', 'KNOWN GAP (out of scope): CI_PodcastVisual/CM_EpisodeVisual still '
+      'use the direct-Patch pattern that cannot save attachments',
+      sorted(_still_broken) == ['CI_PodcastVisual', 'CM_EpisodeVisual'],
+      ','.join(sorted(_still_broken)))
+
+
+def _geo(scr, ctl):
+    g = R[(scr, ctl)]
+    return tuple(int(g[p_]) for p_ in ('X', 'Y', 'Width', 'Height'))
+
+
+_gx, _gy, _gw, _gh = _geo(CL2, 'CL_Gallery')
+_px, _py, _pw, _ph = _geo(CL2, 'CL_AttachPanel')
+check('attach', 'Gallery and attachments panel sit side by side without overlapping',
+      _gx + _gw <= _px and _px + _pw <= 1366)
+check('attach', 'Gallery and panel end above the bottom bar (Y 712)',
+      _gy + _gh <= 712 and _py + _ph <= 712)
+_fx, _fw, _fh = (int(rule(CL2, 'CL_FormAttach', p_)) for p_ in ('X', 'Width', 'Height'))
+check('attach', 'CL_FormAttach fits inside the panel in both positions',
+      _px <= _fx and _fx + _fw <= _px + _pw
+      and all(y_ + _fh <= _py + _ph for y_ in (250, 278))
+      and (rule(CL2, 'CL_FormAttach', 'Y') or '') == 'If(IsBlank(varAttachRecord), 278, 250)')
+check('attach', 'Both cards fit inside the form',
+      int(rule(CL2, 'CL_DCId', 'Height')) + int(rule(CL2, 'CL_DCAttach', 'Height')) <= _fh
+      and int(rule(CL2, 'CL_DCAttachValue', 'Y')) + int(rule(CL2, 'CL_DCAttachValue', 'Height'))
+      <= int(rule(CL2, 'CL_DCAttach', 'Height')) - 20)
+
+# ChildLegalScreen's scroll panel now flows: every Y is chained to the control
+# above it, and hidden rows take no space. Evaluate it for every combination of
+# the variables that show or hide rows.
+import itertools as _it
+
+
+def _cl_layout(env):
+    kids = {k['Name']: {r['Property']: r['InvariantScript'] for r in k['Rules']}
+            for k in _node(CL2, 'CL_Gallery')['Children'] if k['Template']['Name'] != 'galleryTemplate'}
+    memo = {}
+
+    def ev(expr):
+        t = code_only(expr)
+        t = re.sub(r'\b(CL_\w+)\.(Y|Height|Visible|X|Width)\b', r'val("\1","\2")', t)
+        t = t.replace('Left(varChildContractCase, 6) = "Case 1"', repr(env['case1']))
+        t = t.replace('Left(varChildContractCase, 6) <> "Case 1"', repr(not env['case1']))
+        t = t.replace('varChildMediaType', repr(env['mt']))
+        for v_ in ('varChildModelRelease', 'varChildMusicUsed', 'varChildPreexisting',
+                   'varChildSubtitlesProvided', 'varDocFramework', 'varDocSpecific'):
+            t = re.sub(r'\b' + v_ + r'\b', repr(env.get(v_, False)), t)
+        t = t.replace('<>', '!=')
+        t = re.sub(r'(?<![!<>=])=(?!=)', '==', t)
+        t = re.sub(r'\bAnd\b', ' and ', re.sub(r'\bOr\b', ' or ', t))
+        t = re.sub(r'\bNot\(', 'not_(', t).replace('true', 'True').replace('false', 'False')
+        t = ' '.join(t.split())
+        return eval(t, {'If': lambda c, a, b=0: a if c else b, 'not_': lambda x: not x,
+                        'val': val})
+
+    def val(c, p_):
+        if (c, p_) not in memo:
+            memo[(c, p_)] = ev(kids[c].get(p_, 'true' if p_ == 'Visible' else '0'))
+        return memo[(c, p_)]
+
+    ts = ev(R[(CL2, 'CL_Gallery')]['TemplateSize'])
+    boxes = [(c, val(c, 'X'), val(c, 'Y'), val(c, 'Width'), val(c, 'Height'))
+             for c in kids if val(c, 'Visible')]
+    return ts, boxes
+
+
+_bad = []
+_worst_gap = 0
+for mt, c1, mr, mu, pe, sb in _it.product(('Photo', 'Video', 'Podcast'), *[(False, True)] * 5):
+    env = {'mt': mt, 'case1': c1, 'varChildModelRelease': mr, 'varChildMusicUsed': mu,
+           'varChildPreexisting': pe, 'varChildSubtitlesProvided': sb}
+    try:
+        ts, boxes = _cl_layout(env)
+    except Exception as ex:
+        _bad.append(f'eval {env}: {ex}')
+        break
+    bottom = max(y + h for (_c, x, y, w, h) in boxes)
+    if bottom > ts:
+        _bad.append(f'{mt} case1={c1} mr={mr} mu={mu} pe={pe} sb={sb}: content {bottom} > {ts}')
+    _worst_gap = max(_worst_gap, ts - bottom)
+    for (a, ax, ay, aw, ah), (b_, bx, by, bw, bh) in _it.combinations(boxes, 2):
+        if {a, b_} == {'CL_Banner', 'CL_BannerText'}:
+            continue
+        if ax < bx + bw and bx < ax + aw and ay < by + bh and by < ay + ah:
+            _bad.append(f'{mt}: {a} overlaps {b_}')
+    if any(x + w > _gw for (_c, x, y, w, h) in boxes):
+        _bad.append(f'{mt}: a control is wider than the gallery')
+check('attach', 'ChildLegalScreen flows: no clipping, no overlap, fits the width, in all 96 variable combinations',
+      not _bad, '; '.join(sorted(set(_bad))[:5]))
+check('attach', f'ChildLegalScreen stays compact: at most 40px of empty space under the content (worst {_worst_gap})',
+      _worst_gap <= 40)
 
 
 # ---------------- layout: nothing clipped, nothing stranded outside its scroll panel ----------------

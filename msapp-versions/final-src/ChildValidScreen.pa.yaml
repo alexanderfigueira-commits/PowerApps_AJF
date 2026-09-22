@@ -18,6 +18,13 @@ Screens:
             And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
         );
         Set(varNavArm, "");
+        // The attachments form edits a snapshot of the open media item. It is
+        // re-read only when a different item is open, so the Patch on Save
+        // cannot reload the form and drop files staged but not yet saved.
+        If(
+            Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
+            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
+        );
         ClearCollect(colValidations,
             {Check: "Media type is set",
              Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "",
@@ -91,10 +98,10 @@ Screens:
              Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildProducer)) And varChildProducer <> ""),
              Note: "Select the producer (contracting authority) on the Metadata tab."},
             {Check: "VTT subtitle file attached (Video, if subtitles provided)",
-             Pass: varChildMediaType <> "Video" Or Not(varChildSubtitlesProvided) Or CountRows(Filter(CL_VTTUpload.Attachments, EndsWith(Lower(Name), ".vtt"))) > 0,
+             Pass: varChildMediaType <> "Video" Or Not(varChildSubtitlesProvided) Or CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) > 0,
              Note: "Subtitles marked as provided - attach at least one .vtt file on the Legal & Docs tab."},
             {Check: "No SRT files attached (Video - VTT only)",
-             Pass: varChildMediaType <> "Video" Or (CountRows(Filter(CL_VTTUpload.Attachments, EndsWith(Lower(Name), ".srt"))) = 0 And CountRows(Filter(CL_Annex.Attachments, EndsWith(Lower(Name), ".srt"))) = 0),
+             Pass: varChildMediaType <> "Video" Or CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".srt"))) = 0,
              Note: "SRT subtitles are no longer accepted. Remove .srt files and attach .vtt instead."},
             {Check: "Publication end date not earlier than start date (Video / Podcast)",
              Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or IsBlank(varChildPublicationStartDate) Or IsBlank(varChildPublicationEndDate) Or varChildPublicationEndDate >= varChildPublicationStartDate,
@@ -324,8 +331,8 @@ Screens:
                   {Check: "Publication end date set (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or Not(IsBlank(varChildPublicationEndDate)), Note: "Set the publication end date on the Metadata tab."},
                   {Check: "Production place provided (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildProductionPlace1)) And varChildProductionPlace1 <> ""), Note: "Enter the production place on the Metadata tab."},
                   {Check: "Producer selected (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildProducer)) And varChildProducer <> ""), Note: "Select the producer (contracting authority) on the Metadata tab."},
-                  {Check: "VTT subtitle file attached (Video, if subtitles provided)", Pass: varChildMediaType <> "Video" Or Not(varChildSubtitlesProvided) Or CountRows(Filter(CL_VTTUpload.Attachments, EndsWith(Lower(Name), ".vtt"))) > 0, Note: "Subtitles marked as provided - attach at least one .vtt file on the Legal & Docs tab."},
-                  {Check: "No SRT files attached (Video - VTT only)", Pass: varChildMediaType <> "Video" Or (CountRows(Filter(CL_VTTUpload.Attachments, EndsWith(Lower(Name), ".srt"))) = 0 And CountRows(Filter(CL_Annex.Attachments, EndsWith(Lower(Name), ".srt"))) = 0), Note: "SRT subtitles are no longer accepted. Remove .srt files and attach .vtt instead."},
+                  {Check: "VTT subtitle file attached (Video, if subtitles provided)", Pass: varChildMediaType <> "Video" Or Not(varChildSubtitlesProvided) Or CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) > 0, Note: "Subtitles marked as provided - attach at least one .vtt file on the Legal & Docs tab."},
+                  {Check: "No SRT files attached (Video - VTT only)", Pass: varChildMediaType <> "Video" Or CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".srt"))) = 0, Note: "SRT subtitles are no longer accepted. Remove .srt files and attach .vtt instead."},
                   {Check: "Publication end date not earlier than start date (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or IsBlank(varChildPublicationStartDate) Or IsBlank(varChildPublicationEndDate) Or varChildPublicationEndDate >= varChildPublicationStartDate, Note: "Publication end date cannot be earlier than the publication start date."},
                   {Check: "Production end date not earlier than filming date (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or IsBlank(varChildCaptureDate) Or IsBlank(varChildProductionEndDate) Or varChildProductionEndDate >= varChildCaptureDate, Note: "Production end date cannot be earlier than the filming date."},
                   {Check: "Model release: if persons appear → forms provided", Pass: Not(varChildModelRelease) Or varChildModelReleaseProvided, Note: "Recognisable persons declared but model release not confirmed. Attach forms on Legal & Docs."},
@@ -581,11 +588,20 @@ Screens:
                                   )
                               },
                               UpdateIf(colArchives, ArchiveId = varCurrentChildId, {SPId: savedMedia.ID});
-                              Notify("Media saved to SharePoint.", NotificationType.Success);
-                              Set(varRequestMediaType, "");
-                              Set(varConfirmed, false);
-                              Set(varShowTypeConfirm, true);
-                              Navigate(RequesDetailtScreen)
+                              Set(varCurrentChildSPId, savedMedia.ID);
+                              If(
+                                  // The item already had an ID, so the attachments form was enabled and
+                                  // may hold files for it: send them now, after the Patch above.
+                                  // CL_FormAttach.OnSuccess finishes the save; OnFailure stops here.
+                                  spId > 0 And Coalesce(varAttachRecord.ID, 0) = spId,
+                                  SubmitForm(CL_FormAttach),
+                                  // The item was only just created: the form was disabled, nothing to send.
+                                  Notify("Media saved to SharePoint.", NotificationType.Success);
+                                  Set(varRequestMediaType, "");
+                                  Set(varConfirmed, false);
+                                  Set(varShowTypeConfirm, true);
+                                  Navigate(RequesDetailtScreen)
+                              )
                           )
                       ),
                       Notify("Save failed: " & FirstError.Message, NotificationType.Error)
