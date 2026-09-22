@@ -202,7 +202,11 @@ Screens:
                 First(colArchives).MediaType
             )
         );
-        Set(varRequestDG, HomeFilterDG.Selected.Value);
+        // only a new request takes the dropdown's first DG; an opened one keeps its own
+        If(
+            IsBlank(varRequestDG) Or varRequestDG = "",
+            Set(varRequestDG, HomeFilterDG.Selected.Value)
+        );
         Set(locShowContactPopup, false);
         If(
             Not(IsBlank(varCurrentRequest))
@@ -400,9 +404,15 @@ Screens:
                               ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber
                           )
                       ).EmailContact},
-                  Filter(
-                      Table({DisplayName: locManual, Mail: locManual}),
-                      Not(IsBlank(DisplayName))
+                  Ungroup(
+                      Table(
+                          {rows: ForAll(varCurrentRequest.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})},
+                          {rows: Filter(
+                              Table({DisplayName: locManual, Mail: locManual}),
+                              Not(IsBlank(DisplayName))
+                          )}
+                      ),
+                      "rows"
                   )
               )
             DisplayFields: =["DisplayName"]
@@ -479,9 +489,15 @@ Screens:
                               ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber
                           )
                       ).EmailContact},
-                  Filter(
-                      Table({DisplayName: locManual, Mail: locManual}),
-                      Not(IsBlank(DisplayName))
+                  Ungroup(
+                      Table(
+                          {rows: ForAll(varCurrentRequest.Contractor_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})},
+                          {rows: Filter(
+                              Table({DisplayName: locManual, Mail: locManual}),
+                              Not(IsBlank(DisplayName))
+                          )}
+                      ),
+                      "rows"
                   )
               )
             DisplayFields: =["DisplayName"]
@@ -554,7 +570,7 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            Default: =varRequestDescription1
+            Default: =varRequestDescription
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =75
@@ -973,7 +989,11 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
-              =IfError(
+              =// save exactly what is on screen
+              Set(varRequestTitle, RS_Title.Text);
+              Set(varRequestDescription, RS_Description.Text);
+              Set(varRequestDG, HomeFilterDG.Selected.Value);
+              IfError(
                   With(
                       {
                           savedReq: Patch(
@@ -985,8 +1005,8 @@ Screens:
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
                                   Description: varRequestDescription,
-                                  DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                  Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Status: {Value: "Processing"}
                               }
                           )
@@ -1001,6 +1021,8 @@ Screens:
                           )
                       );
                       Clear(colArchives);
+                      // the management gallery reloads on its next visit
+                      Set(varReqDataLoaded, false);
                       Notify("Request submitted successfully.", NotificationType.Success);
                       Navigate(RequestManagementScreen)
                   ),
@@ -1083,7 +1105,11 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(120, 60, 0, 1)
             OnSelect: |-
-              =IfError(
+              =// save exactly what is on screen
+              Set(varRequestTitle, RS_Title.Text);
+              Set(varRequestDescription, RS_Description.Text);
+              Set(varRequestDG, HomeFilterDG.Selected.Value);
+              IfError(
                   With(
                       {
                           savedReq: Patch(
@@ -1095,8 +1121,8 @@ Screens:
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
                                   Description: varRequestDescription,
-                                  DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                  Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Status: {Value: "Processing"}
                               }
                           )
@@ -1111,6 +1137,8 @@ Screens:
                           )
                       );
                       Clear(colArchives);
+                      // the management gallery reloads on its next visit
+                      Set(varReqDataLoaded, false);
                       Notify("Request resubmitted for review.", NotificationType.Success);
                       Navigate(RequestManagementScreen)
                   ),
@@ -1137,24 +1165,27 @@ Screens:
             ChevronFill: =RGBA(255, 255, 255, 1)
             ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
             ChevronHoverFill: =Self.ChevronFill
-            Default: =
+            Default: =varRequestDG
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =44
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             Items: |-
-              =If(
-                  !IsBlank(varUserDept) && varUserDept <> "",
-                  If(
-                      CountRows(Filter(colDGOptions, Value <> "All", Left(Value, 4) = Left(varUserDept, 4))) > 0,
-                      Filter(colDGOptions, Value <> "All", Left(Value, 4) = Left(varUserDept, 4)),
-                      Filter(colDGOptions, Value <> "All")
-                  ),
-                  Filter(colDGOptions, Value <> "All")
+              =With(
+                  {locAll: Filter(colDGOptions, Value <> "All")},
+                  With(
+                      {locMine: Filter(locAll, Left(Value, 4) = Left(varUserDept, 4))},
+                      If(
+                          IsBlank(varUserDept) Or varUserDept = "" Or IsEmpty(locMine),
+                          locAll,
+                          // the request's own DG stays listed even outside the user's department
+                          Filter(locAll, Left(Value, 4) = Left(varUserDept, 4) Or Value = varRequestDG)
+                      )
+                  )
               )
             Items.Value: =Value
-            OnChange: =
+            OnChange: =Set(varRequestDG, Self.Selected.Value)
             PressedColor: =Self.Color
             PressedFill: =Self.Fill
             SelectionColor: =RGBA(255, 255, 255, 1)
@@ -2188,7 +2219,11 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(120, 60, 0, 1)
             OnSelect: |-
-              =If(
+              =// save exactly what is on screen
+              Set(varRequestTitle, RS_Title.Text);
+              Set(varRequestDescription, RS_Description.Text);
+              Set(varRequestDG, HomeFilterDG.Selected.Value);
+              If(
                   IsBlank(varRequestTitle) Or IsBlank(varRequestDG),
                   Notify("Enter the request title and select a DG/Agency before saving.", NotificationType.Warning),
               
@@ -2222,7 +2257,7 @@ Screens:
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
                                   Description: varRequestDescription,
-                                  DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u,
+                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
                                       {
                                           '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                                           Claims: "i:0#.f|membership|" & Lower(u.Mail),
@@ -2233,7 +2268,7 @@ Screens:
                                           Picture: ""
                                       }
                                   ),
-                                  Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u,
+                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
                                       {
                                           '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                                           Claims: "i:0#.f|membership|" & Lower(u.Mail),
@@ -2255,6 +2290,8 @@ Screens:
                           IsBlank(ParentRequest) Or ParentRequest = "",
                           {ParentRequest: varCurrentRequest.RequestNumber}
                       );
+                      // the management gallery reloads on its next visit
+                      Set(varReqDataLoaded, false);
                       Notify("Draft saved.", NotificationType.Success),
               
                       Notify("Error saving draft: " & FirstError.Message, NotificationType.Error)

@@ -276,8 +276,10 @@ Screens:
             OnSelect: |-
               =Set(varCurrentRequest, Defaults('AV-CD-Requests'));
               Set(varRequestTitle, Blank());
+              Set(varRequestTitle1, "");
               Set(varRequestDG, "");
               Set(varRequestDescription,  Blank());
+              Set(varRequestDescription1, "");
               Set(varRequestOwnerContact, "");
               Set(varRequestOwnerEmail, User().Email);
               Set(varRequestMediaType, "");
@@ -754,8 +756,10 @@ Screens:
                   OnSelect: |-
                     =Set(varCurrentRequest, ThisItem);
                     Set(varRequestTitle1, Coalesce(ThisItem.RequestTitle, ""));
+                    Set(varRequestTitle, Coalesce(ThisItem.RequestTitle, ""));
                     Set(varRequestDG, Coalesce(ThisItem.DG.Value, ""));
                     Set(varRequestDescription1, Coalesce(ThisItem.Description, ""));
+                    Set(varRequestDescription, Coalesce(ThisItem.Description, ""));
                     Set(varRequestOwnerContact, Coalesce(First(ThisItem.DG_Agency_Contact).DisplayName, ""));
                     Set(varRequestMediaType, "");
                     Navigate(RequesDetailtScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})

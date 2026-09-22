@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v34-notes.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v35-save-submit.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -638,6 +638,32 @@ for _c, _t in (('RS_CardPhotoBtn', 'Photo'), ('RS_CardVideoBtn', 'Video'), ('RS_
               for x in (f'Set(varRequestMediaType, "{_t}")', 'Set(varConfirmed, true)')))
 check('picker', 'RS_LblMissing follows the locShowDetails collapse idiom',
       (rule(RQ, 'RS_LblMissing', 'Y') or '') == 'If(locShowDetails,403,110)')
+
+# ---------------- Draft Save / Submit write the opened request's real values (v35) ----------------
+_hr = rule(MR, 'HomeRowSelect', 'OnSelect') or ''
+check('save', 'Opening a request fills the variables the screen and saves read',
+      'Set(varRequestTitle, Coalesce(ThisItem.RequestTitle' in _hr
+      and 'Set(varRequestDescription, Coalesce(ThisItem.Description' in _hr)
+check('save', 'RS_Title and RS_Description show the variables that are saved',
+      rule(RQ, 'RS_Title', 'Default') == 'varRequestTitle'
+      and rule(RQ, 'RS_Description', 'Default') == 'varRequestDescription')
+check('save', 'HomeFilterDG shows and updates the request DG',
+      rule(RQ, 'HomeFilterDG', 'Default') == 'varRequestDG'
+      and 'Set(varRequestDG, Self.Selected.Value)' in (rule(RQ, 'HomeFilterDG', 'OnChange') or '')
+      and 'Value = varRequestDG' in (rule(RQ, 'HomeFilterDG', 'Items') or ''))
+check('save', 'OnVisible no longer overwrites an opened request DG',
+      'IsBlank(varRequestDG) Or varRequestDG = ""' in _ov_rq)
+for _cb, _col in (('RS_Owner', 'DG_Agency_Contact'), ('RS_Contractor', 'Contractor_Contact')):
+    check('save', f'{_cb} pre-selects the saved {_col} people',
+          f'varCurrentRequest.{_col} As p' in (rule(RQ, _cb, 'DefaultSelectedItems') or ''))
+for _b in ('RS_BtnDraftSave', 'RS_BtnSubmitRequest', 'RS_BtnResubmitRequest'):
+    _t = code_only(rule(RQ, _b, 'OnSelect'))
+    check('save', f'{_b} saves what is on screen',
+          _t.startswith('Set(varRequestTitle, RS_Title.Text)') and 'Set(varRequestDG, HomeFilterDG.Selected.Value)' in _t)
+    check('save', f'{_b} writes only resolvable users to the Person columns',
+          _t.count('DisplayName <> Mail) As u') == 2 and 'SelectedItems As u' not in _t)
+    check('save', f'{_b} marks the management list for reload after success',
+          'Set(varReqDataLoaded, false)' in _t)
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''
