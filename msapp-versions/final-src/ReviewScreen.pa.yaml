@@ -16,6 +16,7 @@ Screens:
         Set(varReviewComment, "");
         Set(varReviewQueueMine, Coalesce(varReviewMineOnly, false));
         Set(varReviewMineOnly, false);
+        Refresh('AV-CD-Requests');
         ClearCollect(colRevReqs, 'AV-CD-Requests')
     Children:
       - RV_TopBar:
@@ -65,8 +66,7 @@ Screens:
               =Sort(
                   Filter(colRevReqs,
                       (Status.Value = "Processing" Or Status.Value = "Pending"),
-                      Not(varReviewQueueMine) Or Not(IsEmpty(Filter(DG_Agency_Contact, Lower(Email) = Lower(User().Email)))),
-                      Lower('Created By'.Email) <> Lower(User().Email)
+                      Not(varReviewQueueMine) Or Not(IsEmpty(Filter(DG_Agency_Contact, Lower(Email) = Lower(User().Email))))
                   ),
                   Modified, SortOrder.Descending
               )

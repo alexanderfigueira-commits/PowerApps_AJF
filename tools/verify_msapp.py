@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v29-attachform.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v30-reviewvisible.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -133,8 +133,23 @@ check('2', 'Media keeps its own caption and position',
 # ---------------- carried forward from v4-v10 ----------------
 check('prior', 'Self-approval closed on ReviewScreen',
       has(RV, 'RV_BtnApprove', 'DisplayMode', 'varUserRole = "ADMINISTRATOR"', '<> Lower(User().Email)'))
-check('prior', 'Review queue excludes your own requests',
-      has(RV, 'RV_QueueGallery', 'Items', "Lower('Created By'.Email) <> Lower(User().Email)"))
+# Superseded: the queue used to exclude the author, which hid a Processing request
+# from the person who submitted it. Visibility and permission are now separate --
+# the queue shows it, the three actions refuse it.
+check('prior', 'Review queue no longer hides your own requests',
+      "Lower('Created By'.Email) <> Lower(User().Email)"
+      not in (rule(RV, 'RV_QueueGallery', 'Items') or ''))
+check('prior', 'Self-approval is still impossible on all three review actions',
+      all(all(x in (rule(RV, c_, 'DisplayMode') or '')
+              for x in ('<> Lower(User().Email)', 'varUserRole = "ADMINISTRATOR"',
+                        'varReviewProject.Status.Value = "Processing"'))
+          for c_ in ('RV_BtnApprove', 'RV_BtnReject', 'RV_BtnNeedInfo')))
+check('prior', 'The review queue keeps its mine-only narrowing',
+      has(RV, 'RV_QueueGallery', 'Items', 'varReviewQueueMine', 'DG_Agency_Contact'))
+check('prior', 'The review queue is read fresh, not from the connector cache',
+      (lambda o: "Refresh('AV-CD-Requests')" in o
+       and o.index("Refresh('AV-CD-Requests')") < o.index('ClearCollect(colRevReqs'))
+      (rule(RV, RV, 'OnVisible') or 'xClearCollect(colRevReqs'))
 check('prior', 'Approve no longer overwrites DG_Agency_Contact',
       'DG_Agency_Contact' not in (rule(RV, 'RV_BtnApprove', 'OnSelect') or 'x'))
 check('prior', 'Approve writes the single-person Assignee',
