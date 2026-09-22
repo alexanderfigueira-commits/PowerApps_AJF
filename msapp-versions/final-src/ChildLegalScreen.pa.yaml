@@ -330,7 +330,7 @@ Screens:
                   Text: ="Recognisable private persons appear in this production"
                   Width: =900
                   X: =28
-                  Y: =356
+                  Y: =394
             - CL_ChkModelProvided:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -347,7 +347,7 @@ Screens:
                   Visible: =varChildModelRelease
                   Width: =700
                   X: =52
-                  Y: =394
+                  Y: =432
             - CL_ChkMusic:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -364,7 +364,7 @@ Screens:
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =900
                   X: =28
-                  Y: =432
+                  Y: =466
             - CL_ChkMusicProvided:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -381,7 +381,7 @@ Screens:
                   Visible: =(varChildMediaType = "Video" Or varChildMediaType = "Podcast") And varChildMusicUsed
                   Width: =700
                   X: =52
-                  Y: =470
+                  Y: =504
             - CL_ChkPreexisting:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -398,7 +398,7 @@ Screens:
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =900
                   X: =28
-                  Y: =508
+                  Y: =538
             - CL_ChkPreexistingProvided:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -415,7 +415,7 @@ Screens:
                   Visible: =(varChildMediaType = "Video" Or varChildMediaType = "Podcast") And varChildPreexisting
                   Width: =700
                   X: =52
-                  Y: =546
+                  Y: =576
             - CL_Divider2:
                 Control: Rectangle@2.3.0
                 Properties:
@@ -424,7 +424,7 @@ Screens:
                   Height: =1
                   Width: =1302
                   X: =32
-                  Y: =590
+                  Y: =610
             - CL_LblAttachments:
                 Control: Label@2.5.1
                 Properties:
@@ -437,7 +437,7 @@ Screens:
                   Text: ="Legal annexes & supporting documents"
                   Width: =800
                   X: =32
-                  Y: =600
+                  Y: =620
             - CL_AttachHint:
                 Control: Label@2.5.1
                 Properties:
@@ -449,7 +449,7 @@ Screens:
                   Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes, VTT subtitles (SRT is no longer accepted), scripts."
                   Width: =1302
                   X: =32
-                  Y: =632
+                  Y: =652
             - CL_Annex:
                 Control: Attachments@2.3.0
                 Properties:
@@ -467,7 +467,7 @@ Screens:
                   PressedFill: =RGBA(0, 18, 107, 1)
                   Width: =1302
                   X: =32
-                  Y: =658
+                  Y: =678
             - CL_ChkSubtitles:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -875,7 +875,7 @@ Screens:
             OnCheck: =Set(varChildNoThirdParty, true)
             OnUncheck: =Set(varChildNoThirdParty, false)
             Text: ="No third-party rights in this production"
-            Width: =384
-            X: =950
+            Width: =900
+            X: =28
             Y: =356
           Children: []
