@@ -933,8 +933,44 @@ Screens:
                   ItemColor: =RGBA(255, 255, 255, 1)
                   ItemFill: =RGBA(56, 96, 178, 1)
                   ItemHoverFill: =RGBA(186, 202, 226, 1)
-                  Items: =[]
+                  Items: =LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)).Attachments
                   MaxAttachments: =3
+                  OnAddFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CM_EpisodeVisual.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CM_EpisodeVisual.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnUndoRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CM_EpisodeVisual.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
                   PressedColor: =RGBA(255, 255, 255, 1)
                   PressedFill: =RGBA(0, 18, 107, 1)
                   Visible: =varChildMediaType = "Podcast"

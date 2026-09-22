@@ -212,7 +212,7 @@ Screens:
               =[{id: 1}]
             LoadingSpinner: =LoadingSpinner.None
             TemplatePadding: =0
-            TemplateSize: =If(varChildMediaType = "Video", 1040, 810)
+            TemplateSize: =If(varChildMediaType = "Video", 1040, 830)
             Width: =1366
             Y: =102
           Children:
@@ -446,7 +446,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   Height: =22
                   Size: =12
-                  Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes, VTT subtitles (SRT is no longer accepted), scripts."
+                  Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles here. All files attached to this media file are listed in both boxes below - a SharePoint item has a single set of attachments."
                   Width: =1302
                   X: =32
                   Y: =652
@@ -461,8 +461,44 @@ Screens:
                   ItemColor: =RGBA(255, 255, 255, 1)
                   ItemFill: =RGBA(56, 96, 178, 1)
                   ItemHoverFill: =RGBA(186, 202, 226, 1)
-                  Items: =[]
+                  Items: =LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)).Attachments
                   MaxAttachments: =20
+                  OnAddFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_Annex.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_Annex.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnUndoRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_Annex.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
                   PressedColor: =RGBA(255, 255, 255, 1)
                   PressedFill: =RGBA(0, 18, 107, 1)
                   Width: =1302
@@ -509,8 +545,44 @@ Screens:
                   ItemColor: =RGBA(255, 255, 255, 1)
                   ItemFill: =RGBA(56, 96, 178, 1)
                   ItemHoverFill: =RGBA(186, 202, 226, 1)
-                  Items: =[]
+                  Items: =LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)).Attachments
                   MaxAttachments: =5
+                  OnAddFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_VTTUpload.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_VTTUpload.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
+                  OnUndoRemoveFile: |-
+                    =IfError(
+                        Patch(
+                            'AV-CD-Mediafiles',
+                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
+                            {Attachments: CL_VTTUpload.Attachments}
+                        ),
+                        Notify(
+                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
+                            NotificationType.Error
+                        )
+                    )
                   PressedColor: =RGBA(255, 255, 255, 1)
                   PressedFill: =RGBA(0, 18, 107, 1)
                   Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
@@ -585,6 +657,24 @@ Screens:
                   Width: =700
                   X: =32
                   Y: =266
+            - CL_ChkNoThirdParty:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Default: =varChildNoThirdParty
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildNoThirdParty, true)
+                  OnUncheck: =Set(varChildNoThirdParty, false)
+                  Text: ="No third-party rights in this production"
+                  Width: =900
+                  X: =28
+                  Y: =356
+                Children: []
       - CL_BottomBar:
           Control: Rectangle@2.3.0
           Properties:
@@ -847,7 +937,7 @@ Screens:
                           Filter(
                               Table(
                               {lbl: CL_LblCase.Text, gone: CL_LblCase.Visible And IsBlank(CL_Case.Selected.Value)},
-                              {lbl: "VTT subtitle file(s)", gone: CL_LblVTT.Visible And CountRows(CL_VTTUpload.Attachments) = 0}
+                              {lbl: "VTT subtitle file(s)", gone: CL_LblVTT.Visible And CountRows(Filter(CL_VTTUpload.Attachments, EndsWith(Lower(Name), ".vtt"))) = 0}
                               ),
                               gone
                           ),
@@ -860,22 +950,3 @@ Screens:
             Width: =900
             X: =190
             Y: =720
-
-      - CL_ChkNoThirdParty:
-          Control: Classic/CheckBox@2.1.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
-            CheckmarkFill: =RGBA(0, 0, 0, 1)
-            Default: =varChildNoThirdParty
-            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
-            Font: =Font.'Open Sans'
-            Height: =36
-            HoverColor: =RGBA(0, 18, 107, 1)
-            OnCheck: =Set(varChildNoThirdParty, true)
-            OnUncheck: =Set(varChildNoThirdParty, false)
-            Text: ="No third-party rights in this production"
-            Width: =900
-            X: =28
-            Y: =356
-          Children: []

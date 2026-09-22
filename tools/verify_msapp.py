@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v12-section2.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v22-attachments.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -143,6 +143,102 @@ check('prior', 'Clear clears both date variables',
           'Set(varFilterEndDate, Blank())'))
 check('prior', 'Contact popup present (8 controls)',
       sum(1 for (s, c) in R if s == RQ and 'Contact' in c and c.startswith('RS_')) >= 8)
+
+# ---------------- attachments ----------------
+CI2, CM2, CL2, CV2 = 'ChildInfoScreen', 'ChildMetaScreen', 'ChildLegalScreen', 'ChildValidScreen'
+BOXES = [(CI2, 'CI_PodcastVisual'), (CM2, 'CM_EpisodeVisual'),
+         (CL2, 'CL_Annex'), (CL2, 'CL_VTTUpload')]
+REC = "LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0))"
+for scr, ctl in BOXES:
+    check('attach', f'{ctl} loads the item\'s attachments',
+          (rule(scr, ctl, 'Items') or '') == f'{REC}.Attachments')
+    check('attach', f'{ctl} persists add/remove/undo',
+          all(f'{{Attachments: {ctl}.Attachments}}' in (rule(scr, ctl, p) or '')
+              and 'IfError(' in (rule(scr, ctl, p) or '')
+              for p in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile')))
+    check('attach', f'{ctl} still locked while Processing',
+          'varRequestorLocked' in (rule(scr, ctl, 'DisplayMode') or ''))
+# every box writes only its own output, never a sibling's
+crossed = []
+for scr, ctl in BOXES:
+    for p in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile'):
+        v = rule(scr, ctl, p) or ''
+        crossed += [f'{ctl}.{p}->{o}' for _, o in BOXES if o != ctl and o in v]
+check('attach', 'No box overwrites another box\'s output', not crossed, ','.join(crossed))
+# a shared bag makes an unfiltered CountRows meaningless, so none may remain
+vacuous = []
+for scr, ctl, prop in ((CV2, CV2, 'OnVisible'), (CV2, 'CV_BtnRefresh', 'OnSelect'),
+                       (CI2, 'CI_LblMissing', 'Text'), (CL2, 'CL_LblMissing', 'Text')):
+    v = rule(scr, ctl, prop) or ''
+    for _, box in BOXES:
+        if f'CountRows({box}.Attachments)' in v:
+            vacuous.append(f'{ctl}.{prop}:{box}')
+check('attach', 'No rule counts the whole shared bag unfiltered', not vacuous, ','.join(vacuous))
+
+# ---------------- layout: nothing clipped, nothing stranded outside its scroll panel ----------------
+def _ev(expr, mt):
+    if expr is None:
+        return None
+    def If(c, a, b=False):
+        return a if c else b
+    def Switch(v, *args):
+        pairs = args[:len(args) - len(args) % 2]
+        for i in range(0, len(pairs) - 1, 2):
+            if v == pairs[i]:
+                return pairs[i + 1]
+        return args[-1] if len(args) % 2 else 0
+    import re as _re
+    t = expr.replace('varChildMediaType', repr(mt)).replace('<>', '!=')
+    t = _re.sub(r'(?<![!<>=])=(?!=)', '==', t)
+    t = _re.sub(r'\bAnd\b', 'and', _re.sub(r'\bOr\b', 'or', t))
+    t = _re.sub(r'\bNot\(', 'not_(', t).replace('true', 'True').replace('false', 'False')
+    try:
+        return eval(t, {'If': If, 'Switch': Switch, 'not_': lambda x: not x})
+    except Exception:
+        return None
+
+clipped, stranded = [], []
+for sname, stp in S.items():
+    for gal in stp.get('Children', []):
+        gr = {r['Property']: r['InvariantScript'] for r in gal['Rules']}
+        if gal['Template']['Name'] != 'gallery' or gr.get('Items', '').strip() != '[{id: 1}]':
+            continue  # only the one-row galleries used as scroll panels
+        for mt in ('Photo', 'Video', 'Podcast', 'Other'):
+            ts = _ev(gr.get('TemplateSize'), mt)
+            if not isinstance(ts, int):
+                continue
+            for k in gal.get('Children', []):
+                g = {r['Property']: r['InvariantScript'] for r in k['Rules']}
+                if _ev(g.get('Visible', 'true'), mt) is not True:
+                    continue
+                y, h = _ev(g.get('Y'), mt), _ev(g.get('Height'), mt)
+                if isinstance(y, int) and isinstance(h, int) and y + h > ts:
+                    clipped.append(f'{k["Name"]}@{mt} {y + h}>{ts}')
+        # a control positioned like the panel's contents but parented to the screen
+        # would float instead of scrolling -- the bug that stranded three controls
+        names = {k['Name'] for k in gal.get('Children', [])}
+        for sib in stp.get('Children', []):
+            if sib['Name'] == gal['Name'] or sib.get('IsGroupControl'):
+                continue
+            sg = {r['Property']: r['InvariantScript'] for r in sib['Rules']}
+            try:
+                sy = int(sg['Y'])
+            except (ValueError, KeyError):
+                continue
+            gy, gh = _ev(gr.get('Y'), 'Other'), _ev(gr.get('Height'), 'Other')
+            if isinstance(gy, int) and isinstance(gh, int) and gy < sy < gy + gh \
+                    and sib['Name'] not in names and sib['Name'].endswith(('Notes', 'NoThirdParty')):
+                stranded.append(f'{sname}.{sib["Name"]}')
+check('layout', 'Nothing inside a scroll panel is clipped by TemplateSize',
+      not clipped, '; '.join(sorted(set(clipped))[:6]))
+check('layout', 'No field control stranded outside its scroll panel',
+      not stranded, ','.join(stranded))
+for scr, ctl, par in (('ChildLegalScreen', 'CL_ChkNoThirdParty', 'CL_Gallery'),
+                      ('ChildInfoScreen', 'CI_LblNotes', 'CI_Gallery'),
+                      ('ChildInfoScreen', 'CI_Notes', 'CI_Gallery')):
+    gal = [c for c in S[scr]['Children'] if c['Name'] == par][0]
+    check('layout', f'{ctl} lives inside {par}',
+          any(k['Name'] == ctl and k.get('Parent') == par for k in gal.get('Children', [])))
 
 # ---------------- package integrity ----------------
 total, missing = 0, []
