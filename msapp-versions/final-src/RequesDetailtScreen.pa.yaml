@@ -39,6 +39,7 @@ Screens:
             locResetContacts,
             Reset(RS_Owner);
             Reset(RS_Contractor);
+            Reset(RS_AdminNotes);
             UpdateContext({locResetContacts: false})
         );
         Set(
@@ -586,12 +587,12 @@ Screens:
             Color: =RGBA(153, 27, 27, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =77
+            Height: =40
             Text: ="⛔  Request rejected - please review the comment, fix any issues, and resubmit."
             Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
-            Width: =431
-            X: =822
-            Y: =302
+            Width: =420
+            X: =870
+            Y: =58
       - RS_RejectionComment:
           Control: Label@2.5.1
           Group: Group1
@@ -979,6 +980,7 @@ Screens:
                               'AV-CD-Requests',
                               LookUp('AV-CD-Requests', ID = varCurrentRequest.ID),
                               {
+                                  Notes: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
                                   RequestNumber: varCurrentRequest.RequestNumber,
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
@@ -1088,6 +1090,7 @@ Screens:
                               'AV-CD-Requests',
                               LookUp('AV-CD-Requests', ID = varCurrentRequest.ID),
                               {
+                                  Notes: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
                                   RequestNumber: varCurrentRequest.RequestNumber,
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
@@ -2198,6 +2201,7 @@ Screens:
                                   LookUp('AV-CD-Requests', ID = varCurrentRequest.ID)
                               ),
                               {
+                                  Notes: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
                                   RequestNumber: If(
                                       Coalesce(varCurrentRequest.ID, 0) <= 0,
                                       With(
@@ -2305,6 +2309,7 @@ Screens:
                       Set(varCurrentRequest,
                           Patch('AV-CD-Requests', Defaults('AV-CD-Requests'),
                               {
+                                  Notes: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
                                   RequestNumber: With(
                   {
                       yr: Text(Year(Today())),
@@ -2593,4 +2598,57 @@ Screens:
             Width: =600
             X: =535
             Y: =399
+          Children: []
+      - RS_LblAdminNotes:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Administrator notes"
+            Visible: =locShowDetails
+            Width: =470
+            X: =828
+            Y: =280
+          Children: []
+      - RS_AdminNotes:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(Not(varUserRole = "ADMINISTRATOR") And IsBlank(Coalesce(varCurrentRequest.Notes, "")), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Default: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR" Or Not(IsBlank(Coalesce(varCurrentRequest.Notes, ""))),
+                  Coalesce(varCurrentRequest.Notes, ""),
+                  "No notes from the administrator"
+              )
+            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+            Font: =Font.'Open Sans'
+            Height: =74
+            HintText: ="Comments on this request (the requestor sees them read-only)"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            OnChange: |-
+              =// Saves itself (like CI_Notes): the request save buttons are only enabled in
+              // Draft/Pending/Rejected, but administrators write notes on Processing requests too.
+              If(
+                  varUserRole = "ADMINISTRATOR" And Coalesce(varCurrentRequest.ID, 0) > 0,
+                  IfError(
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {Notes: Self.Text}));
+                      // keep the management-screen cache in step, so reopening shows the new notes
+                      If(
+                          Not(IsBlank(LookUp(colMyReqs, ID = varCurrentRequest.ID))),
+                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {Notes: Self.Text})
+                      );
+                      Notify("Administrator notes saved.", NotificationType.Success),
+                      Notify("Administrator notes could not be saved: " & FirstError.Message, NotificationType.Error)
+                  )
+              )
+            Visible: =locShowDetails
+            Width: =470
+            X: =828
+            Y: =304
           Children: []

@@ -239,17 +239,17 @@ Screens:
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
-            Height: =168
+            Height: =248
             Items: |-
               =If(
                   IsBlank(varReviewProject),
                   Filter('AV-CD-Mediafiles', 1 = 2),
                   Sort(
                       Filter('AV-CD-Mediafiles', ParentRequest = varReviewProject.RequestNumber),
-                      Modified, SortOrder.Descending
+                      Created, SortOrder.Descending
                   )
               )
-            TemplateSize: =42
+            TemplateSize: =100
             Visible: =Not(IsBlank(varReviewProject))
             Width: =900
             X: =436
@@ -262,14 +262,14 @@ Screens:
                   Fill: =RGBA(220, 224, 230, 1)
                   Height: =1
                   Width: =900
-                  Y: =41
+                  Y: =99
             - RV_CRowTitle:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =RGBA(32, 31, 30, 1)
                   Font: =Font.'Open Sans'
-                  Height: =42
+                  Height: =36
                   Size: =12
                   Text: =If(IsBlank(ThisItem.CD_MediaNumber) Or ThisItem.CD_MediaNumber = "New archive", "— untitled —", ThisItem.CD_MediaNumber)
                   Width: =340
@@ -280,7 +280,7 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =RGBA(96, 104, 120, 1)
                   Font: =Font.'Open Sans'
-                  Height: =42
+                  Height: =36
                   Size: =12
                   Text: =If(IsBlank(First(ThisItem.MediaType).Value), "—", If(First(ThisItem.MediaType).Value = "Photo", "Photo/Reportage", First(ThisItem.MediaType).Value))
                   Width: =140
@@ -299,7 +299,7 @@ Screens:
                         RGBA(193, 40, 40, 1)
                     )
                   Font: =Font.'Open Sans'
-                  Height: =42
+                  Height: =36
                   Size: =12
                   Text: |-
                     =If(
@@ -312,6 +312,54 @@ Screens:
                     )
                   Width: =160
                   X: =540
+            - RV_CRowNotesLbl:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =22
+                  Size: =10
+                  Text: ="Internal Notes"
+                  Width: =110
+                  X: =24
+                  Y: =40
+                Children: []
+            - RV_CRowNotes:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =Coalesce(ThisItem.Notes, "")
+                  DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Open Sans'
+                  Height: =56
+                  HintText: ="Internal notes for this media item"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Mode: =TextMode.MultiLine
+                  Visible: =true
+                  Width: =690
+                  X: =140
+                  Y: =38
+                Children: []
+            - RV_CRowNotesSave:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(Self.DisplayMode = DisplayMode.Edit, RGBA(56, 96, 178, 1), RGBA(186, 196, 214, 1))
+                  DisplayMode: =If(varUserRole = "ADMINISTRATOR" And RV_CRowNotes.Text <> Coalesce(ThisItem.Notes, ""), DisplayMode.Edit, DisplayMode.Disabled)
+                  Height: =32
+                  Icon: =Icon.Save
+                  OnSelect: |-
+                    =IfError(
+                        Patch('AV-CD-Mediafiles', LookUp('AV-CD-Mediafiles', ID = ThisItem.ID), {Notes: RV_CRowNotes.Text});
+                        Notify("Internal notes saved for " & ThisItem.CD_MediaNumber & ".", NotificationType.Success),
+                        Notify("Internal notes could not be saved: " & FirstError.Message, NotificationType.Error)
+                    )
+                  Width: =32
+                  X: =846
+                  Y: =50
+                Children: []
       - RV_DetailDivider2:
           Control: Rectangle@2.3.0
           Properties:
@@ -321,7 +369,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject))
             Width: =900
             X: =436
-            Y: =392
+            Y: =472
       - RV_LblOwnerAssign:
           Control: Label@2.5.1
           Properties:
@@ -334,7 +382,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject))
             Width: =700
             X: =460
-            Y: =404
+            Y: =484
       - RV_Assignee:
           Control: Classic/ComboBox@2.4.0
           Properties:
@@ -372,7 +420,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject))
             Width: =380
             X: =460
-            Y: =432
+            Y: =512
       - RV_OwnerEmail:
           Control: Classic/TextInput@2.3.2
           Properties:
@@ -386,7 +434,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject))
             Width: =380
             X: =860
-            Y: =432
+            Y: =512
       - RV_DetailDivider3:
           Control: Rectangle@2.3.0
           Properties:
@@ -396,7 +444,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject))
             Width: =900
             X: =436
-            Y: =484
+            Y: =564
       - RV_LblComment:
           Control: Label@2.5.1
           Properties:
@@ -409,14 +457,14 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject))
             Width: =600
             X: =460
-            Y: =496
+            Y: =576
       - RV_Comment:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Default: =Coalesce(varReviewComment, "")
             Font: =Font.'Open Sans'
-            Height: =100
+            Height: =60
             HintText: ="Explain what needs to be corrected before the project can be approved."
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
@@ -425,7 +473,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject))
             Width: =880
             X: =460
-            Y: =524
+            Y: =604
       - RV_ExistingComment:
           Control: Label@2.5.1
           Properties:
@@ -439,7 +487,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject)) And Not(IsBlank(varReviewProject.ReviewerComments))
             Width: =880
             X: =460
-            Y: =628
+            Y: =668
       - RV_DetailDivider4:
           Control: Rectangle@2.3.0
           Properties:
@@ -449,7 +497,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject))
             Width: =900
             X: =436
-            Y: =666
+            Y: =706
       - RV_BtnApprove:
           Control: Classic/Button@2.2.0
           Properties:
@@ -515,7 +563,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
             Width: =200
             X: =460
-            Y: =680
+            Y: =720
       - RV_BtnReject:
           Control: Classic/Button@2.2.0
           Properties:
@@ -570,7 +618,7 @@ Screens:
             Text: ="✕  Reject"
             Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
             X: =676
-            Y: =680
+            Y: =720
       - RV_BtnNeedInfo:
           Control: Classic/Button@2.2.0
           Properties:
@@ -626,7 +674,7 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
             Width: =200
             X: =852
-            Y: =680
+            Y: =720
       - RV_RejectHint:
           Control: Label@2.5.1
           Properties:
@@ -641,7 +689,7 @@ Screens:
               And (IsBlank(varReviewComment) Or varReviewComment = "")
             Width: =440
             X: =457
-            Y: =634
+            Y: =674
       - RV_Title:
           Control: Label@2.5.1
           Properties:
@@ -687,7 +735,7 @@ Screens:
             Tooltip: ="No internet connection detected. Please verify your connection and try again."
             Visible: =!Connection.Connected
             X: =858
-            Y: =680
+            Y: =720
       - HomeUserName_4:
           Control: Label@2.5.1
           Group: Header_6
