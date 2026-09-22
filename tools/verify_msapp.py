@@ -43,7 +43,8 @@ def has(scr, ctl, prop, *needles):
     return v is not None and all(x in v for x in needles)
 
 
-MR, RQ, RV, DS = 'MyRequestScreen', 'RequestScreen', 'ReviewScreen', 'DashboardScreen'
+# the two screens were renamed in Studio on 22-09
+MR, RQ, RV, DS = 'RequestManagementScreen', 'RequesDetailtScreen', 'ReviewScreen', 'DashboardScreen'
 
 # ---------------- Section 1: status model ----------------
 check('1', 'Submit writes Processing', has(RQ, 'RS_BtnSubmitRequest', 'OnSelect', 'Status: {Value: "Processing"}'))

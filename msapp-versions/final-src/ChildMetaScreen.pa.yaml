@@ -41,7 +41,7 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: =Navigate(RequestScreen)
+            OnSelect: =Navigate(RequesDetailtScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -1081,7 +1081,6 @@ Screens:
             Width: =174
             X: =1125
             Y: =4
-
       - CM_LblMissing:
           Control: Label@2.5.1
           Properties:
@@ -1089,7 +1088,6 @@ Screens:
             Color: =RGBA(224, 134, 0, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =40
             Size: =12
             Text: |-
               =With(
@@ -1120,5 +1118,3 @@ Screens:
             Width: =910
             X: =190
             Y: =720
-            ZIndex: =900
-          Children: []

@@ -13,7 +13,7 @@ Screens:
       LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
       OnVisible: |-
         =Set(varMonthStart, Date(Year(Now()), Month(Now()), 1));
-        ClearCollect(colDashReqs, AVCentralDepositRequests);
+        ClearCollect(colDashReqs, 'AV-CD-Requests');
         If(
             CountRows(colDashReqs) >= 2000,
             Notify(
@@ -48,13 +48,13 @@ Screens:
                 Status.Value = "Approved",
                 If(varUserRole = "ADMINISTRATOR", true, 'Created By'.Email = User().Email)
             )));
-        
+
         Set(varKpiApprovedTotal,
             CountRows(Filter(colDashReqs, 
                 Status.Value = "Approved",
                 If(varUserRole = "ADMINISTRATOR", true, 'Created By'.Email = User().Email)
             )));
-        
+
         Set(varKpiAvgPublishDays,
             With(
                 {approved: Filter(colDashReqs, Status.Value = "Approved", Not(IsBlank(ReviewedDate)))},
@@ -654,7 +654,7 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(237, 125, 49, 0.06)
-            OnSelect: =Set(varNavFilter, "Pending"); Navigate(MyRequestScreen, ScreenTransition.Cover)
+            OnSelect: =Set(varNavFilter, "Pending"); Navigate(RequestManagementScreen, ScreenTransition.Cover)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =RGBA(237, 125, 49, 0.12)
@@ -777,12 +777,12 @@ Screens:
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = MyRequestScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(MyRequestScreen)
+            OnSelect: =Navigate(RequestManagementScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)

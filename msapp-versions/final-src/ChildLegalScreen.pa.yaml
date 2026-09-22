@@ -693,14 +693,14 @@ Screens:
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = MyRequestScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(56, 96, 178, 0.75)
             OnSelect: |-
               =If(varNavArm = "MyRequestScreen",
-                  Set(varNavArm, ""); Navigate(MyRequestScreen),
+                  Set(varNavArm, ""); Navigate(RequestManagementScreen),
                   Set(varNavArm, "MyRequestScreen");
                   Notify("Unsaved media changes will be lost. Click again to leave.", NotificationType.Warning)
               )
@@ -832,7 +832,6 @@ Screens:
             Width: =174
             X: =1133
             Y: =4
-
       - CL_LblMissing:
           Control: Label@2.5.1
           Properties:
@@ -840,7 +839,6 @@ Screens:
             Color: =RGBA(224, 134, 0, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =40
             Size: =12
             Text: |-
               =With(
@@ -862,5 +860,3 @@ Screens:
             Width: =900
             X: =190
             Y: =720
-            ZIndex: =900
-          Children: []

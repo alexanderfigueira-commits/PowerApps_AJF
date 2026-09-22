@@ -513,14 +513,14 @@ Screens:
                           With(
                               {
                                   savedMedia: Patch(
-                                      AVCentralDepositMediaItems,
+                                      'AV-CD-Mediafiles',
                                       If(
                                           spId = 0,
-                                          Defaults(AVCentralDepositMediaItems),
-                                          LookUp(AVCentralDepositMediaItems, ID = spId)
+                                          Defaults('AV-CD-Mediafiles'),
+                                          LookUp('AV-CD-Mediafiles', ID = spId)
                                       ),
                                       {
-                                          CD_MediaNumber: If(spId = 0, With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter(AVCentralDepositMediaItems, StartsWith(CD_MediaNumber, yr & "-")), CD_MediaNumber, SortOrder.Descending)).CD_MediaNumber, yr & "-0000"), 4)) + 1), 4)), LookUp(AVCentralDepositMediaItems, ID = spId).CD_MediaNumber),
+                                          CD_MediaNumber: If(spId = 0, With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter('AV-CD-Mediafiles', StartsWith(CD_MediaNumber, yr & "-")), CD_MediaNumber, SortOrder.Descending)).CD_MediaNumber, yr & "-0000"), 4)) + 1), 4)), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
                                           Description: varChildDescription1,
                                           BelugaReference: varChildBelugaRef,
                                           // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
@@ -568,13 +568,13 @@ Screens:
                               },
                               UpdateIf(colArchives, ArchiveId = varCurrentChildId, {SPId: savedMedia.ID});
                               Notify("Media saved to SharePoint.", NotificationType.Success);
-                              Navigate(RequestScreen)
+                              Navigate(RequesDetailtScreen)
                           )
                       ),
                       Notify("Save failed: " & FirstError.Message, NotificationType.Error)
                   ),
                   Notify("Media added to request. Save or submit the request to persist media to SharePoint.", NotificationType.Success);
-                  Navigate(RequestScreen)
+                  Navigate(RequesDetailtScreen)
               )
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
@@ -684,14 +684,14 @@ Screens:
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = MyRequestScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(56, 96, 178, 0.75)
             OnSelect: |-
               =If(varNavArm = "MyRequestScreen",
-                  Set(varNavArm, ""); Navigate(MyRequestScreen),
+                  Set(varNavArm, ""); Navigate(RequestManagementScreen),
                   Set(varNavArm, "MyRequestScreen");
                   Notify("Unsaved media changes will be lost. Click again to leave.", NotificationType.Warning)
               )

@@ -16,7 +16,7 @@ Screens:
         Set(varReviewComment, "");
         Set(varReviewQueueMine, Coalesce(varReviewMineOnly, false));
         Set(varReviewMineOnly, false);
-        ClearCollect(colRevReqs, AVCentralDepositRequests)
+        ClearCollect(colRevReqs, 'AV-CD-Requests')
     Children:
       - RV_TopBar:
           Control: Rectangle@2.3.0
@@ -229,9 +229,9 @@ Screens:
             Items: |-
               =If(
                   IsBlank(varReviewProject),
-                  Filter(AVCentralDepositMediaItems, 1 = 2),
+                  Filter('AV-CD-Mediafiles', 1 = 2),
                   Sort(
-                      Filter(AVCentralDepositMediaItems, ParentRequest = varReviewProject.RequestNumber),
+                      Filter('AV-CD-Mediafiles', ParentRequest = varReviewProject.RequestNumber),
                       Modified, SortOrder.Descending
                   )
               )
@@ -459,8 +459,8 @@ Screens:
             HoverFill: =RGBA(15, 90, 55, 1)
             OnSelect: |-
               =IfError(
-                  Patch(AVCentralDepositRequests,
-                      LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
+                  Patch('AV-CD-Requests',
+                      LookUp('AV-CD-Requests', ID = varReviewProject.ID),
                       {
                           Status: {Value: "Approved"},
                          Assignee: If(
@@ -527,8 +527,8 @@ Screens:
             HoverFill: =RGBA(253, 235, 235, 1)
             OnSelect: |-
               =IfError(
-                  Patch(AVCentralDepositRequests,
-                      LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
+                  Patch('AV-CD-Requests',
+                      LookUp('AV-CD-Requests', ID = varReviewProject.ID),
                       {
                           Status: {Value: "Rejected"},
                           ReviewerComments: varReviewComment,
@@ -556,6 +556,62 @@ Screens:
             Text: ="✕  Reject"
             Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
             X: =676
+            Y: =680
+      - RV_BtnNeedInfo:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(224, 134, 0, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: |-
+              =If(
+                  Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
+                  And Lower(varReviewProject.'Created By'.Email) <> Lower(User().Email)
+                  And Not(IsBlank(varReviewComment)) And varReviewComment <> "",
+                  DisplayMode.Edit,
+                  DisplayMode.Disabled
+              )
+            Fill: =RGBA(224, 134, 0, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(224, 134, 0, 1), -20%)
+            OnSelect: |-
+              =IfError(
+                  Patch('AV-CD-Requests',
+                      LookUp('AV-CD-Requests', ID = varReviewProject.ID),
+                      {
+                          Status: {Value: "Pending"},
+                          ReviewerComments: varReviewComment,
+                          ReviewedByContact: Table({
+                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                              Claims: "i:0#.f|membership|" & Lower(User().Email),
+                              DisplayName: User().FullName,
+                              Email: User().Email,
+                              Department: "",
+                              JobTitle: "",
+                              Picture: ""
+                          }),
+                          ReviewedDate: Now()
+                      }
+                  );
+                  Notify("Sent back to the requestor for more information.", NotificationType.Success);
+                  Set(varReviewProject, Blank());
+                  Set(varReviewComment, ""),
+                  Notify("Could not send it back: " & FirstError.Message, NotificationType.Error)
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="↩  Need info"
+            Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
+            Width: =200
+            X: =852
             Y: =680
       - RV_RejectHint:
           Control: Label@2.5.1
@@ -736,12 +792,12 @@ Screens:
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = MyRequestScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(MyRequestScreen)
+            OnSelect: =Navigate(RequestManagementScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
@@ -873,61 +929,3 @@ Screens:
             Width: =83
             X: =948
             Y: =5
-
-      - RV_BtnNeedInfo:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(224, 134, 0, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledColor: =RGBA(186, 196, 214, 1)
-            DisabledFill: =RGBA(240, 242, 246, 1)
-            DisplayMode: |-
-              =If(
-                  Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
-                  And Lower(varReviewProject.'Created By'.Email) <> Lower(User().Email)
-                  And Not(IsBlank(varReviewComment)) And varReviewComment <> "",
-                  DisplayMode.Edit,
-                  DisplayMode.Disabled
-              )
-            Fill: =RGBA(224, 134, 0, 1)
-            Font: =Font.'Open Sans'
-            Height: =44
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =ColorFade(RGBA(224, 134, 0, 1), -20%)
-            OnSelect: |-
-              =IfError(
-                  Patch(AVCentralDepositRequests,
-                      LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
-                      {
-                          Status: {Value: "Pending"},
-                          ReviewerComments: varReviewComment,
-                          ReviewedByContact: Table({
-                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
-                              Claims: "i:0#.f|membership|" & Lower(User().Email),
-                              DisplayName: User().FullName,
-                              Email: User().Email,
-                              Department: "",
-                              JobTitle: "",
-                              Picture: ""
-                          }),
-                          ReviewedDate: Now()
-                      }
-                  );
-                  Notify("Sent back to the requestor for more information.", NotificationType.Success);
-                  Set(varReviewProject, Blank());
-                  Set(varReviewComment, ""),
-                  Notify("Could not send it back: " & FirstError.Message, NotificationType.Error)
-              )
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =14
-            Text: ="↩  Need info"
-            Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
-            Width: =200
-            X: =852
-            Y: =680
-          Children: []
