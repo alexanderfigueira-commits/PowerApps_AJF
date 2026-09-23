@@ -1014,7 +1014,7 @@ Screens:
                               'AV-CD-Requests',
                               LookUp('AV-CD-Requests', ID = varCurrentRequest.ID),
                               {
-                                  Notes: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
                                   RequestNumber: varCurrentRequest.RequestNumber,
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
@@ -1136,7 +1136,7 @@ Screens:
                               'AV-CD-Requests',
                               LookUp('AV-CD-Requests', ID = varCurrentRequest.ID),
                               {
-                                  Notes: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
                                   RequestNumber: varCurrentRequest.RequestNumber,
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
@@ -2262,7 +2262,7 @@ Screens:
                                   LookUp('AV-CD-Requests', ID = varCurrentRequest.ID)
                               ),
                               {
-                                  Notes: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
                                   RequestNumber: If(
                                       Coalesce(varCurrentRequest.ID, 0) <= 0,
                                       With(
@@ -2376,7 +2376,7 @@ Screens:
                       Set(varCurrentRequest,
                           Patch('AV-CD-Requests', Defaults('AV-CD-Requests'),
                               {
-                                  Notes: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
                                   RequestNumber: With(
                   {
                       yr: Text(Year(Today())),
@@ -2696,11 +2696,11 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(Not(varUserRole = "ADMINISTRATOR") And IsBlank(Coalesce(varCurrentRequest.Notes, "")), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Color: =If(Not(varUserRole = "ADMINISTRATOR") And IsBlank(Coalesce(varCurrentRequest.ReviewerComments, "")), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
             Default: |-
               =If(
-                  varUserRole = "ADMINISTRATOR" Or Not(IsBlank(Coalesce(varCurrentRequest.Notes, ""))),
-                  Coalesce(varCurrentRequest.Notes, ""),
+                  varUserRole = "ADMINISTRATOR" Or Not(IsBlank(Coalesce(varCurrentRequest.ReviewerComments, ""))),
+                  Coalesce(varCurrentRequest.ReviewerComments, ""),
                   "No notes from the administrator"
               )
             DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
@@ -2716,11 +2716,11 @@ Screens:
               If(
                   varUserRole = "ADMINISTRATOR" And Coalesce(varCurrentRequest.ID, 0) > 0,
                   IfError(
-                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {Notes: Self.Text}));
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ReviewerComments: Self.Text}));
                       // keep the management-screen cache in step, so reopening shows the new notes
                       If(
                           Not(IsBlank(LookUp(colMyReqs, ID = varCurrentRequest.ID))),
-                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {Notes: Self.Text})
+                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {ReviewerComments: Self.Text})
                       );
                       Notify("Administrator notes saved.", NotificationType.Success),
                       Notify("Administrator notes could not be saved: " & FirstError.Message, NotificationType.Error)

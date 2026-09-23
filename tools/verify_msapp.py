@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v42-row-actions.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v43-admin-notes-reviewer.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -718,6 +718,18 @@ for _c, _vis, _extra in (('HomeRowUserAction', 'ThisItem.Status.Value = "Pending
           and (_extra in _g.get('Text', '') or _g.get('Icon') == _extra)
           and _g.get('DisplayMode', 'DisplayMode.Edit') == 'DisplayMode.Edit')
 check('row-actions', 'The approved check is green', R.get((MR, 'HomeRowApproved'), {}).get('Color') == 'RGBA(22, 128, 80, 1)')
+
+# ---------------- administrator notes = ReviewerComments (v43) ----------------
+check('admin-notes', 'RS_AdminNotes shows ReviewerComments, read-only placeholder for others',
+      'varCurrentRequest.ReviewerComments' in (rule(RQ, 'RS_AdminNotes', 'Default') or '')
+      and 'No notes from the administrator' in (rule(RQ, 'RS_AdminNotes', 'Default') or '')
+      and 'varCurrentRequest.Notes' not in (rule(RQ, 'RS_AdminNotes', 'Default') or ''))
+check('admin-notes', 'RS_AdminNotes saves ReviewerComments (SharePoint and the list cache)',
+      (rule(RQ, 'RS_AdminNotes', 'OnChange') or '').count('{ReviewerComments: Self.Text}') == 2)
+for _b in ('RS_BtnDraftSave', 'RS_BtnDraftSave_1', 'RS_BtnSubmitRequest', 'RS_BtnResubmitRequest'):
+    _t = rule(RQ, _b, 'OnSelect') or ''
+    check('admin-notes', f'{_b} keeps ReviewerComments (admin text, or the stored value for others)',
+          'ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text' in _t and 'Notes: If(' not in _t.replace('ReviewerComments: If(', ''))
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''
