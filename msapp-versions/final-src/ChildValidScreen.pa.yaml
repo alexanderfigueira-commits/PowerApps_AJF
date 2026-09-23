@@ -580,7 +580,7 @@ Screens:
                                           CreditContact: varChildCredits1,
                                                       ContractingAuthority: varChildContractingAuthority,
                                                       ExecProducerName: varChildExecProducer,
-                                                      Producer: If(IsBlank(varChildProducerSel), Blank(), ForAll(varChildProducerSel As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
+                                                      Producer: If(IsBlank(varChildProducerSel), Blank(), ForAll(varChildProducerSel As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
                                                       PhotoCaption: varChildPhotoCaption, ProductionTitle: varChildTitle1,
                                                       DepositStatus: Table({Value: "Pending Approval"}),
                                           ParentRequest: varCurrentRequest.RequestNumber

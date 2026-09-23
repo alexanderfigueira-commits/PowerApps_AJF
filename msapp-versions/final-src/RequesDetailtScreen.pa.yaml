@@ -1019,8 +1019,8 @@ Screens:
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
                                   Description: varRequestDescription,
-                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   // manual (non-Microsoft 365) email picked in RS_Owner; blank when none
                                   Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
                                   // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none
@@ -1141,8 +1141,8 @@ Screens:
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
                                   Description: varRequestDescription,
-                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
-                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   // manual (non-Microsoft 365) email picked in RS_Owner; blank when none
                                   Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
                                   // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none
@@ -2285,7 +2285,6 @@ Screens:
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
                                       {
-                                          '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                                           Claims: "i:0#.f|membership|" & Lower(u.Mail),
                                           DisplayName: u.DisplayName,
                                           Email: u.Mail,
@@ -2296,7 +2295,6 @@ Screens:
                                   ),
                                   Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
                                       {
-                                          '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                                           Claims: "i:0#.f|membership|" & Lower(u.Mail),
                                           DisplayName: u.DisplayName,
                                           Email: u.Mail,

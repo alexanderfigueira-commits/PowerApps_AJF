@@ -529,7 +529,6 @@ Screens:
                               IsBlank(RV_Assignee.Selected.Mail),
                               Blank(),
                               {
-                                  '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                                   Claims: "i:0#.f|membership|" & Lower(RV_Assignee.Selected.Mail),
                                   DisplayName: RV_Assignee.Selected.DisplayName,
                                   Email: RV_Assignee.Selected.Mail,
@@ -539,7 +538,6 @@ Screens:
                               }
                           ),
                           ReviewedByContact: Table({
-                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                               Claims: "i:0#.f|membership|" & Lower(User().Email),
                               DisplayName: User().FullName,
                               Email: User().Email,
@@ -595,7 +593,6 @@ Screens:
                           Status: {Value: "Rejected"},
                           ReviewerComments: varReviewComment,
                           ReviewedByContact: Table({
-                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                               Claims: "i:0#.f|membership|" & Lower(User().Email),
                               DisplayName: User().FullName,
                               Email: User().Email,
@@ -650,7 +647,6 @@ Screens:
                           Status: {Value: "Pending"},
                           ReviewerComments: varReviewComment,
                           ReviewedByContact: Table({
-                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
                               Claims: "i:0#.f|membership|" & Lower(User().Email),
                               DisplayName: User().FullName,
                               Email: User().Email,
