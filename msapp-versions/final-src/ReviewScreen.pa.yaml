@@ -329,7 +329,7 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Default: =Coalesce(ThisItem.Notes, "")
+                  Default: =PlainText(Coalesce(ThisItem.Notes, ""))
                   DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
                   Font: =Font.'Open Sans'
                   Height: =56
@@ -347,7 +347,7 @@ Screens:
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(Self.DisplayMode = DisplayMode.Edit, RGBA(56, 96, 178, 1), RGBA(186, 196, 214, 1))
-                  DisplayMode: =If(varUserRole = "ADMINISTRATOR" And RV_CRowNotes.Text <> Coalesce(ThisItem.Notes, ""), DisplayMode.Edit, DisplayMode.Disabled)
+                  DisplayMode: =If(varUserRole = "ADMINISTRATOR" And RV_CRowNotes.Text <> PlainText(Coalesce(ThisItem.Notes, "")), DisplayMode.Edit, DisplayMode.Disabled)
                   Height: =32
                   Icon: =Icon.Save
                   OnSelect: |-

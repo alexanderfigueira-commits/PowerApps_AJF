@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v36-manual-contacts.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v37-plaintext.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -679,6 +679,14 @@ for _b in ('RS_BtnDraftSave', 'RS_BtnSubmitRequest', 'RS_BtnResubmitRequest'):
     _t = code_only(rule(RQ, _b, 'OnSelect'))
     check('manual', f'{_b} hands over to the saved column only after the Patch',
           _t.index('Patch(') < _t.index('RemoveIf(colManualContacts, ParentRequest = varCurrentRequest.RequestNumber)'))
+
+# ---------------- rich-text columns shown as plain text (v37) ----------------
+for _col in ('Notes', 'PhotoCaption'):
+    check('plain', f'colArchives.{_col} is loaded as plain text (feeds CI_Notes / CM_Caption)',
+          f'{_col}: PlainText(Coalesce(' in _ov_rq)
+check('plain', 'RV_CRowNotes shows plain text, and its save icon compares the same value',
+      rule(RV, 'RV_CRowNotes', 'Default') == 'PlainText(Coalesce(ThisItem.Notes, ""))'
+      and 'RV_CRowNotes.Text <> PlainText(Coalesce(ThisItem.Notes, ""))' in (rule(RV, 'RV_CRowNotesSave', 'DisplayMode') or ''))
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''

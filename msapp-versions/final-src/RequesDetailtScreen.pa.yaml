@@ -73,10 +73,11 @@ Screens:
                             BelugaReference,
                             ""
                         ),
-                        Notes: Coalesce(
+                        // rich-text column: keep the text, drop the HTML
+                        Notes: PlainText(Coalesce(
                             Notes,
                             ""
-                        ),
+                        )),
                         ProductionTitle: Coalesce(
                             ProductionTitle,
                             ""
@@ -137,10 +138,11 @@ Screens:
                             First(LanguageVersions).Value,
                             ""
                         ),
-                        PhotoCaption: Coalesce(
+                        // rich-text column: keep the text, drop the HTML
+                        PhotoCaption: PlainText(Coalesce(
                             PhotoCaption,
                             ""
-                        ),
+                        )),
                         Credits: Coalesce(
                             CreditContact,
                             ""
