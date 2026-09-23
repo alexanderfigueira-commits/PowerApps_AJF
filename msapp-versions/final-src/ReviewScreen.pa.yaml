@@ -65,7 +65,13 @@ Screens:
             Items: |-
               =Sort(
                   Filter(colRevReqs,
-                      (Status.Value = "Processing" Or Status.Value = "Pending"),
+                      // ADMINISTRATOR: Processing and Pending. Anyone else: only their own Pending
+                      // (a safety net: ReviewScreen is only reachable by administrators).
+                      If(
+                          varUserRole = "ADMINISTRATOR",
+                          Status.Value = "Processing" Or Status.Value = "Pending",
+                          Status.Value = "Pending" And Lower('Created By'.Email) = Lower(User().Email)
+                      ),
                       Not(varReviewQueueMine) Or Not(IsEmpty(Filter(DG_Agency_Contact, Lower(Email) = Lower(User().Email))))
                   ),
                   Modified, SortOrder.Descending
@@ -509,7 +515,7 @@ Screens:
             DisplayMode: |-
               =If(
                   Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
-                  And Lower(varReviewProject.'Created By'.Email) <> Lower(User().Email) And varReviewProject.Status.Value = "Processing",
+                  And varReviewProject.Status.Value = "Processing",
                   DisplayMode.Edit,
                   DisplayMode.Disabled
               )
@@ -574,7 +580,7 @@ Screens:
             DisplayMode: |-
               =If(
                   Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
-                  And Lower(varReviewProject.'Created By'.Email) <> Lower(User().Email) And varReviewProject.Status.Value = "Processing"
+                  And varReviewProject.Status.Value = "Processing"
                   And Not(IsBlank(varReviewComment)) And varReviewComment <> "",
                   DisplayMode.Edit,
                   DisplayMode.Disabled
@@ -628,7 +634,7 @@ Screens:
             DisplayMode: |-
               =If(
                   Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
-                  And Lower(varReviewProject.'Created By'.Email) <> Lower(User().Email) And varReviewProject.Status.Value = "Processing"
+                  And varReviewProject.Status.Value = "Processing"
                   And Not(IsBlank(varReviewComment)) And varReviewComment <> "",
                   DisplayMode.Edit,
                   DisplayMode.Disabled
