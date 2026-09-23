@@ -417,7 +417,7 @@ Screens:
                               Not(IsBlank(DisplayName))
                           )}
                       ),
-                      "rows"
+                      rows
                   )
               )
             DisplayFields: =["DisplayName"]
@@ -453,7 +453,7 @@ Screens:
                               Not(IsBlank(DisplayName))
                           )}
                       ),
-                      "rows"
+                      rows
                   )
               )
             OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
@@ -508,7 +508,7 @@ Screens:
                               Not(IsBlank(DisplayName))
                           )}
                       ),
-                      "rows"
+                      rows
                   )
               )
             DisplayFields: =["DisplayName"]
@@ -544,7 +544,7 @@ Screens:
                               Not(IsBlank(DisplayName))
                           )}
                       ),
-                      "rows"
+                      rows
                   )
               )
             OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))

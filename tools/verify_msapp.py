@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v37-plaintext.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v38-ungroup-fix.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -687,6 +687,11 @@ for _col in ('Notes', 'PhotoCaption'):
 check('plain', 'RV_CRowNotes shows plain text, and its save icon compares the same value',
       rule(RV, 'RV_CRowNotes', 'Default') == 'PlainText(Coalesce(ThisItem.Notes, ""))'
       and 'RV_CRowNotes.Text <> PlainText(Coalesce(ThisItem.Notes, ""))' in (rule(RV, 'RV_CRowNotesSave', 'DisplayMode') or ''))
+
+# ---------------- current Power Fx syntax (v38) ----------------
+_bad_ug = [f'{s_}.{c_}.{p_}' for (s_, c_), g in R.items() for p_, v_ in g.items()
+           if re.search(r'Ungroup\([\s\S]*,\s*"[A-Za-z_]+"\s*\)', v_)]
+check('syntax', 'No Ungroup passes its column as a quoted string', not _bad_ug, ','.join(_bad_ug))
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''
