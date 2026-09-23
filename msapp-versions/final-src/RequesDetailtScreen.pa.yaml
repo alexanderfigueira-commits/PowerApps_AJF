@@ -216,7 +216,12 @@ Screens:
                  Or varCurrentRequest.Status.Value = "Pending")
             And Not(IsBlank(varCurrentRequest.ReviewerComments)),
             Notify(
-                "Rejected by " & Coalesce(First(varCurrentRequest.ReviewedByContact).DisplayName, "the reviewer")
+                If(
+                    varCurrentRequest.Status.Value = "Rejected",
+                    "Rejected by ",
+                    // Pending = the administrator pressed Need info
+                    "More information requested by "
+                ) & Coalesce(First(varCurrentRequest.ReviewedByContact).DisplayName, "the reviewer")
                 & If(
                     IsBlank(varCurrentRequest.ReviewedDate),
                     "",
@@ -633,7 +638,7 @@ Screens:
             Height: =33
             Size: =12
             Text: |-
-              ="Reviewer comment: -"
+              ="Reviewer comment: " & Coalesce(varCurrentRequest.ReviewerComments, "-")
             Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
             Width: =586
             X: =181

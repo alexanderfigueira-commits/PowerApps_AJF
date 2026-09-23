@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v43-admin-notes-reviewer.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v44-reject-vs-needinfo.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -730,6 +730,16 @@ for _b in ('RS_BtnDraftSave', 'RS_BtnDraftSave_1', 'RS_BtnSubmitRequest', 'RS_Bt
     _t = rule(RQ, _b, 'OnSelect') or ''
     check('admin-notes', f'{_b} keeps ReviewerComments (admin text, or the stored value for others)',
           'ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text' in _t and 'Notes: If(' not in _t.replace('ReviewerComments: If(', ''))
+
+# ---------------- Rejected vs Pending (Need info) (v44) ----------------
+check('reject', 'Reject writes Rejected, Need info writes Pending, Approve writes Approved',
+      'Status: {Value: "Rejected"}' in (rule(RV, 'RV_BtnReject', 'OnSelect') or '')
+      and 'Status: {Value: "Pending"}' in (rule(RV, 'RV_BtnNeedInfo', 'OnSelect') or '')
+      and 'Status: {Value: "Approved"}' in (rule(RV, 'RV_BtnApprove', 'OnSelect') or ''))
+check('reject', 'The request screen announces Rejected and Pending differently',
+      '"Rejected by "' in _ov_rq and '"More information requested by "' in _ov_rq)
+check('reject', 'The rejection banner shows the reviewer comment',
+      'varCurrentRequest.ReviewerComments' in (rule(RQ, 'RS_RejectionComment', 'Text') or ''))
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''
