@@ -27,7 +27,13 @@ Screens:
         If(varChildMediaType = "Podcast" And varPodMetaChildId <> varCurrentChildId,
             Set(varPodMetaChildId, varCurrentChildId);
             Set(varChildProducer, "");
-            Set(varChildExecProducer, ""))
+            Set(varChildExecProducer, ""));
+        // the attachments panel (CL_FormAttach) edits a snapshot of the open media item;
+        // taken here too so the file lists on this tab show the right item
+        If(
+            Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
+            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
+        )
     Children:
       - CM_Back:
           Control: Classic/Button@2.2.0
@@ -183,7 +189,7 @@ Screens:
               =[{id: 1}]
             LoadingSpinner: =LoadingSpinner.None
             TemplatePadding: =0
-            TemplateSize: =580 + If(varChildMediaType = "Podcast", 360, If(varChildMediaType = "Photo", 160, 0))
+            TemplateSize: =580 + If(varChildMediaType = "Podcast", 480, If(varChildMediaType = "Photo", 160, 0))
             Width: =1366
             Y: =102
           Children:
@@ -905,7 +911,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="Episode visual"
+                  Text: ="Episode visual  - upload it in 3. Legal & Docs, attachments panel"
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =56
@@ -927,59 +933,114 @@ Screens:
                 Control: Attachments@2.3.0
                 Properties:
                   BorderColor: =RGBA(220, 224, 230, 1)
-                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  DisplayMode: =DisplayMode.View
                   Font: =Font.'Open Sans'
                   Height: =100
                   HoverFill: =RGBA(186, 202, 226, 1)
                   ItemColor: =RGBA(255, 255, 255, 1)
                   ItemFill: =RGBA(56, 96, 178, 1)
                   ItemHoverFill: =RGBA(186, 202, 226, 1)
-                  Items: =LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)).Attachments
-                  Items.Name: =DisplayName
-                  Items.Value: =Id
+                  Items: |-
+                    =// read-only: files are uploaded in the Legal & Docs attachments panel (CL_FormAttach)
+                    Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))
+                  Items.Name: =Name
+                  Items.Value: =Value
                   MaxAttachments: =3
-                  OnAddFile: |-
-                    =IfError(
-                        Patch(
-                            'AV-CD-Mediafiles',
-                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
-                            {Attachments: CM_EpisodeVisual.Attachments}
-                        ),
-                        Notify(
-                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
-                            NotificationType.Error
-                        )
-                    )
-                  OnRemoveFile: |-
-                    =IfError(
-                        Patch(
-                            'AV-CD-Mediafiles',
-                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
-                            {Attachments: CM_EpisodeVisual.Attachments}
-                        ),
-                        Notify(
-                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
-                            NotificationType.Error
-                        )
-                    )
-                  OnUndoRemoveFile: |-
-                    =IfError(
-                        Patch(
-                            'AV-CD-Mediafiles',
-                            LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)),
-                            {Attachments: CM_EpisodeVisual.Attachments}
-                        ),
-                        Notify(
-                            "Could not save the attachment. Save the media file first, then attach: " & FirstError.Message,
-                            NotificationType.Error
-                        )
-                    )
                   PressedColor: =RGBA(255, 255, 255, 1)
                   PressedFill: =RGBA(0, 18, 107, 1)
                   Visible: =varChildMediaType = "Podcast"
                   Width: =1230
                   X: =56
                   Y: =650
+            - CM_LblPubChannel:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Publication channel"
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =800
+                  X: =56
+                  Y: =850
+                Children: []
+            - CM_ChkBeluga:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Default: =varChildPubBeluga
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildPubBeluga, true)
+                  OnUncheck: =Set(varChildPubBeluga, false)
+                  Text: ="Beluga"
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =160
+                  X: =52
+                  Y: =874
+                Children: []
+            - CM_ChkSpotify:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Default: =varChildPubSpotify
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildPubSpotify, true)
+                  OnUncheck: =Set(varChildPubSpotify, false)
+                  Text: ="Spotify"
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =160
+                  X: =220
+                  Y: =874
+                Children: []
+            - CM_LblAudio:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: |-
+                    ="Audio file(s) - upload them in 3. Legal & Docs, attachments panel (MP3, WAV, M4A or AAC; very large files: use the FTP path)"
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =1100
+                  X: =56
+                  Y: =916
+                Children: []
+            - CM_AudioFiles:
+                Control: Attachments@2.3.0
+                Properties:
+                  BorderColor: =RGBA(220, 224, 230, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  Height: =80
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  ItemColor: =RGBA(255, 255, 255, 1)
+                  ItemFill: =RGBA(56, 96, 178, 1)
+                  ItemHoverFill: =RGBA(186, 202, 226, 1)
+                  Items: |-
+                    =// read-only: files are uploaded in the Legal & Docs attachments panel (CL_FormAttach)
+                    Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".mp3") Or EndsWith(Lower(Name), ".wav") Or EndsWith(Lower(Name), ".m4a") Or EndsWith(Lower(Name), ".aac"))
+                  MaxAttachments: =3
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(0, 18, 107, 1)
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =1230
+                  X: =56
+                  Y: =940
+                Children: []
       - CM_TopBar:
           Control: Rectangle@2.3.0
           Properties:

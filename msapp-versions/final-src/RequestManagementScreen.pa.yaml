@@ -63,7 +63,7 @@ Screens:
             Set(varFilterRequestName, "");
             Set(varFilterStartDate, Today()-31);
             Set(varFilterEndDate, Today());
-            UpdateContext({locProdTypeFilter: Blank()});
+            UpdateContext({locProdTypeFilter: Blank(), locShowFilters: true});
             Set(varReqFiltersInit, true)
         );
         
@@ -866,7 +866,8 @@ Screens:
                   DisabledBorderColor: =Self.BorderColor
                   DisplayMode: =DisplayMode.View
                   Fill: |-
-                    =If("Approved" in ThisItem.Status.Value, Color.DarkGreen,
+                    =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
+                       "Approved" in ThisItem.Status.Value, Color.DarkGreen,
                        "Pending" in ThisItem.Status.Value, Color.Orange,
                        "Draft" in ThisItem.Status.Value, Color.Gray,
                        "Rejected" in ThisItem.Status.Value, Color.Red,
@@ -1009,9 +1010,9 @@ Screens:
             - HomeRowApproved:
                 Control: Classic/Icon@2.5.0
                 Properties:
-                  AccessibleLabel: ="Approved"
+                  AccessibleLabel: =ThisItem.Status.Value
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(22, 128, 80, 1)
+                  Color: =If(ThisItem.Status.Value = "Partially approved", RGBA(184, 134, 11, 1), RGBA(22, 128, 80, 1))
                   DisplayMode: =DisplayMode.Edit
                   FocusedBorderThickness: =0
                   Height: =30
@@ -1021,8 +1022,8 @@ Screens:
                   PaddingLeft: =5
                   PaddingRight: =5
                   PaddingTop: =5
-                  Tooltip: ="Approved"
-                  Visible: =ThisItem.Status.Value = "Approved"
+                  Tooltip: =ThisItem.Status.Value
+                  Visible: =ThisItem.Status.Value = "Approved" Or ThisItem.Status.Value = "Partially approved"
                   Width: =30
                   X: =1190
                   Y: =15

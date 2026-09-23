@@ -876,7 +876,7 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =54
             Size: =12
-            Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles here. They are saved to this media item in SharePoint when you press Save Media on the Validations tab."
+            Text: ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles here - for podcasts also the podcast visual, episode visuals and audio files. Everything is saved to this media item when you press Save Media."
             Width: =460
             X: =874
             Y: =192

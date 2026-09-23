@@ -530,7 +530,15 @@ Screens:
                   Patch('AV-CD-Requests',
                       LookUp('AV-CD-Requests', ID = varReviewProject.ID),
                       {
-                          Status: {Value: "Approved"},
+                          // some but not all media files ticked "Approved" on the request screen -> Partially approved
+                          Status: {Value: If(
+                          With(
+                              {n: CountRows(RV_ChildrenGallery.AllItems), ok: CountRows(Filter(RV_ChildrenGallery.AllItems, MediaApproved = true))},
+                              ok > 0 And ok < n
+                          ),
+                          "Partially approved",
+                          "Approved"
+                      )},
                          Assignee: If(
                               IsBlank(RV_Assignee.Selected.Mail),
                               Blank(),
@@ -554,7 +562,13 @@ Screens:
                           ReviewedDate: Now()
                       }
                   );
-                  Notify("Request approved.", NotificationType.Success);
+                  Notify(
+                      If(With(
+                              {n: CountRows(RV_ChildrenGallery.AllItems), ok: CountRows(Filter(RV_ChildrenGallery.AllItems, MediaApproved = true))},
+                              ok > 0 And ok < n
+                          ), "Request partially approved: only the ticked media files are approved.", "Request approved."),
+                      NotificationType.Success
+                  );
                   Set(varReviewProject, Blank());
                   Set(varReviewComment, "");
                   // reload the queue from SharePoint so the handled request leaves or updates
@@ -603,6 +617,7 @@ Screens:
                       {
                           Status: {Value: "Rejected"},
                           ReviewerComments: varReviewComment,
+                          AdminNotesUpdatedOn: Now(),
                           ReviewedByContact: Table({
                               Claims: "i:0#.f|membership|" & Lower(User().Email),
                               DisplayName: User().FullName,
@@ -662,6 +677,7 @@ Screens:
                       {
                           Status: {Value: "Pending"},
                           ReviewerComments: varReviewComment,
+                          AdminNotesUpdatedOn: Now(),
                           ReviewedByContact: Table({
                               Claims: "i:0#.f|membership|" & Lower(User().Email),
                               DisplayName: User().FullName,

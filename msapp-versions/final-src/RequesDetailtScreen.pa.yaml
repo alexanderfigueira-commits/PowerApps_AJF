@@ -40,6 +40,7 @@ Screens:
             Reset(RS_Owner);
             Reset(RS_Contractor);
             Reset(RS_AdminNotes);
+            Reset(RS_RequestorNotes);
             UpdateContext({locResetContacts: false})
         );
         Set(
@@ -78,6 +79,8 @@ Screens:
                             Notes,
                             ""
                         )),
+                        MediaApproved: Coalesce(MediaApproved, false),
+                        PublicationChannel: Concat(PublicationChannel, Value, ";"),
                         ProductionTitle: Coalesce(
                             ProductionTitle,
                             ""
@@ -735,7 +738,7 @@ Screens:
             Height: =46
             Size: =11
             Text: ="STATUS"
-            Width: =180
+            Width: =120
             X: =909
             Y: =If(locShowDetails,445,150)
       - RS_ChildrenGallery:
@@ -778,6 +781,8 @@ Screens:
                     Set(varChildProducerSel, ThisItem.Producer);
                     Set(varChildProducer, Concat(ThisItem.Producer, DisplayName, ", "));
                     Set(varChildPhotoCaption, Coalesce(ThisItem.PhotoCaption, ""));
+                    Set(varChildPubBeluga, "Beluga" in Coalesce(ThisItem.PublicationChannel, ""));
+                    Set(varChildPubSpotify, "Spotify" in Coalesce(ThisItem.PublicationChannel, ""));
                     Set(varChildModelRelease, Coalesce(ThisItem.ModelRelease, false));
                     Set(varChildNoThirdParty, Coalesce(ThisItem.NoThirdPartyRights, false));
                     Set(varChildModelReleaseProvided, Coalesce(ThisItem.ModelReleaseProvided, false));
@@ -947,6 +952,37 @@ Screens:
                   Width: =90
                   X: =1127
                   Y: =11
+            - RS_CRowApproved:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Default: =Coalesce(ThisItem.MediaApproved, false)
+                  DisplayMode: |-
+                    =// administrators approve per media file; everyone else sees the state
+                    If(varUserRole = "ADMINISTRATOR" And Coalesce(ThisItem.SPId, 0) > 0, DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: |-
+                    =IfError(
+                        Patch('AV-CD-Mediafiles', LookUp('AV-CD-Mediafiles', ID = ThisItem.SPId), {MediaApproved: true});
+                        Patch(colArchives, ThisItem, {MediaApproved: true}),
+                        Notify("Could not save the approval: " & FirstError.Message, NotificationType.Error)
+                    )
+                  OnUncheck: |-
+                    =IfError(
+                        Patch('AV-CD-Mediafiles', LookUp('AV-CD-Mediafiles', ID = ThisItem.SPId), {MediaApproved: false});
+                        Patch(colArchives, ThisItem, {MediaApproved: false}),
+                        Notify("Could not save the approval: " & FirstError.Message, NotificationType.Error)
+                    )
+                  Text: =""
+                  Visible: =true
+                  Width: =44
+                  X: =1058
+                  Y: =12
+                Children: []
       - RS_ChildrenEmpty:
           Control: Label@2.5.1
           Group: Group1
@@ -1020,6 +1056,9 @@ Screens:
                               LookUp('AV-CD-Requests', ID = varCurrentRequest.ID),
                               {
                                   ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
                                   RequestNumber: varCurrentRequest.RequestNumber,
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
@@ -1142,6 +1181,9 @@ Screens:
                               LookUp('AV-CD-Requests', ID = varCurrentRequest.ID),
                               {
                                   ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
                                   RequestNumber: varCurrentRequest.RequestNumber,
                                   RequestTitle: varRequestTitle,
                                   DG: {Value: varRequestDG},
@@ -2013,7 +2055,7 @@ Screens:
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisabledFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Processing", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
             DisplayMode: =DisplayMode.View
-            Fill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(230, 236, 245, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Processing", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
+            Fill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(230, 236, 245, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Partially approved", RGBA(184, 134, 11, 1), "Rejected", RGBA(193, 40, 40, 1), "Processing", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
             Font: =Font.'Open Sans'
             Height: =32
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
@@ -2027,8 +2069,7 @@ Screens:
             RadiusTopLeft: =8
             RadiusTopRight: =8
             Size: =18
-            Text: |-
-              =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", "🆕", "Draft", "📝", "Pending", "⏳", "Approved", "✅", "Rejected", "⛔", "Processing", "🌐", "📝")
+            Text: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", "🆕", "Draft", "📝", "Pending", "⏳", "Approved", "✅", "Partially approved", "◐", "Rejected", "⛔", "Processing", "🌐", "📝")
             Tooltip: |-
               ="Status: " & If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")) & If(Not(IsBlank(varCurrentRequest)) And Coalesce(varCurrentRequest.ID, 0) > 0 And Not(IsBlank(varCurrentRequest.Modified)), "  (" & Text(varCurrentRequest.Modified, "dd-mm-yyyy") & ")", "")
             Width: =41
@@ -2268,6 +2309,9 @@ Screens:
                               ),
                               {
                                   ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
                                   RequestNumber: If(
                                       Coalesce(varCurrentRequest.ID, 0) <= 0,
                                       With(
@@ -2361,12 +2405,12 @@ Screens:
                   DisplayMode.Edit,
                   DisplayMode.Disabled
               )
-            Fill: =RGBA(180, 95, 6, 1)
+            Fill: =RGBA(56, 96, 178, 1)
             Font: =Font.'Open Sans'
             Height: =41
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(120, 60, 0, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
               =If(
                   IsBlank(Coalesce(varRequestTitle)) Or Coalesce(varRequestTitle) = ""
@@ -2382,6 +2426,9 @@ Screens:
                           Patch('AV-CD-Requests', Defaults('AV-CD-Requests'),
                               {
                                   ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
                                   RequestNumber: With(
                   {
                       yr: Text(Year(Today())),
@@ -2472,6 +2519,8 @@ Screens:
               Set(varChildFTPPath1, "");
               Set(varChildBelugaRef, "");
               Set(varChildNotes, "");
+              Set(varChildPubBeluga, false);
+              Set(varChildPubSpotify, false);
               Navigate(ChildInfoScreen),
                   Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
               )
@@ -2693,7 +2742,7 @@ Screens:
             Height: =22
             Text: ="Administrator notes"
             Visible: =locShowDetails
-            Width: =470
+            Width: =232
             X: =828
             Y: =280
           Children: []
@@ -2710,7 +2759,7 @@ Screens:
               )
             DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
             Font: =Font.'Open Sans'
-            Height: =74
+            Height: =62
             HintText: ="Comments on this request (the requestor sees them read-only)"
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
@@ -2721,18 +2770,125 @@ Screens:
               If(
                   varUserRole = "ADMINISTRATOR" And Coalesce(varCurrentRequest.ID, 0) > 0,
                   IfError(
-                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ReviewerComments: Self.Text}));
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ReviewerComments: Self.Text, AdminNotesUpdatedOn: Now()}));
                       // keep the management-screen cache in step, so reopening shows the new notes
                       If(
                           Not(IsBlank(LookUp(colMyReqs, ID = varCurrentRequest.ID))),
-                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {ReviewerComments: Self.Text})
+                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {ReviewerComments: Self.Text, AdminNotesUpdatedOn: Now()})
                       );
                       Notify("Administrator notes saved.", NotificationType.Success),
                       Notify("Administrator notes could not be saved: " & FirstError.Message, NotificationType.Error)
                   )
               )
             Visible: =locShowDetails
-            Width: =470
+            Width: =232
             X: =828
-            Y: =304
+            Y: =302
+          Children: []
+      - RS_LblRequestorNotes:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Requestor notes"
+            Visible: =locShowDetails
+            Width: =232
+            X: =1070
+            Y: =280
+          Children: []
+      - RS_RequestorNotes:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(Not((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))) And IsBlank(PlainText(Coalesce(varCurrentRequest.Notes, ""))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Default: |-
+              =If(
+                  (Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) Or Not(IsBlank(PlainText(Coalesce(varCurrentRequest.Notes, "")))),
+                  PlainText(Coalesce(varCurrentRequest.Notes, "")),
+                  "No notes from the requestor"
+              )
+            DisplayMode: |-
+              =// the request owner can always write here, also while Processing (P1-01)
+              If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), DisplayMode.Edit, DisplayMode.View)
+            Font: =Font.'Open Sans'
+            Height: =62
+            HintText: ="Comments for Central Deposit - editable at any time"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            OnChange: |-
+              =If(
+                  (Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And Coalesce(varCurrentRequest.ID, 0) > 0,
+                  IfError(
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {Notes: Self.Text, RequestorNotesUpdatedOn: Now()}));
+                      If(
+                          Not(IsBlank(LookUp(colMyReqs, ID = varCurrentRequest.ID))),
+                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {Notes: Self.Text, RequestorNotesUpdatedOn: Now()})
+                      );
+                      Notify("Requestor notes saved.", NotificationType.Success),
+                      Notify("Requestor notes could not be saved: " & FirstError.Message, NotificationType.Error)
+                  )
+              )
+            Visible: =locShowDetails
+            Width: =232
+            X: =1070
+            Y: =302
+          Children: []
+      - RS_AdminNotesUpdated:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =18
+            Size: =9
+            Text: |-
+              =If(
+                  IsBlank(varCurrentRequest.AdminNotesUpdatedOn),
+                  "Last updated on: -",
+                  "Last updated on " & Text(varCurrentRequest.AdminNotesUpdatedOn, DateTimeFormat.ShortDateTime)
+              )
+            Visible: =locShowDetails
+            Width: =232
+            X: =828
+            Y: =366
+          Children: []
+      - RS_RequestorNotesUpdated:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =18
+            Size: =9
+            Text: |-
+              =If(
+                  IsBlank(varCurrentRequest.RequestorNotesUpdatedOn),
+                  "Last updated on: -",
+                  "Last updated on " & Text(varCurrentRequest.RequestorNotesUpdatedOn, DateTimeFormat.ShortDateTime)
+              )
+            Visible: =locShowDetails
+            Width: =232
+            X: =1070
+            Y: =366
+          Children: []
+      - RS_ThApproved:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =46
+            Size: =11
+            Text: ="APPROVED"
+            Width: =100
+            X: =1030
+            Y: =If(locShowDetails,448,150)
           Children: []

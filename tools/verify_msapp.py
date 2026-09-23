@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v44-reject-vs-needinfo.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v45-notes-approval-podcast.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -123,8 +123,11 @@ STYLE = ('Fill', 'HoverFill', 'PressedFill', 'DisabledFill', 'Color', 'HoverColo
          'RadiusTopLeft', 'RadiusTopRight', 'RadiusBottomLeft', 'RadiusBottomRight',
          'Font', 'Size', 'FontWeight', 'PaddingTop', 'PaddingBottom', 'PaddingLeft', 'PaddingRight')
 # 2b: the pair was rebuilt in Studio and already matches each other
-bad = [p for p in STYLE if rule(RQ, 'RS_BtnDraftSave_1', p) != rule(RQ, 'RS_BtnDraftSave', p)]
-check('2', f'Media matches Save on all {len(STYLE)} style properties', not bad, ','.join(bad))
+# P1-26 (v45): the Media button takes the Submit colours; the rest of its style still matches Save
+bad = [p for p in STYLE if p not in ('Fill', 'HoverFill') and rule(RQ, 'RS_BtnDraftSave_1', p) != rule(RQ, 'RS_BtnDraftSave', p)]
+check('2', f'Media matches Save on the {len(STYLE) - 2} non-colour style properties', not bad, ','.join(bad))
+check('2', 'P1-26: Media button uses the Submit colours',
+      all(rule(RQ, 'RS_BtnDraftSave_1', p) == rule(RQ, 'RS_BtnSubmitRequest', p) for p in ('Fill', 'HoverFill')))
 check('2', 'Media keeps its own caption and position',
       rule(RQ, 'RS_BtnDraftSave_1', 'Text') != rule(RQ, 'RS_BtnDraftSave', 'Text')
       and rule(RQ, 'RS_BtnDraftSave_1', 'X') != rule(RQ, 'RS_BtnDraftSave', 'X'))
@@ -206,8 +209,8 @@ for scr in LOCKED_SCREENS:
             continue
         if LOCKVAR in dm:
             nlocked += 1
-        elif not (c_ == 'CI_Notes' or 'varUserRole' in dm or c_ == 'CI_TplSearch'
-                  or (c_ in ('CI_PodcastVisual', 'CM_EpisodeVisual', 'CL_VTTUpload')
+        elif not (c_ in ('CI_Notes', 'RS_RequestorNotes') or 'varUserRole' in dm or c_ == 'CI_TplSearch'
+                  or (c_ in ('CI_PodcastVisual', 'CM_EpisodeVisual', 'CL_VTTUpload', 'CM_AudioFiles')
                       and dm.strip() == 'DisplayMode.View')):
             unlocked.append(c_)
 check('3a', f'Every request input carries the lock ({nlocked} of them)',
@@ -341,13 +344,11 @@ check('attach', 'CL_VTTUpload name map matches the rows it now lists (Name/Value
       == '{"Name":"Name","Value":"Value"}')
 check('attach', 'Nothing on ChildLegalScreen Patches {Attachments: ...} any more',
       not any(s_ == CL2 and '{Attachments:' in v_ for (s_, c_, p_, v_) in _all_rules))
-_still_broken = [c for (s_, c) in R
-                 if c in ('CI_PodcastVisual', 'CM_EpisodeVisual')
-                 and 'Patch(' in (rule(s_, c, 'OnAddFile') or '')]
-check('attach', 'KNOWN GAP (out of scope): CI_PodcastVisual/CM_EpisodeVisual still '
-      'use the direct-Patch pattern that cannot save attachments',
-      sorted(_still_broken) == ['CI_PodcastVisual', 'CM_EpisodeVisual'],
-      ','.join(sorted(_still_broken)))
+for _s, _c, _flt in ((CI2, 'CI_PodcastVisual', '.png'), (CM2, 'CM_EpisodeVisual', '.png'), (CM2, 'CM_AudioFiles', '.mp3')):
+    _g = R.get((_s, _c), {})
+    check('attach', f'{_c} is a read-only list of the files in the attachments form (v45, no Patch)',
+          _g.get('DisplayMode') == 'DisplayMode.View' and 'CL_DCAttachValue.Attachments' in _g.get('Items', '')
+          and _flt in _g.get('Items', '') and not any(p_ in _g for p_ in ('OnAddFile', 'OnRemoveFile', 'OnUndoRemoveFile')))
 
 
 def _geo(scr, ctl):
@@ -711,13 +712,14 @@ for _b in ('RV_BtnApprove', 'RV_BtnReject', 'RV_BtnNeedInfo'):
 # ---------------- HomeGallery status actions (v42) ----------------
 for _c, _vis, _extra in (('HomeRowUserAction', 'ThisItem.Status.Value = "Pending"', '"User action'),
                          ('HomeRowContinue', 'IsBlank(ThisItem.Status.Value) Or ThisItem.Status.Value = "Draft"', 'Icon.Edit'),
-                         ('HomeRowApproved', 'ThisItem.Status.Value = "Approved"', 'Icon.Check')):
+                         ('HomeRowApproved', 'ThisItem.Status.Value = "Approved" Or ThisItem.Status.Value = "Partially approved"', 'Icon.Check')):
     _g = R.get((MR, _c), {})
     check('row-actions', f'{_c} shows only for its status and opens the row like a click',
           _g.get('Visible') == _vis and 'Select(HomeRowSelect)' in _g.get('OnSelect', '')
           and (_extra in _g.get('Text', '') or _g.get('Icon') == _extra)
           and _g.get('DisplayMode', 'DisplayMode.Edit') == 'DisplayMode.Edit')
-check('row-actions', 'The approved check is green', R.get((MR, 'HomeRowApproved'), {}).get('Color') == 'RGBA(22, 128, 80, 1)')
+check('row-actions', 'The check is green for Approved, amber for Partially approved',
+      R.get((MR, 'HomeRowApproved'), {}).get('Color') == 'If(ThisItem.Status.Value = "Partially approved", RGBA(184, 134, 11, 1), RGBA(22, 128, 80, 1))')
 
 # ---------------- administrator notes = ReviewerComments (v43) ----------------
 check('admin-notes', 'RS_AdminNotes shows ReviewerComments, read-only placeholder for others',
@@ -725,21 +727,54 @@ check('admin-notes', 'RS_AdminNotes shows ReviewerComments, read-only placeholde
       and 'No notes from the administrator' in (rule(RQ, 'RS_AdminNotes', 'Default') or '')
       and 'varCurrentRequest.Notes' not in (rule(RQ, 'RS_AdminNotes', 'Default') or ''))
 check('admin-notes', 'RS_AdminNotes saves ReviewerComments (SharePoint and the list cache)',
-      (rule(RQ, 'RS_AdminNotes', 'OnChange') or '').count('{ReviewerComments: Self.Text}') == 2)
+      (rule(RQ, 'RS_AdminNotes', 'OnChange') or '').count('{ReviewerComments: Self.Text, AdminNotesUpdatedOn: Now()}') == 2)
 for _b in ('RS_BtnDraftSave', 'RS_BtnDraftSave_1', 'RS_BtnSubmitRequest', 'RS_BtnResubmitRequest'):
     _t = rule(RQ, _b, 'OnSelect') or ''
     check('admin-notes', f'{_b} keeps ReviewerComments (admin text, or the stored value for others)',
-          'ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text' in _t and 'Notes: If(' not in _t.replace('ReviewerComments: If(', ''))
+          'ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text' in _t and 'Notes: If(' in _t.replace('ReviewerComments: If(', '')
+          and 'AdminNotesUpdatedOn: If(' in _t and 'RequestorNotesUpdatedOn: If(' in _t)
 
 # ---------------- Rejected vs Pending (Need info) (v44) ----------------
 check('reject', 'Reject writes Rejected, Need info writes Pending, Approve writes Approved',
       'Status: {Value: "Rejected"}' in (rule(RV, 'RV_BtnReject', 'OnSelect') or '')
       and 'Status: {Value: "Pending"}' in (rule(RV, 'RV_BtnNeedInfo', 'OnSelect') or '')
-      and 'Status: {Value: "Approved"}' in (rule(RV, 'RV_BtnApprove', 'OnSelect') or ''))
+      and '"Partially approved",' in (rule(RV, 'RV_BtnApprove', 'OnSelect') or '')
+      and '"Approved"' in (rule(RV, 'RV_BtnApprove', 'OnSelect') or ''))
 check('reject', 'The request screen announces Rejected and Pending differently',
       '"Rejected by "' in _ov_rq and '"More information requested by "' in _ov_rq)
 check('reject', 'The rejection banner shows the reviewer comment',
       'varCurrentRequest.ReviewerComments' in (rule(RQ, 'RS_RejectionComment', 'Text') or ''))
+
+# ---------------- v45: requestor notes, per-media approval, podcast channel ----------------
+_rn = R.get((RQ, 'RS_RequestorNotes'), {})
+check('v45', 'RS_RequestorNotes: owner edits (also while Processing), others read-only with a placeholder',
+      'DisplayMode.Edit' in _rn.get('DisplayMode', '') and "'Created By'.Email" in _rn.get('DisplayMode', '')
+      and 'No notes from the requestor' in _rn.get('Default', ''))
+check('v45', 'RS_RequestorNotes saves Notes + RequestorNotesUpdatedOn (SharePoint and list cache)',
+      _rn.get('OnChange', '').count('{Notes: Self.Text, RequestorNotesUpdatedOn: Now()}') == 2)
+for _c, _col in (('RS_AdminNotesUpdated', 'AdminNotesUpdatedOn'), ('RS_RequestorNotesUpdated', 'RequestorNotesUpdatedOn')):
+    check('v45', f'{_c} shows "Last updated on" from {_col}',
+          f'varCurrentRequest.{_col}' in (rule(RQ, _c, 'Text') or '') and 'Last updated on' in (rule(RQ, _c, 'Text') or ''))
+for _b in ('RV_BtnReject', 'RV_BtnNeedInfo'):
+    check('v45', f'{_b} stamps AdminNotesUpdatedOn with the comment', 'AdminNotesUpdatedOn: Now()' in (rule(RV, _b, 'OnSelect') or ''))
+_ap = R.get((RQ, 'RS_CRowApproved'), {})
+check('v45', 'RS_CRowApproved: admin-only checkbox in RS_ChildrenGallery that saves MediaApproved',
+      'varUserRole = "ADMINISTRATOR"' in _ap.get('DisplayMode', '') and 'MediaApproved: true' in _ap.get('OnCheck', '')
+      and 'MediaApproved: false' in _ap.get('OnUncheck', '')
+      and any(k['Name'] == 'RS_CRowApproved' for c in S[RQ]['Children'] if c['Name'] == 'RS_ChildrenGallery' for k in c['Children']))
+check('v45', 'colArchives loads MediaApproved and PublicationChannel',
+      'MediaApproved: Coalesce(MediaApproved, false)' in _ov_rq and 'PublicationChannel: Concat(PublicationChannel, Value, ";")' in _ov_rq)
+_sv = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''
+check('v45', 'Save Media writes PublicationChannel (Beluga / Spotify)',
+      'PublicationChannel: ForAll(Filter(' in _sv and 'varChildPubSpotify' in _sv)
+check('v45', 'Opening a media item loads the channel; a new one clears it',
+      'Set(varChildPubSpotify, "Spotify" in' in (rule(RQ, 'RS_CRowSelect', 'OnSelect') or '')
+      and 'Set(varChildPubSpotify, false)' in (rule(RQ, 'RS_BtnDraftSave_1', 'OnSelect') or ''))
+for _scr in ('ChildInfoScreen', 'ChildMetaScreen'):
+    check('v45', f'{_scr} takes the attachments snapshot so its file lists show the open item',
+          'Set(varAttachRecord' in (rule(_scr, _scr, 'OnVisible') or ''))
+check('v45', 'P1-21: Request Management opens with the filter sections expanded',
+      'locShowFilters: true' in (rule(MR, MR, 'OnVisible') or ''))
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''
