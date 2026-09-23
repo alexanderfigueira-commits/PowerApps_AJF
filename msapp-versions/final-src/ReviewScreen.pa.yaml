@@ -297,6 +297,9 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: |-
                     =If(
+                        ((Not(IsBlank(ThisItem.PodcastVisualCheck)) And ThisItem.PodcastVisualCheck <> "OK") Or (Not(IsBlank(ThisItem.EpisodeVisualCheck)) And ThisItem.EpisodeVisualCheck <> "OK")),
+                        RGBA(193, 40, 40, 1),
+                        If(
                         Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
                         And Not(IsBlank(First(ThisItem.MediaType).Value))
                         And Not(IsBlank(First(ThisItem.ContractCase).Value))
@@ -304,17 +307,22 @@ Screens:
                         RGBA(22, 128, 80, 1),
                         RGBA(193, 40, 40, 1)
                     )
+                    )
                   Font: =Font.'Open Sans'
                   Height: =36
                   Size: =12
                   Text: |-
                     =If(
+                        ((Not(IsBlank(ThisItem.PodcastVisualCheck)) And ThisItem.PodcastVisualCheck <> "OK") Or (Not(IsBlank(ThisItem.EpisodeVisualCheck)) And ThisItem.EpisodeVisualCheck <> "OK")),
+                        "⚠  Image size",
+                        If(
                         Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
                         And Not(IsBlank(First(ThisItem.MediaType).Value))
                         And Not(IsBlank(First(ThisItem.ContractCase).Value))
                         And Not(ThisItem.AIVoiceover = "Yes"),
                         "✓  Ready",
                         "⚠  Incomplete"
+                    )
                     )
                   Width: =160
                   X: =540

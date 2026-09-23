@@ -80,6 +80,8 @@ Screens:
                             ""
                         )),
                         MediaApproved: Coalesce(MediaApproved, false),
+                        PodcastVisualCheck: Coalesce(PodcastVisualCheck, ""),
+                        EpisodeVisualCheck: Coalesce(EpisodeVisualCheck, ""),
                         PublicationChannel: Concat(PublicationChannel, Value, ";"),
                         ProductionTitle: Coalesce(
                             ProductionTitle,
@@ -848,6 +850,10 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: |-
                     =If(
+                        // podcast image check failed (flow result)
+                        ((Not(IsBlank(ThisItem.PodcastVisualCheck)) And ThisItem.PodcastVisualCheck <> "OK") Or (Not(IsBlank(ThisItem.EpisodeVisualCheck)) And ThisItem.EpisodeVisualCheck <> "OK")),
+                        RGBA(193, 40, 40, 1),
+                        If(
                         Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
                         And Not(IsBlank(ThisItem.MediaType)) And ThisItem.MediaType <> ""
                         And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
@@ -855,17 +861,23 @@ Screens:
                         RGBA(22, 128, 80, 1),
                         RGBA(193, 40, 40, 1)
                     )
+                    )
                   Font: =Font.'Open Sans'
                   Height: =55
                   OnSelect: =Select(Parent)
                   Text: |-
                     =If(
+                        // podcast image check failed (flow result)
+                        ((Not(IsBlank(ThisItem.PodcastVisualCheck)) And ThisItem.PodcastVisualCheck <> "OK") Or (Not(IsBlank(ThisItem.EpisodeVisualCheck)) And ThisItem.EpisodeVisualCheck <> "OK")),
+                        "⚠ Image size",
+                        If(
                         Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
                         And Not(IsBlank(ThisItem.MediaType)) And ThisItem.MediaType <> ""
                         And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
                         And Not(Coalesce(ThisItem.AIVoiceover, false)),
                         "✓  Ready",
                         "⚠  Incomplete"
+                    )
                     )
                   Width: =200
                   X: =634
@@ -1033,6 +1045,7 @@ Screens:
                       Or IsBlank(MediaType) Or MediaType = ""
                       Or IsBlank(ContractCase) Or ContractCase = ""
                       Or Coalesce(AIVoiceover, false)
+                      Or ((Not(IsBlank(PodcastVisualCheck)) And PodcastVisualCheck <> "OK") Or (Not(IsBlank(EpisodeVisualCheck)) And EpisodeVisualCheck <> "OK"))
                   ) = 0,
                   DisplayMode.Edit,
                   DisplayMode.Disabled
@@ -1158,6 +1171,7 @@ Screens:
                       Or IsBlank(MediaType) Or MediaType = ""
                       Or IsBlank(ContractCase) Or ContractCase = ""
                       Or Coalesce(AIVoiceover, false)
+                      Or ((Not(IsBlank(PodcastVisualCheck)) And PodcastVisualCheck <> "OK") Or (Not(IsBlank(EpisodeVisualCheck)) And EpisodeVisualCheck <> "OK"))
                   ) = 0,
                   DisplayMode.Edit,
                   DisplayMode.Disabled
@@ -2556,7 +2570,8 @@ Screens:
                               {lbl: RS_LblDG.Text, gone: RS_LblDG.Visible And IsBlank(HomeFilterDG.Selected.Value)},
                               {lbl: RS_LblOwner.Text, gone: RS_LblOwner.Visible And IsEmpty(RS_Owner.SelectedItems)},
                               {lbl: RS_LblContractor.Text, gone: RS_LblContractor.Visible And IsEmpty(RS_Contractor.SelectedItems)},
-                              {lbl: "Media files", gone: RS_ArchivesSection.Visible And CountRows(colArchives) = 0}
+                              {lbl: "Media files", gone: RS_ArchivesSection.Visible And CountRows(colArchives) = 0},
+                              {lbl: "Podcast image sizes (see the media rows)", gone: CountIf(colArchives, ((Not(IsBlank(PodcastVisualCheck)) And PodcastVisualCheck <> "OK") Or (Not(IsBlank(EpisodeVisualCheck)) And EpisodeVisualCheck <> "OK"))) > 0}
                               ),
                               gone
                           ),

@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v45-notes-approval-podcast.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v46-visual-check.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -775,6 +775,23 @@ for _scr in ('ChildInfoScreen', 'ChildMetaScreen'):
           'Set(varAttachRecord' in (rule(_scr, _scr, 'OnVisible') or ''))
 check('v45', 'P1-21: Request Management opens with the filter sections expanded',
       'locShowFilters: true' in (rule(MR, MR, 'OnVisible') or ''))
+
+# ---------------- v46: podcast image size alerts (flow result columns) ----------------
+for _s, _c, _col in (('ChildInfoScreen', 'CI_PodcastVisualCheck', 'PodcastVisualCheck'),
+                     ('ChildMetaScreen', 'CM_EpisodeVisualCheck', 'EpisodeVisualCheck')):
+    _t = rule(_s, _c, 'Text') or ''
+    check('v46', f'{_c} shows pending / OK / the flow message from {_col}',
+          f'.{_col}' in _t and 'pending' in _t and '"⚠ " & r' in _t and rule(_s, _c, 'Visible') == 'varChildMediaType = "Podcast"')
+check('v46', 'colArchives loads both check columns',
+      'PodcastVisualCheck: Coalesce(PodcastVisualCheck, "")' in _ov_rq and 'EpisodeVisualCheck: Coalesce(EpisodeVisualCheck, "")' in _ov_rq)
+for _b in ('RS_BtnSubmitRequest', 'RS_BtnResubmitRequest'):
+    _d = rule(RQ, _b, 'DisplayMode') or ''
+    check('v46', f'{_b} is blocked only by a known failure, never by a pending check',
+          'Not(IsBlank(PodcastVisualCheck)) And PodcastVisualCheck <> "OK"' in _d
+          and 'Not(IsBlank(EpisodeVisualCheck)) And EpisodeVisualCheck <> "OK"' in _d)
+for _s, _c in ((RQ, 'RS_CRowValid'), (RV, 'RV_CRowValid')):
+    check('v46', f'{_c} flags a failed image check', 'ThisItem.PodcastVisualCheck' in (rule(_s, _c, 'Text') or '') and 'Image size' in (rule(_s, _c, 'Text') or ''))
+check('v46', 'RS_LblMissing lists failed podcast image sizes', 'Podcast image sizes' in (rule(RQ, 'RS_LblMissing', 'Text') or ''))
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''

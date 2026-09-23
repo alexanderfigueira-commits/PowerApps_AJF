@@ -783,6 +783,35 @@ Screens:
                   Width: =900
                   X: =56
                   Y: =404
+            - CI_PodcastVisualCheck:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =With(
+                        {r: LookUp(colArchives, SPId = varCurrentChildSPId).PodcastVisualCheck},
+                        If(IsBlank(r), RGBA(96, 104, 120, 1), r = "OK", RGBA(22, 128, 80, 1), RGBA(193, 40, 40, 1))
+                    )
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =110
+                  Size: =11
+                  Text: |-
+                    =// written by the "AV-CD visual check" flow after Save Media
+                    With(
+                        {r: LookUp(colArchives, SPId = varCurrentChildSPId).PodcastVisualCheck},
+                        If(
+                            IsBlank(r), "Size check pending: it runs automatically after Save Media.",
+                            r = "OK", "✓ Podcast visual: size and format OK",
+                            "⚠ " & r
+                        )
+                    )
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =300
+                  X: =970
+                  Y: =404
+                Children: []
       - CI_BelugaRef:
           Control: Classic/TextInput@2.3.2
           Properties:
