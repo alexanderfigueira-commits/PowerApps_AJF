@@ -556,7 +556,12 @@ Screens:
                   );
                   Notify("Request approved.", NotificationType.Success);
                   Set(varReviewProject, Blank());
-                  Set(varReviewComment, ""),
+                  Set(varReviewComment, "");
+                  // reload the queue from SharePoint so the handled request leaves or updates
+                  Refresh('AV-CD-Requests');
+                  ClearCollect(colRevReqs, 'AV-CD-Requests');
+                  // RequestManagementScreen reloads on its next visit too
+                  Set(varReqDataLoaded, false),
                   Notify("Approve failed: " & FirstError.Message, NotificationType.Error)
               )
             PressedBorderColor: =Self.Fill
@@ -611,7 +616,12 @@ Screens:
                   );
                   Notify("Request rejected. The owner will see your comment on their next visit.", NotificationType.Warning);
                   Set(varReviewProject, Blank());
-                  Set(varReviewComment, ""),
+                  Set(varReviewComment, "");
+                  // reload the queue from SharePoint so the handled request leaves or updates
+                  Refresh('AV-CD-Requests');
+                  ClearCollect(colRevReqs, 'AV-CD-Requests');
+                  // RequestManagementScreen reloads on its next visit too
+                  Set(varReqDataLoaded, false),
                   Notify("Reject failed: " & FirstError.Message, NotificationType.Error)
               )
             PressedBorderColor: =Self.Fill
@@ -665,7 +675,12 @@ Screens:
                   );
                   Notify("Sent back to the requestor for more information.", NotificationType.Success);
                   Set(varReviewProject, Blank());
-                  Set(varReviewComment, ""),
+                  Set(varReviewComment, "");
+                  // reload the queue from SharePoint so the handled request leaves or updates
+                  Refresh('AV-CD-Requests');
+                  ClearCollect(colRevReqs, 'AV-CD-Requests');
+                  // RequestManagementScreen reloads on its next visit too
+                  Set(varReqDataLoaded, false),
                   Notify("Could not send it back: " & FirstError.Message, NotificationType.Error)
               )
             PressedBorderColor: =Self.Fill

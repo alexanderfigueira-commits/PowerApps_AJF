@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v40-review-roles.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v41-review-reload.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -698,6 +698,15 @@ _bad_ug = [f'{s_}.{c_}.{p_}' for (s_, c_), g in R.items() for p_, v_ in g.items(
 check('syntax', 'No Ungroup passes its column as a quoted string', not _bad_ug, ','.join(_bad_ug))
 _odata = [f'{s_}.{c_}.{p_}' for (s_, c_), g in R.items() for p_, v_ in g.items() if "'@odata.type'" in v_]
 check('syntax', "Person values carry no legacy '@odata.type' field", not _odata, ','.join(_odata))
+
+# ---------------- review queue reloads after each action (v41) ----------------
+for _b in ('RV_BtnApprove', 'RV_BtnReject', 'RV_BtnNeedInfo'):
+    _t = rule(RV, _b, 'OnSelect') or ''
+    _ok = _t[:_t.rfind('Notify(')]          # success branch: everything before the failure Notify
+    check('rv-reload', f'{_b} reloads the queue after a successful Patch',
+          all(x in _ok for x in ("Refresh('AV-CD-Requests')", "ClearCollect(colRevReqs, 'AV-CD-Requests')",
+                                 'Set(varReqDataLoaded, false)'))
+          and _ok.index('Patch(') < _ok.index('ClearCollect(colRevReqs'))
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''
