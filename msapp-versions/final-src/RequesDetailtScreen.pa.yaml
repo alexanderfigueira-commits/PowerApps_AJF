@@ -398,12 +398,15 @@ Screens:
             ChevronHoverFill: =Self.ChevronFill
             DefaultSelectedItems: |-
               =With(
-                  {locManual: Last(
+                  {locManual: Coalesce(
+              Last(
                           Filter(
                               colManualContacts,
                               ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber
                           )
-                      ).EmailContact},
+                      ).EmailContact,
+              varCurrentRequest.Manual_DG_Agency_Contact
+              )},
                   Ungroup(
                       Table(
                           {rows: ForAll(varCurrentRequest.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})},
@@ -423,12 +426,15 @@ Screens:
             InputTextPlaceholder: ="Search the DG official responsible"
             Items: |-
               =With(
-                  {locManual: Last(
+                  {locManual: Coalesce(
+              Last(
                           Filter(
                               colManualContacts,
                               ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber
                           )
-                      ).EmailContact},
+                      ).EmailContact,
+              varCurrentRequest.Manual_DG_Agency_Contact
+              )},
                   Ungroup(
                       Table(
                           {rows:
@@ -483,12 +489,15 @@ Screens:
             ChevronHoverFill: =Self.ChevronFill
             DefaultSelectedItems: |-
               =With(
-                  {locManual: Last(
+                  {locManual: Coalesce(
+              Last(
                           Filter(
                               colManualContacts,
                               ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber
                           )
-                      ).EmailContact},
+                      ).EmailContact,
+              varCurrentRequest.Manual_Contractor_Contact
+              )},
                   Ungroup(
                       Table(
                           {rows: ForAll(varCurrentRequest.Contractor_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})},
@@ -508,12 +517,15 @@ Screens:
             InputTextPlaceholder: ="Search the contractor / production company"
             Items: |-
               =With(
-                  {locManual: Last(
+                  {locManual: Coalesce(
+              Last(
                           Filter(
                               colManualContacts,
                               ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber
                           )
-                      ).EmailContact},
+                      ).EmailContact,
+              varCurrentRequest.Manual_Contractor_Contact
+              )},
                   Ungroup(
                       Table(
                           {rows:
@@ -1007,6 +1019,10 @@ Screens:
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  // manual (non-Microsoft 365) email picked in RS_Owner; blank when none
+                                  Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none
+                                  Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
                                   Status: {Value: "Processing"}
                               }
                           )
@@ -1022,6 +1038,8 @@ Screens:
                       );
                       Clear(colArchives);
                       // the management gallery reloads on its next visit
+                      // saved on the request now, so it becomes the source for this request
+                      RemoveIf(colManualContacts, ParentRequest = varCurrentRequest.RequestNumber);
                       Set(varReqDataLoaded, false);
                       Notify("Request submitted successfully.", NotificationType.Success);
                       Navigate(RequestManagementScreen)
@@ -1123,6 +1141,10 @@ Screens:
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  // manual (non-Microsoft 365) email picked in RS_Owner; blank when none
+                                  Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none
+                                  Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
                                   Status: {Value: "Processing"}
                               }
                           )
@@ -1138,6 +1160,8 @@ Screens:
                       );
                       Clear(colArchives);
                       // the management gallery reloads on its next visit
+                      // saved on the request now, so it becomes the source for this request
+                      RemoveIf(colManualContacts, ParentRequest = varCurrentRequest.RequestNumber);
                       Set(varReqDataLoaded, false);
                       Notify("Request resubmitted for review.", NotificationType.Success);
                       Navigate(RequestManagementScreen)
@@ -2279,6 +2303,10 @@ Screens:
                                           Picture: ""
                                       }
                                   ),
+                                  // manual (non-Microsoft 365) email picked in RS_Owner; blank when none
+                                  Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none
+                                  Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
                                   Status: {Value: "Draft"}
                               }
                           )
@@ -2291,6 +2319,8 @@ Screens:
                           {ParentRequest: varCurrentRequest.RequestNumber}
                       );
                       // the management gallery reloads on its next visit
+                      // saved on the request now, so it becomes the source for this request
+                      RemoveIf(colManualContacts, ParentRequest = varCurrentRequest.RequestNumber);
                       Set(varReqDataLoaded, false);
                       Notify("Draft saved.", NotificationType.Success),
               
@@ -2547,12 +2577,15 @@ Screens:
             Color: |-
               =If(
                   IsBlank(
-                      Last(
+                      Coalesce(
+              Last(
                           Filter(
                               colManualContacts,
                               ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber
                           )
-                      ).EmailContact
+                      ).EmailContact,
+              varCurrentRequest.Manual_Contractor_Contact
+              )
                   ),
                   RGBA(150, 155, 165, 1),
                   RGBA(30, 34, 44, 1)
@@ -2562,12 +2595,15 @@ Screens:
             Height: =22
             Text: |-
               =With(
-                  {locSaved: Last(
+                  {locSaved: Coalesce(
+              Last(
                           Filter(
                               colManualContacts,
                               ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber
                           )
-                      ).EmailContact},
+                      ).EmailContact,
+              varCurrentRequest.Manual_Contractor_Contact
+              )},
                   If(IsBlank(locSaved), "Not defined", locSaved)
               )
             Visible: =locShowContactPopup
@@ -2608,12 +2644,15 @@ Screens:
             Color: |-
               =If(
                   IsBlank(
-                      Last(
+                      Coalesce(
+              Last(
                           Filter(
                               colManualContacts,
                               ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber
                           )
-                      ).EmailContact
+                      ).EmailContact,
+              varCurrentRequest.Manual_DG_Agency_Contact
+              )
                   ),
                   RGBA(150, 155, 165, 1),
                   RGBA(30, 34, 44, 1)
@@ -2623,12 +2662,15 @@ Screens:
             Height: =22
             Text: |-
               =With(
-                  {locSaved: Last(
+                  {locSaved: Coalesce(
+              Last(
                           Filter(
                               colManualContacts,
                               ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber
                           )
-                      ).EmailContact},
+                      ).EmailContact,
+              varCurrentRequest.Manual_DG_Agency_Contact
+              )},
                   If(IsBlank(locSaved), "Not defined", locSaved)
               )
             Visible: =locShowContactPopup

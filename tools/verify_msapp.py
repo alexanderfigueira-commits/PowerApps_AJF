@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v35-save-submit.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v36-manual-contacts.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -664,6 +664,21 @@ for _b in ('RS_BtnDraftSave', 'RS_BtnSubmitRequest', 'RS_BtnResubmitRequest'):
           _t.count('DisplayName <> Mail) As u') == 2 and 'SelectedItems As u' not in _t)
     check('save', f'{_b} marks the management list for reload after success',
           'Set(varReqDataLoaded, false)' in _t)
+
+# ---------------- manual contacts persist in their own text columns (v36) ----------------
+for _k, _cb, _col in (('DG/Agency', 'RS_Owner', 'Manual_DG_Agency_Contact'),
+                      ('Contractor', 'RS_Contractor', 'Manual_Contractor_Contact')):
+    for _p in ('Items', 'DefaultSelectedItems'):
+        check('manual', f'{_cb}.{_p} falls back to the saved {_col}',
+              f'varCurrentRequest.{_col}' in (rule(RQ, _cb, _p) or ''))
+    for _b in ('RS_BtnDraftSave', 'RS_BtnSubmitRequest', 'RS_BtnResubmitRequest'):
+        check('manual', f'{_b} writes {_col} from the manual picks in {_cb}',
+              f'{_col}: Concat(Filter({_cb}.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; ")'
+              in (rule(RQ, _b, 'OnSelect') or ''))
+for _b in ('RS_BtnDraftSave', 'RS_BtnSubmitRequest', 'RS_BtnResubmitRequest'):
+    _t = code_only(rule(RQ, _b, 'OnSelect'))
+    check('manual', f'{_b} hands over to the saved column only after the Patch',
+          _t.index('Patch(') < _t.index('RemoveIf(colManualContacts, ParentRequest = varCurrentRequest.RequestNumber)'))
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''

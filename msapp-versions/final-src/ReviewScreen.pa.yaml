@@ -164,7 +164,7 @@ Screens:
             Height: =24
             Size: =12
             Text: |-
-              =Coalesce(varReviewProject.DG.Value, "—") & "   ·   Contact: " & Coalesce(First(varReviewProject.DG_Agency_Contact).DisplayName, "—")
+              =Coalesce(varReviewProject.DG.Value, "—") & "   ·   Contact: " & Coalesce(First(varReviewProject.DG_Agency_Contact).DisplayName, varReviewProject.Manual_DG_Agency_Contact, "—")
             Visible: =Not(IsBlank(varReviewProject))
             Width: =860
             X: =454
@@ -425,7 +425,7 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            Default: =Coalesce(First(varReviewProject.Contractor_Contact).DisplayName, "—")
+            Default: =Coalesce(First(varReviewProject.Contractor_Contact).DisplayName, varReviewProject.Manual_Contractor_Contact, "—")
             DisplayMode: =DisplayMode.View
             Font: =Font.'Open Sans'
             HintText: ="Contractor contact"
