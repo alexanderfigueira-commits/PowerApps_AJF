@@ -12,7 +12,7 @@ import yaml
 from paload import PaLoader
 
 MSAPP = sys.argv[1] if len(sys.argv) > 1 else \
-    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v41-review-reload.msapp'
+    '/home/user/PowerApps_AJF/msapp-versions/AV-CD-v42-row-actions.msapp'
 z = zipfile.ZipFile(MSAPP)
 S, R = {}, {}
 for n in [i.filename for i in z.infolist()]:
@@ -707,6 +707,17 @@ for _b in ('RV_BtnApprove', 'RV_BtnReject', 'RV_BtnNeedInfo'):
           all(x in _ok for x in ("Refresh('AV-CD-Requests')", "ClearCollect(colRevReqs, 'AV-CD-Requests')",
                                  'Set(varReqDataLoaded, false)'))
           and _ok.index('Patch(') < _ok.index('ClearCollect(colRevReqs'))
+
+# ---------------- HomeGallery status actions (v42) ----------------
+for _c, _vis, _extra in (('HomeRowUserAction', 'ThisItem.Status.Value = "Pending"', '"User action'),
+                         ('HomeRowContinue', 'IsBlank(ThisItem.Status.Value) Or ThisItem.Status.Value = "Draft"', 'Icon.Edit'),
+                         ('HomeRowApproved', 'ThisItem.Status.Value = "Approved"', 'Icon.Check')):
+    _g = R.get((MR, _c), {})
+    check('row-actions', f'{_c} shows only for its status and opens the row like a click',
+          _g.get('Visible') == _vis and 'Select(HomeRowSelect)' in _g.get('OnSelect', '')
+          and (_extra in _g.get('Text', '') or _g.get('Icon') == _extra)
+          and _g.get('DisplayMode', 'DisplayMode.Edit') == 'DisplayMode.Edit')
+check('row-actions', 'The approved check is green', R.get((MR, 'HomeRowApproved'), {}).get('Color') == 'RGBA(22, 128, 80, 1)')
 
 # ---------------- after a media save: back to the request, type restored, no picker ----------------
 _save = rule('ChildValidScreen', 'CV_BtnSaveArchive', 'OnSelect') or ''

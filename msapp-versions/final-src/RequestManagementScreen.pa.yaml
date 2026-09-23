@@ -954,6 +954,80 @@ Screens:
                   Width: =115
                   X: =1058
                   Y: =1
+            - HomeRowUserAction:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 96, 178, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(56, 96, 178, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(56, 96, 178, 1)
+                  OnSelect: |-
+                    =// opens the request, same as clicking the row
+                    Select(HomeRowSelect)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: ="User action  →"
+                  Tooltip: ="Open in review queue to approve or reject"
+                  Visible: =ThisItem.Status.Value = "Pending"
+                  Width: =110
+                  X: =1174
+                  Y: =13
+                  ZIndex: =12
+                Children: []
+            - HomeRowContinue:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: ="Continue working on this draft"
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(56, 96, 178, 1)
+                  DisplayMode: =DisplayMode.Edit
+                  FocusedBorderThickness: =0
+                  Height: =30
+                  Icon: =Icon.Edit
+                  OnSelect: |-
+                    =// opens the request, same as clicking the row
+                    Select(HomeRowSelect)
+                  PaddingBottom: =5
+                  PaddingLeft: =5
+                  PaddingRight: =5
+                  PaddingTop: =5
+                  Tooltip: ="Continue working on this draft"
+                  Visible: =IsBlank(ThisItem.Status.Value) Or ThisItem.Status.Value = "Draft"
+                  Width: =30
+                  X: =1190
+                  Y: =15
+                  ZIndex: =13
+                Children: []
+            - HomeRowApproved:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: ="Approved"
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(22, 128, 80, 1)
+                  DisplayMode: =DisplayMode.Edit
+                  FocusedBorderThickness: =0
+                  Height: =30
+                  Icon: =Icon.Check
+                  OnSelect: =Select(HomeRowSelect)
+                  PaddingBottom: =5
+                  PaddingLeft: =5
+                  PaddingRight: =5
+                  PaddingTop: =5
+                  Tooltip: ="Approved"
+                  Visible: =ThisItem.Status.Value = "Approved"
+                  Width: =30
+                  X: =1190
+                  Y: =15
+                  ZIndex: =14
+                Children: []
       - HomeEmptyState:
           Control: Label@2.5.1
           Properties:
