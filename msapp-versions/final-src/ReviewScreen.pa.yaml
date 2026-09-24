@@ -1048,3 +1048,70 @@ Screens:
             Width: =141
             X: =1219
             Y: =73
+      - RV_BtnAssign:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(224, 134, 0, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: |-
+              =// enabled when a person is picked who is not already the assignee
+              If(
+                  IsBlank(RV_Assignee.Selected.Mail)
+                      Or Lower(RV_Assignee.Selected.Mail) = Lower(Coalesce(varReviewProject.Assignee.Email, "")),
+                  DisplayMode.Disabled,
+                  DisplayMode.Edit
+              )
+            Fill: =RGBA(224, 134, 0, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(224, 134, 0, 1), -20%)
+            OnSelect: |-
+              =// Hand-off: saves only the Assignee. The "AV-CD assignee hand-off" flow sees the
+              // change in SharePoint and emails the new assignee (previous assignee in copy).
+              With(
+                  {id: varReviewProject.ID, who: RV_Assignee.Selected.DisplayName},
+                  IfError(
+                      Patch(
+                          'AV-CD-Requests',
+                          LookUp('AV-CD-Requests', ID = id),
+                          {
+                              Assignee: {
+                                  Claims: "i:0#.f|membership|" & Lower(RV_Assignee.Selected.Mail),
+                                  DisplayName: RV_Assignee.Selected.DisplayName,
+                                  Email: RV_Assignee.Selected.Mail,
+                                  Department: "",
+                                  JobTitle: "",
+                                  Picture: ""
+                              }
+                          }
+                      );
+                      Notify(
+                          who & " is now the assignee of " & varReviewProject.RequestNumber
+                              & ". They will receive an email.",
+                          NotificationType.Success
+                      );
+                      Refresh('AV-CD-Requests');
+                      ClearCollect(colRevReqs, 'AV-CD-Requests');
+                      // keep the same request open, now with the new assignee
+                      Set(varReviewProject, LookUp(colRevReqs, ID = id));
+                      Set(varReqDataLoaded, false),
+                      Notify("Assign failed: " & FirstError.Message, NotificationType.Error)
+                  )
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="Assign"
+            Tooltip: ="Save this person as the assignee now. The new assignee gets an email (AV-CD assignee hand-off flow)."
+            Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
+            Width: =90
+            X: =1250
+            Y: =512
+          Children: []

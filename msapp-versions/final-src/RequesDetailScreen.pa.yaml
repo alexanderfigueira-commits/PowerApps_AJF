@@ -21,9 +21,11 @@ Screens:
             varUserDept,
             Office365Users.MyProfile().Department
         );
+        // details open; a blank locDetailsCollapsed also means open, so they are
+        // already open before this runs
         UpdateContext(
             {
-                locShowDetails: true,
+                locDetailsCollapsed: false,
                 locShowMedia: true
             }
         );
@@ -273,7 +275,7 @@ Screens:
             Visible: =Not(IsBlank(Self.Text))
             Width: =587
             X: =38
-            Y: =If(locShowDetails,403,110)
+            Y: =If(locDetailsCollapsed, 110, 403)
       - RS_RequestCard:
           Control: Rectangle@2.3.0
           Properties:
@@ -281,7 +283,7 @@ Screens:
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
             Height: =293
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =1296
             X: =38
             Y: =102
@@ -340,7 +342,7 @@ Screens:
             RadiusTopRight: =18
             Text: ="+"
             Tooltip: ="Add Official Contact"
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =25
             X: =349
             Y: =189
@@ -391,7 +393,7 @@ Screens:
             RadiusTopRight: =18
             Text: ="+"
             Tooltip: ="Add Contrator Contact"
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =25
             X: =714
             Y: =189
@@ -404,7 +406,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Request title *"
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =173
             X: =112
             Y: =112
@@ -551,7 +553,7 @@ Screens:
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             OnChange: =Set(varRequestTitle, Self.Text)
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =627
             X: =112
             Y: =143
@@ -564,7 +566,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="DG / Agency *"
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =300
             X: =828
             Y: =113
@@ -577,7 +579,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Contact (Official DG/Agency) *"
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =279
             X: =57
             Y: =193
@@ -655,7 +657,7 @@ Screens:
             SearchFields: =["DisplayName"]
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =310
             X: =64
             Y: =226
@@ -668,7 +670,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =19
             Text: ="Contact (Contractor)*"
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =300
             X: =422
             Y: =196
@@ -746,7 +748,7 @@ Screens:
             SearchFields: =["DisplayName"]
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =310
             X: =429
             Y: =226
@@ -756,7 +758,7 @@ Screens:
             BorderColor: =RGBA(220, 224, 230, 1)
             Fill: =RGBA(241, 244, 249, 1)
             Height: =220
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =2
             X: =779
             Y: =132
@@ -769,7 +771,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =26
             Text: ="Request description"
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =634
             X: =64
             Y: =276
@@ -782,7 +784,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Administrator notes"
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =232
             X: =828
             Y: =280
@@ -795,7 +797,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Requestor notes"
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =232
             X: =1070
             Y: =280
@@ -813,7 +815,7 @@ Screens:
                   "Last updated on: -",
                   "Last updated on " & Text(varCurrentRequest.AdminNotesUpdatedOn, DateTimeFormat.ShortDateTime)
               )
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =232
             X: =828
             Y: =366
@@ -831,7 +833,7 @@ Screens:
                   "Last updated on: -",
                   "Last updated on " & Text(varCurrentRequest.RequestorNotesUpdatedOn, DateTimeFormat.ShortDateTime)
               )
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =232
             X: =1070
             Y: =366
@@ -848,7 +850,7 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             Mode: =TextMode.MultiLine
             OnChange: =Set(varRequestDescription, Self.Text)
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =675
             X: =64
             Y: =302
@@ -886,7 +888,7 @@ Screens:
                       Notify("Administrator notes could not be saved: " & FirstError.Message, NotificationType.Error)
                   )
               )
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =232
             X: =828
             Y: =302
@@ -923,7 +925,7 @@ Screens:
                       Notify("Requestor notes could not be saved: " & FirstError.Message, NotificationType.Error)
                   )
               )
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =232
             X: =1070
             Y: =302
@@ -980,7 +982,7 @@ Screens:
             Text: ="Media files* (0)"
             Width: =188
             X: =625
-            Y: =If(locShowDetails,413,110)
+            Y: =If(locDetailsCollapsed, 110, 413)
       - RS_ChildrenCard:
           Control: Rectangle@2.3.0
           Group: Group1
@@ -988,10 +990,10 @@ Screens:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =If(locShowDetails,266,550)
+            Height: =If(locDetailsCollapsed, 550, 266)
             Width: =1293
             X: =26
-            Y: =If(locShowDetails,448,150)
+            Y: =If(locDetailsCollapsed, 150, 448)
       - RS_ChildrenHeader:
           Control: Rectangle@2.3.0
           Group: Group1
@@ -1001,7 +1003,7 @@ Screens:
             Height: =46
             Width: =1293
             X: =26
-            Y: =If(locShowDetails,448,150)
+            Y: =If(locDetailsCollapsed, 150, 448)
       - RS_ThTitle:
           Control: Label@2.5.1
           Group: Group1
@@ -1016,7 +1018,7 @@ Screens:
             Text: ="TITLE"
             Width: =351
             X: =36
-            Y: =If(locShowDetails,447,150)
+            Y: =If(locDetailsCollapsed, 150, 447)
       - RS_ThType:
           Control: Label@2.5.1
           Group: Group1
@@ -1031,7 +1033,7 @@ Screens:
             Text: ="TYPE"
             Width: =160
             X: =437
-            Y: =If(locShowDetails,445,150)
+            Y: =If(locDetailsCollapsed, 150, 445)
       - RS_ThValidation:
           Control: Label@2.5.1
           Group: Group1
@@ -1046,7 +1048,7 @@ Screens:
             Text: ="VALIDATION"
             Width: =200
             X: =665
-            Y: =If(locShowDetails,445,150)
+            Y: =If(locDetailsCollapsed, 150, 445)
       - RS_ThStatus:
           Control: Label@2.5.1
           Group: Group1
@@ -1061,7 +1063,7 @@ Screens:
             Text: ="STATUS"
             Width: =120
             X: =909
-            Y: =If(locShowDetails,445,150)
+            Y: =If(locDetailsCollapsed, 150, 445)
       - RS_ChildrenGallery:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
@@ -1074,7 +1076,7 @@ Screens:
             Visible: =locShowMedia
             Width: =1293
             X: =26
-            Y: =If(locShowDetails,496,190)
+            Y: =If(locDetailsCollapsed, 190, 496)
           Children:
             - RS_CRowSelect:
                 Control: Rectangle@2.3.0
@@ -1582,7 +1584,7 @@ Screens:
             PressedFill: =Self.Fill
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =427
             X: =828
             Y: =142
@@ -1599,7 +1601,7 @@ Screens:
             Visible: =CountRows(colArchives) > 0
             Width: =400
             X: =927
-            Y: =If(locShowDetails,413,110)
+            Y: =If(locDetailsCollapsed, 110, 413)
       - RS_TypeIconBtn:
           Control: Classic/Button@2.2.0
           Properties:
@@ -1626,7 +1628,7 @@ Screens:
               =Switch(varRequestMediaType, "Photo","📷","Video","🎬","Podcast","🎙️","➕")
             Tooltip: |-
               =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", "Choose production type", "Production type: " & varRequestMediaType)
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =44
             X: =61
             Y: =144
@@ -1644,7 +1646,7 @@ Screens:
                   "Video", "AI-generated content",
                   "Podcast", "AI-generated voice-over",
                   "")
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =390
             X: =828
             Y: =207
@@ -1667,7 +1669,7 @@ Screens:
                   "Video", "This production uses AI-generated content",
                   "Podcast", "This production uses an AI-generated voice-over",
                   "")
-            Visible: =locShowDetails
+            Visible: =Not(locDetailsCollapsed)
             Width: =390
             X: =834
             Y: =243
@@ -1819,7 +1821,7 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
-              =UpdateContext({locShowDetails: !locShowDetails})
+              =UpdateContext({locDetailsCollapsed: !locDetailsCollapsed})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -1827,8 +1829,8 @@ Screens:
             RadiusBottomRight: =18
             RadiusTopLeft: =18
             RadiusTopRight: =18
-            Text: =If(locShowDetails, "v", ">")
-            Tooltip: =If(locShowDetails, "Collapse request details", "Expand request details")
+            Text: =If(locDetailsCollapsed, ">", "v")
+            Tooltip: =If(locDetailsCollapsed, "Expand request details", "Collapse request details")
             Width: =27
             X: =1304
             Y: =102
@@ -2348,7 +2350,7 @@ Screens:
             Text: ="APPROVED"
             Width: =100
             X: =1030
-            Y: =If(locShowDetails,448,150)
+            Y: =If(locDetailsCollapsed, 150, 448)
       - RS_ThStatus_1:
           Control: Label@2.5.1
           Properties:
@@ -2362,7 +2364,7 @@ Screens:
             Text: ="ACTION"
             Width: =158
             X: =1136
-            Y: =If(locShowDetails,448,150)
+            Y: =If(locDetailsCollapsed, 150, 448)
       - RS_StatusBadge_1:
           Control: Classic/Button@2.2.0
           Properties:
