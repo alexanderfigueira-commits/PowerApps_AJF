@@ -19,13 +19,6 @@ Screens:
         Set(varReviewMineOnly, false);
         ClearCollect(colRevReqs, 'AV-CD-Requests')
     Children:
-      - RV_TopBar:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(0, 18, 107, 1)
-            Height: =52
-            Width: =1366
       - RV_QueuePanel:
           Control: Rectangle@2.3.0
           Properties:
@@ -291,41 +284,6 @@ Screens:
                   Text: =If(IsBlank(First(ThisItem.MediaType).Value), "—", If(First(ThisItem.MediaType).Value = "Photo", "Photo/Reportage", First(ThisItem.MediaType).Value))
                   Width: =140
                   X: =384
-            - RV_CRowValid:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: |-
-                    =If(
-                        ((Not(IsBlank(ThisItem.PodcastVisualCheck)) And ThisItem.PodcastVisualCheck <> "OK") Or (Not(IsBlank(ThisItem.EpisodeVisualCheck)) And ThisItem.EpisodeVisualCheck <> "OK")),
-                        RGBA(193, 40, 40, 1),
-                        If(
-                        Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
-                        And Not(IsBlank(First(ThisItem.MediaType).Value))
-                        And Not(IsBlank(First(ThisItem.ContractCase).Value))
-                        And Not(ThisItem.AIVoiceover = "Yes"),
-                        RGBA(22, 128, 80, 1),
-                        RGBA(193, 40, 40, 1)
-                    )
-                    )
-                  Font: =Font.'Open Sans'
-                  Height: =36
-                  Size: =12
-                  Text: |-
-                    =If(
-                        ((Not(IsBlank(ThisItem.PodcastVisualCheck)) And ThisItem.PodcastVisualCheck <> "OK") Or (Not(IsBlank(ThisItem.EpisodeVisualCheck)) And ThisItem.EpisodeVisualCheck <> "OK")),
-                        "⚠  Image size",
-                        If(
-                        Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
-                        And Not(IsBlank(First(ThisItem.MediaType).Value))
-                        And Not(IsBlank(First(ThisItem.ContractCase).Value))
-                        And Not(ThisItem.AIVoiceover = "Yes"),
-                        "✓  Ready",
-                        "⚠  Incomplete"
-                    )
-                    )
-                  Width: =160
-                  X: =540
             - RV_CRowNotesLbl:
                 Control: Label@2.5.1
                 Properties:
@@ -338,24 +296,33 @@ Screens:
                   Width: =110
                   X: =24
                   Y: =40
-                Children: []
-            - RV_CRowNotes:
-                Control: Classic/TextInput@2.3.2
+            - RV_CRowValid:
+                Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Default: =PlainText(Coalesce(ThisItem.Notes, ""))
-                  DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+                  Color: |-
+                    =If(
+                        Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
+                        And Not(IsBlank(First(ThisItem.MediaType).Value))
+                        And Not(IsBlank(First(ThisItem.ContractCase).Value))
+                        And Not(ThisItem.AIVoiceover = "Yes"),
+                        RGBA(22, 128, 80, 1),
+                        RGBA(193, 40, 40, 1)
+                    )
                   Font: =Font.'Open Sans'
-                  Height: =56
-                  HintText: ="Internal notes for this media item"
-                  HoverBorderColor: =RGBA(0, 18, 107, 1)
-                  HoverFill: =RGBA(186, 202, 226, 1)
-                  Mode: =TextMode.MultiLine
-                  Visible: =true
-                  Width: =690
-                  X: =140
-                  Y: =38
-                Children: []
+                  Height: =36
+                  Size: =12
+                  Text: |-
+                    =If(
+                        Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
+                        And Not(IsBlank(First(ThisItem.MediaType).Value))
+                        And Not(IsBlank(First(ThisItem.ContractCase).Value))
+                        And Not(ThisItem.AIVoiceover = "Yes"),
+                        "✓  Ready",
+                        "⚠  Incomplete"
+                    )
+                  Width: =160
+                  X: =540
             - RV_CRowNotesSave:
                 Control: Classic/Icon@2.5.0
                 Properties:
@@ -373,7 +340,21 @@ Screens:
                   Width: =32
                   X: =846
                   Y: =50
-                Children: []
+            - RV_CRowNotes:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =PlainText(Coalesce(ThisItem.Notes, ""))
+                  DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+                  Font: =Font.'Open Sans'
+                  Height: =56
+                  HintText: ="Internal notes for this media item"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Mode: =TextMode.MultiLine
+                  Width: =690
+                  X: =140
+                  Y: =38
       - RV_DetailDivider2:
           Control: Rectangle@2.3.0
           Properties:
@@ -391,11 +372,11 @@ Screens:
             Color: =RGBA(60, 66, 80, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =24
-            Text: ="Assignee(s)  -  approver is added on approval; add a co-assignee when needed"
+            Height: =28
+            Text: ="Co-assignee when needed                                           Assignee  -  approver is added on approval "
             Visible: =Not(IsBlank(varReviewProject))
-            Width: =700
-            X: =460
+            Width: =800
+            X: =454
             Y: =484
       - RV_Assignee:
           Control: Classic/ComboBox@2.4.0
@@ -512,6 +493,13 @@ Screens:
             Width: =900
             X: =436
             Y: =706
+      - RV_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
       - RV_BtnApprove:
           Control: Classic/Button@2.2.0
           Properties:
@@ -722,15 +710,15 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(140, 148, 160, 1)
             Font: =Font.'Open Sans'
-            Height: =24
+            Height: =27
             Size: =12
             Text: ="A reviewer comment is required before rejecting."
             Visible: |-
               =Not(IsBlank(varReviewProject))
               And (IsBlank(varReviewComment) Or varReviewComment = "")
-            Width: =440
-            X: =457
-            Y: =674
+            Width: =387
+            X: =965
+            Y: =574
       - RV_Title:
           Control: Label@2.5.1
           Properties:

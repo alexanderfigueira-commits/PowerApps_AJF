@@ -9,7 +9,7 @@
 EditorState:
   ScreensOrder:
     - RequestManagementScreen
-    - RequesDetailtScreen
+    - RequesDetailScreen
     - ChildInfoScreen
     - ChildMetaScreen
     - ChildLegalScreen

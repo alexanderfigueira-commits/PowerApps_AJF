@@ -265,8 +265,22 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =52
+                  OnSelect: |-
+                    =// The production type is on the media list (MediaType, multi-select Choice),
+                    // not on the request. The request's first media item decides the screen.
+                    Set(varPrintRequest, ThisItem);
+                    Switch(
+                        First(LookUp('AV-CD-Mediafiles', ParentRequest = ThisItem.RequestNumber).MediaType).Value,
+                        "Video", Navigate(PrintVideoDetailScreen, ScreenTransition.None),
+                        "Podcast", Navigate(PrintPodcastDetailScreen, ScreenTransition.None),
+                        "Photo", Navigate(PrintPhotoDetailScreen, ScreenTransition.None),
+                        Notify("Request " & ThisItem.RequestNumber & " has no media file with a production type yet, "
+                            & "so there is nothing to print.", NotificationType.Warning)
+                    )
                   Size: =22
+                  TabIndex: =0
                   Text: ="›"
+                  Tooltip: ="Open the print view"
                   Width: =36
                   X: =1250
             - HP_RowDG:

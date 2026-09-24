@@ -20,7 +20,7 @@ Screens:
                 "REQUESTOR"
             )
         );
-        
+
         // Data loads once per session, or whenever the cache is empty (self-heal),
         // instead of on every visit. Use HomeBtnRefresh to reload on demand.
         If(
@@ -54,7 +54,7 @@ Screens:
             );
             Set(varReqDataLoaded, true)
         );
-        
+
         // Filters initialise once, so the selection survives navigating away and back.
         If(
             Not(varReqFiltersInit),
@@ -66,7 +66,7 @@ Screens:
             UpdateContext({locProdTypeFilter: Blank(), locShowFilters: true});
             Set(varReqFiltersInit, true)
         );
-        
+
         // A status handed over from the dashboard still wins on every visit.
         If(
             Not(IsBlank(varNavFilter)),
@@ -107,120 +107,6 @@ Screens:
             Fill: =RGBA(0, 18, 107, 1)
             Height: =56
             Width: =1366
-      - NavPanel_MyRequestScreen_2:
-          Control: Classic/Button@2.2.0
-          Group: menu
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledFill: =RGBA(255, 255, 255, 0.10)
-            DisplayMode: =DisplayMode.View
-            Fill: =RGBA(255, 255, 255, 0.10)
-            Font: =Font.'Open Sans'
-            Height: =52
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(255, 255, 255, 0.10)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(255, 255, 255, 0.10)
-            RadiusBottomLeft: =24
-            RadiusBottomRight: =24
-            RadiusTopLeft: =24
-            RadiusTopRight: =24
-            Size: =10
-            TabIndex: =-1
-            Text: =""
-            Width: =424
-            X: =686
-            Y: =5
-      - NavBtnRequests_MyRequestScreen_2:
-          Control: Classic/Button@2.2.0
-          Group: menu
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(RequestManagementScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="📋 Requests"
-            Tooltip: ="Requests"
-            Width: =83
-            X: =698
-            Y: =10
-      - NavBtnDashboard_MyRequestScreen_4:
-          Control: Classic/Button@2.2.0
-          Group: menu
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            Height: =38
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(DashboardScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="📊" & Char(10) & "Dashboard"
-            Tooltip: ="Dashboard"
-            Width: =83
-            X: =789
-            Y: =10
-      - NavBtnHelp_MyRequestScreen_4:
-          Control: Classic/Button@2.2.0
-          Group: menu
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(HelpScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="🔎" & Char(10) & "Help"
-            Tooltip: ="Help"
-            Width: =83
-            X: =1030
-            Y: =10
       - HomePageTitle:
           Control: Label@2.5.1
           Properties:
@@ -233,35 +119,6 @@ Screens:
             Width: =600
             X: =48
             Y: =68
-      - NavBtnReview_MyRequestScreen_2:
-          Control: Classic/Button@2.2.0
-          Group: menu
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(ReviewScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="👁" & Char(10) & "Review"
-            Tooltip: ="Review"
-            Visible: =varUserRole = "ADMINISTRATOR"
-            Width: =83
-            X: =874
-            Y: =10
       - HomeBtnNew:
           Control: Classic/Button@2.2.0
           Properties:
@@ -285,7 +142,7 @@ Screens:
               Set(varRequestMediaType, "");
               // drop manual contacts left by a new request that was never saved
               RemoveIf(colManualContacts, IsBlank(ParentRequest) Or ParentRequest = "");
-              Navigate(RequesDetailtScreen, ScreenTransition.None, {locShowTypePicker: true, locResetContacts: true})
+              Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: true, locResetContacts: true})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -313,7 +170,7 @@ Screens:
             PressedFill: =Self.Color
             Size: =12
             Text: |-
-              ="All  (" & Text(
+              ="All Status (" & Text(
                   CountRows(
                       Filter(
                           colMyReqs,
@@ -336,8 +193,8 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =86
-            X: =644
+            Width: =110
+            X: =639
             Y: =147
       - HomeChipDraft:
           Control: Classic/Button@2.2.0
@@ -382,8 +239,8 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =96
-            X: =739
+            Width: =80
+            X: =759
             Y: =146
       - HomeChipSubmitted:
           Control: Classic/Button@2.2.0
@@ -428,7 +285,7 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =112
+            Width: =110
             X: =979
             Y: =146
       - HomeChipApproved:
@@ -474,7 +331,7 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =120
+            Width: =110
             X: =1099
             Y: =146
       - HomeChipRejected:
@@ -520,8 +377,8 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =112
-            X: =1227
+            Width: =110
+            X: =1222
             Y: =146
       - HomeTableCard:
           Control: Rectangle@2.3.0
@@ -601,8 +458,8 @@ Screens:
             Size: =12
             Text: =If(locShowFilters, "▴  Fewer filters", "▾  More filters")
             Width: =142
-            X: =1059
-            Y: =72
+            X: =1200
+            Y: =69
       - HomeTableHeader:
           Control: Rectangle@2.3.0
           Group: Group2
@@ -762,7 +619,7 @@ Screens:
                     Set(varRequestDescription, Coalesce(ThisItem.Description, ""));
                     Set(varRequestOwnerContact, Coalesce(First(ThisItem.DG_Agency_Contact).DisplayName, ""));
                     Set(varRequestMediaType, "");
-                    Navigate(RequesDetailtScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
+                    Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
                   Width: =1323
             - HomeRowDivider:
                 Control: Rectangle@2.3.0
@@ -914,7 +771,7 @@ Screens:
                   Tooltip: ="Open in review queue to approve or reject"
                   Visible: =ThisItem.Status.Value = "Processing" And varUserRole = "ADMINISTRATOR"
                   Width: =70
-                  X: =1174
+                  X: =1194
                   Y: =13
             - HomeRowAssignee:
                 Control: Label@2.5.1
@@ -979,17 +836,14 @@ Screens:
                   Tooltip: ="Open in review queue to approve or reject"
                   Visible: =ThisItem.Status.Value = "Pending"
                   Width: =110
-                  X: =1174
+                  X: =1190
                   Y: =13
-                  ZIndex: =12
-                Children: []
             - HomeRowContinue:
                 Control: Classic/Icon@2.5.0
                 Properties:
                   AccessibleLabel: ="Continue working on this draft"
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =RGBA(56, 96, 178, 1)
-                  DisplayMode: =DisplayMode.Edit
                   FocusedBorderThickness: =0
                   Height: =30
                   Icon: =Icon.Edit
@@ -1003,17 +857,14 @@ Screens:
                   Tooltip: ="Continue working on this draft"
                   Visible: =IsBlank(ThisItem.Status.Value) Or ThisItem.Status.Value = "Draft"
                   Width: =30
-                  X: =1190
+                  X: =1214
                   Y: =15
-                  ZIndex: =13
-                Children: []
             - HomeRowApproved:
                 Control: Classic/Icon@2.5.0
                 Properties:
                   AccessibleLabel: =ThisItem.Status.Value
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(ThisItem.Status.Value = "Partially approved", RGBA(184, 134, 11, 1), RGBA(22, 128, 80, 1))
-                  DisplayMode: =DisplayMode.Edit
                   FocusedBorderThickness: =0
                   Height: =30
                   Icon: =Icon.Check
@@ -1025,10 +876,8 @@ Screens:
                   Tooltip: =ThisItem.Status.Value
                   Visible: =ThisItem.Status.Value = "Approved" Or ThisItem.Status.Value = "Partially approved"
                   Width: =30
-                  X: =1190
-                  Y: =15
-                  ZIndex: =14
-                Children: []
+                  X: =1214
+                  Y: =16
       - HomeEmptyState:
           Control: Label@2.5.1
           Properties:
@@ -1072,9 +921,47 @@ Screens:
             PressedFill: =Self.Color
             Size: =12
             Text: ="Clear"
-            Width: =100
-            X: =1205
-            Y: =73
+            Width: =108
+            X: =961
+            Y: =72
+      - HomeBtnRefresh:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(247, 248, 250, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =Refresh('AV-CD-Requests');
+              Refresh('AV-CD-Mediafiles');
+              ClearCollect(colMyReqs, 'AV-CD-Requests');
+              ClearCollect(colMyMedia, 'AV-CD-Mediafiles');
+              Set(
+                  varMyRequestorName,
+                  LookUp(colMyReqs, 'Created By'.Email = User().Email, 'Created By'.DisplayName)
+              );
+              ClearCollect(colRequestorOptions, {Value: "All"});
+              Collect(
+                  colRequestorOptions,
+                  Sort(Distinct(colMyReqs, 'Created By'.DisplayName), Value)
+              );
+              Set(varReqDataLoaded, true);
+              Notify("Requests reloaded from SharePoint.", NotificationType.Information)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="⟳  Reload"
+            Tooltip: ="Reload requests and media files from SharePoint"
+            Width: =108
+            X: =1079
+            Y: =72
       - HomeCounterBar:
           Control: Label@2.5.1
           Properties:
@@ -1092,7 +979,7 @@ Screens:
               )
             Font: =Font.'Open Sans'
             Height: =22
-            Size: =12
+            Size: =10
             Text: |-
               =Text(CountRows(HomeGallery.AllItems)) & If(CountRows(HomeGallery.AllItems) = 1, "  request", "  requests") & "   " &
               If(
@@ -1110,8 +997,8 @@ Screens:
                   )
               )
             Width: =215
-            X: =51
-            Y: =708
+            X: =21
+            Y: =712
       - HomeLblArchive:
           Control: Label@2.5.1
           Properties:
@@ -1315,8 +1202,8 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =128
-            X: =843
+            Width: =120
+            X: =848
             Y: =146
       - HomeTypePhoto:
           Control: Classic/Button@2.2.0
@@ -1338,7 +1225,7 @@ Screens:
             PressedFill: =RGBA(230, 236, 245, 1)
             Size: =12
             Text: |-
-              ="📷 Photo  (" & Text(
+              ="📷   (" & Text(
                   CountRows(
                       Filter(
                           colMyReqs,
@@ -1361,8 +1248,9 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =125
-            X: =178
+            Tooltip: ="Reportage/Photo"
+            Width: =80
+            X: =228
             Y: =145
       - HomeTypeVideo:
           Control: Classic/Button@2.2.0
@@ -1384,7 +1272,7 @@ Screens:
             PressedFill: =RGBA(230, 236, 245, 1)
             Size: =12
             Text: |-
-              ="🎬  Video  (" & Text(
+              ="🎬  (" & Text(
                   CountRows(
                       Filter(
                           colMyReqs,
@@ -1407,8 +1295,11 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =120
-            X: =315
+            Tooltip: |-
+              ="Video
+              "
+            Width: =80
+            X: =320
             Y: =145
       - HomeTypePodcast:
           Control: Classic/Button@2.2.0
@@ -1430,7 +1321,7 @@ Screens:
             PressedFill: =RGBA(230, 236, 245, 1)
             Size: =12
             Text: |-
-              ="🎙️  Podcast  (" & Text(
+              ="🎙️  (" & Text(
                   CountRows(
                       Filter(
                           colMyReqs,
@@ -1453,8 +1344,9 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =130
-            X: =447
+            Tooltip: ="Podcast"
+            Width: =80
+            X: =412
             Y: =145
       - HomeTypeAll:
           Control: Classic/Button@2.2.0
@@ -1476,7 +1368,7 @@ Screens:
             PressedFill: =RGBA(230, 236, 245, 1)
             Size: =12
             Text: |-
-              ="🗂️  All Media  (" & Text(
+              ="All Media (" & Text(
                   CountRows(
                       Filter(
                           colMyReqs,
@@ -1493,8 +1385,9 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =141
-            X: =29
+            Tooltip: ="All Media"
+            Width: =120
+            X: =94
             Y: =145
       - HomeLblProdType:
           Control: Label@2.5.1
@@ -1504,12 +1397,12 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =15
+            Height: =22
             Size: =10
             Text: ="PRODUCTION TYPE"
-            Width: =552
-            X: =25
-            Y: =123
+            Width: =579
+            X: =36
+            Y: =118
       - HomeThAction:
           Control: Label@2.5.1
           Group: Group2
@@ -1525,55 +1418,6 @@ Screens:
             Width: =108
             X: =1200
             Y: =If(locShowFilters,330,200)
-      - HomeAppTitle_3:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =37
-            Size: =14
-            Text: ="Central Deposit"
-            VerticalAlign: =VerticalAlign.Bottom
-            Width: =193
-            X: =244
-            Y: =8
-      - Logo_EC_Form_8:
-          Control: Image@2.2.3
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =50
-            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
-            PaddingLeft: =15
-            Width: =186
-            X: =2
-            Y: =2
-      - CD_Logo_3:
-          Control: Image@2.2.3
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =31
-            Image: =cd_badge_play
-            Width: =31
-            X: =208
-            Y: =20
-      - HomeAppSubtitle_3:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.'Open Sans'
-            Height: =22
-            Size: =10
-            Text: ="Ticket System"
-            VerticalAlign: =VerticalAlign.Top
-            X: =266
-            Y: =32
       - HomeDateArrow_1:
           Control: Label@2.5.1
           Properties:
@@ -1597,12 +1441,12 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =16
+            Height: =23
             Size: =10
             Text: ="STATUS"
-            Width: =600
-            X: =745
-            Y: =122
+            Width: =706
+            X: =639
+            Y: =117
       - HomeLblArchive_1:
           Control: Label@2.5.1
           Properties:
@@ -1677,53 +1521,6 @@ Screens:
             Width: =330
             X: =767
             Y: =270
-      - Image1_8:
-          Control: Image@2.2.3
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =56
-            Image: =User().Image
-            RadiusBottomLeft: =3
-            RadiusBottomRight: =3
-            RadiusTopLeft: =3
-            RadiusTopRight: =3
-            Tooltip: |-
-              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
-              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
-            Width: =61
-            X: =1305
-            Y: =1
-      - NavBtnDashboard_MyRequestScreen_5:
-          Control: Classic/Button@2.2.0
-          Group: menu
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: |-
-              =ClearCollect(colPrintData, HomeGallery.AllItems);
-              Navigate(HomePrintScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="📂
-              Export"
-            Tooltip: ="Dashboard"
-            Width: =83
-            X: =947
-            Y: =10
       - HomeThAction_1:
           Control: Label@2.5.1
           Properties:
@@ -1777,15 +1574,256 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =16
+            Height: =14
             Size: =10
             Text: ="TITLE"
             Visible: =locShowFilters
-            Width: =317
-            X: =151
+            Width: =579
+            X: =36
             Y: =196
-      - HomeUserName_8:
+      - HomeAppTitle_9:
           Control: Label@2.5.1
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Size: =14
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =193
+            X: =244
+            Y: =8
+      - Logo_EC_Form_15:
+          Control: Image@2.2.3
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =50
+            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
+            PaddingLeft: =15
+            Width: =186
+            X: =2
+            Y: =2
+      - CD_Logo_9:
+          Control: Image@2.2.3
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =31
+            Image: =cd_badge_play
+            Width: =31
+            X: =208
+            Y: =20
+      - HomeAppSubtitle_9:
+          Control: Label@2.5.1
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =266
+            Y: =32
+      - NavPanel_MyRequestScreen_16:
+          Control: Classic/Button@2.2.0
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =RGBA(255, 255, 255, 0.10)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(255, 255, 255, 0.10)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 0.10)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(255, 255, 255, 0.10)
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            Size: =10
+            TabIndex: =-1
+            Text: =""
+            Width: =424
+            X: =666
+            Y: =4
+      - NavBtnRequests_MyRequestScreen_16:
+          Control: Classic/Button@2.2.0
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(RequestManagementScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📋 Requests"
+            Tooltip: ="Requests"
+            Width: =83
+            X: =678
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_32:
+          Control: Classic/Button@2.2.0
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(DashboardScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📊" & Char(10) & "Dashboard"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =769
+            Y: =9
+      - NavBtnReview_MyRequestScreen_16:
+          Control: Classic/Button@2.2.0
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(ReviewScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="👁" & Char(10) & "Review"
+            Tooltip: ="Review"
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =83
+            X: =854
+            Y: =9
+      - NavBtnHelp_MyRequestScreen_16:
+          Control: Classic/Button@2.2.0
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Width: =83
+            X: =1010
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_33:
+          Control: Classic/Button@2.2.0
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =ClearCollect(colPrintData, HomeGallery.AllItems);
+              Navigate(HomePrintScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📂
+              Export"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =927
+            Y: =9
+      - Image1_16:
+          Control: Image@2.2.3
+          Group: Header_3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+            Y: =1
+      - HomeUserName_16:
+          Control: Label@2.5.1
+          Group: Header_3
           Properties:
             Align: =Align.Center
             BorderColor: =RGBA(0, 18, 107, 1)
@@ -1802,42 +1840,3 @@ Screens:
             Width: =174
             X: =1139
             Y: =6
-      - HomeBtnRefresh:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =1
-            Color: =RGBA(96, 104, 120, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(247, 248, 250, 1)
-            Font: =Font.'Open Sans'
-            Height: =36
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(230, 236, 245, 1)
-            OnSelect: |-
-              =Refresh('AV-CD-Requests');
-              Refresh('AV-CD-Mediafiles');
-              ClearCollect(colMyReqs, 'AV-CD-Requests');
-              ClearCollect(colMyMedia, 'AV-CD-Mediafiles');
-              Set(
-                  varMyRequestorName,
-                  LookUp(colMyReqs, 'Created By'.Email = User().Email, 'Created By'.DisplayName)
-              );
-              ClearCollect(colRequestorOptions, {Value: "All"});
-              Collect(
-                  colRequestorOptions,
-                  Sort(Distinct(colMyReqs, 'Created By'.DisplayName), Value)
-              );
-              Set(varReqDataLoaded, true);
-              Notify("Requests reloaded from SharePoint.", NotificationType.Success)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =12
-            Text: ="⟳  Reload"
-            Tooltip: ="Reload requests and media files from SharePoint"
-            Width: =108
-            X: =945
-            Y: =72
-          Children: []
