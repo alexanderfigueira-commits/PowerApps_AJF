@@ -666,7 +666,7 @@ Screens:
             Height: =65
             Size: =10
             Text: |-
-              ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles here - for podcasts also the podcast visual, episode visuals and audio files. Everything is saved to this media item when you press Save Media.
+              ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles here. Podcast visuals and audio files are added on the Info and Metadata tabs. Everything is saved to this media item when you press Save Media.
               "
             Width: =460
             X: =874
@@ -771,7 +771,34 @@ Screens:
                   DisplayName: =DataSourceInfo([@'AV-CD-Mediafiles'],DataSourceInfo.DisplayName,Attachments)
                   Height: =360
                   Required: =false
-                  Update: =CL_DCAttachValue.Attachments
+                  Update: |-
+                    =// CL_FormAttach is the only form that is submitted (Save Media). For podcasts the
+                    // podcast visual (Info tab, CI_PodcastVisual) and the audio files (Metadata tab,
+                    // CM_AudioFiles) are edited in their own forms; their changes are merged here so
+                    // one SubmitForm saves every file and no form removes another form's files.
+                    With(
+                        {
+                            podcast: varChildMediaType = "Podcast",
+                            saved: varAttachRecord.Attachments.DisplayName,
+                            here: CL_DCAttachValue.Attachments.Name
+                        },
+                        Ungroup(
+                            Table(
+                                // this panel's files, minus the podcast files removed on Info / Metadata
+                                {files: Filter(
+                                    CL_DCAttachValue.Attachments,
+                                    Not(podcast)
+                                        Or Not(Name in saved)
+                                        Or (Not(EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")) Or Name in CI_PodcastVisual.Attachments.Name)
+                                            And (Not(EndsWith(Lower(Name), ".mp3") Or EndsWith(Lower(Name), ".wav") Or EndsWith(Lower(Name), ".m4a") Or EndsWith(Lower(Name), ".aac")) Or Name in CM_AudioFiles.Attachments.Name)
+                                )},
+                                // new files added on Info / Metadata
+                                {files: Filter(CI_PodcastVisual.Attachments, podcast And Not(Name in saved) And Not(Name in here))},
+                                {files: Filter(CM_AudioFiles.Attachments, podcast And Not(Name in saved) And Not(Name in here))}
+                            ),
+                            files
+                        )
+                    )
                   Width: =484
                   X: =0
                   Y: =1

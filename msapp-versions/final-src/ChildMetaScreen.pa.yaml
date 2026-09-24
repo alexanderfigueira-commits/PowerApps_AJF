@@ -947,7 +947,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="Episode visual  - upload it in 3. Legal & Docs, attachments panel"
+                  Text: ="Episode visual  - upload it on 1. Info, with the podcast visual (📎 Podcast visual)"
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =56
@@ -974,7 +974,7 @@ Screens:
                   FontWeight: =FontWeight.Semibold
                   Height: =22
                   Text: |-
-                    ="Audio file(s) - upload them in 3. Legal & Docs, attachments panel (MP3, WAV, M4A or AAC; very large files: use the FTP path)"
+                    ="Audio file(s) (MP3, WAV, M4A or AAC; very large files: use the FTP path)"
                   Visible: =varChildMediaType = "Podcast"
                   Width: =1100
                   X: =56
@@ -1004,8 +1004,8 @@ Screens:
                   ItemFill: =RGBA(56, 96, 178, 1)
                   ItemHoverFill: =RGBA(186, 202, 226, 1)
                   Items: |-
-                    =// read-only: files are uploaded in the Legal & Docs attachments panel (CL_FormAttach)
-                    Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))
+                    =// read-only: podcast and episode visuals are uploaded on the Info tab (CI_PodcastVisual)
+                    Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))
                   Items.Name: =Name
                   Items.Value: =Value
                   MaxAttachments: =3
@@ -1015,29 +1015,35 @@ Screens:
                   Width: =1230
                   X: =56
                   Y: =650
-            - CM_AudioFiles:
-                Control: Attachments@2.3.0
+            - CM_BtnOpenAttach:
+                Control: Classic/Button@2.2.0
                 Properties:
-                  BorderColor: =RGBA(220, 224, 230, 1)
-                  DisplayMode: =DisplayMode.View
+                  BorderColor: =RGBA(56, 96, 178, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(56, 96, 178, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
                   Font: =Font.'Open Sans'
-                  Height: =80
-                  HoverFill: =RGBA(186, 202, 226, 1)
-                  ItemColor: =RGBA(255, 255, 255, 1)
-                  ItemFill: =RGBA(56, 96, 178, 1)
-                  ItemHoverFill: =RGBA(186, 202, 226, 1)
-                  Items: |-
-                    =// read-only: files are uploaded in the Legal & Docs attachments panel (CL_FormAttach)
-                    Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".mp3") Or EndsWith(Lower(Name), ".wav") Or EndsWith(Lower(Name), ".m4a") Or EndsWith(Lower(Name), ".aac"))
-                  Items.Name: =Name
-                  Items.Value: =Value
-                  MaxAttachments: =3
-                  PressedColor: =RGBA(255, 255, 255, 1)
-                  PressedFill: =RGBA(0, 18, 107, 1)
+                  Height: =48
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(230, 236, 245, 1)
+                  OnSelect: |-
+                    =UpdateContext({locShowAudioFiles: true})
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: |-
+                    =With({files: Filter(CM_AudioFiles.Attachments, EndsWith(Lower(Name), ".mp3") Or EndsWith(Lower(Name), ".wav") Or EndsWith(Lower(Name), ".m4a") Or EndsWith(Lower(Name), ".aac"))},
+                        "📎 Audio files: " & If(IsEmpty(files), "no file yet", Concat(files, Name, ", "))
+                        & "   ·   click to upload or remove")
                   Visible: =varChildMediaType = "Podcast"
                   Width: =1230
                   X: =56
                   Y: =940
+                  ZIndex: =72
+                Children: []
       - CM_TopBar:
           Control: Rectangle@2.3.0
           Properties:
@@ -1391,3 +1397,279 @@ Screens:
             Width: =174
             X: =1139
             Y: =6
+      - CM_AttachShade:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.35)
+            Height: =768
+            OnSelect: |-
+              =UpdateContext({locShowAudioFiles: false})
+            Visible: =locShowAudioFiles And varChildMediaType = "Podcast"
+            Width: =1366
+            ZIndex: =35
+          Children: []
+      - CM_AttachPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =594
+            Visible: =locShowAudioFiles And varChildMediaType = "Podcast"
+            Width: =492
+            X: =858
+            Y: =110
+            ZIndex: =36
+      - CM_LblAttachPanel:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =16
+            Text: ="Audio files"
+            Visible: =locShowAudioFiles And varChildMediaType = "Podcast"
+            Width: =460
+            X: =874
+            Y: =120
+            ZIndex: =37
+      - CM_AttachFor:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: |-
+              ="Media item: " & Coalesce(varChildTitle1, varChildTitle, "Untitled media item")
+              & If(
+                  IsBlank(varAttachRecord),
+                  "  ·  not saved in SharePoint yet",
+                  "  ·  " & varAttachRecord.CD_MediaNumber
+              )
+            Visible: =locShowAudioFiles And varChildMediaType = "Podcast"
+            Width: =460
+            X: =874
+            Y: =150
+            ZIndex: =38
+      - CM_AttachHint:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =65
+            Size: =10
+            Text: |-
+              ="Up to 3 audio files (MP3, WAV, M4A or AAC). Very large files: use the FTP path. The files are saved to this media item when you press Save Media on the Validations tab."
+            Visible: =locShowAudioFiles And varChildMediaType = "Podcast"
+            Width: =460
+            X: =874
+            Y: =190
+            ZIndex: =39
+      - CM_FormAudioFiles:
+          Control: Form@2.4.4
+          Variant: Classic
+          Layout: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DataSource: ='AV-CD-Mediafiles'
+            DefaultMode: =If(varRequestorLocked, FormMode.View, FormMode.Edit)
+            Height: =420
+            Item: |-
+              =If(
+                  IsBlank(varAttachRecord),
+                  Defaults('AV-CD-Mediafiles'),
+                  varAttachRecord
+              )
+            NumberOfColumns: =1
+            OnFailure: |-
+              =// not submitted: Save Media submits CL_FormAttach, which saves these files too
+              false
+            OnSuccess: |-
+              =// not submitted: Save Media submits CL_FormAttach, which saves these files too
+              false
+            Visible: =locShowAudioFiles And varChildMediaType = "Podcast"
+            Width: =484
+            X: =862
+            Y: =If(IsBlank(varAttachRecord), 278, 250)
+            ZIndex: =40
+          Children:
+            - CM_DCAudId:
+                Control: TypedDataCard@1.0.7
+                Variant: BlankCard
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DisplayMode: =Parent.DisplayMode
+                  Height: =44
+                  Visible: =false
+                  Width: =484
+                  X: =0
+                  Y: =0
+                Children:
+                  - CM_DCAudIdKey:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =32
+                        Size: =12
+                        Text: ="ID"
+                        Width: =60
+                        Wrap: =false
+                        X: =15
+                        Y: =6
+                  - CM_DCAudIdValue:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(60, 66, 80, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =32
+                        Size: =12
+                        Text: =If(IsBlank(ThisItem.ID), "—", Text(ThisItem.ID))
+                        Width: =Parent.Width - 96
+                        Wrap: =false
+                        X: =80
+                        Y: =6
+            - CM_DCAudioFiles:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicAttachmentsEdit
+                IsLocked: true
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="{Attachments}"
+                  Default: =ThisItem.Attachments
+                  DisplayMode: =If(IsBlank(varAttachRecord), DisplayMode.Disabled, Parent.DisplayMode)
+                  DisplayName: =DataSourceInfo([@'AV-CD-Mediafiles'],DataSourceInfo.DisplayName,Attachments)
+                  Height: =360
+                  Required: =false
+                  Update: =CM_AudioFiles.Attachments
+                  Width: =484
+                  X: =0
+                  Y: =1
+                Children:
+                  - CM_DCAudioFilesKey:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =34
+                        Size: =12
+                        Text: |-
+                          ="Audio file(s): MP3, WAV, M4A or AAC"
+                        Width: =Parent.Width - 32
+                        Wrap: =false
+                        X: =16
+                        Y: =6
+                  - CM_AudioFiles:
+                      Control: Attachments@2.3.0
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =RGBA(220, 224, 230, 1)
+                        DisplayMode: =Parent.DisplayMode
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =280
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        ItemColor: =RGBA(255, 255, 255, 1)
+                        ItemFill: =RGBA(56, 96, 178, 1)
+                        ItemHoverFill: =RGBA(186, 202, 226, 1)
+                        Items: |-
+                          =// only this kind of file; the item's other files stay in the Legal & Docs panel
+                          Filter(Parent.Default, EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac"))
+                        MaxAttachments: =3
+                        PaddingBottom: =5
+                        PaddingLeft: =If(Self.DisplayMode = DisplayMode.Edit, 5, 0)
+                        PaddingRight: =5
+                        PaddingTop: =5
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 18, 107, 1)
+                        Size: =12
+                        Tooltip: =Parent.DisplayName
+                        Width: =Parent.Width - 32
+                        X: =16
+                        Y: =42
+                  - CM_DCAudioFilesError:
+                      Control: Label@2.5.1
+                      MetadataKey: ErrorMessage
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(168, 0, 0, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =10
+                        Live: =Live.Assertive
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =14
+                        Text: =Parent.Error
+                        Visible: =Parent.DisplayMode=DisplayMode.Edit
+                        Width: =Parent.Width - 32
+                        X: =16
+                        Y: =CM_AudioFiles.Y + CM_AudioFiles.Height
+                  - CM_DCAudioFilesStar:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldRequired
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =CM_DCAudioFilesKey.Height
+                        Text: ="*"
+                        Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                        Width: =30
+                        Wrap: =false
+                        Y: =CM_DCAudioFilesKey.Y
+      - CM_AttachNeedSave:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(200, 30, 30, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =12
+            Text: ="⚠  Save the media item first to add attachments"
+            Visible: =IsBlank(varAttachRecord) And locShowAudioFiles And varChildMediaType = "Podcast"
+            Width: =460
+            X: =874
+            Y: =260
+            ZIndex: =41
+      - CM_AttachClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locShowAudioFiles: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =16
+            Text: ="X"
+            Visible: =locShowAudioFiles And varChildMediaType = "Podcast"
+            Width: =40
+            X: =1298
+            Y: =118
+            ZIndex: =42
+          Children: []
