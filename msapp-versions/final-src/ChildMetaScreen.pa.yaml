@@ -33,7 +33,9 @@ Screens:
         If(
             Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
             Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
-        )
+        );
+        // the episode visual pop-ups start closed
+        UpdateContext({locShowEpisodeVisual: false, locShowEpVisualPreview: false})
     Children:
       - CM_Back:
           Control: Classic/Button@2.2.0
@@ -199,7 +201,7 @@ Screens:
                   BorderColor: =RGBA(220, 224, 230, 1)
                   BorderThickness: =1
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =560 + If(varChildMediaType = "Podcast", 340, If(varChildMediaType = "Photo", 24, 0))
+                  Height: =560 + If(varChildMediaType = "Podcast", 422, If(varChildMediaType = "Photo", 24, 0))
                   Width: =1302
                   X: =32
                   Y: =16
@@ -289,8 +291,8 @@ Screens:
                     =If(varChildMediaType = "Photo", "Contractor / Agency *",
                        If(varChildMediaType = "Podcast", "Director, Motion Designer, Photographer",
                           If(varChildMediaType = "Video", "Director, Motion Designer, Photographer", "Director / producer *")))
-                  Width: =If(varChildMediaType = "Podcast", 390, 500)
-                  X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 896, 500)))
+                  Width: =If(varChildMediaType = "Podcast", 606, 500)
+                  X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 678, 500)))
                   Y: =If(varChildMediaType = "Photo", 394, If(varChildMediaType = "Video", 476, If(varChildMediaType = "Podcast", 526, 122)))
             - CM_Credits:
                 Control: Classic/TextInput@2.3.2
@@ -306,8 +308,8 @@ Screens:
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildCredits1, Self.Text)
-                  Width: =If(varChildMediaType = "Podcast", 390, 500)
-                  X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 896, 500)))
+                  Width: =If(varChildMediaType = "Podcast", 606, 500)
+                  X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 678, 500)))
                   Y: =If(varChildMediaType = "Photo", 420, If(varChildMediaType = "Video", 502, If(varChildMediaType = "Podcast", 552, 148)))
             - CM_LblDesc:
                 Control: Label@2.5.1
@@ -349,7 +351,7 @@ Screens:
                   Visible: =varChildAIVoiceover
                   Width: =900
                   X: =56
-                  Y: =If(varChildMediaType = "Podcast", 832, 408)
+                  Y: =If(varChildMediaType = "Podcast", 922, 408)
             - CM_AIWarningText:
                 Control: Label@2.5.1
                 Properties:
@@ -362,17 +364,17 @@ Screens:
                   Visible: =varChildAIVoiceover
                   Width: =880
                   X: =66
-                  Y: =If(varChildMediaType = "Podcast", 832, 408)
+                  Y: =If(varChildMediaType = "Podcast", 922, 408)
             - CM_PodcastDivider:
                 Control: Rectangle@2.3.0
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Fill: =RGBA(220, 224, 230, 1)
                   Height: =1
-                  Visible: =false
-                  Width: =1230
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =1228
                   X: =56
-                  Y: =468
+                  Y: =682
             - CM_LblPodcastSection:
                 Control: Label@2.5.1
                 Properties:
@@ -382,11 +384,11 @@ Screens:
                   FontWeight: =FontWeight.Bold
                   Height: =28
                   Size: =15
-                  Text: ="Podcast episode details"
-                  Visible: =false
+                  Text: ="Episode files"
+                  Visible: =varChildMediaType = "Podcast"
                   Width: =600
                   X: =56
-                  Y: =480
+                  Y: =692
             - CM_LblEpisodeSummary:
                 Control: Label@2.5.1
                 Properties:
@@ -427,7 +429,7 @@ Screens:
                   Height: =22
                   Text: ="Season nr. *"
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =160
+                  Width: =139
                   X: =56
                   Y: =178
             - CM_SeasonNumber:
@@ -442,7 +444,7 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildSeasonNumber, Value(Self.Text))
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =160
+                  Width: =139
                   X: =56
                   Y: =204
             - CM_LblEpisodeNumber:
@@ -455,8 +457,8 @@ Screens:
                   Height: =22
                   Text: ="Episode nr. *"
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =160
-                  X: =240
+                  Width: =139
+                  X: =212
                   Y: =178
             - CM_EpisodeNumber:
                 Control: Classic/TextInput@2.3.2
@@ -470,8 +472,8 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildEpisodeNumber, Value(Self.Text))
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =160
-                  X: =240
+                  Width: =139
+                  X: =212
                   Y: =204
             - CM_ChkBeluga:
                 Control: Classic/CheckBox@2.1.0
@@ -490,7 +492,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =160
                   X: =52
-                  Y: =874
+                  Y: =630
             - CM_ChkSpotify:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -508,7 +510,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =160
                   X: =220
-                  Y: =874
+                  Y: =630
             - CM_PhotoNotice:
                 Control: Rectangle@2.3.0
                 Properties:
@@ -597,7 +599,7 @@ Screens:
                   Height: =22
                   Text: =If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", "Production place *", "Place *")
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 400, 500)
+                  Width: =If(varChildMediaType = "Podcast", 295, 500)
                   X: =If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 367, 388))
                   Y: =If(varChildMediaType = "Video", 202, If(varChildMediaType = "Podcast", 446, 186))
             - CM_PlacePhoto:
@@ -612,7 +614,7 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildProductionPlace1, Self.Text)
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 400, 500)
+                  Width: =If(varChildMediaType = "Podcast", 295, 500)
                   X: =If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 367, 388))
                   Y: =If(varChildMediaType = "Video", 228, If(varChildMediaType = "Podcast", 472, 212))
             - CM_LblCaptions:
@@ -666,8 +668,8 @@ Screens:
                   Height: =22
                   Text: ="Links"
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 400, 640))
-                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 788, 56))
+                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 295, 640))
+                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 678, 56))
                   Y: =If(varChildMediaType = "Video", 202, If(varChildMediaType = "Podcast", 446, 474))
             - CM_LinksPhoto:
                 Control: Classic/TextInput@2.3.2
@@ -681,8 +683,8 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildLinks1, Self.Text)
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 400, 640))
-                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 788, 56))
+                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 295, 640))
+                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 678, 56))
                   Y: =If(varChildMediaType = "Video", 228, If(varChildMediaType = "Podcast", 472, 498))
             - CM_LblTagsPhoto:
                 Control: Label@2.5.1
@@ -694,9 +696,9 @@ Screens:
                   Height: =22
                   Text: ="Pertinent tags"
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 500, 510))
-                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 56, 720))
-                  Y: =If(varChildMediaType = "Video", 476, If(varChildMediaType = "Podcast", 766, 474))
+                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 295, 510))
+                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 989, 720))
+                  Y: =If(varChildMediaType = "Video", 476, If(varChildMediaType = "Podcast", 446, 474))
             - CM_TagsPhoto:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -709,9 +711,9 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildTags, Self.Text)
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 500, 510))
-                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 56, 720))
-                  Y: =If(varChildMediaType = "Video", 502, If(varChildMediaType = "Podcast", 792, 498))
+                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 295, 510))
+                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 989, 720))
+                  Y: =If(varChildMediaType = "Video", 502, If(varChildMediaType = "Podcast", 472, 498))
             - CM_LblProdEnd:
                 Control: Label@2.5.1
                 Properties:
@@ -778,7 +780,7 @@ Screens:
                   Height: =22
                   Text: ="Publication end date *"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =295
+                  Width: =If(varChildMediaType = "Podcast", 295, 295)
                   X: =If(varChildMediaType = "Podcast", 56, 989)
                   Y: =If(varChildMediaType = "Podcast", 446, 122)
             - CM_PubEndV:
@@ -793,7 +795,7 @@ Screens:
                   IconFill: =RGBA(255, 255, 255, 1)
                   OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =295
+                  Width: =If(varChildMediaType = "Podcast", 295, 295)
                   X: =If(varChildMediaType = "Podcast", 56, 989)
                   Y: =If(varChildMediaType = "Podcast", 472, 148)
             - CM_LblScript:
@@ -836,8 +838,8 @@ Screens:
                   Height: =22
                   Text: ="Producer *"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =400
-                  X: =56
+                  Width: =If(varChildMediaType = "Podcast", 295, 400)
+                  X: =If(varChildMediaType = "Podcast", 56, 56)
                   Y: =If(varChildMediaType = "Podcast", 526, 396)
             - CM_Producer:
                 Control: Classic/ComboBox@2.4.0
@@ -863,8 +865,8 @@ Screens:
                   SelectionColor: =RGBA(255, 255, 255, 1)
                   SelectionFill: =RGBA(56, 96, 178, 1)
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =400
-                  X: =56
+                  Width: =If(varChildMediaType = "Podcast", 295, 400)
+                  X: =If(varChildMediaType = "Podcast", 56, 56)
                   Y: =If(varChildMediaType = "Podcast", 552, 422)
             - CM_Caption:
                 Control: Classic/TextInput@2.3.2
@@ -893,8 +895,8 @@ Screens:
                   Height: =22
                   Text: ="Executive producer"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =500
-                  X: =If(varChildMediaType = "Podcast", 476, 588)
+                  Width: =If(varChildMediaType = "Podcast", 295, 500)
+                  X: =If(varChildMediaType = "Podcast", 367, 588)
                   Y: =If(varChildMediaType = "Podcast", 526, 396)
             - CM_ExecProducer:
                 Control: Classic/TextInput@2.3.2
@@ -908,8 +910,8 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildExecProducer, Self.Text)
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =393
-                  X: =If(varChildMediaType = "Podcast", 476, 588)
+                  Width: =If(varChildMediaType = "Podcast", 295, 393)
+                  X: =If(varChildMediaType = "Podcast", 367, 588)
                   Y: =If(varChildMediaType = "Podcast", 552, 422)
             - CM_LblEpisodeTitleP:
                 Control: Label@2.5.1
@@ -921,8 +923,8 @@ Screens:
                   Height: =22
                   Text: ="Title of the episode *"
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =500
-                  X: =448
+                  Width: =917
+                  X: =367
                   Y: =178
             - CM_EpisodeTitleP:
                 Control: Classic/TextInput@2.3.2
@@ -936,8 +938,8 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildTitle, Self.Text); Set(varChildTitle1, Self.Text)
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =500
-                  X: =448
+                  Width: =917
+                  X: =367
                   Y: =204
             - CM_LblEpisodeVisual:
                 Control: Label@2.5.1
@@ -947,11 +949,11 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="Episode visual  - upload it on 1. Info, with the podcast visual (📎 Podcast visual)"
+                  Text: ="Episode visual"
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =800
+                  Width: =917
                   X: =56
-                  Y: =606
+                  Y: =730
             - CM_LblPubChannel:
                 Control: Label@2.5.1
                 Properties:
@@ -962,9 +964,9 @@ Screens:
                   Height: =22
                   Text: ="Publication channel"
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =800
+                  Width: =600
                   X: =56
-                  Y: =850
+                  Y: =606
             - CM_LblAudio:
                 Control: Label@2.5.1
                 Properties:
@@ -976,9 +978,9 @@ Screens:
                   Text: |-
                     ="Audio file(s) (MP3, WAV, M4A or AAC; very large files: use the FTP path)"
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =1100
+                  Width: =917
                   X: =56
-                  Y: =916
+                  Y: =840
             - CM_HintEpisodeVisual:
                 Control: Label@2.5.1
                 Properties:
@@ -989,32 +991,9 @@ Screens:
                   Size: =11
                   Text: ="Horizontal format, 1280x720 px, JPEG or PNG only."
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =800
+                  Width: =917
                   X: =56
-                  Y: =628
-            - CM_EpisodeVisual:
-                Control: Attachments@2.3.0
-                Properties:
-                  BorderColor: =RGBA(220, 224, 230, 1)
-                  DisplayMode: =DisplayMode.View
-                  Font: =Font.'Open Sans'
-                  Height: =100
-                  HoverFill: =RGBA(186, 202, 226, 1)
-                  ItemColor: =RGBA(255, 255, 255, 1)
-                  ItemFill: =RGBA(56, 96, 178, 1)
-                  ItemHoverFill: =RGBA(186, 202, 226, 1)
-                  Items: |-
-                    =// read-only: podcast and episode visuals are uploaded on the Info tab (CI_PodcastVisual)
-                    Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))
-                  Items.Name: =Name
-                  Items.Value: =Value
-                  MaxAttachments: =3
-                  PressedColor: =RGBA(255, 255, 255, 1)
-                  PressedFill: =RGBA(0, 18, 107, 1)
-                  Visible: =varChildMediaType = "Podcast"
-                  Width: =1230
-                  X: =56
-                  Y: =650
+                  Y: =752
             - CM_BtnOpenAttach:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -1039,10 +1018,67 @@ Screens:
                         "📎 Audio files: " & If(IsEmpty(files), "no file yet", Concat(files, Name, ", "))
                         & "   ·   click to upload or remove")
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =1230
+                  Width: =917
                   X: =56
-                  Y: =940
+                  Y: =864
                   ZIndex: =72
+                Children: []
+            - CM_BtnOpenEpisodeVisual:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 96, 178, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(56, 96, 178, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =48
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(230, 236, 245, 1)
+                  OnSelect: |-
+                    =UpdateContext({locShowEpisodeVisual: true})
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: |-
+                    =With({files: Filter(CM_EpisodeVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))},
+                        "📎 Episode visual: " & If(IsEmpty(files), "no file yet", Concat(files, Name, ", "))
+                        & "   ·   click to upload or remove")
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =917
+                  X: =56
+                  Y: =776
+                  ZIndex: =73
+                Children: []
+            - CM_BtnViewEpisodeVisual:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 96, 178, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(56, 96, 178, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: =If(IsBlank(Last(Filter(CM_EpisodeVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")))), DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =48
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(230, 236, 245, 1)
+                  OnSelect: |-
+                    =UpdateContext({locShowEpVisualPreview: true})
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: =If(IsBlank(Last(Filter(CM_EpisodeVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")))), "🖼  No visual to view yet", "🖼  View episode visual")
+                  Tooltip: ="Open the episode visual in a preview"
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =295
+                  X: =989
+                  Y: =776
+                  ZIndex: =74
                 Children: []
       - CM_TopBar:
           Control: Rectangle@2.3.0
@@ -1680,4 +1716,385 @@ Screens:
             X: =1298
             Y: =118
             ZIndex: =42
+          Children: []
+      - CM_EVAttachShade:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.35)
+            Height: =768
+            OnSelect: |-
+              =UpdateContext({locShowEpisodeVisual: false})
+            Visible: =locShowEpisodeVisual And varChildMediaType = "Podcast"
+            Width: =1366
+            ZIndex: =43
+          Children: []
+      - CM_EVAttachPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =594
+            Visible: =locShowEpisodeVisual And varChildMediaType = "Podcast"
+            Width: =492
+            X: =858
+            Y: =110
+            ZIndex: =44
+      - CM_LblEVAttachPanel:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =16
+            Text: ="Episode visual"
+            Visible: =locShowEpisodeVisual And varChildMediaType = "Podcast"
+            Width: =460
+            X: =874
+            Y: =120
+            ZIndex: =45
+      - CM_EVAttachFor:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: |-
+              ="Media item: " & Coalesce(varChildTitle1, varChildTitle, "Untitled media item")
+              & If(
+                  IsBlank(varAttachRecord),
+                  "  ·  not saved in SharePoint yet",
+                  "  ·  " & varAttachRecord.CD_MediaNumber
+              )
+            Visible: =locShowEpisodeVisual And varChildMediaType = "Podcast"
+            Width: =460
+            X: =874
+            Y: =150
+            ZIndex: =46
+      - CM_EVAttachHint:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =65
+            Size: =10
+            Text: |-
+              ="Episode visual: horizontal, 1280x720 px, JPEG or PNG only. It is kept apart from the podcast visual (Info tab) and saved to this media item when you press Save Media on the Validations tab."
+            Visible: =locShowEpisodeVisual And varChildMediaType = "Podcast"
+            Width: =460
+            X: =874
+            Y: =190
+            ZIndex: =47
+      - CM_FormEpisodeVisual:
+          Control: Form@2.4.4
+          Variant: Classic
+          Layout: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DataSource: ='AV-CD-Mediafiles'
+            DefaultMode: =If(varRequestorLocked, FormMode.View, FormMode.Edit)
+            Height: =420
+            Item: |-
+              =If(
+                  IsBlank(varAttachRecord),
+                  Defaults('AV-CD-Mediafiles'),
+                  varAttachRecord
+              )
+            NumberOfColumns: =1
+            OnFailure: |-
+              =// not submitted: Save Media submits CL_FormAttach, which saves these files too
+              false
+            OnSuccess: |-
+              =// not submitted: Save Media submits CL_FormAttach, which saves these files too
+              false
+            Visible: =locShowEpisodeVisual And varChildMediaType = "Podcast"
+            Width: =484
+            X: =862
+            Y: =If(IsBlank(varAttachRecord), 278, 250)
+            ZIndex: =48
+          Children:
+            - CM_DCEVId:
+                Control: TypedDataCard@1.0.7
+                Variant: BlankCard
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DisplayMode: =Parent.DisplayMode
+                  Height: =44
+                  Visible: =false
+                  Width: =484
+                  X: =0
+                  Y: =0
+                Children:
+                  - CM_DCEVIdKey:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =32
+                        Size: =12
+                        Text: ="ID"
+                        Width: =60
+                        Wrap: =false
+                        X: =15
+                        Y: =6
+                  - CM_DCEVIdValue:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(60, 66, 80, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =32
+                        Size: =12
+                        Text: =If(IsBlank(ThisItem.ID), "—", Text(ThisItem.ID))
+                        Width: =Parent.Width - 96
+                        Wrap: =false
+                        X: =80
+                        Y: =6
+            - CM_DCEpisodeVisual:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicAttachmentsEdit
+                IsLocked: true
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="{Attachments}"
+                  Default: =ThisItem.Attachments
+                  DisplayMode: =If(IsBlank(varAttachRecord), DisplayMode.Disabled, Parent.DisplayMode)
+                  DisplayName: =DataSourceInfo([@'AV-CD-Mediafiles'],DataSourceInfo.DisplayName,Attachments)
+                  Height: =360
+                  Required: =false
+                  Update: =CM_EpisodeVisual.Attachments
+                  Width: =484
+                  X: =0
+                  Y: =1
+                Children:
+                  - CM_DCEpisodeVisualKey:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =34
+                        Size: =12
+                        Text: ="Episode visual (JPEG or PNG, 1280x720 px)"
+                        Width: =Parent.Width - 32
+                        Wrap: =false
+                        X: =16
+                        Y: =6
+                  - CM_EpisodeVisual:
+                      Control: Attachments@2.3.0
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =RGBA(220, 224, 230, 1)
+                        DisplayMode: =Parent.DisplayMode
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =280
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        ItemColor: =RGBA(255, 255, 255, 1)
+                        ItemFill: =RGBA(56, 96, 178, 1)
+                        ItemHoverFill: =RGBA(186, 202, 226, 1)
+                        Items: |-
+                          =// only the episode visual: saved as "EpisodeVisual_<name>" by CL_DCAttach.Update, so the
+                          // podcast visual (Info tab) and the other files stay in their own panels
+                          Filter(varAttachRecord.Attachments, StartsWith(DisplayName, "EpisodeVisual_") And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))
+                        MaxAttachments: =1
+                        PaddingBottom: =5
+                        PaddingLeft: =If(Self.DisplayMode = DisplayMode.Edit, 5, 0)
+                        PaddingRight: =5
+                        PaddingTop: =5
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 18, 107, 1)
+                        Size: =12
+                        Tooltip: =Parent.DisplayName
+                        Width: =Parent.Width - 32
+                        X: =16
+                        Y: =42
+                  - CM_DCEpisodeVisualError:
+                      Control: Label@2.5.1
+                      MetadataKey: ErrorMessage
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(168, 0, 0, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =10
+                        Live: =Live.Assertive
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =14
+                        Text: =Parent.Error
+                        Visible: =Parent.DisplayMode=DisplayMode.Edit
+                        Width: =Parent.Width - 32
+                        X: =16
+                        Y: =CM_EpisodeVisual.Y + CM_EpisodeVisual.Height
+                  - CM_DCEpisodeVisualStar:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldRequired
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =CM_DCEpisodeVisualKey.Height
+                        Text: ="*"
+                        Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                        Width: =30
+                        Wrap: =false
+                        Y: =CM_DCEpisodeVisualKey.Y
+      - CM_EVAttachNeedSave:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(200, 30, 30, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =12
+            Text: ="⚠  Save the media item first to add attachments"
+            Visible: =IsBlank(varAttachRecord) And locShowEpisodeVisual And varChildMediaType = "Podcast"
+            Width: =460
+            X: =874
+            Y: =260
+            ZIndex: =49
+      - CM_EVAttachClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locShowEpisodeVisual: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =16
+            Text: ="X"
+            Visible: =locShowEpisodeVisual And varChildMediaType = "Podcast"
+            Width: =40
+            X: =1298
+            Y: =118
+            ZIndex: =50
+          Children: []
+      - CM_EpVisualShade:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.35)
+            Height: =768
+            OnSelect: |-
+              =UpdateContext({locShowEpVisualPreview: false})
+            Visible: =locShowEpVisualPreview And varChildMediaType = "Podcast"
+            Width: =1366
+            ZIndex: =51
+          Children: []
+      - CM_EpVisualPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =640
+            Visible: =locShowEpVisualPreview And varChildMediaType = "Podcast"
+            Width: =800
+            X: =283
+            Y: =66
+            ZIndex: =52
+          Children: []
+      - CM_LblEpVisualPanel:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =16
+            Text: ="Episode visual"
+            Visible: =locShowEpVisualPreview And varChildMediaType = "Podcast"
+            Width: =700
+            X: =307
+            Y: =78
+            ZIndex: =53
+          Children: []
+      - CM_EpVisualFile:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: |-
+              =With(
+                  {f: Last(Filter(CM_EpisodeVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))), w: CM_EpVisualImage.OriginalWidth, h: CM_EpVisualImage.OriginalHeight},
+                  f.Name
+                  & If(w > 0, "  ·  " & w & " × " & h & " px"
+                      & If(w = 1280 And h = 720, "  ·  ✓ meets the format",
+                          "  ·  ⚠ expected horizontal, 1280x720 px"), "")
+              )
+            Visible: =locShowEpVisualPreview And varChildMediaType = "Podcast"
+            Width: =752
+            X: =307
+            Y: =108
+            ZIndex: =54
+          Children: []
+      - CM_EpVisualImage:
+          Control: Image@2.2.3
+          Properties:
+            AccessibleLabel: ="Episode visual preview"
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            CalculateOriginalDimensions: =true
+            Fill: =RGBA(244, 246, 250, 1)
+            Height: =530
+            Image: =Last(Filter(CM_EpisodeVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))).Value
+            Tooltip: =Last(Filter(CM_EpisodeVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))).Name
+            Visible: =locShowEpVisualPreview And varChildMediaType = "Podcast"
+            Width: =752
+            X: =307
+            Y: =156
+            ZIndex: =55
+          Children: []
+      - CM_EpVisualClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locShowEpVisualPreview: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =16
+            Text: ="X"
+            Visible: =locShowEpVisualPreview And varChildMediaType = "Podcast"
+            Width: =40
+            X: =1031
+            Y: =74
+            ZIndex: =56
           Children: []

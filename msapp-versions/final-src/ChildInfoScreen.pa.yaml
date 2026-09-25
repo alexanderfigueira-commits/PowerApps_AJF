@@ -1584,7 +1584,7 @@ Screens:
             Height: =65
             Size: =10
             Text: |-
-              ="Podcast visual: square, 1400x1400 to 3000x3000 px, RGB. Episode visual: horizontal, 1280x720 px. JPEG or PNG only. The files are saved to this media item when you press Save Media on the Validations tab."
+              ="Podcast visual: square, 1400x1400 to 3000x3000 px, RGB, JPEG or PNG only. The episode visual is uploaded on the Metadata tab. The files are saved to this media item when you press Save Media on the Validations tab."
             Visible: =locShowPodcastVisual And varChildMediaType = "Podcast"
             Width: =460
             X: =874
@@ -1683,7 +1683,7 @@ Screens:
                         Font: =Font.'Open Sans'
                         Height: =34
                         Size: =12
-                        Text: ="Podcast visual / episode visual (JPEG or PNG)"
+                        Text: ="Podcast visual (JPEG or PNG)"
                         Width: =Parent.Width - 32
                         Wrap: =false
                         X: =16
@@ -1702,9 +1702,9 @@ Screens:
                         ItemFill: =RGBA(56, 96, 178, 1)
                         ItemHoverFill: =RGBA(186, 202, 226, 1)
                         Items: |-
-                          =// only this kind of file; the item's other files stay in the Legal & Docs panel.
+                          =// only the podcast visual (episode visuals, "EpisodeVisual_...", are on the Metadata tab); the item's other files stay in the Legal & Docs panel.
                           // Reads the saved item (varAttachRecord): Parent.Default has no DisplayName column.
-                          Filter(varAttachRecord.Attachments, EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png"))
+                          Filter(varAttachRecord.Attachments, Not(StartsWith(DisplayName, "EpisodeVisual_")) And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))
                         MaxAttachments: =2
                         PaddingBottom: =5
                         PaddingLeft: =If(Self.DisplayMode = DisplayMode.Edit, 5, 0)
