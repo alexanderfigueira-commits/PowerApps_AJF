@@ -345,7 +345,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =25
             X: =349
-            Y: =189
+            Y: =296
       - RS_CardTitle:
           Control: Label@2.5.1
           Properties:
@@ -396,7 +396,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =25
             X: =714
-            Y: =189
+            Y: =296
       - RS_LblTitle:
           Control: Label@2.5.1
           Properties:
@@ -582,7 +582,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =279
             X: =57
-            Y: =193
+            Y: =300
       - RS_Owner:
           Control: Classic/ComboBox@2.4.0
           Properties:
@@ -660,7 +660,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =310
             X: =64
-            Y: =226
+            Y: =333
       - RS_LblContractor:
           Control: Label@2.5.1
           Properties:
@@ -673,7 +673,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =300
             X: =422
-            Y: =196
+            Y: =303
       - RS_Contractor:
           Control: Classic/ComboBox@2.4.0
           Properties:
@@ -751,7 +751,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =310
             X: =429
-            Y: =226
+            Y: =333
       - RS_DetailsDivider:
           Control: Rectangle@2.3.0
           Properties:
@@ -774,7 +774,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =634
             X: =64
-            Y: =276
+            Y: =190
       - RS_LblAdminNotes:
           Control: Label@2.5.1
           Properties:
@@ -853,7 +853,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =675
             X: =64
-            Y: =302
+            Y: =216
       - RS_AdminNotes:
           Control: Classic/TextInput@2.3.2
           Properties:
