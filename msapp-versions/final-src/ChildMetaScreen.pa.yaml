@@ -291,9 +291,9 @@ Screens:
                     =If(varChildMediaType = "Photo", "Contractor / Agency *",
                        If(varChildMediaType = "Podcast", "Director, Motion Designer, Photographer",
                           If(varChildMediaType = "Video", "Director, Motion Designer, Photographer", "Director / producer *")))
-                  Width: =If(varChildMediaType = "Podcast", 606, 500)
-                  X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 678, 500)))
-                  Y: =If(varChildMediaType = "Photo", 394, If(varChildMediaType = "Video", 476, If(varChildMediaType = "Podcast", 526, 122)))
+                  Width: =Switch(varChildMediaType, "Photo", 295, "Video", 606, "Podcast", 606, 500)
+                  X: =Switch(varChildMediaType, "Photo", 989, "Video", 678, "Podcast", 678, 500)
+                  Y: =Switch(varChildMediaType, "Photo", 186, "Video", 396, "Podcast", 526, 122)
             - CM_Credits:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -308,9 +308,9 @@ Screens:
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildCredits1, Self.Text)
-                  Width: =If(varChildMediaType = "Podcast", 606, 500)
-                  X: =If(varChildMediaType = "Photo", 588, If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 678, 500)))
-                  Y: =If(varChildMediaType = "Photo", 420, If(varChildMediaType = "Video", 502, If(varChildMediaType = "Podcast", 552, 148)))
+                  Width: =Switch(varChildMediaType, "Photo", 295, "Video", 606, "Podcast", 606, 500)
+                  X: =Switch(varChildMediaType, "Photo", 989, "Video", 678, "Podcast", 678, 500)
+                  Y: =Switch(varChildMediaType, "Photo", 212, "Video", 422, "Podcast", 552, 148)
             - CM_LblDesc:
                 Control: Label@2.5.1
                 Properties:
@@ -351,7 +351,7 @@ Screens:
                   Visible: =varChildAIVoiceover
                   Width: =900
                   X: =56
-                  Y: =If(varChildMediaType = "Podcast", 922, 408)
+                  Y: =Switch(varChildMediaType, "Photo", 480, "Video", 476, "Podcast", 922, 408)
             - CM_AIWarningText:
                 Control: Label@2.5.1
                 Properties:
@@ -364,7 +364,7 @@ Screens:
                   Visible: =varChildAIVoiceover
                   Width: =880
                   X: =66
-                  Y: =If(varChildMediaType = "Podcast", 922, 408)
+                  Y: =Switch(varChildMediaType, "Photo", 480, "Video", 476, "Podcast", 922, 408)
             - CM_PodcastDivider:
                 Control: Rectangle@2.3.0
                 Properties:
@@ -599,8 +599,8 @@ Screens:
                   Height: =22
                   Text: =If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", "Production place *", "Place *")
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 295, 500)
-                  X: =If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 367, 388))
+                  Width: =295
+                  X: =Switch(varChildMediaType, "Video", 56, 367)
                   Y: =If(varChildMediaType = "Video", 202, If(varChildMediaType = "Podcast", 446, 186))
             - CM_PlacePhoto:
                 Control: Classic/TextInput@2.3.2
@@ -614,8 +614,8 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildProductionPlace1, Self.Text)
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 295, 500)
-                  X: =If(varChildMediaType = "Video", 56, If(varChildMediaType = "Podcast", 367, 388))
+                  Width: =295
+                  X: =Switch(varChildMediaType, "Video", 56, 367)
                   Y: =If(varChildMediaType = "Video", 228, If(varChildMediaType = "Podcast", 472, 212))
             - CM_LblCaptions:
                 Control: Label@2.5.1
@@ -640,9 +640,9 @@ Screens:
                   Height: =22
                   Text: ="Contracting authority *"
                   Visible: =varChildMediaType = "Photo"
-                  Width: =500
-                  X: =56
-                  Y: =394
+                  Width: =295
+                  X: =678
+                  Y: =186
             - CM_Authority:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -655,9 +655,9 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildContractingAuthority, Self.Text)
                   Visible: =varChildMediaType = "Photo"
-                  Width: =500
-                  X: =56
-                  Y: =420
+                  Width: =295
+                  X: =678
+                  Y: =212
             - CM_LblLinksPhoto:
                 Control: Label@2.5.1
                 Properties:
@@ -668,9 +668,9 @@ Screens:
                   Height: =22
                   Text: ="Links"
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 295, 640))
-                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 678, 56))
-                  Y: =If(varChildMediaType = "Video", 202, If(varChildMediaType = "Podcast", 446, 474))
+                  Width: =Switch(varChildMediaType, "Photo", 606, 295)
+                  X: =Switch(varChildMediaType, "Video", 367, "Podcast", 678, 56)
+                  Y: =Switch(varChildMediaType, "Photo", 398, "Podcast", 446, 202)
             - CM_LinksPhoto:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -683,9 +683,9 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildLinks1, Self.Text)
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 295, 640))
-                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 678, 56))
-                  Y: =If(varChildMediaType = "Video", 228, If(varChildMediaType = "Podcast", 472, 498))
+                  Width: =Switch(varChildMediaType, "Photo", 606, 295)
+                  X: =Switch(varChildMediaType, "Video", 367, "Podcast", 678, 56)
+                  Y: =Switch(varChildMediaType, "Video", 228, "Podcast", 472, 424)
             - CM_LblTagsPhoto:
                 Control: Label@2.5.1
                 Properties:
@@ -696,9 +696,9 @@ Screens:
                   Height: =22
                   Text: ="Pertinent tags"
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 295, 510))
-                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 989, 720))
-                  Y: =If(varChildMediaType = "Video", 476, If(varChildMediaType = "Podcast", 446, 474))
+                  Width: =Switch(varChildMediaType, "Podcast", 295, 606)
+                  X: =Switch(varChildMediaType, "Podcast", 989, 678)
+                  Y: =Switch(varChildMediaType, "Photo", 398, "Podcast", 446, 202)
             - CM_TagsPhoto:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -711,9 +711,9 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildTags, Self.Text)
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Video", 500, If(varChildMediaType = "Podcast", 295, 510))
-                  X: =If(varChildMediaType = "Video", 588, If(varChildMediaType = "Podcast", 989, 720))
-                  Y: =If(varChildMediaType = "Video", 502, If(varChildMediaType = "Podcast", 472, 498))
+                  Width: =Switch(varChildMediaType, "Podcast", 295, 606)
+                  X: =Switch(varChildMediaType, "Podcast", 989, 678)
+                  Y: =Switch(varChildMediaType, "Video", 228, "Podcast", 472, 424)
             - CM_LblProdEnd:
                 Control: Label@2.5.1
                 Properties:
@@ -838,7 +838,7 @@ Screens:
                   Height: =22
                   Text: ="Producer *"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 295, 400)
+                  Width: =295
                   X: =If(varChildMediaType = "Podcast", 56, 56)
                   Y: =If(varChildMediaType = "Podcast", 526, 396)
             - CM_Producer:
@@ -865,7 +865,7 @@ Screens:
                   SelectionColor: =RGBA(255, 255, 255, 1)
                   SelectionFill: =RGBA(56, 96, 178, 1)
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 295, 400)
+                  Width: =295
                   X: =If(varChildMediaType = "Podcast", 56, 56)
                   Y: =If(varChildMediaType = "Podcast", 552, 422)
             - CM_Caption:
@@ -895,8 +895,8 @@ Screens:
                   Height: =22
                   Text: ="Executive producer"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 295, 500)
-                  X: =If(varChildMediaType = "Podcast", 367, 588)
+                  Width: =295
+                  X: =367
                   Y: =If(varChildMediaType = "Podcast", 526, 396)
             - CM_ExecProducer:
                 Control: Classic/TextInput@2.3.2
@@ -910,8 +910,8 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildExecProducer, Self.Text)
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 295, 393)
-                  X: =If(varChildMediaType = "Podcast", 367, 588)
+                  Width: =295
+                  X: =367
                   Y: =If(varChildMediaType = "Podcast", 552, 422)
             - CM_LblEpisodeTitleP:
                 Control: Label@2.5.1
