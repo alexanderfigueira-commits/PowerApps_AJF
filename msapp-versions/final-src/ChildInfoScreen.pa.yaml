@@ -1672,8 +1672,9 @@ Screens:
                         ItemFill: =RGBA(56, 96, 178, 1)
                         ItemHoverFill: =RGBA(186, 202, 226, 1)
                         Items: |-
-                          =// only this kind of file; the item's other files stay in the Legal & Docs panel
-                          Filter(Parent.Default, EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png"))
+                          =// only this kind of file; the item's other files stay in the Legal & Docs panel.
+                          // Reads the saved item (varAttachRecord): Parent.Default has no DisplayName column.
+                          Filter(varAttachRecord.Attachments, EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png"))
                         MaxAttachments: =2
                         PaddingBottom: =5
                         PaddingLeft: =If(Self.DisplayMode = DisplayMode.Edit, 5, 0)
