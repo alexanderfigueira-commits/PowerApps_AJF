@@ -356,7 +356,20 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             DelayItemLoading: =false
             Height: =480
-            Items: =colValidations
+            Items: |-
+              =// only the checks for this production type; each title names its scope.
+              // The others are still in colValidations (they always pass for other types),
+              // so the counters and the Save button are unchanged.
+              Filter(
+                  colValidations,
+                  If(
+                      "(Photo only)" in Check, varChildMediaType = "Photo",
+                      "(Podcast only)" in Check, varChildMediaType = "Podcast",
+                      "(Video / Podcast" in Check, varChildMediaType = "Video" Or varChildMediaType = "Podcast",
+                      "(Video" in Check, varChildMediaType = "Video",
+                      true
+                  )
+              )
             LoadingSpinner: =LoadingSpinner.None
             TemplateSize: =44
             Width: =1302
