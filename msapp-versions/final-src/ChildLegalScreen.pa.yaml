@@ -24,13 +24,6 @@ Screens:
         If(
             Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
             Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
-        );
-        // CL_Case cannot be empty: with no case stored it shows its first item.
-        // OnChange does not run when that item is simply accepted, so store it
-        // here; Validations, the Case 1 checkboxes and Save then see the same value.
-        If(
-            IsBlank(varChildContractCase) Or varChildContractCase = "",
-            Set(varChildContractCase, "Case 1 - framework / direct service contract")
         )
     Children:
       - CL_Breadcrumb:
@@ -780,10 +773,9 @@ Screens:
                   Required: =false
                   Update: |-
                     =// CL_FormAttach is the only form that is submitted (Save Media). For podcasts the
-                    // podcast visual (Info tab, CI_PodcastVisual), the episode visual (Metadata tab,
-                    // CM_EpisodeVisual) and the audio files (Metadata tab, CM_AudioFiles) are edited in
-                    // their own forms; their changes are merged here so one SubmitForm saves every file
-                    // and no form removes another form's files.
+                    // podcast visual (Info tab, CI_PodcastVisual) and the audio files (Metadata tab,
+                    // CM_AudioFiles) are edited in their own forms; their changes are merged here so
+                    // one SubmitForm saves every file and no form removes another form's files.
                     With(
                         {
                             podcast: varChildMediaType = "Podcast",
@@ -797,27 +789,22 @@ Screens:
                             Ungroup(
                                 Table(
                                     // this panel's files, minus the podcast files removed on Info / Metadata
-                                    {pre: "", files: Filter(
+                                    {files: Filter(
                                         CL_DCAttachValue.Attachments,
                                         Not(podcast)
                                             Or Not(Name in saved)
-                                            Or (Not(EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")) Or Name in CI_PodcastVisual.Attachments.Name Or Name in CM_EpisodeVisual.Attachments.Name)
+                                            Or (Not(EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")) Or Name in CI_PodcastVisual.Attachments.Name)
                                                 And (Not(EndsWith(Lower(Name), ".mp3") Or EndsWith(Lower(Name), ".wav") Or EndsWith(Lower(Name), ".m4a") Or EndsWith(Lower(Name), ".aac")) Or Name in CM_AudioFiles.Attachments.Name)
                                     )},
                                     // new files added on Info / Metadata
-                                    {pre: "", files: Filter(CI_PodcastVisual.Attachments, podcast And Not(Name in saved) And Not(Name in here))},
-                                    {pre: "", files: Filter(CM_AudioFiles.Attachments, podcast And Not(Name in saved) And Not(Name in here))},
-                                    // a new episode visual is saved as "EpisodeVisual_<name>", which keeps it apart from the podcast visual
-                                    {pre: "EpisodeVisual_", files: Filter(
-                                        CM_EpisodeVisual.Attachments,
-                                        podcast And Not(Name in saved) And Not(("EpisodeVisual_" & Name) in saved) And Not(("EpisodeVisual_" & Name) in here)
-                                    )}
+                                    {files: Filter(CI_PodcastVisual.Attachments, podcast And Not(Name in saved) And Not(Name in here))},
+                                    {files: Filter(CM_AudioFiles.Attachments, podcast And Not(Name in saved) And Not(Name in here))}
                                 ),
                                 files
                             ) As f,
                             {
-                                DisplayName: f.pre & f.Name,
-                                Id: Coalesce(LookUp(varAttachRecord.Attachments, DisplayName = f.Name).Id, f.pre & f.Name),
+                                DisplayName: f.Name,
+                                Id: Coalesce(LookUp(varAttachRecord.Attachments, DisplayName = f.Name).Id, f.Name),
                                 Value: f.Value
                             }
                         )
@@ -1068,13 +1055,7 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: |-
-              =// the operational dashboard of the user's role
-              If(
-                  varUserRole = "ADMINISTRATOR",
-                  Navigate('Dashboard-Ope-Administrator'),
-                  Navigate('Dashboard-Ope-Requestor')
-              )
+            OnSelect: =Navigate(DashboardScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)

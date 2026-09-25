@@ -68,7 +68,7 @@ Screens:
              Pass: varChildMediaType <> "Podcast" Or CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) > 0,
              Note: "Attach the podcast visual (square JPEG/PNG) on the Info tab (📎 Podcast visual)."},
             {Check: "Podcast/episode visuals are JPEG or PNG (Podcast only)",
-             Pass: varChildMediaType <> "Podcast" Or (CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CM_AudioFiles.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CM_EpisodeVisual.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic")))) = 0,
+             Pass: varChildMediaType <> "Podcast" Or (CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CM_AudioFiles.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic")))) = 0,
              Note: "Only JPEG or PNG images are accepted for the podcast/episode visuals."},
             {Check: "Season and episode number set (Podcast only)",
              Pass: varChildMediaType <> "Podcast" Or (varChildSeasonNumber > 0 And varChildEpisodeNumber > 0),
@@ -321,7 +321,7 @@ Screens:
                   {Check: "Podcast title provided (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (Not(IsBlank(varRequestTitle)) And varRequestTitle <> ""), Note: "Enter the podcast title on the Info tab."},
                   {Check: "Podcast description provided (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (Not(IsBlank(varRequestDescription)) And varRequestDescription <> ""), Note: "Enter the podcast description on the Info tab."},
                   {Check: "Podcast visual attached (Podcast only)", Pass: varChildMediaType <> "Podcast" Or CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) > 0, Note: "Attach the podcast visual (square JPEG/PNG) on the Info tab (📎 Podcast visual)."},
-                  {Check: "Podcast/episode visuals are JPEG or PNG (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CM_AudioFiles.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CM_EpisodeVisual.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic")))) = 0, Note: "Only JPEG or PNG images are accepted for the podcast/episode visuals."},
+                  {Check: "Podcast/episode visuals are JPEG or PNG (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CM_AudioFiles.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic")))) = 0, Note: "Only JPEG or PNG images are accepted for the podcast/episode visuals."},
                   {Check: "Season and episode number set (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (varChildSeasonNumber > 0 And varChildEpisodeNumber > 0), Note: "Enter the season and episode number on the Metadata tab."},
                   {Check: "Episode summary provided (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (Not(IsBlank(varChildEpisodeSummary1)) And varChildEpisodeSummary1 <> ""), Note: "Enter the episode summary on the Metadata tab."},
                   {Check: "Type of product selected (Video only)", Pass: varChildMediaType <> "Video" Or (Not(IsBlank(Coalesce(varChildProductType, varChildProductType1))) And Coalesce(varChildProductType, varChildProductType1) <> ""), Note: "Select the type of product on the Info tab."},
@@ -356,20 +356,7 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             DelayItemLoading: =false
             Height: =480
-            Items: |-
-              =// only the checks for this production type; each title names its scope.
-              // The others are still in colValidations (they always pass for other types),
-              // so the counters and the Save button are unchanged.
-              Filter(
-                  colValidations,
-                  If(
-                      "(Photo only)" in Check, varChildMediaType = "Photo",
-                      "(Podcast only)" in Check, varChildMediaType = "Podcast",
-                      "(Video / Podcast" in Check, varChildMediaType = "Video" Or varChildMediaType = "Podcast",
-                      "(Video" in Check, varChildMediaType = "Video",
-                      true
-                  )
-              )
+            Items: =colValidations
             LoadingSpinner: =LoadingSpinner.None
             TemplateSize: =44
             Width: =1302
@@ -556,12 +543,7 @@ Screens:
                                           CD_MediaNumber: If(spId = 0, With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter('AV-CD-Mediafiles', StartsWith(CD_MediaNumber, yr & "-")), CD_MediaNumber, SortOrder.Descending)).CD_MediaNumber, yr & "-0000"), 4)) + 1), 4)), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
                                           Description: varChildDescription1,
                                           BelugaReference: varChildBelugaRef,
-                                                      // single-choice column: one record (both ticked -> "Beluga; Spotify"), Blank() when none
-                                                      PublicationChannel: If(
-                                                          varChildPubBeluga Or varChildPubSpotify,
-                                                          {Value: Concat(Filter(Table({Value: "Beluga", On: varChildPubBeluga}, {Value: "Spotify", On: varChildPubSpotify}), On), Value, "; ")},
-                                                          Blank()
-                                                      ),
+                                                      PublicationChannel: ForAll(Filter(Table({Value: "Beluga", On: varChildPubBeluga}, {Value: "Spotify", On: varChildPubSpotify}), On) As c, {Value: c.Value}),
                                           Notes: varChildNotes,
                                           // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
                                           MediaType: Table({Value: varChildMediaType}),
@@ -758,13 +740,7 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: |-
-              =// the operational dashboard of the user's role
-              If(
-                  varUserRole = "ADMINISTRATOR",
-                  Navigate('Dashboard-Ope-Administrator'),
-                  Navigate('Dashboard-Ope-Requestor')
-              )
+            OnSelect: =Navigate(DashboardScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
