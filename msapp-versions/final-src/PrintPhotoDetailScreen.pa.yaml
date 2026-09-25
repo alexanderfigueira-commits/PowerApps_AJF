@@ -41,6 +41,7 @@ Screens:
             Width: =290
             X: =56
             Y: =186
+            ZIndex: =7
       - PPD_HdrVal1:
           Control: Label@2.5.1
           Properties:
@@ -53,6 +54,7 @@ Screens:
             Width: =290
             X: =356
             Y: =186
+            ZIndex: =7
       - PPD_HdrVal2:
           Control: Label@2.5.1
           Properties:
@@ -66,6 +68,7 @@ Screens:
             Width: =290
             X: =656
             Y: =186
+            ZIndex: =7
       - PPD_HdrVal3:
           Control: Label@2.5.1
           Properties:
@@ -78,6 +81,7 @@ Screens:
             Width: =290
             X: =956
             Y: =186
+            ZIndex: =7
       - PPD_HdrVal4:
           Control: Label@2.5.1
           Properties:
@@ -90,6 +94,7 @@ Screens:
             Width: =290
             X: =56
             Y: =222
+            ZIndex: =7
       - PPD_HdrVal5:
           Control: Label@2.5.1
           Properties:
@@ -102,6 +107,7 @@ Screens:
             Width: =290
             X: =356
             Y: =222
+            ZIndex: =7
       - PPD_HdrVal6:
           Control: Label@2.5.1
           Properties:
@@ -114,6 +120,7 @@ Screens:
             Width: =290
             X: =656
             Y: =222
+            ZIndex: =7
       - PPD_BtnBack:
           Control: Classic/Button@2.2.0
           Properties:
@@ -163,6 +170,7 @@ Screens:
             Width: =900
             X: =56
             Y: =126
+            ZIndex: =7
       - PPD_Badge:
           Control: Label@2.5.1
           Properties:
@@ -176,6 +184,7 @@ Screens:
             Width: =330
             X: =980
             Y: =126
+            ZIndex: =7
       - PPD_BtnPrint:
           Control: Classic/Button@2.2.0
           Properties:
