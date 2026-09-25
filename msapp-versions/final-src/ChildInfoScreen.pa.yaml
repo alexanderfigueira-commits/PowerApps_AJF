@@ -24,7 +24,9 @@ Screens:
         If(
             Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
             Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
-        )
+        );
+        // the podcast visual preview starts closed
+        UpdateContext({locShowVisualPreview: false})
     Children:
       - CI_Breadcrumb:
           Control: Label@2.5.1
@@ -788,6 +790,34 @@ Screens:
                   X: =56
                   Y: =404
                   ZIndex: =58
+                Children: []
+            - CI_BtnViewVisual:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(56, 96, 178, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(56, 96, 178, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: =If(IsBlank(Last(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")))), DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =48
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(230, 236, 245, 1)
+                  OnSelect: |-
+                    =UpdateContext({locShowVisualPreview: true})
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: =If(IsBlank(Last(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")))), "🖼  No visual to view yet", "🖼  View podcast visual")
+                  Tooltip: ="Open the podcast visual in a preview"
+                  Visible: =varChildMediaType = "Podcast"
+                  Width: =300
+                  X: =976
+                  Y: =404
+                  ZIndex: =59
                 Children: []
       - CI_BelugaRef:
           Control: Classic/TextInput@2.3.2
@@ -1761,4 +1791,111 @@ Screens:
             X: =1298
             Y: =118
             ZIndex: =921
+          Children: []
+      - CI_VisualShade:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.35)
+            Height: =768
+            OnSelect: |-
+              =UpdateContext({locShowVisualPreview: false})
+            Visible: =locShowVisualPreview And varChildMediaType = "Podcast"
+            Width: =1366
+            ZIndex: =922
+          Children: []
+      - CI_VisualPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =640
+            Visible: =locShowVisualPreview And varChildMediaType = "Podcast"
+            Width: =800
+            X: =283
+            Y: =66
+            ZIndex: =923
+          Children: []
+      - CI_LblVisualPanel:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =16
+            Text: ="Podcast visual"
+            Visible: =locShowVisualPreview And varChildMediaType = "Podcast"
+            Width: =700
+            X: =307
+            Y: =78
+            ZIndex: =924
+          Children: []
+      - CI_VisualFile:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: |-
+              =With(
+                  {f: Last(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))), w: CI_VisualImage.OriginalWidth, h: CI_VisualImage.OriginalHeight},
+                  f.Name
+                  & If(w > 0, "  ·  " & w & " × " & h & " px"
+                      & If(w = h And w >= 1400 And w <= 3000, "  ·  ✓ meets the format",
+                          "  ·  ⚠ expected square, 1400x1400 to 3000x3000 px"), "")
+                  & If(CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) > 1, "  ·  latest of "
+                      & CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) & " images", "")
+              )
+            Visible: =locShowVisualPreview And varChildMediaType = "Podcast"
+            Width: =752
+            X: =307
+            Y: =108
+            ZIndex: =925
+          Children: []
+      - CI_VisualImage:
+          Control: Image@2.2.3
+          Properties:
+            AccessibleLabel: ="Podcast visual preview"
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            CalculateOriginalDimensions: =true
+            Fill: =RGBA(244, 246, 250, 1)
+            Height: =530
+            Image: =Last(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))).Value
+            Tooltip: =Last(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))).Name
+            Visible: =locShowVisualPreview And varChildMediaType = "Podcast"
+            Width: =752
+            X: =307
+            Y: =156
+            ZIndex: =926
+          Children: []
+      - CI_VisualClose:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locShowVisualPreview: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =16
+            Text: ="X"
+            Visible: =locShowVisualPreview And varChildMediaType = "Podcast"
+            Width: =40
+            X: =1031
+            Y: =74
+            ZIndex: =927
           Children: []
