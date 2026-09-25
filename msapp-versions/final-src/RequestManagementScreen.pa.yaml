@@ -648,7 +648,8 @@ Screens:
                       )
                   ),
                   Created,
-                  SortOrder.Descending
+                  // one status: oldest first (waiting longest on top); All Status: newest first
+                  If(varFilter = "All", SortOrder.Descending, SortOrder.Ascending)
               )
             ShowNavigation: =true
             TemplateSize: =60
