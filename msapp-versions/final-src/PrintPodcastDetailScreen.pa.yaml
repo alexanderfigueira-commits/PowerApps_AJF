@@ -130,11 +130,16 @@ Screens:
           Control: Label@2.5.1
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(IsBlank(First(colPrintReqMedia).Description), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Color: =If(IsBlank(Trim(PlainText(First(colPrintReqMedia).Description))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
             Font: =Font.'Open Sans'
             Height: =20
             Size: =12
-            Text: =If(IsBlank(First(colPrintReqMedia).Description), "Not provided", First(colPrintReqMedia).Description)
+            Text: |-
+              =// rich-text column: show the text only, without the HTML
+              With(
+                  {plain: Trim(PlainText(First(colPrintReqMedia).Description))},
+                  If(IsBlank(plain), "Not provided", plain)
+              )
             Width: =980
             X: =310
             Y: =292
@@ -559,11 +564,16 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsBlank(ThisItem.Notes), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Color: =If(IsBlank(Trim(PlainText(ThisItem.Notes))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
                   Height: =20
                   Size: =12
-                  Text: =If(IsBlank(ThisItem.Notes), "Not provided", ThisItem.Notes)
+                  Text: |-
+                    =// rich-text column: show the text only, without the HTML
+                    With(
+                        {plain: Trim(PlainText(ThisItem.Notes))},
+                        If(IsBlank(plain), "Not provided", plain)
+                    )
                   Width: =980
                   X: =310
                   Y: =668
