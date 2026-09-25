@@ -543,7 +543,12 @@ Screens:
                                           CD_MediaNumber: If(spId = 0, With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter('AV-CD-Mediafiles', StartsWith(CD_MediaNumber, yr & "-")), CD_MediaNumber, SortOrder.Descending)).CD_MediaNumber, yr & "-0000"), 4)) + 1), 4)), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
                                           Description: varChildDescription1,
                                           BelugaReference: varChildBelugaRef,
-                                                      PublicationChannel: ForAll(Filter(Table({Value: "Beluga", On: varChildPubBeluga}, {Value: "Spotify", On: varChildPubSpotify}), On) As c, {Value: c.Value}),
+                                                      // single-choice column: one record (both ticked -> "Beluga; Spotify"), Blank() when none
+                                                      PublicationChannel: If(
+                                                          varChildPubBeluga Or varChildPubSpotify,
+                                                          {Value: Concat(Filter(Table({Value: "Beluga", On: varChildPubBeluga}, {Value: "Spotify", On: varChildPubSpotify}), On), Value, "; ")},
+                                                          Blank()
+                                                      ),
                                           Notes: varChildNotes,
                                           // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
                                           MediaType: Table({Value: varChildMediaType}),

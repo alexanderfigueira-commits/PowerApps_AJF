@@ -84,7 +84,7 @@ Screens:
                             ""
                         )),
                         MediaApproved: Coalesce(MediaApproved, false),
-                        PublicationChannel: Concat(PublicationChannel, Value, ";"),
+                        PublicationChannel: Coalesce(PublicationChannel.Value, ""),
                         ProductionTitle: Coalesce(
                             ProductionTitle,
                             ""
@@ -1637,8 +1637,11 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             CheckboxBorderColor: =RGBA(0, 18, 107, 1)
             CheckmarkFill: =RGBA(0, 0, 0, 1)
+            Color: =If((IsBlank(varRequestMediaType) Or varRequestMediaType = ""), RGBA(214, 140, 0, 1), RGBA(0, 0, 0, 1))
             Default: =varRequestAIDeclared
-            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            DisplayMode: |-
+              =// no production type yet: nothing to declare
+              If(varRequestorLocked Or (IsBlank(varRequestMediaType) Or varRequestMediaType = ""), DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =30
             HoverColor: =RGBA(0, 18, 107, 1)
@@ -1649,7 +1652,7 @@ Screens:
                   "Photo", "This production uses AI-generated images",
                   "Video", "This production uses AI-generated content",
                   "Podcast", "This production uses an AI-generated voice-over",
-                  "")
+                  "Please select the production type!")
             Visible: =Not(locDetailsCollapsed)
             Width: =390
             X: =834

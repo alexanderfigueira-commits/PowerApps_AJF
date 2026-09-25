@@ -1071,6 +1071,7 @@ Screens:
             Width: =220
             X: =1122
             Y: =720
+            ZIndex: =22
       - CM_BottomBar:
           Control: Rectangle@2.3.0
           Properties:

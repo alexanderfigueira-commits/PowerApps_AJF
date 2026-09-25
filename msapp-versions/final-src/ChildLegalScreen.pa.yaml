@@ -24,6 +24,13 @@ Screens:
         If(
             Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
             Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
+        );
+        // CL_Case cannot be empty: with no case stored it shows its first item.
+        // OnChange does not run when that item is simply accepted, so store it
+        // here; Validations, the Case 1 checkboxes and Save then see the same value.
+        If(
+            IsBlank(varChildContractCase) Or varChildContractCase = "",
+            Set(varChildContractCase, "Case 1 - framework / direct service contract")
         )
     Children:
       - CL_Breadcrumb:
