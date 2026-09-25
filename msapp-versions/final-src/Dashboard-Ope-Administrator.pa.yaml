@@ -429,13 +429,14 @@ Screens:
             HoverBorderColor: =Self.BorderColor
             HoverFill: =Self.Fill
             Items: |-
-              =// oldest first: every Pending request, then every Processing request
-              Ungroup(
-                  Table(
-                      {rows: Sort(Filter(colOpeReqs, Status.Value = "Pending"), Modified, SortOrder.Ascending)},
-                      {rows: Sort(Filter(colOpeReqs, Status.Value = "Processing"), Modified, SortOrder.Ascending)}
-                  ),
-                  rows
+              =// oldest first: every Pending request, then every Processing request.
+              // One Sort with a two-part key (status group, then seconds since 2000), so the
+              // rows stay request records and ThisItem.Status works in the row badge.
+              Sort(
+                  Filter(colOpeReqs, Status.Value = "Pending" Or Status.Value = "Processing"),
+                  If(Status.Value = "Pending", 0, 10000000000)
+                      + DateDiff(DateTime(2000, 1, 1, 0, 0, 0), Modified, TimeUnit.Seconds),
+                  SortOrder.Ascending
               )
             PressedBorderColor: =Self.BorderColor
             PressedFill: =Self.Fill

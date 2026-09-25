@@ -423,13 +423,14 @@ Screens:
             HoverBorderColor: =Self.BorderColor
             HoverFill: =Self.Fill
             Items: |-
-              =// oldest first: every Pending request, then every Draft request
-              Ungroup(
-                  Table(
-                      {rows: Sort(Filter(colOpeReqs, Status.Value = "Pending"), Modified, SortOrder.Ascending)},
-                      {rows: Sort(Filter(colOpeReqs, Status.Value = "Draft"), Modified, SortOrder.Ascending)}
-                  ),
-                  rows
+              =// oldest first: every Pending request, then every Draft request.
+              // One Sort with a two-part key (status group, then seconds since 2000), so the
+              // rows stay request records and ThisItem.Status works in the row badge.
+              Sort(
+                  Filter(colOpeReqs, Status.Value = "Pending" Or Status.Value = "Draft"),
+                  If(Status.Value = "Pending", 0, 10000000000)
+                      + DateDiff(DateTime(2000, 1, 1, 0, 0, 0), Modified, TimeUnit.Seconds),
+                  SortOrder.Ascending
               )
             PressedBorderColor: =Self.BorderColor
             PressedFill: =Self.Fill
@@ -474,7 +475,7 @@ Screens:
                   Height: =28
                   OnSelect: =Select(Parent)
                   Size: =11
-                  Text: =Coalesce(ThisItem.RequestNumber, "New request") & "  ·  " & If(IsBlank(ThisItem.RequestTitle), "Untitled", ThisItem.RequestTitle)
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
                   Width: =284
                   X: =8
                   Y: =4
@@ -669,7 +670,7 @@ Screens:
                   Height: =28
                   OnSelect: =Select(Parent)
                   Size: =11
-                  Text: =Coalesce(ThisItem.RequestNumber, "New request") & "  ·  " & If(IsBlank(ThisItem.RequestTitle), "Untitled", ThisItem.RequestTitle)
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
                   Width: =284
                   X: =8
                   Y: =4
@@ -864,7 +865,7 @@ Screens:
                   Height: =28
                   OnSelect: =Select(Parent)
                   Size: =11
-                  Text: =Coalesce(ThisItem.RequestNumber, "New request") & "  ·  " & If(IsBlank(ThisItem.RequestTitle), "Untitled", ThisItem.RequestTitle)
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
                   Width: =284
                   X: =8
                   Y: =4
