@@ -1,0 +1,1196 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ChildLegalScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
+      OnVisible: |-
+        =Set(
+            varRequestorLocked,
+            varUserRole <> "ADMINISTRATOR"
+            And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+        );
+        Set(varNavArm, "");
+        // The attachments form edits a snapshot of the open media item. It is
+        // re-read only when a different item is open, so the Patch on Save
+        // cannot reload the form and drop files staged but not yet saved.
+        If(
+            Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
+            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
+        )
+    Children:
+      - CL_Breadcrumb:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =56
+            Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
+            Width: =700
+            X: =200
+      - HomeAppTitle_CL:
+          Control: Label@2.5.1
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =18
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =180
+            X: =264
+            Y: =6
+      - HomeUserName_CL:
+          Control: Label@2.5.1
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Text: =User().FullName
+            Width: =204
+            X: =1103
+            Y: =18
+      - Logo_EC_CL:
+          Control: Image@2.2.3
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =42
+            Image: ='logo--en'
+            PaddingLeft: =15
+            Width: =170
+            X: =16
+            Y: =8
+      - CD_Logo_CL:
+          Control: Image@2.2.3
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =40
+            Image: =cd_badge_play
+            Width: =40
+            X: =214
+            Y: =8
+      - CL_TabsBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =50
+            Width: =1366
+            Y: =52
+      - CL_Tab1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildInfoScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="✓  1.  Info"
+            Width: =150
+            X: =16
+            Y: =52
+      - HeaderDivider_ChildLegalScreen:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(255, 255, 255, 0.35)
+            Height: =30
+            Width: =2
+            X: =200
+            Y: =13
+      - CL_Tab2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildMetaScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="✓  2.  Metadata"
+            Width: =170
+            X: =176
+            Y: =52
+      - CL_Tab3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 18, 107, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 1)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="3.  Legal & Docs"
+            Width: =180
+            X: =356
+            Y: =52
+      - CL_Tab3Line:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =3
+            Width: =180
+            X: =356
+            Y: =99
+      - CL_Tab4:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildValidScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="4.  Validations"
+            Width: =170
+            X: =546
+            Y: =52
+      - CL_BottomBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =56
+            Width: =1366
+            Y: =712
+      - CL_BtnPrev:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildMetaScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="←  Previous"
+            Width: =140
+            X: =32
+            Y: =720
+      - HomeAppSubtitle_CL:
+          Control: Label@2.5.1
+          Group: Header_CL
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =264
+            Y: =30
+      - CL_Gallery:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DelayItemLoading: =false
+            Fill: =RGBA(247, 248, 250, 1)
+            Height: =610
+            Items: |-
+              =[{id: 1}]
+            LoadingSpinner: =LoadingSpinner.None
+            TemplatePadding: =0
+            TemplateSize: |-
+              =// grows only with what is visible, so the panel scrolls only when it must
+              260
+              + If(Left(varChildContractCase, 6) = "Case 1", 140, 0)
+              + If(varChildModelRelease, 30, 0)
+              + If(
+                  varChildMediaType = "Video" Or varChildMediaType = "Podcast",
+                  64 + If(varChildMusicUsed, 30, 0) + If(varChildPreexisting, 30, 0),
+                  0
+              )
+              + If(varChildMediaType = "Video", 32 + If(varChildSubtitlesProvided, 120, 0), 0)
+            Width: =846
+            Y: =102
+          Children:
+            - CL_Banner:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(147, 197, 253, 1)
+                  BorderThickness: =1
+                  Fill: =RGBA(239, 246, 255, 1)
+                  Height: =36
+                  Width: =810
+                  X: =24
+                  Y: =8
+            - CL_BannerText:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 64, 175, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  Size: =12
+                  Text: ="Select the contract case, confirm the rights flags, then attach the legal documents in the panel on the right."
+                  Width: =809
+                  X: =30
+                  Y: =8
+            - CL_LblCase:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =26
+                  Size: =16
+                  Text: ="Contract case *"
+                  Width: =600
+                  X: =24
+                  Y: =54
+            - CL_Case:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  ChevronBackground: =RGBA(56, 96, 178, 1)
+                  ChevronFill: =RGBA(255, 255, 255, 1)
+                  ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                  Default: =varChildContractCase
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Items: |-
+                    =[
+                        "Case 1 - framework / direct service contract",
+                        "Case 2 - specific service contract",
+                        "Case 3 - co-production agreement",
+                        "Case 4 - acquisition of existing material",
+                        "Case 5 - internal EU production",
+                        "Case 6 - donation / free licence"
+                    ]
+                  Items.Value: =Value
+                  OnChange: =Set(varChildContractCase, Self.Selected.Value)
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(0, 18, 107, 1)
+                  SelectionColor: =RGBA(255, 255, 255, 1)
+                  SelectionFill: =RGBA(56, 96, 178, 1)
+                  Width: =560
+                  X: =24
+                  Y: =82
+            - CL_LblCase1Sub:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="Case 1 — required documents"
+                  Visible: =Left(varChildContractCase, 6) = "Case 1"
+                  Width: =520
+                  X: =24
+                  Y: =130
+            - CL_Divider1:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =798
+                  X: =24
+                  Y: =If(Left(varChildContractCase, 6) = "Case 1", 274, 134)
+            - CL_LblRights:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =26
+                  Size: =16
+                  Text: ="Rights & declarations"
+                  Width: =600
+                  X: =24
+                  Y: =CL_Divider1.Y + 10
+            - CL_ChkNoThirdParty:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Default: =varChildNoThirdParty
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildNoThirdParty, true)
+                  OnUncheck: =Set(varChildNoThirdParty, false)
+                  Text: ="No third-party rights in this production"
+                  Width: =780
+                  X: =20
+                  Y: =CL_LblRights.Y + 30
+            - CL_ChkModel:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildModelRelease, true)
+                  OnUncheck: =Set(varChildModelRelease, false); Set(varChildModelReleaseProvided, false)
+                  Text: ="Recognisable private persons appear in this production"
+                  Width: =780
+                  X: =20
+                  Y: =CL_ChkNoThirdParty.Y + CL_ChkNoThirdParty.Height
+            - CL_ChkModelProvided:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =30
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildModelReleaseProvided, true)
+                  OnUncheck: =Set(varChildModelReleaseProvided, false)
+                  Text: ="  ↳  Model release form(s) provided (attach on the right)"
+                  Visible: =varChildModelRelease
+                  Width: =700
+                  X: =44
+                  Y: =CL_ChkModel.Y + CL_ChkModel.Height
+            - CL_ChkMusic:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildMusicUsed, true)
+                  OnUncheck: =Set(varChildMusicUsed, false); Set(varChildMusicLicenceProvided, false)
+                  Text: ="This production contains music (original or licensed)"
+                  Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+                  Width: =780
+                  X: =20
+                  Y: =CL_ChkModelProvided.Y + If(CL_ChkModelProvided.Visible, CL_ChkModelProvided.Height, 0)
+            - CL_ChkMusicProvided:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =30
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildMusicLicenceProvided, true)
+                  OnUncheck: =Set(varChildMusicLicenceProvided, false)
+                  Text: ="  ↳  Music licence / annex provided (attach on the right)"
+                  Visible: =(varChildMediaType = "Video" Or varChildMediaType = "Podcast") And varChildMusicUsed
+                  Width: =700
+                  X: =44
+                  Y: =CL_ChkMusic.Y + If(CL_ChkMusic.Visible, CL_ChkMusic.Height, 0)
+            - CL_ChkPreexisting:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildPreexisting, true)
+                  OnUncheck: =Set(varChildPreexisting, false); Set(varChildPreexistingProvided, false)
+                  Text: ="Production contains pre-existing rights material"
+                  Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
+                  Width: =780
+                  X: =20
+                  Y: =CL_ChkMusicProvided.Y + If(CL_ChkMusicProvided.Visible, CL_ChkMusicProvided.Height, 0)
+            - CL_ChkPreexistingProvided:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =30
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildPreexistingProvided, true)
+                  OnUncheck: =Set(varChildPreexistingProvided, false)
+                  Text: ="  ↳  Pre-existing rights annex(es) provided (attach on the right)"
+                  Visible: =(varChildMediaType = "Video" Or varChildMediaType = "Podcast") And varChildPreexisting
+                  Width: =700
+                  X: =44
+                  Y: =CL_ChkPreexisting.Y + If(CL_ChkPreexisting.Visible, CL_ChkPreexisting.Height, 0)
+            - CL_Divider2:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =798
+                  X: =24
+                  Y: =CL_VTTUpload.Y + If(CL_VTTUpload.Visible, CL_VTTUpload.Height, 0) + 8
+            - CL_ChkSubtitles:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varChildSubtitlesProvided, true)
+                  OnUncheck: =Set(varChildSubtitlesProvided, false)
+                  Text: ="Subtitles are provided for this production (VTT format)"
+                  Visible: =varChildMediaType = "Video"
+                  Width: =780
+                  X: =20
+                  Y: =CL_ChkPreexistingProvided.Y + If(CL_ChkPreexistingProvided.Visible, CL_ChkPreexistingProvided.Height, 0)
+            - CL_LblVTT:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(60, 66, 80, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Text: ="VTT subtitle file(s) *   - attach them in the panel on the right (VTT only, SRT is not accepted)"
+                  Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
+                  Width: =780
+                  X: =24
+                  Y: =CL_ChkSubtitles.Y + If(CL_ChkSubtitles.Visible, CL_ChkSubtitles.Height, 0)
+            - CL_VTTUpload:
+                Control: Attachments@2.3.0
+                Properties:
+                  BorderColor: =RGBA(220, 224, 230, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  Height: =96
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  ItemColor: =RGBA(255, 255, 255, 1)
+                  ItemFill: =RGBA(56, 96, 178, 1)
+                  ItemHoverFill: =RGBA(186, 202, 226, 1)
+                  Items: =Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))
+                  Items.Name: =Name
+                  Items.Value: =Value
+                  MaxAttachments: =5
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(0, 18, 107, 1)
+                  Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
+                  Width: =780
+                  X: =24
+                  Y: =CL_LblVTT.Y + If(CL_LblVTT.Visible, 24, 0)
+            - CL_ChkFramework:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Default: =varDocFramework
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =30
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varDocFramework, true)
+                  OnUncheck: =Set(varDocFramework, false)
+                  Text: ="Signed framework contract *"
+                  Visible: =Left(varChildContractCase, 6) = "Case 1"
+                  Width: =560
+                  X: =20
+                  Y: =152
+            - CL_ChkSpecific:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Default: =varDocSpecific
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =30
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varDocSpecific, true)
+                  OnUncheck: =Set(varDocSpecific, false)
+                  Text: ="Signed specific contract *"
+                  Visible: =Left(varChildContractCase, 6) = "Case 1"
+                  Width: =560
+                  X: =20
+                  Y: =182
+            - CL_ChkOffer:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Default: =varDocOffer
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  Height: =30
+                  HoverColor: =RGBA(0, 18, 107, 1)
+                  OnCheck: =Set(varDocOffer, true)
+                  OnUncheck: =Set(varDocOffer, false)
+                  Text: ="Offer (optional)"
+                  Visible: =Left(varChildContractCase, 6) = "Case 1"
+                  Width: =560
+                  X: =20
+                  Y: =212
+            - CL_LblCase1Req:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(200, 30, 30, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =22
+                  Size: =12
+                  Text: ="⚠  Both mandatory contracts must be confirmed"
+                  Visible: =Left(varChildContractCase, 6) = "Case 1" And (Not(varDocFramework) Or Not(varDocSpecific))
+                  Width: =700
+                  X: =24
+                  Y: =244
+      - CL_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+      - CL_AttachPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =594
+            Width: =492
+            X: =858
+            Y: =110
+      - CL_LblAttachments:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =28
+            Size: =16
+            Text: ="Legal annexes & supporting documents"
+            Width: =460
+            X: =874
+            Y: =120
+      - CL_AttachFor:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: |-
+              ="Media item: " & Coalesce(varChildTitle1, varChildTitle, "Untitled media item")
+              & If(
+                  IsBlank(varAttachRecord),
+                  "  ·  not saved in SharePoint yet",
+                  "  ·  " & varAttachRecord.CD_MediaNumber
+              )
+            Width: =460
+            X: =874
+            Y: =150
+      - CL_AttachHint:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =65
+            Size: =10
+            Text: |-
+              ="Attach signed contracts, model releases, music licences, pre-existing rights annexes and VTT subtitles here. Podcast visuals and audio files are added on the Info and Metadata tabs. Everything is saved to this media item when you press Save Media.
+              "
+            Width: =460
+            X: =874
+            Y: =190
+      - CL_AttachNeedSave:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(200, 30, 30, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =12
+            Text: ="⚠  Save the media item first to add attachments"
+            Visible: =IsBlank(varAttachRecord)
+            Width: =460
+            X: =874
+            Y: =260
+      - CL_FormAttach:
+          Control: Form@2.4.4
+          Variant: Classic
+          Layout: Vertical
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DataSource: ='AV-CD-Mediafiles'
+            DefaultMode: =If(varRequestorLocked, FormMode.View, FormMode.Edit)
+            Height: =420
+            Item: |-
+              =If(
+                  IsBlank(varAttachRecord),
+                  Defaults('AV-CD-Mediafiles'),
+                  varAttachRecord
+              )
+            NumberOfColumns: =1
+            OnFailure: |-
+              =// Stop: stay on the Validations tab. The other fields were already Patched
+              // and the staged files are still in the form, so Save Media can be retried.
+              Notify(
+                  "The media details were saved, but the attachments were not: " & CL_FormAttach.Error & "  Press Save Media to try again.",
+                  NotificationType.Error
+              )
+            OnSuccess: |-
+              =Notify("Media and attachments saved to SharePoint.", NotificationType.Success);
+              // re-read the item so the form lists the saved files
+              Refresh('AV-CD-Mediafiles');
+              Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)));
+              // the same finish CV_BtnSaveArchive has always had
+              Set(varRequestMediaType, "");
+              Set(varConfirmed, false);
+              Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
+            Width: =484
+            X: =862
+            Y: =If(IsBlank(varAttachRecord), 278, 250)
+          Children:
+            - CL_DCId:
+                Control: TypedDataCard@1.0.7
+                Variant: BlankCard
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DisplayMode: =Parent.DisplayMode
+                  Height: =44
+                  Visible: =false
+                  Width: =484
+                  X: =0
+                  Y: =0
+                Children:
+                  - CL_DCIdKey:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =32
+                        Size: =12
+                        Text: ="ID"
+                        Width: =60
+                        Wrap: =false
+                        X: =15
+                        Y: =6
+                  - CL_DCIdValue:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(60, 66, 80, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =32
+                        Size: =12
+                        Text: =If(IsBlank(ThisItem.ID), "—", Text(ThisItem.ID))
+                        Width: =Parent.Width - 96
+                        Wrap: =false
+                        X: =80
+                        Y: =6
+            - CL_DCAttach:
+                Control: TypedDataCard@1.0.7
+                Variant: ClassicAttachmentsEdit
+                IsLocked: true
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DataField: ="{Attachments}"
+                  Default: =ThisItem.Attachments
+                  DisplayMode: =If(IsBlank(varAttachRecord), DisplayMode.Disabled, Parent.DisplayMode)
+                  DisplayName: =DataSourceInfo([@'AV-CD-Mediafiles'],DataSourceInfo.DisplayName,Attachments)
+                  Height: =360
+                  Required: =false
+                  Update: |-
+                    =// CL_FormAttach is the only form that is submitted (Save Media). For podcasts the
+                    // podcast visual (Info tab, CI_PodcastVisual) and the audio files (Metadata tab,
+                    // CM_AudioFiles) are edited in their own forms; their changes are merged here so
+                    // one SubmitForm saves every file and no form removes another form's files.
+                    With(
+                        {
+                            podcast: varChildMediaType = "Podcast",
+                            saved: varAttachRecord.Attachments.DisplayName,
+                            here: CL_DCAttachValue.Attachments.Name
+                        },
+                        // shaped as SharePoint attachment records: each needs its Id (the saved
+                        // attachment's Id, or the file name for a new file), else Save fails with
+                        // "Field 'Id' is required"
+                        ForAll(
+                            Ungroup(
+                                Table(
+                                    // this panel's files, minus the podcast files removed on Info / Metadata
+                                    {files: Filter(
+                                        CL_DCAttachValue.Attachments,
+                                        Not(podcast)
+                                            Or Not(Name in saved)
+                                            Or (Not(EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")) Or Name in CI_PodcastVisual.Attachments.Name)
+                                                And (Not(EndsWith(Lower(Name), ".mp3") Or EndsWith(Lower(Name), ".wav") Or EndsWith(Lower(Name), ".m4a") Or EndsWith(Lower(Name), ".aac")) Or Name in CM_AudioFiles.Attachments.Name)
+                                    )},
+                                    // new files added on Info / Metadata
+                                    {files: Filter(CI_PodcastVisual.Attachments, podcast And Not(Name in saved) And Not(Name in here))},
+                                    {files: Filter(CM_AudioFiles.Attachments, podcast And Not(Name in saved) And Not(Name in here))}
+                                ),
+                                files
+                            ) As f,
+                            {
+                                DisplayName: f.Name,
+                                Id: Coalesce(LookUp(varAttachRecord.Attachments, DisplayName = f.Name).Id, f.Name),
+                                Value: f.Value
+                            }
+                        )
+                    )
+                  Width: =484
+                  X: =0
+                  Y: =1
+                Children:
+                  - CL_DCAttachKey:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldName
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =34
+                        Size: =12
+                        Text: =Parent.DisplayName
+                        Width: =Parent.Width - 32
+                        Wrap: =false
+                        X: =16
+                        Y: =6
+                  - CL_DCAttachValue:
+                      Control: Attachments@2.3.0
+                      MetadataKey: FieldValue
+                      Properties:
+                        BorderColor: =If(IsBlank(Parent.Error), Parent.BorderColor, Color.Red)
+                        DisplayMode: =Parent.DisplayMode
+                        Font: =Font.'Open Sans'
+                        Height: =280
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        ItemColor: =RGBA(255, 255, 255, 1)
+                        ItemFill: =RGBA(56, 96, 178, 1)
+                        ItemHoverFill: =RGBA(186, 202, 226, 1)
+                        Items: =Parent.Default
+                        PaddingBottom: =5
+                        PaddingLeft: =If(Self.DisplayMode = DisplayMode.Edit, 5, 0)
+                        PaddingRight: =5
+                        PaddingTop: =5
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 18, 107, 1)
+                        Size: =12
+                        Tooltip: =Parent.DisplayName
+                        Width: =Parent.Width - 32
+                        X: =16
+                        Y: =42
+                  - CL_DCAttachError:
+                      Control: Label@2.5.1
+                      MetadataKey: ErrorMessage
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(168, 0, 0, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =10
+                        Live: =Live.Assertive
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =14
+                        Text: =Parent.Error
+                        Visible: =Parent.DisplayMode=DisplayMode.Edit
+                        Width: =Parent.Width - 32
+                        X: =16
+                        Y: =CL_DCAttachValue.Y + CL_DCAttachValue.Height
+                  - CL_DCAttachStar:
+                      Control: Label@2.5.1
+                      MetadataKey: FieldRequired
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =CL_DCAttachKey.Height
+                        Text: ="*"
+                        Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                        Width: =30
+                        Wrap: =false
+                        Y: =CL_DCAttachKey.Y
+      - CL_BtnNext:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: =Navigate(ChildValidScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="Validations  ➤"
+            Width: =220
+            X: =1110
+            Y: =720
+      - CL_LblMissing:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(224, 134, 0, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: |-
+              =With(
+                  {miss:
+                      Concat(
+                          Filter(
+                              Table(
+                              {lbl: CL_LblCase.Text, gone: CL_LblCase.Visible And IsBlank(CL_Case.Selected.Value)},
+                              {lbl: "VTT subtitle file(s)", gone: CL_LblVTT.Visible And CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) = 0}
+                              ),
+                              gone
+                          ),
+                          ", " & Trim(Substitute(lbl, "*", ""))
+                      )
+                  },
+                  If(IsBlank(miss), "", "Still to complete:  " & Mid(miss, 3))
+              )
+            Visible: =Not(IsBlank(Self.Text))
+            Width: =900
+            X: =190
+            Y: =720
+      - HomeAppTitle_12:
+          Control: Label@2.5.1
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Size: =14
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =193
+            X: =244
+            Y: =8
+      - Logo_EC_Form_18:
+          Control: Image@2.2.3
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =50
+            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
+            PaddingLeft: =15
+            Width: =186
+            X: =2
+            Y: =2
+      - CD_Logo_12:
+          Control: Image@2.2.3
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =31
+            Image: =cd_badge_play
+            Width: =31
+            X: =208
+            Y: =20
+      - HomeAppSubtitle_12:
+          Control: Label@2.5.1
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =266
+            Y: =32
+      - NavPanel_MyRequestScreen_11:
+          Control: Classic/Button@2.2.0
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =RGBA(255, 255, 255, 0.10)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(255, 255, 255, 0.10)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 0.10)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(255, 255, 255, 0.10)
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            Size: =10
+            TabIndex: =-1
+            Text: =""
+            Width: =424
+            X: =666
+            Y: =4
+      - NavBtnRequests_MyRequestScreen_11:
+          Control: Classic/Button@2.2.0
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(RequestManagementScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📋 Requests"
+            Tooltip: ="Requests"
+            Width: =83
+            X: =678
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_22:
+          Control: Classic/Button@2.2.0
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(DashboardScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📊" & Char(10) & "Dashboard"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =769
+            Y: =9
+      - NavBtnReview_MyRequestScreen_11:
+          Control: Classic/Button@2.2.0
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(ReviewScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="👁" & Char(10) & "Review"
+            Tooltip: ="Review"
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =83
+            X: =854
+            Y: =9
+      - NavBtnHelp_MyRequestScreen_11:
+          Control: Classic/Button@2.2.0
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Width: =83
+            X: =1010
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_23:
+          Control: Classic/Button@2.2.0
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =ClearCollect(colPrintData, HomeGallery.AllItems);
+              Navigate(HomePrintScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📂
+              Export"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =927
+            Y: =9
+      - Image1_18:
+          Control: Image@2.2.3
+          Group: Header_10
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+            Y: =1
+      - HomeUserName_18:
+          Control: Label@2.5.1
+          Group: Header_10
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =47
+            Size: =11
+            Text: |-
+              =User().FullName & " - " & If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =174
+            X: =1139
+            Y: =6

@@ -1,0 +1,880 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ReviewScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |-
+        =Set(varReviewProject, Blank());
+        Set(varReviewComment, "");
+        Set(varReviewQueueMine, Coalesce(varReviewMineOnly, false));
+        Set(varReviewMineOnly, false);
+        ClearCollect(colRevReqs, AVCentralDepositRequests)
+    Children:
+      - RV_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =52
+            Width: =1366
+      - RV_QueuePanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =840
+            Width: =430
+            Y: =52
+      - RV_QueueTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =44
+            Size: =14
+            Text: ="Submitted requests  (" & Text(CountRows(RV_QueueGallery.AllItems)) & ")"
+            Width: =400
+            X: =16
+            Y: =60
+      - RV_QueueDivider:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(220, 224, 230, 1)
+            Height: =1
+            Width: =430
+            Y: =104
+      - RV_QueueGallery:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Height: =786
+            Items: |-
+              =Sort(
+                  Filter(colRevReqs,
+                      If(varReviewQueueMine, Status.Value = "Pending", Status.Value = "Pending"),
+                      Not(varReviewQueueMine) Or Not(IsEmpty(Filter(DG_Agency_Contact, Lower(Email) = Lower(User().Email))))
+                  ),
+                  Modified, SortOrder.Descending
+              )
+            TemplateSize: =72
+            Width: =430
+            Y: =106
+          Children:
+            - RV_QRowBg:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+                  Height: =71
+                  HoverFill: =RGBA(240, 242, 246, 1)
+                  OnSelect: |-
+                    =Set(varReviewProject, ThisItem);
+                    Set(varReviewComment, "")
+                  Width: =430
+            - RV_QRowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(220, 224, 230, 1)
+                  Height: =1
+                  Width: =430
+                  Y: =71
+            - RV_QRowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  OnSelect: =Select(Parent)
+                  Text: =Coalesce(ThisItem.RequestTitle, "Untitled request")
+                  Width: =390
+                  X: =20
+                  Y: =10
+            - RV_QRowMeta:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =24
+                  OnSelect: =Select(Parent)
+                  Size: =12
+                  Text: =Coalesce(ThisItem.DG.Value, "—") & "  ·  " & Coalesce(First(ThisItem.DG_Agency_Contact).DisplayName, "—")
+                  Width: =390
+                  X: =20
+                  Y: =38
+      - RV_DetailPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =840
+            Width: =930
+            X: =436
+            Y: =52
+      - RV_EmptyState:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Size: =14
+            Text: ="Select a request from the queue on the left to review it."
+            Visible: =IsBlank(varReviewProject)
+            Width: =880
+            X: =461
+            Y: =420
+      - RV_DetailMeta:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Text: |-
+              =Coalesce(varReviewProject.DG.Value, "—") & "   ·   Contact: " & Coalesce(First(varReviewProject.DG_Agency_Contact).DisplayName, "—")
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =860
+            X: =460
+            Y: =104
+      - RV_DetailDivider1:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(220, 224, 230, 1)
+            Height: =1
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =900
+            X: =436
+            Y: =136
+      - RV_ChildrenTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Text: ="Archives in this request"
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =400
+            X: =460
+            Y: =148
+      - RV_ThTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="ARCHIVE TITLE"
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =340
+            X: =460
+            Y: =180
+      - RV_ThType:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="TYPE"
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =140
+            X: =820
+            Y: =180
+      - RV_ThValid:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            Size: =11
+            Text: ="VALIDATION"
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =160
+            X: =976
+            Y: =180
+      - RV_ChildrenGallery:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =168
+            Items: |-
+              =If(
+                  IsBlank(varReviewProject),
+                  Filter(AVCentralDepositMediaItems, 1 = 2),
+                  Sort(
+                      Filter(AVCentralDepositMediaItems, ParentRequest = varReviewProject.RequestNumber),
+                      Modified, SortOrder.Descending
+                  )
+              )
+            TemplateSize: =42
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =900
+            X: =436
+            Y: =216
+          Children:
+            - RV_CRowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(220, 224, 230, 1)
+                  Height: =1
+                  Width: =900
+                  Y: =41
+            - RV_CRowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =42
+                  Size: =12
+                  Text: =If(IsBlank(ThisItem.CD_MediaNumber) Or ThisItem.CD_MediaNumber = "New archive", "— untitled —", ThisItem.CD_MediaNumber)
+                  Width: =340
+                  X: =24
+            - RV_CRowType:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =42
+                  Size: =12
+                  Text: =If(IsBlank(First(ThisItem.MediaType).Value), "—", If(First(ThisItem.MediaType).Value = "Photo", "Photo/Reportage", First(ThisItem.MediaType).Value))
+                  Width: =140
+                  X: =384
+            - RV_CRowValid:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =If(
+                        Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
+                        And Not(IsBlank(First(ThisItem.MediaType).Value))
+                        And Not(IsBlank(First(ThisItem.ContractCase).Value))
+                        And Not(ThisItem.AIVoiceover = "Yes"),
+                        RGBA(22, 128, 80, 1),
+                        RGBA(193, 40, 40, 1)
+                    )
+                  Font: =Font.'Open Sans'
+                  Height: =42
+                  Size: =12
+                  Text: |-
+                    =If(
+                        Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
+                        And Not(IsBlank(First(ThisItem.MediaType).Value))
+                        And Not(IsBlank(First(ThisItem.ContractCase).Value))
+                        And Not(ThisItem.AIVoiceover = "Yes"),
+                        "✓  Ready",
+                        "⚠  Incomplete"
+                    )
+                  Width: =160
+                  X: =540
+      - RV_DetailDivider2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(220, 224, 230, 1)
+            Height: =1
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =900
+            X: =436
+            Y: =392
+      - RV_LblOwnerAssign:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: ="Assignee(s)  —  approver is added on approval; add a co-assignee if needed"
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =700
+            X: =460
+            Y: =404
+      - RV_Assignee:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(56, 96, 178, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            ChevronHoverFill: =RGBA(255, 255, 255, 1)
+            DefaultSelectedItems: |-
+              =ForAll(varReviewProject.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
+            DisplayFields: =["DisplayName"]
+            Font: =Font.'Open Sans'
+            HoverFill: =RGBA(186, 202, 226, 1)
+            InputTextPlaceholder: ="Search people to add as assignee…"
+            Items: |-
+              =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            SearchFields: =["DisplayName"]
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(56, 96, 178, 1)
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =380
+            X: =460
+            Y: =432
+      - RV_OwnerEmail:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =Coalesce(First(varReviewProject.Contractor_Contact).DisplayName, "—")
+            DisplayMode: =DisplayMode.View
+            Font: =Font.'Open Sans'
+            HintText: ="Contractor contact"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =380
+            X: =860
+            Y: =432
+      - RV_DetailDivider3:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(220, 224, 230, 1)
+            Height: =1
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =900
+            X: =436
+            Y: =484
+      - RV_LblComment:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: ="Reviewer comment  (required to reject)"
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =600
+            X: =460
+            Y: =496
+      - RV_Comment:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =Coalesce(varReviewComment, "")
+            Font: =Font.'Open Sans'
+            Height: =100
+            HintText: ="Explain what needs to be corrected before the project can be approved."
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varReviewComment, Self.Text)
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =880
+            X: =460
+            Y: =524
+      - RV_ExistingComment:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            Size: =12
+            Text: |-
+              ="Previous reviewer comment: " & Coalesce(varReviewProject.ReviewerComments, "none")
+            Visible: =Not(IsBlank(varReviewProject)) And Not(IsBlank(varReviewProject.ReviewerComments))
+            Width: =880
+            X: =460
+            Y: =628
+      - RV_DetailDivider4:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(220, 224, 230, 1)
+            Height: =1
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =900
+            X: =436
+            Y: =666
+      - RV_BtnApprove:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(255, 255, 255, 1)
+            DisabledFill: =RGBA(186, 196, 214, 1)
+            DisplayMode: =If(Not(IsBlank(varReviewProject)), DisplayMode.Edit, DisplayMode.Disabled)
+            Fill: =RGBA(22, 128, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(15, 90, 55, 1)
+            OnSelect: |-
+              =IfError(
+                  Patch(AVCentralDepositRequests,
+                      LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
+                      {
+                          Status: {Value: "Approved"},
+                          // Assignee(s) = the approver, plus any co-assignees selected in RV_Assignee.
+                          DG_Agency_Contact: Table({
+                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                              Claims: "i:0#.f|membership|" & Lower(User().Email),
+                              DisplayName: User().FullName,
+                              Email: User().Email,
+                              Department: "",
+                              JobTitle: "",
+                              Picture: ""
+                          }),
+                          ReviewedByContact: Table({
+                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                              Claims: "i:0#.f|membership|" & Lower(User().Email),
+                              DisplayName: User().FullName,
+                              Email: User().Email,
+                              Department: "",
+                              JobTitle: "",
+                              Picture: ""
+                          }),
+                          ReviewedDate: Now()
+                      }
+                  );
+                  Notify("Request approved.", NotificationType.Success);
+                  Set(varReviewProject, Blank());
+                  Set(varReviewComment, ""),
+                  Notify("Approve failed: " & FirstError.Message, NotificationType.Error)
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="✓  Approve"
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =200
+            X: =460
+            Y: =680
+      - RV_BtnReject:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(193, 40, 40, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: |-
+              =If(
+                  Not(IsBlank(varReviewProject)) And Not(IsBlank(varReviewComment)) And varReviewComment <> "",
+                  DisplayMode.Edit,
+                  DisplayMode.Disabled
+              )
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(253, 235, 235, 1)
+            OnSelect: |-
+              =IfError(
+                  Patch(AVCentralDepositRequests,
+                      LookUp(AVCentralDepositRequests, ID = varReviewProject.ID),
+                      {
+                          Status: {Value: "Rejected"},
+                          ReviewerComments: varReviewComment,
+                          ReviewedByContact: Table({
+                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                              Claims: "i:0#.f|membership|" & Lower(User().Email),
+                              DisplayName: User().FullName,
+                              Email: User().Email,
+                              Department: "",
+                              JobTitle: "",
+                              Picture: ""
+                          }),
+                          ReviewedDate: Now()
+                      }
+                  );
+                  Notify("Request rejected. The owner will see your comment on their next visit.", NotificationType.Warning);
+                  Set(varReviewProject, Blank());
+                  Set(varReviewComment, ""),
+                  Notify("Reject failed: " & FirstError.Message, NotificationType.Error)
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="✕  Reject"
+            Visible: =Not(IsBlank(varReviewProject))
+            X: =676
+            Y: =680
+      - RV_RejectHint:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =12
+            Text: ="A reviewer comment is required before rejecting."
+            Visible: |-
+              =Not(IsBlank(varReviewProject))
+              And (IsBlank(varReviewComment) Or varReviewComment = "")
+            Width: =440
+            X: =860
+            Y: =692
+      - RV_Title:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(241, 244, 249, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =52
+            Size: =15
+            Text: ="Review queue:"
+            Width: =876
+            X: =460
+            Y: =62
+      - RV_DetailTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =31
+            Size: =15
+            Text: =Coalesce(varReviewProject.RequestTitle, "")
+            Visible: =Not(IsBlank(varReviewProject))
+            Width: =200
+            X: =980
+            Y: =72
+      - NoInternetIcon_6:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 0, 0, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =44
+            Icon: =Icon.GlobeNotConnected
+            PaddingBottom: =5
+            PaddingLeft: =5
+            PaddingRight: =5
+            PaddingTop: =5
+            Tooltip: ="No internet connection detected. Please verify your connection and try again."
+            Visible: =!Connection.Connected
+            X: =858
+            Y: =680
+      - HomeUserName_4:
+          Control: Label@2.5.1
+          Group: Header_6
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =47
+            Size: =11
+            Text: |-
+              =User().FullName & " - " & If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =174
+            X: =1139
+            Y: =6
+      - Image1_9:
+          Control: Image@2.2.3
+          Group: Header_6
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+      - HomeAppTitle_5:
+          Control: Label@2.5.1
+          Group: Group4_2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Size: =14
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =193
+            X: =258
+            Y: =6
+      - Logo_EC_Form_14:
+          Control: Image@2.2.3
+          Group: Group4_2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =50
+            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
+            PaddingLeft: =15
+            Width: =186
+      - CD_Logo_5:
+          Control: Image@2.2.3
+          Group: Group4_2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =31
+            Image: =cd_badge_play
+            Width: =31
+            X: =222
+            Y: =18
+      - HomeAppSubtitle_5:
+          Control: Label@2.5.1
+          Group: Group4_2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =280
+            Y: =30
+      - NavPanel_MyRequestScreen_5:
+          Control: Classic/Button@2.2.0
+          Group: menu_1
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =RGBA(255, 255, 255, 0.10)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(255, 255, 255, 0.10)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 0.10)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(255, 255, 255, 0.10)
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            Size: =10
+            TabIndex: =-1
+            Text: =""
+            Visible: =true
+            Width: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  439,
+                  356
+              )
+            X: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  687,
+                  770
+              )
+      - NavBtnRequests_MyRequestScreen_5:
+          Control: Classic/Button@2.2.0
+          Group: menu_1
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = MyRequestScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(MyRequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📋 Requests"
+            Tooltip: ="Requests"
+            Visible: =true
+            Width: =83
+            X: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  699,
+                  782
+              )
+            Y: =5
+      - NavBtnDashboard_MyRequestScreen_10:
+          Control: Classic/Button@2.2.0
+          Group: menu_1
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(DashboardScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📊" & Char(10) & "Dashboard"
+            Tooltip: ="Dashboard"
+            Visible: =true
+            Width: =83
+            X: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  782,
+                  865
+              )
+            Y: =5
+      - NavBtnReview_MyRequestScreen_5:
+          Control: Classic/Button@2.2.0
+          Group: menu_1
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(ReviewScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="👁" & Char(10) & "Review"
+            Tooltip: ="Review"
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =83
+            X: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  865,
+                  948
+              )
+            Y: =5
+      - NavBtnHelp_MyRequestScreen_6:
+          Control: Classic/Button@2.2.0
+          Group: menu_1
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Visible: =true
+            Width: =83
+            X: =1031
+            Y: =5
+      - NavBtnDashboard_MyRequestScreen_11:
+          Control: Classic/Button@2.2.0
+          Group: menu_1
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HomePrintScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =ClearCollect(colPrintData, HomeGallery.AllItems);
+              Navigate(HomePrintScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📂
+              Export"
+            Tooltip: ="Dashboard"
+            Visible: =true
+            Width: =83
+            X: =948
+            Y: =5

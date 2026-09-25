@@ -1,0 +1,881 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ChildValidScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
+      OnVisible: |-
+        =Set(
+            varRequestorLocked,
+            varUserRole <> "ADMINISTRATOR"
+            And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+        );
+        Set(varNavArm, "");
+        // The attachments form edits a snapshot of the open media item. It is
+        // re-read only when a different item is open, so the Patch on Save
+        // cannot reload the form and drop files staged but not yet saved.
+        If(
+            Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
+            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
+        );
+        ClearCollect(colValidations,
+            {Check: "Media type is set",
+             Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "",
+             Note: "Select a production type on the Info tab."},
+            {Check: "Archive title is provided",
+             Pass: Not(IsBlank(varChildTitle1)) And varChildTitle1 <> "" And varChildTitle1 <> "New archive",
+             Note: "Enter a descriptive title on the Info tab."},
+            {Check: "Capture / production date is set",
+             Pass: Not(IsBlank(varChildCaptureDate)),
+             Note: "Set the date on the Info tab (Metadata tab for Photo/Reportage)."},
+            {Check: "Language version(s) selected (Video / Podcast only)",
+             Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildLanguageVersions)) And varChildLanguageVersions <> ""),
+             Note: "Select the language on the Info tab (Video) or Metadata tab (Podcast)."},
+            {Check: "No AI-generated voice-over (not accepted)",
+             Pass: Not(varChildAIVoiceover),
+             Note: "⛔ AI voice-over detected. This archive cannot be submitted."},
+            {Check: "Contract case (1–6) is selected",
+             Pass: Not(IsBlank(varChildContractCase)) And varChildContractCase <> "",
+             Note: "Select a contract case on the Legal & Docs tab."},
+            {Check: "Case 1: both mandatory contracts confirmed", Pass: Left(varChildContractCase, 6) <> "Case 1" Or (varDocFramework And varDocSpecific), Note: "Confirm the signed framework and specific contracts on the Legal & Docs tab."},
+            {Check: "Contractor / agency provided (Photo only)",
+             Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildCredits1)) And varChildCredits1 <> ""),
+             Note: "Enter the contractor / agency on the Metadata tab."},
+            {Check: "Description provided (Photo only)",
+             Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildDescription1)) And varChildDescription1 <> ""),
+             Note: "Enter the description on the Info tab."},
+            {Check: "Place provided (Photo only)",
+             Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildProductionPlace1)) And varChildProductionPlace1 <> ""),
+             Note: "Enter the place on the Metadata tab."},
+            {Check: "Photo caption provided (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildPhotoCaption)) And varChildPhotoCaption <> ""), Note: "Enter the photo caption on the Metadata tab."},
+            {Check: "Contracting authority provided (Photo only)",
+             Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildContractingAuthority)) And varChildContractingAuthority <> ""),
+             Note: "Enter the contracting authority on the Metadata tab."},
+            {Check: "Podcast title provided (Podcast only)",
+             Pass: varChildMediaType <> "Podcast" Or (Not(IsBlank(varRequestTitle)) And varRequestTitle <> ""),
+             Note: "Enter the podcast title on the Info tab."},
+            {Check: "Podcast description provided (Podcast only)",
+             Pass: varChildMediaType <> "Podcast" Or (Not(IsBlank(varRequestDescription)) And varRequestDescription <> ""),
+             Note: "Enter the podcast description on the Info tab."},
+            {Check: "Podcast visual attached (Podcast only)",
+             Pass: varChildMediaType <> "Podcast" Or CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) > 0,
+             Note: "Attach the podcast visual (square JPEG/PNG) on the Info tab (📎 Podcast visual)."},
+            {Check: "Podcast/episode visuals are JPEG or PNG (Podcast only)",
+             Pass: varChildMediaType <> "Podcast" Or (CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CM_AudioFiles.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic")))) = 0,
+             Note: "Only JPEG or PNG images are accepted for the podcast/episode visuals."},
+            {Check: "Season and episode number set (Podcast only)",
+             Pass: varChildMediaType <> "Podcast" Or (varChildSeasonNumber > 0 And varChildEpisodeNumber > 0),
+             Note: "Enter the season and episode number on the Metadata tab."},
+            {Check: "Episode summary provided (Podcast only)",
+             Pass: varChildMediaType <> "Podcast" Or (Not(IsBlank(varChildEpisodeSummary1)) And varChildEpisodeSummary1 <> ""),
+             Note: "Enter the episode summary on the Metadata tab."},
+            {Check: "Type of product selected (Video only)",
+             Pass: varChildMediaType <> "Video" Or (Not(IsBlank(Coalesce(varChildProductType, varChildProductType1))) And Coalesce(varChildProductType, varChildProductType1) <> ""),
+             Note: "Select the type of product on the Info tab."},
+            {Check: "Description / summary provided (Video only)",
+             Pass: varChildMediaType <> "Video" Or (Not(IsBlank(varChildDescription1)) And varChildDescription1 <> ""),
+             Note: "Enter the description on the Info tab."},
+            {Check: "Production end date set (Video / Podcast)",
+             Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or Not(IsBlank(varChildProductionEndDate)),
+             Note: "Set the production end date on the Metadata tab."},
+            {Check: "Publication start date set (Video / Podcast)",
+             Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or Not(IsBlank(varChildPublicationStartDate)),
+             Note: "Set the publication start date on the Metadata tab."},
+            {Check: "Publication end date set (Video / Podcast)",
+             Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or Not(IsBlank(varChildPublicationEndDate)),
+             Note: "Set the publication end date on the Metadata tab."},
+            {Check: "Production place provided (Video / Podcast)",
+             Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildProductionPlace1)) And varChildProductionPlace1 <> ""),
+             Note: "Enter the production place on the Metadata tab."},
+            {Check: "Producer selected (Video / Podcast)",
+             Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildProducer)) And varChildProducer <> ""),
+             Note: "Select the producer (contracting authority) on the Metadata tab."},
+            {Check: "VTT subtitle file attached (Video, if subtitles provided)",
+             Pass: varChildMediaType <> "Video" Or Not(varChildSubtitlesProvided) Or CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) > 0,
+             Note: "Subtitles marked as provided - attach at least one .vtt file on the Legal & Docs tab."},
+            {Check: "No SRT files attached (Video - VTT only)",
+             Pass: varChildMediaType <> "Video" Or CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".srt"))) = 0,
+             Note: "SRT subtitles are no longer accepted. Remove .srt files and attach .vtt instead."},
+            {Check: "Publication end date not earlier than start date (Video / Podcast)",
+             Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or IsBlank(varChildPublicationStartDate) Or IsBlank(varChildPublicationEndDate) Or varChildPublicationEndDate >= varChildPublicationStartDate,
+             Note: "Publication end date cannot be earlier than the publication start date."},
+            {Check: "Production end date not earlier than filming date (Video / Podcast)",
+             Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or IsBlank(varChildCaptureDate) Or IsBlank(varChildProductionEndDate) Or varChildProductionEndDate >= varChildCaptureDate,
+             Note: "Production end date cannot be earlier than the filming date."},
+            {Check: "Model release: if persons appear → forms provided",
+             Pass: Not(varChildModelRelease) Or varChildModelReleaseProvided,
+             Note: "Recognisable persons declared but model release not confirmed. Attach forms on Legal & Docs."},
+            {Check: "Music licence: if music used → documentation provided",
+             Pass: Not(varChildMusicUsed) Or varChildMusicLicenceProvided,
+             Note: "Music declared but licence/annex not confirmed. Attach on Legal & Docs."},
+            {Check: "Pre-existing rights: if declared → annex provided",
+             Pass: Not(varChildPreexisting) Or varChildPreexistingProvided,
+             Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
+            {Check: "FTP delivery path set on this archive (Photo only)",
+             Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath1)) And varChildFTPPath1 <> ""),
+             Note: "Enter the FTP path on the Info tab."},
+            {Check: "Owner / point of contact set on the request",
+             Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "",
+             Note: "Set the owner on the Request screen."}
+        )
+    Children:
+      - CV_Breadcrumb:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =52
+            Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1)
+            Width: =700
+            X: =200
+      - CV_TabsBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =50
+            Width: =1366
+            Y: =52
+      - CV_Tab1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildInfoScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="✓  1.  Info"
+            Width: =150
+            X: =16
+            Y: =52
+      - HeaderDivider_ChildValidScreen:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(255, 255, 255, 0.35)
+            Height: =30
+            Width: =2
+            X: =200
+            Y: =13
+      - CV_Tab2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildMetaScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="✓  2.  Metadata"
+            Width: =170
+            X: =176
+            Y: =52
+      - CV_Tab3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildLegalScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="✓  3.  Legal & Docs"
+            Width: =180
+            X: =356
+            Y: =52
+      - CV_Tab4:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 18, 107, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 1)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="4.  Validations"
+            Width: =170
+            X: =546
+            Y: =52
+      - CV_Tab4Line:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =3
+            Width: =170
+            X: =546
+            Y: =99
+      - CV_OverallCard:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: |-
+              =If(CountIf(colValidations, Not(Pass)) = 0,
+                  RGBA(134, 239, 172, 1),
+                  RGBA(254, 202, 202, 1))
+            BorderThickness: =2
+            Fill: |-
+              =If(CountIf(colValidations, Not(Pass)) = 0,
+                  RGBA(240, 253, 244, 1),
+                  RGBA(254, 242, 242, 1))
+            Height: =64
+            Width: =1302
+            X: =32
+            Y: =112
+      - CV_OverallIcon:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(CountIf(colValidations, Not(Pass)) = 0, RGBA(22,128,80,1), RGBA(193,40,40,1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =64
+            Size: =28
+            Text: =If(CountIf(colValidations, Not(Pass)) = 0, "✓", "✗")
+            Width: =60
+            X: =56
+            Y: =112
+      - CV_OverallStatus:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(CountIf(colValidations, Not(Pass)) = 0, RGBA(22,128,80,1), RGBA(193,40,40,1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =64
+            Size: =16
+            Text: |-
+              =If(CountIf(colValidations, Not(Pass)) = 0,
+                  "Ready — all checks passed. Press Save archive to add to your request.",
+                  Text(CountIf(colValidations, Not(Pass))) & " point(s) missing — resolve before saving")
+            Width: =900
+            X: =116
+            Y: =112
+      - CV_BtnRefresh:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(247, 248, 250, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =ClearCollect(colValidations,
+                  {Check: "Media type is set", Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "", Note: "Select a production type on the Info tab."},
+                  {Check: "Archive title is provided", Pass: Not(IsBlank(varChildTitle1)) And varChildTitle1 <> "" And varChildTitle1 <> "New archive", Note: "Enter a descriptive title on the Info tab."},
+                  {Check: "Capture / production date is set", Pass: Not(IsBlank(varChildCaptureDate)), Note: "Set the date on the Info tab (Metadata tab for Photo/Reportage)."},
+                  {Check: "Language version(s) selected (Video / Podcast only)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildLanguageVersions)) And varChildLanguageVersions <> ""), Note: "Select the language on the Info tab (Video) or Metadata tab (Podcast)."},
+                  {Check: "No AI-generated voice-over (not accepted)", Pass: Not(varChildAIVoiceover), Note: "⛔ AI voice-over detected. This archive cannot be submitted."},
+                  {Check: "Contract case (1–6) is selected", Pass: Not(IsBlank(varChildContractCase)) And varChildContractCase <> "", Note: "Select a contract case on the Legal & Docs tab."},
+                  {Check: "Case 1: both mandatory contracts confirmed", Pass: Left(varChildContractCase, 6) <> "Case 1" Or (varDocFramework And varDocSpecific), Note: "Confirm the signed framework and specific contracts on the Legal & Docs tab."},
+                  {Check: "Contractor / agency provided (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildCredits1)) And varChildCredits1 <> ""), Note: "Enter the contractor / agency on the Metadata tab."},
+                  {Check: "Description provided (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildDescription1)) And varChildDescription1 <> ""), Note: "Enter the description on the Info tab."},
+                  {Check: "Place provided (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildProductionPlace1)) And varChildProductionPlace1 <> ""), Note: "Enter the place on the Metadata tab."},
+                  {Check: "Photo caption provided (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildPhotoCaption)) And varChildPhotoCaption <> ""), Note: "Enter the photo caption on the Metadata tab."},
+                  {Check: "Contracting authority provided (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildContractingAuthority)) And varChildContractingAuthority <> ""), Note: "Enter the contracting authority on the Metadata tab."},
+                  {Check: "Podcast title provided (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (Not(IsBlank(varRequestTitle)) And varRequestTitle <> ""), Note: "Enter the podcast title on the Info tab."},
+                  {Check: "Podcast description provided (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (Not(IsBlank(varRequestDescription)) And varRequestDescription <> ""), Note: "Enter the podcast description on the Info tab."},
+                  {Check: "Podcast visual attached (Podcast only)", Pass: varChildMediaType <> "Podcast" Or CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) > 0, Note: "Attach the podcast visual (square JPEG/PNG) on the Info tab (📎 Podcast visual)."},
+                  {Check: "Podcast/episode visuals are JPEG or PNG (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic"))) + CountRows(Filter(CM_AudioFiles.Attachments, EndsWith(Lower(Name), ".gif") Or EndsWith(Lower(Name), ".webp") Or EndsWith(Lower(Name), ".bmp") Or EndsWith(Lower(Name), ".tif") Or EndsWith(Lower(Name), ".tiff") Or EndsWith(Lower(Name), ".heic")))) = 0, Note: "Only JPEG or PNG images are accepted for the podcast/episode visuals."},
+                  {Check: "Season and episode number set (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (varChildSeasonNumber > 0 And varChildEpisodeNumber > 0), Note: "Enter the season and episode number on the Metadata tab."},
+                  {Check: "Episode summary provided (Podcast only)", Pass: varChildMediaType <> "Podcast" Or (Not(IsBlank(varChildEpisodeSummary1)) And varChildEpisodeSummary1 <> ""), Note: "Enter the episode summary on the Metadata tab."},
+                  {Check: "Type of product selected (Video only)", Pass: varChildMediaType <> "Video" Or (Not(IsBlank(Coalesce(varChildProductType, varChildProductType1))) And Coalesce(varChildProductType, varChildProductType1) <> ""), Note: "Select the type of product on the Info tab."},
+                  {Check: "Description / summary provided (Video only)", Pass: varChildMediaType <> "Video" Or (Not(IsBlank(varChildDescription1)) And varChildDescription1 <> ""), Note: "Enter the description on the Info tab."},
+                  {Check: "Production end date set (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or Not(IsBlank(varChildProductionEndDate)), Note: "Set the production end date on the Metadata tab."},
+                  {Check: "Publication start date set (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or Not(IsBlank(varChildPublicationStartDate)), Note: "Set the publication start date on the Metadata tab."},
+                  {Check: "Publication end date set (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or Not(IsBlank(varChildPublicationEndDate)), Note: "Set the publication end date on the Metadata tab."},
+                  {Check: "Production place provided (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildProductionPlace1)) And varChildProductionPlace1 <> ""), Note: "Enter the production place on the Metadata tab."},
+                  {Check: "Producer selected (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildProducer)) And varChildProducer <> ""), Note: "Select the producer (contracting authority) on the Metadata tab."},
+                  {Check: "VTT subtitle file attached (Video, if subtitles provided)", Pass: varChildMediaType <> "Video" Or Not(varChildSubtitlesProvided) Or CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) > 0, Note: "Subtitles marked as provided - attach at least one .vtt file on the Legal & Docs tab."},
+                  {Check: "No SRT files attached (Video - VTT only)", Pass: varChildMediaType <> "Video" Or CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".srt"))) = 0, Note: "SRT subtitles are no longer accepted. Remove .srt files and attach .vtt instead."},
+                  {Check: "Publication end date not earlier than start date (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or IsBlank(varChildPublicationStartDate) Or IsBlank(varChildPublicationEndDate) Or varChildPublicationEndDate >= varChildPublicationStartDate, Note: "Publication end date cannot be earlier than the publication start date."},
+                  {Check: "Production end date not earlier than filming date (Video / Podcast)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or IsBlank(varChildCaptureDate) Or IsBlank(varChildProductionEndDate) Or varChildProductionEndDate >= varChildCaptureDate, Note: "Production end date cannot be earlier than the filming date."},
+                  {Check: "Model release: if persons appear → forms provided", Pass: Not(varChildModelRelease) Or varChildModelReleaseProvided, Note: "Recognisable persons declared but model release not confirmed. Attach forms on Legal & Docs."},
+                  {Check: "Music licence: if music used → documentation provided", Pass: Not(varChildMusicUsed) Or varChildMusicLicenceProvided, Note: "Music declared but licence/annex not confirmed. Attach on Legal & Docs."},
+                  {Check: "Pre-existing rights: if declared → annex provided", Pass: Not(varChildPreexisting) Or varChildPreexistingProvided, Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
+                  {Check: "FTP delivery path set on this archive (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath1)) And varChildFTPPath1 <> ""), Note: "Enter the FTP path on the Info tab."},
+                  {Check: "Owner / point of contact set on the request", Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "", Note: "Set the owner on the Request screen."}
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="↻  Re-check"
+            Width: =120
+            X: =1198
+            Y: =130
+      - CV_ChecklistGallery:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DelayItemLoading: =false
+            Height: =480
+            Items: =colValidations
+            LoadingSpinner: =LoadingSpinner.None
+            TemplateSize: =44
+            Width: =1302
+            X: =32
+            Y: =188
+          Children:
+            - CV_RowBg:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =If(ThisItem.Pass, RGBA(240, 253, 244, 1), RGBA(254, 242, 242, 1))
+                  Height: =43
+                  Width: =1302
+            - CV_RowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =1302
+                  Y: =43
+            - CV_RowIcon:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(ThisItem.Pass, RGBA(22,128,80,1), RGBA(193,40,40,1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =43
+                  Size: =16
+                  Text: =If(ThisItem.Pass, "✓", "✗")
+                  Width: =44
+                  X: =16
+            - CV_RowCheck:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(ThisItem.Pass, RGBA(22,128,80,1), RGBA(80,40,40,1))
+                  Font: =Font.'Open Sans'
+                  FontWeight: =If(ThisItem.Pass, FontWeight.Normal, FontWeight.Semibold)
+                  Height: =43
+                  Text: =ThisItem.Check
+                  Width: =560
+                  X: =64
+            - CV_RowNote:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =43
+                  Size: =12
+                  Text: =If(ThisItem.Pass, "—", ThisItem.Note)
+                  Width: =640
+                  X: =652
+      - CV_BottomBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =56
+            Width: =1366
+            Y: =712
+      - CV_BtnPrev:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: =Navigate(ChildLegalScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="⯬ Previous"
+            Width: =140
+            X: =32
+            Y: =720
+      - CV_MissingNote:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Right
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(193, 40, 40, 1)
+            Font: =Font.'Open Sans'
+            Size: =12
+            Text: =If(CountIf(colValidations, Not(Pass)) = 0, "", Text(CountIf(colValidations, Not(Pass))) & " check(s) must pass before saving")
+            Width: =440
+            X: =660
+            Y: =720
+      - CV_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+      - CV_BtnSaveArchive:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(255, 255, 255, 1)
+            DisabledFill: =RGBA(186, 196, 214, 1)
+            DisplayMode: |-
+              =If(
+                  varRequestorLocked,
+                  DisplayMode.Disabled,
+                  If(CountIf(colValidations, Not(Pass)) = 0, DisplayMode.Edit, DisplayMode.Disabled)
+              )
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |-
+              =With(
+                  {existingRec: LookUp(colArchives, ArchiveId = varCurrentChildId)},
+                  RemoveIf(colArchives, ArchiveId = varCurrentChildId);
+                  Collect(colArchives, {
+                      ArchiveId: varCurrentChildId,
+                      SPId: Coalesce(existingRec.SPId, varCurrentChildSPId, 0),
+                      Title: If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1),
+                      MediaType: varChildMediaType,
+                      Description: varChildDescription1,
+                      CaptureDate: varChildCaptureDate,
+                      ProductionPlace: varChildProductionPlace1,
+                      ProductType: varChildProductType,
+                      SeriesTitle: varChildSeriesTitle1,
+                      EpisodeTitle: varChildEpisodeTitle,
+                      EpisodeSummary: varChildEpisodeSummary1,
+                      SeasonNumber: varChildSeasonNumber,
+                      EpisodeNumber: varChildEpisodeNumber,
+                      ProductionEndDate: varChildProductionEndDate,
+                      PublicationStartDate: varChildPublicationStartDate,
+                      PublicationEndDate: varChildPublicationEndDate,
+                      ReferenceLinks: varChildLinks1,
+                      Tags: varChildTags,
+                                  PhotoCaption: varChildPhotoCaption, ProductionTitle: varChildTitle1,
+                                  Credits: varChildCredits1,
+                                  ContractingAuthority: varChildContractingAuthority,
+                                  ExecProducer: varChildExecProducer,
+                                  Producer: varChildProducerSel,
+                      FTPPath: varChildFTPPath1,
+                      BelugaReference: varChildBelugaRef,
+                                  PublicationChannel: Concat(Filter(Table({Value: "Beluga", On: varChildPubBeluga}, {Value: "Spotify", On: varChildPubSpotify}), On), Value, ";"),
+                      Notes: varChildNotes,
+                      LanguageVersions: varChildLanguageVersions,
+                      AIVoiceover: varChildAIVoiceover,
+                      ContractCase: varChildContractCase,
+                      ContractCase1Sub: varChildContractCase1Sub,
+                      ModelRelease: varChildModelRelease,
+                      NoThirdPartyRights: varChildNoThirdParty,
+                      ModelReleaseProvided: varChildModelReleaseProvided,
+                      MusicUsed: varChildMusicUsed,
+                      MusicLicenceProvided: varChildMusicLicenceProvided,
+                      Preexisting: varChildPreexisting,
+                      PreexistingProvided: varChildPreexistingProvided
+                  })
+              );
+              If(
+                  Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
+                  IfError(
+                      With(
+                          {spId: Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0)},
+                          With(
+                              {
+                                  savedMedia: Patch(
+                                      'AV-CD-Mediafiles',
+                                      If(
+                                          spId = 0,
+                                          Defaults('AV-CD-Mediafiles'),
+                                          LookUp('AV-CD-Mediafiles', ID = spId)
+                                      ),
+                                      {
+                                          CD_MediaNumber: If(spId = 0, With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter('AV-CD-Mediafiles', StartsWith(CD_MediaNumber, yr & "-")), CD_MediaNumber, SortOrder.Descending)).CD_MediaNumber, yr & "-0000"), 4)) + 1), 4)), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
+                                          Description: varChildDescription1,
+                                          BelugaReference: varChildBelugaRef,
+                                                      PublicationChannel: ForAll(Filter(Table({Value: "Beluga", On: varChildPubBeluga}, {Value: "Spotify", On: varChildPubSpotify}), On) As c, {Value: c.Value}),
+                                          Notes: varChildNotes,
+                                          // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
+                                          MediaType: Table({Value: varChildMediaType}),
+                                                              CaptureDate: varChildCaptureDate,
+                                          ProductionPlace: varChildProductionPlace1,
+                                          ProductType: If(
+                                              IsBlank(varChildProductType) Or varChildProductType = "",
+                                              Blank(),
+                                              Table({Value: varChildProductType})
+                                          ),
+                                          SeriesTitle: varChildSeriesTitle1,
+                                          EpisodeTitle: varChildEpisodeTitle,
+                                          EpisodeSummary: varChildEpisodeSummary1,
+                                          SeasonNumber: varChildSeasonNumber,
+                                          EpisodeNumber: varChildEpisodeNumber,
+                                          ProductionEndDate: varChildProductionEndDate,
+                                          PublicationStartDate: varChildPublicationStartDate,
+                                          PublicationEndDate: varChildPublicationEndDate,
+                                          ReferenceLinks: varChildLinks1,
+                                          Tags: varChildTags,
+                                          FTPPath: varChildFTPPath1,
+                                          LanguageVersions: Table({Value: varChildLanguageVersions}),
+                                          // AIVoiceover column is TEXT; var is Boolean by convention, converted here only.
+                                          AIVoiceover: If(varChildAIVoiceover, "Yes", "No"),
+                                          ContractCase: Table({Value: varChildContractCase}),
+                                          ContractCase1Sub: If(
+                                              IsBlank(varChildContractCase1Sub) Or varChildContractCase1Sub = "",
+                                              Blank(),
+                                              Table({Value: varChildContractCase1Sub})
+                                          ),
+                                          MusicUsed: varChildMusicUsed,
+                                          MusicLicenseProvided: varChildMusicLicenceProvided,
+                                          PreexistingRightsProvided: varChildPreexistingProvided,
+                                          ModelReleaseProvided: varChildModelReleaseProvided,
+                                          NoThirdPartyRights: varChildNoThirdParty,
+                                          CreditContact: varChildCredits1,
+                                                      ContractingAuthority: varChildContractingAuthority,
+                                                      ExecProducerName: varChildExecProducer,
+                                                      Producer: If(IsBlank(varChildProducerSel), Blank(), ForAll(varChildProducerSel As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
+                                                      PhotoCaption: varChildPhotoCaption, ProductionTitle: varChildTitle1,
+                                                      DepositStatus: Table({Value: "Pending Approval"}),
+                                          ParentRequest: varCurrentRequest.RequestNumber
+                                      }
+                                  )
+                              },
+                              UpdateIf(colArchives, ArchiveId = varCurrentChildId, {SPId: savedMedia.ID});
+                              Set(varCurrentChildSPId, savedMedia.ID);
+                              If(
+                                  // The item already had an ID, so the attachments form was enabled and
+                                  // may hold files for it: send them now, after the Patch above.
+                                  // CL_FormAttach.OnSuccess finishes the save; OnFailure stops here.
+                                  spId > 0 And Coalesce(varAttachRecord.ID, 0) = spId,
+                                  SubmitForm(CL_FormAttach),
+                                  // The item was only just created: the form was disabled, nothing to send.
+                                  Notify("Media saved to SharePoint.", NotificationType.Success);
+                                  Set(varRequestMediaType, "");
+                                  Set(varConfirmed, false);
+                                  Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
+                              )
+                          )
+                      ),
+                      Notify("Save failed: " & FirstError.Message, NotificationType.Error)
+                  ),
+                  Notify("Media added to request. Save or submit the request to persist media to SharePoint.", NotificationType.Success);
+                  Set(varRequestMediaType, "");
+                  Set(varConfirmed, false);
+                  Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="Save Media  ➤"
+            Width: =200
+            X: =1142
+            Y: =720
+      - HomeAppTitle_13:
+          Control: Label@2.5.1
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Size: =14
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =193
+            X: =244
+            Y: =8
+      - Logo_EC_Form_19:
+          Control: Image@2.2.3
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =50
+            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
+            PaddingLeft: =15
+            Width: =186
+            X: =2
+            Y: =2
+      - CD_Logo_13:
+          Control: Image@2.2.3
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =31
+            Image: =cd_badge_play
+            Width: =31
+            X: =208
+            Y: =20
+      - HomeAppSubtitle_13:
+          Control: Label@2.5.1
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =266
+            Y: =32
+      - NavPanel_MyRequestScreen_12:
+          Control: Classic/Button@2.2.0
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =RGBA(255, 255, 255, 0.10)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(255, 255, 255, 0.10)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 0.10)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(255, 255, 255, 0.10)
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            Size: =10
+            TabIndex: =-1
+            Text: =""
+            Width: =424
+            X: =666
+            Y: =4
+      - NavBtnRequests_MyRequestScreen_12:
+          Control: Classic/Button@2.2.0
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(RequestManagementScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📋 Requests"
+            Tooltip: ="Requests"
+            Width: =83
+            X: =678
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_24:
+          Control: Classic/Button@2.2.0
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(DashboardScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📊" & Char(10) & "Dashboard"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =769
+            Y: =9
+      - NavBtnReview_MyRequestScreen_12:
+          Control: Classic/Button@2.2.0
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(ReviewScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="👁" & Char(10) & "Review"
+            Tooltip: ="Review"
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =83
+            X: =854
+            Y: =9
+      - NavBtnHelp_MyRequestScreen_12:
+          Control: Classic/Button@2.2.0
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Width: =83
+            X: =1010
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_25:
+          Control: Classic/Button@2.2.0
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =ClearCollect(colPrintData, HomeGallery.AllItems);
+              Navigate(HomePrintScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📂
+              Export"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =927
+            Y: =9
+      - Image1_19:
+          Control: Image@2.2.3
+          Group: Header_11
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+            Y: =1
+      - HomeUserName_19:
+          Control: Label@2.5.1
+          Group: Header_11
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =47
+            Size: =11
+            Text: |-
+              =User().FullName & " - " & If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =174
+            X: =1139
+            Y: =6
