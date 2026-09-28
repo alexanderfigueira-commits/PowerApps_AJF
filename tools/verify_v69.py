@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Static checks for v69 against v68: DOA_menu_2 copied to every screen, old menus deleted."""
-import json, re, sys, zipfile
+import json, os, re, sys, zipfile
 import yaml
 from paload import PaLoader
 
