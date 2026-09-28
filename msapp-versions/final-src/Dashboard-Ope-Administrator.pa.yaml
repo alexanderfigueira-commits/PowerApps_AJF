@@ -236,8 +236,8 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =698
-            Y: =10
+            X: =797
+            Y: =8
       - DOA_NavBtnDashboard_MyRequestScreen_12:
           Control: Classic/Button@2.2.0
           Group: DOA_menu_2
@@ -271,7 +271,7 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =789
+            X: =705
             Y: =10
       - DOA_NavBtnHelp_MyRequestScreen_7:
           Control: Classic/Button@2.2.0
@@ -328,8 +328,8 @@ Screens:
             Tooltip: ="Review"
             Visible: =varUserRole = "ADMINISTRATOR"
             Width: =83
-            X: =874
-            Y: =10
+            X: =875
+            Y: =8
       - DOA_NavBtnDashboard_MyRequestScreen_13:
           Control: Classic/Button@2.2.0
           Group: DOA_menu_2
@@ -359,8 +359,8 @@ Screens:
               Export"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =947
-            Y: =10
+            X: =951
+            Y: =8
       - DOA_List1Card:
           Control: Rectangle@2.3.0
           Properties:

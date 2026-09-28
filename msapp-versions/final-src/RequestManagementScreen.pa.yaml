@@ -549,8 +549,8 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =50
             Size: =11
-            Text: ="REQUEST TITLE"
-            Width: =279
+            Text: ="TITLE"
+            Width: =199
             X: =164
             Y: =If(locShowFilters,330,200)
       - HomeThAssignee:
@@ -566,8 +566,8 @@ Screens:
             Size: =11
             Text: ="ASSIGNEE"
             Width: =141
-            X: =820
-            Y: =If(locShowFilters,330,200)
+            X: =638
+            Y: =333
       - HomeThDG:
           Control: Label@2.5.1
           Group: Group2
@@ -580,9 +580,9 @@ Screens:
             Height: =50
             Size: =11
             Text: ="DG"
-            Width: =149
-            X: =421
-            Y: =If(locShowFilters,330,200)
+            Width: =92
+            X: =370
+            Y: =333
       - HomeThArchives:
           Control: Label@2.5.1
           Group: Group2
@@ -595,11 +595,12 @@ Screens:
             Height: =50
             Size: =11
             Text: |-
-              ="MEDIA 
-              ITEMS (Nº)"
-            Width: =139
-            X: =577
-            Y: =If(locShowFilters,330,200)
+              ="# 
+              MEDIA 
+              "
+            Width: =71
+            X: =459
+            Y: =333
       - HomeThStatus:
           Control: Label@2.5.1
           Group: Group2
@@ -613,7 +614,7 @@ Screens:
             Size: =11
             Text: ="STATUS"
             Width: =70
-            X: =717
+            X: =547
             Y: =If(locShowFilters,330,200)
       - HomeGallery:
           Control: Gallery@2.15.0
@@ -724,9 +725,8 @@ Screens:
             - HomeRowName:
                 Control: Label@2.5.1
                 Properties:
-                  Align: =Align.Center
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(32, 31, 30, 1)
+                  Color: =RGBA(51, 51, 51, 1)
                   Font: =Font.'Open Sans'
                   Height: =59
                   OnSelect: =Select(Parent)
@@ -744,9 +744,14 @@ Screens:
                   Height: =59
                   OnSelect: =Select(Parent)
                   Size: =10
-                  Text: =If(IsBlank(ThisItem.DG.Value),"—",ThisItem.DG.Value)
-                  Width: =175
-                  X: =362
+                  Text: |-
+                    =Left(
+                        ThisItem.DG.Value,
+                        Find(" - ", ThisItem.DG.Value) - 1
+                    )
+                  Tooltip: =If(IsBlank(ThisItem.DG.Value),"—",ThisItem.DG.Value)
+                  Width: =88
+                  X: =353
             - HomeRowArchives:
                 Control: Label@2.5.1
                 Properties:
@@ -767,7 +772,7 @@ Screens:
                         )
                     )
                   Width: =65
-                  X: =559
+                  X: =441
             - HomeRowBadge:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -785,6 +790,7 @@ Screens:
                        "Processing" in ThisItem.Status.Value, Color.DarkOrchid,
                        Color.Gray)
                   Font: =Font.'Open Sans'
+                  Height: =30
                   HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
                   HoverColor: =RGBA(255, 255, 255, 1)
                   HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
@@ -797,9 +803,9 @@ Screens:
                   RadiusTopRight: =14
                   Size: =11
                   Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
-                  Width: =94
-                  X: =662
-                  Y: =9
+                  Width: =88
+                  X: =520
+                  Y: =16
             - HomeRowReview:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -837,8 +843,14 @@ Screens:
                   Height: =59
                   OnSelect: =Select(Parent)
                   Size: =10
-                  Text: =If(IsBlank(ThisItem.Assignee.DisplayName), "—", ThisItem.Assignee.DisplayName)
-                  X: =772
+                  Text: |-
+                    =If(
+                        "(" in ThisItem.Assignee.DisplayName,
+                        Trim(Left(ThisItem.Assignee.DisplayName, Find("(", ThisItem.Assignee.DisplayName) - 1)),
+                        ThisItem.Assignee.DisplayName
+                    )
+                  Width: =120
+                  X: =626
             - HomeRowAssignee_1:
                 Control: Label@2.5.1
                 Properties:
@@ -849,8 +861,21 @@ Screens:
                   Height: =59
                   OnSelect: =Select(Parent)
                   Size: =10
-                  Text: =If(IsBlank(ThisItem.'Created By'.DisplayName), "—", ThisItem.'Created By'.DisplayName)
-                  X: =908
+                  Text: |-
+                    =Trim(
+                        Left(
+                            ThisItem.'Created By'.DisplayName,
+                            Find("(", ThisItem.'Created By'.DisplayName) - 1
+                        )
+                    ) &
+                    Char(10) &
+                    Mid(
+                        ThisItem.'Created By'.DisplayName,
+                        Find("(", ThisItem.'Created By'.DisplayName) + 1,
+                        Find(")", ThisItem.'Created By'.DisplayName) - Find("(", ThisItem.'Created By'.DisplayName) - 1
+                    )
+                  Width: =218
+                  X: =746
                   Y: =1
             - HomeRowAssignee_2:
                 Control: Label@2.5.1
@@ -1587,8 +1612,8 @@ Screens:
             Size: =11
             Text: ="CREATOR"
             Width: =120
-            X: =975
-            Y: =If(locShowFilters,330,200)
+            X: =819
+            Y: =333
       - HomeThAction_2:
           Control: Label@2.5.1
           Properties:
