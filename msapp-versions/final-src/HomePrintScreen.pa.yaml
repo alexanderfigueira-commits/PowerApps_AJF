@@ -907,27 +907,9 @@ Screens:
               Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
             Width: =61
             X: =1305
-      - HomeUserName_5:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.Arial
-            Height: =47
-            Size: =11
-            Text: |-
-              =User().FullName & " - " & If(
-                  Find(".", Office365Users.MyProfile().Department) > 0,
-                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
-                  Office365Users.MyProfile().Department
-              )
-            Width: =174
-            X: =1139
-            Y: =6
-      - HP_NavPanel_MyRequestScreen_6:
+      - NavPanel_MyRequestScreen_4:
           Control: Classic/Button@2.2.0
-          Group: HP_menu_2
+          Group: Group3_4
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -952,12 +934,11 @@ Screens:
             TabIndex: =-1
             Text: =""
             Width: =424
-            X: =686
-            Y: =5
-            ZIndex: =127
-      - HP_NavBtnRequests_MyRequestScreen_6:
+            X: =666
+            Y: =4
+      - NavBtnRequests_MyRequestScreen_4:
           Control: Classic/Button@2.2.0
-          Group: HP_menu_2
+          Group: Group3_4
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -981,12 +962,11 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =797
-            Y: =8
-            ZIndex: =128
-      - HP_NavBtnDashboard_MyRequestScreen_12:
+            X: =678
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_8:
           Control: Classic/Button@2.2.0
-          Group: HP_menu_2
+          Group: Group3_4
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -1017,41 +997,11 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =705
-            Y: =10
-            ZIndex: =129
-      - HP_NavBtnHelp_MyRequestScreen_7:
+            X: =769
+            Y: =9
+      - NavBtnReview_MyRequestScreen_4:
           Control: Classic/Button@2.2.0
-          Group: HP_menu_2
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(HelpScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="🔎" & Char(10) & "Help"
-            Tooltip: ="Help"
-            Width: =83
-            X: =1030
-            Y: =10
-            ZIndex: =130
-      - HP_NavBtnReview_MyRequestScreen_6:
-          Control: Classic/Button@2.2.0
-          Group: HP_menu_2
+          Group: Group3_4
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -1076,18 +1026,45 @@ Screens:
             Tooltip: ="Review"
             Visible: =varUserRole = "ADMINISTRATOR"
             Width: =83
-            X: =875
-            Y: =8
-            ZIndex: =131
-      - HP_NavBtnDashboard_MyRequestScreen_13:
+            X: =854
+            Y: =9
+      - NavBtnHelp_MyRequestScreen_5:
           Control: Classic/Button@2.2.0
-          Group: HP_menu_2
+          Group: Group3_4
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Width: =83
+            X: =1010
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_9:
+          Control: Classic/Button@2.2.0
+          Group: Group3_4
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HomePrintScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
@@ -1108,6 +1085,23 @@ Screens:
               Export"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =951
-            Y: =8
-            ZIndex: =132
+            X: =927
+            Y: =9
+      - HomeUserName_5:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =47
+            Size: =11
+            Text: |-
+              =User().FullName & " - " & If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =174
+            X: =1139
+            Y: =6
