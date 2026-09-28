@@ -575,6 +575,35 @@ Screens:
                   Width: =80
                   X: =312
                   Y: =51
+            - DOA_List1RowNotes:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: ="Are there any new notes?"
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// red: the administrator notes changed less than 15 days ago
+                    If(
+                        Not(IsBlank(ThisItem.AdminNotesUpdatedOn))
+                            And DateDiff(ThisItem.AdminNotesUpdatedOn, Today(), TimeUnit.Days) < 15,
+                        Color.Red,
+                        RGBA(77, 77, 77, 1)
+                    )
+                  DisplayMode: =DisplayMode.Edit
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Note
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: ="Are there any new notes?"
+                  Visible: =true
+                  Width: =20
+                  X: =72
+                  Y: =53
+                  ZIndex: =8
+                Children: []
       - DOA_List1Empty:
           Control: Label@2.5.1
           Properties:
@@ -806,6 +835,35 @@ Screens:
                   Width: =70
                   Y: =53
                 Children: []
+            - DOA_List2RowNotes:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: ="Are there any new notes?"
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// red: the administrator notes changed less than 15 days ago
+                    If(
+                        Not(IsBlank(ThisItem.AdminNotesUpdatedOn))
+                            And DateDiff(ThisItem.AdminNotesUpdatedOn, Today(), TimeUnit.Days) < 15,
+                        Color.Red,
+                        RGBA(77, 77, 77, 1)
+                    )
+                  DisplayMode: =DisplayMode.Edit
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Note
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: ="Are there any new notes?"
+                  Visible: =true
+                  Width: =20
+                  X: =72
+                  Y: =53
+                  ZIndex: =8
+                Children: []
       - DOA_List2Empty:
           Control: Label@2.5.1
           Properties:
@@ -1036,6 +1094,35 @@ Screens:
                     
                   Width: =70
                   Y: =53
+                Children: []
+            - DOA_List3RowNotes:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: ="Are there any new notes?"
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// red: the administrator notes changed less than 15 days ago
+                    If(
+                        Not(IsBlank(ThisItem.AdminNotesUpdatedOn))
+                            And DateDiff(ThisItem.AdminNotesUpdatedOn, Today(), TimeUnit.Days) < 15,
+                        Color.Red,
+                        RGBA(77, 77, 77, 1)
+                    )
+                  DisplayMode: =DisplayMode.Edit
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Note
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: ="Are there any new notes?"
+                  Visible: =true
+                  Width: =20
+                  X: =72
+                  Y: =53
+                  ZIndex: =8
                 Children: []
       - DOA_List3Empty:
           Control: Label@2.5.1
