@@ -26,7 +26,9 @@ Screens:
         UpdateContext(
             {
                 locDetailsCollapsed: false,
-                locShowMedia: true
+                locShowMedia: true,
+                locShowAdminNotes: false,
+                locShowRequestorNotes: false
             }
         );
         // locShowTypePicker arrives with Navigate: true only from HomeBtnNew
@@ -82,7 +84,7 @@ Screens:
                             ""
                         )),
                         MediaApproved: Coalesce(MediaApproved, false),
-                        PublicationChannel: Concat(PublicationChannel, Value, ";"),
+                        PublicationChannel: Coalesce(PublicationChannel.Value, ""),
                         ProductionTitle: Coalesce(
                             ProductionTitle,
                             ""
@@ -326,7 +328,7 @@ Screens:
               )
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
-            Height: =32
+            Height: =20
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
@@ -344,8 +346,8 @@ Screens:
             Tooltip: ="Add Official Contact"
             Visible: =Not(locDetailsCollapsed)
             Width: =25
-            X: =349
-            Y: =189
+            X: =836
+            Y: =301
       - RS_CardTitle:
           Control: Label@2.5.1
           Properties:
@@ -377,7 +379,7 @@ Screens:
               )
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
-            Height: =32
+            Height: =20
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
@@ -395,8 +397,8 @@ Screens:
             Tooltip: ="Add Contrator Contact"
             Visible: =Not(locDetailsCollapsed)
             Width: =25
-            X: =714
-            Y: =189
+            X: =834
+            Y: =355
       - RS_LblTitle:
           Control: Label@2.5.1
           Properties:
@@ -405,11 +407,12 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =22
+            Size: =10
             Text: ="Request title *"
             Visible: =Not(locDetailsCollapsed)
             Width: =173
-            X: =112
-            Y: =112
+            X: =144
+            Y: =113
       - RS_ContactTitle:
           Control: Label@2.5.1
           Properties:
@@ -554,9 +557,9 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             OnChange: =Set(varRequestTitle, Self.Text)
             Visible: =Not(locDetailsCollapsed)
-            Width: =627
-            X: =112
-            Y: =143
+            Width: =720
+            X: =138
+            Y: =138
       - RS_LblDG:
           Control: Label@2.5.1
           Properties:
@@ -565,11 +568,12 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =22
+            Size: =10
             Text: ="DG / Agency *"
             Visible: =Not(locDetailsCollapsed)
             Width: =300
-            X: =828
-            Y: =113
+            X: =915
+            Y: =116
       - RS_LblOwner:
           Control: Label@2.5.1
           Properties:
@@ -578,11 +582,12 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =22
+            Size: =10
             Text: ="Contact (Official DG/Agency) *"
             Visible: =Not(locDetailsCollapsed)
-            Width: =279
-            X: =57
-            Y: =193
+            Width: =219
+            X: =64
+            Y: =265
       - RS_Owner:
           Control: Classic/ComboBox@2.4.0
           Properties:
@@ -618,6 +623,7 @@ Screens:
             DisplayFields: =["DisplayName"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
+            Height: =37
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search the DG official responsible"
@@ -658,9 +664,9 @@ Screens:
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
             Visible: =Not(locDetailsCollapsed)
-            Width: =310
+            Width: =759
             X: =64
-            Y: =226
+            Y: =288
       - RS_LblContractor:
           Control: Label@2.5.1
           Properties:
@@ -669,11 +675,12 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =19
+            Size: =10
             Text: ="Contact (Contractor)*"
             Visible: =Not(locDetailsCollapsed)
             Width: =300
-            X: =422
-            Y: =196
+            X: =64
+            Y: =328
       - RS_Contractor:
           Control: Classic/ComboBox@2.4.0
           Properties:
@@ -709,6 +716,7 @@ Screens:
             DisplayFields: =["DisplayName"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
+            Height: =35
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search the contractor / production company"
@@ -749,9 +757,9 @@ Screens:
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
             Visible: =Not(locDetailsCollapsed)
-            Width: =310
-            X: =429
-            Y: =226
+            Width: =759
+            X: =64
+            Y: =347
       - RS_DetailsDivider:
           Control: Rectangle@2.3.0
           Properties:
@@ -760,8 +768,8 @@ Screens:
             Height: =220
             Visible: =Not(locDetailsCollapsed)
             Width: =2
-            X: =779
-            Y: =132
+            X: =883
+            Y: =139
       - RS_LblDescription:
           Control: Label@2.5.1
           Properties:
@@ -770,11 +778,12 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =26
+            Size: =10
             Text: ="Request description"
             Visible: =Not(locDetailsCollapsed)
             Width: =634
             X: =64
-            Y: =276
+            Y: =185
       - RS_LblAdminNotes:
           Control: Label@2.5.1
           Properties:
@@ -786,8 +795,8 @@ Screens:
             Text: ="Administrator notes"
             Visible: =Not(locDetailsCollapsed)
             Width: =232
-            X: =828
-            Y: =280
+            X: =916
+            Y: =282
       - RS_LblRequestorNotes:
           Control: Label@2.5.1
           Properties:
@@ -817,8 +826,8 @@ Screens:
               )
             Visible: =Not(locDetailsCollapsed)
             Width: =232
-            X: =828
-            Y: =366
+            X: =919
+            Y: =365
       - RS_RequestorNotesUpdated:
           Control: Label@2.5.1
           Properties:
@@ -844,87 +853,80 @@ Screens:
             Default: =varRequestDescription
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
-            Height: =75
+            Height: =53
             HintText: ="Describe the purpose, context and scope of this request"
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             Mode: =TextMode.MultiLine
             OnChange: =Set(varRequestDescription, Self.Text)
             Visible: =Not(locDetailsCollapsed)
-            Width: =675
+            Width: =794
             X: =64
-            Y: =302
-      - RS_AdminNotes:
-          Control: Classic/TextInput@2.3.2
+            Y: =206
+      - RS_AdminNotesOpen:
+          Control: Classic/Button@2.2.0
           Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(Not(varUserRole = "ADMINISTRATOR") And IsBlank(Coalesce(varCurrentRequest.ReviewerComments, "")), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
-            Default: |-
-              =If(
-                  varUserRole = "ADMINISTRATOR" Or Not(IsBlank(Coalesce(varCurrentRequest.ReviewerComments, ""))),
-                  Coalesce(varCurrentRequest.ReviewerComments, ""),
-                  "No notes from the administrator"
-              )
-            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+            Align: =Align.Left
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
             Height: =62
-            HintText: ="Comments on this request (the requestor sees them read-only)"
-            HoverBorderColor: =RGBA(0, 18, 107, 1)
-            HoverFill: =RGBA(186, 202, 226, 1)
-            Mode: =TextMode.MultiLine
-            OnChange: |-
-              =// Saves itself (like CI_Notes): the request save buttons are only enabled in
-              // Draft/Pending/Rejected, but administrators write notes on Processing requests too.
-              If(
-                  varUserRole = "ADMINISTRATOR" And Coalesce(varCurrentRequest.ID, 0) > 0,
-                  IfError(
-                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ReviewerComments: Self.Text, AdminNotesUpdatedOn: Now()}));
-                      // keep the management-screen cache in step, so reopening shows the new notes
-                      If(
-                          Not(IsBlank(LookUp(colMyReqs, ID = varCurrentRequest.ID))),
-                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {ReviewerComments: Self.Text, AdminNotesUpdatedOn: Now()})
-                      );
-                      Notify("Administrator notes saved.", NotificationType.Success),
-                      Notify("Administrator notes could not be saved: " & FirstError.Message, NotificationType.Error)
-                  )
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(60, 66, 80, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locShowAdminNotes: true})
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =11
+            Text: |-
+              =With(
+                  {t: Trim(RS_AdminNotes.Text)},
+                  If(varUserRole = "ADMINISTRATOR", "✎  ", "👁  ")
+                  & If(IsBlank(t) Or t = "No notes from the administrator", If(varUserRole = "ADMINISTRATOR", "Add a note", "No notes yet"),
+                      Left(Substitute(t, Char(10), " "), 70) & If(Len(t) > 70, "…", ""))
               )
+            Tooltip: ="Open the administrator notes"
             Visible: =Not(locDetailsCollapsed)
-            Width: =232
-            X: =828
+            Width: =145
+            X: =915
             Y: =302
-      - RS_RequestorNotes:
-          Control: Classic/TextInput@2.3.2
+      - RS_RequestorNotesOpen:
+          Control: Classic/Button@2.2.0
           Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(Not((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))) And IsBlank(PlainText(Coalesce(varCurrentRequest.Notes, ""))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
-            Default: |-
-              =If(
-                  (Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) Or Not(IsBlank(PlainText(Coalesce(varCurrentRequest.Notes, "")))),
-                  PlainText(Coalesce(varCurrentRequest.Notes, "")),
-                  "No notes from the requestor"
-              )
-            DisplayMode: |-
-              =// the request owner can always write here, also while Processing (P1-01)
-              If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), DisplayMode.Edit, DisplayMode.View)
+            Align: =Align.Left
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
             Height: =62
-            HintText: ="Comments for Central Deposit - editable at any time"
-            HoverBorderColor: =RGBA(0, 18, 107, 1)
-            HoverFill: =RGBA(186, 202, 226, 1)
-            Mode: =TextMode.MultiLine
-            OnChange: |-
-              =If(
-                  (Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And Coalesce(varCurrentRequest.ID, 0) > 0,
-                  IfError(
-                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {Notes: Self.Text, RequestorNotesUpdatedOn: Now()}));
-                      If(
-                          Not(IsBlank(LookUp(colMyReqs, ID = varCurrentRequest.ID))),
-                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {Notes: Self.Text, RequestorNotesUpdatedOn: Now()})
-                      );
-                      Notify("Requestor notes saved.", NotificationType.Success),
-                      Notify("Requestor notes could not be saved: " & FirstError.Message, NotificationType.Error)
-                  )
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(60, 66, 80, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locShowRequestorNotes: true})
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =11
+            Text: |-
+              =With(
+                  {t: Trim(RS_RequestorNotes.Text)},
+                  If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), "✎  ", "👁  ")
+                  & If(IsBlank(t) Or t = "No notes from the requestor", If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), "Add a note", "No notes yet"),
+                      Left(Substitute(t, Char(10), " "), 70) & If(Len(t) > 70, "…", ""))
               )
+            Tooltip: ="Open the requestor notes"
             Visible: =Not(locDetailsCollapsed)
             Width: =232
             X: =1070
@@ -978,7 +980,6 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Bold
             Height: =22
-            Size: =16
             Text: ="Media files* (0)"
             Width: =188
             X: =625
@@ -1584,10 +1585,11 @@ Screens:
             PressedFill: =Self.Fill
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
+            Size: =12
             Visible: =Not(locDetailsCollapsed)
-            Width: =427
-            X: =828
-            Y: =142
+            Width: =380
+            X: =914
+            Y: =144
       - RS_MediaLockHint:
           Control: Label@2.5.1
           Properties:
@@ -1600,8 +1602,8 @@ Screens:
             Text: ="Locked - remove all media items to change the type"
             Visible: =CountRows(colArchives) > 0
             Width: =400
-            X: =927
-            Y: =If(locDetailsCollapsed, 110, 413)
+            X: =917
+            Y: =418
       - RS_TypeIconBtn:
           Control: Classic/Button@2.2.0
           Properties:
@@ -1614,12 +1616,13 @@ Screens:
             DisplayMode: =If(CountRows(colArchives) > 0, DisplayMode.Disabled, DisplayMode.Edit)
             Fill: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", RGBA(255, 255, 255, 1), RGBA(230, 236, 245, 1))
             Font: =Font.'Open Sans'
-            Height: =44
+            Height: =57
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
               =UpdateContext({locShowTypePicker: true})
+            PaddingBottom: =10
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -1629,9 +1632,9 @@ Screens:
             Tooltip: |-
               =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", "Choose production type", "Production type: " & varRequestMediaType)
             Visible: =Not(locDetailsCollapsed)
-            Width: =44
-            X: =61
-            Y: =144
+            Width: =53
+            X: =66
+            Y: =122
       - RS_AITitle:
           Control: Label@2.5.1
           Properties:
@@ -1640,6 +1643,7 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =22
+            Size: =10
             Text: |-
               =Switch(varRequestMediaType,
                   "Photo", "AI-generated images",
@@ -1648,18 +1652,21 @@ Screens:
                   "")
             Visible: =Not(locDetailsCollapsed)
             Width: =390
-            X: =828
-            Y: =207
+            X: =917
+            Y: =201
       - RS_AICheck:
           Control: Classic/CheckBox@2.1.0
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             CheckboxBorderColor: =RGBA(0, 18, 107, 1)
             CheckmarkFill: =RGBA(0, 0, 0, 1)
+            Color: =If((IsBlank(varRequestMediaType) Or varRequestMediaType = ""), RGBA(214, 140, 0, 1), RGBA(0, 0, 0, 1))
             Default: =varRequestAIDeclared
-            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            DisplayMode: |-
+              =// no production type yet: nothing to declare
+              If(varRequestorLocked Or (IsBlank(varRequestMediaType) Or varRequestMediaType = ""), DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
-            Height: =30
+            Height: =47
             HoverColor: =RGBA(0, 18, 107, 1)
             OnCheck: =Set(varRequestAIDeclared, true)
             OnUncheck: =Set(varRequestAIDeclared, false)
@@ -1668,11 +1675,11 @@ Screens:
                   "Photo", "This production uses AI-generated images",
                   "Video", "This production uses AI-generated content",
                   "Podcast", "This production uses an AI-generated voice-over",
-                  "")
+                  "Please select the production type!")
             Visible: =Not(locDetailsCollapsed)
-            Width: =390
-            X: =834
-            Y: =243
+            Width: =374
+            X: =916
+            Y: =224
       - RS_TypePickerOverlay:
           Control: Rectangle@2.3.0
           Group: grpProductionTypePicker
@@ -2234,7 +2241,13 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(DashboardScreen)
+            OnSelect: |-
+              =// the operational dashboard of the user's role
+              If(
+                  varUserRole = "ADMINISTRATOR",
+                  Navigate('Dashboard-Ope-Administrator'),
+                  Navigate('Dashboard-Ope-Requestor')
+              )
             PressedBorderColor: =Self.Fill
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
@@ -2349,8 +2362,8 @@ Screens:
             Size: =11
             Text: ="APPROVED"
             Width: =100
-            X: =1030
-            Y: =If(locDetailsCollapsed, 150, 448)
+            X: =1049
+            Y: =444
       - RS_ThStatus_1:
           Control: Label@2.5.1
           Properties:
@@ -2393,8 +2406,8 @@ Screens:
             Tooltip: |-
               ="Status: " & If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")) & If(Not(IsBlank(varCurrentRequest)) And Coalesce(varCurrentRequest.ID, 0) > 0 And Not(IsBlank(varCurrentRequest.Modified)), "  (" & Text(varCurrentRequest.Modified, "dd-mm-yyyy") & ")", "")
             Width: =41
-            X: =813
-            Y: =60
+            X: =398
+            Y: =63
       - RS_ContactBackdrop:
           Control: Rectangle@2.3.0
           Properties:
@@ -2883,3 +2896,377 @@ Screens:
             Width: =174
             X: =1139
             Y: =6
+      - RS_AdminNotesBackdrop:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.45)
+            Height: =768
+            OnSelect: |-
+              =Reset(RS_AdminNotes);
+              UpdateContext({locShowAdminNotes: false})
+            Visible: =locShowAdminNotes
+            Width: =1366
+      - RS_AdminNotesPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =420
+            OnSelect: =
+            Visible: =locShowAdminNotes
+            Width: =800
+            X: =283
+            Y: =134
+      - RS_AdminNotesTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =34
+            Size: =18
+            Text: ="Administrator notes · " & Coalesce(varCurrentRequest.RequestNumber, "new request")
+            Visible: =locShowAdminNotes
+            Width: =752
+            X: =307
+            Y: =150
+      - RS_AdminNotesHint:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: =If(varUserRole = "ADMINISTRATOR", "Notes from Central Deposit. The requestor sees them read-only.", "Notes from Central Deposit (read-only).")
+            Visible: =locShowAdminNotes
+            Width: =752
+            X: =307
+            Y: =186
+      - RS_AdminNotes:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(Not(varUserRole = "ADMINISTRATOR") And IsBlank(Coalesce(varCurrentRequest.ReviewerComments, "")), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Default: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR" Or Not(IsBlank(Coalesce(varCurrentRequest.ReviewerComments, ""))),
+                  Coalesce(varCurrentRequest.ReviewerComments, ""),
+                  "No notes from the administrator"
+              )
+            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+            Font: =Font.'Open Sans'
+            Height: =260
+            HintText: ="Comments on this request (the requestor sees them read-only)"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            OnChange: |-
+              =// saved by the pop-up's Save button (or with Save Draft / Submit on a new request)
+              false
+            Visible: =locShowAdminNotes
+            Width: =752
+            X: =307
+            Y: =216
+      - RS_AdminNotesCancel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(60, 66, 80, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =// discard what was typed since the last save
+              Reset(RS_AdminNotes);
+              UpdateContext({locShowAdminNotes: false})
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: =If(varUserRole = "ADMINISTRATOR", "Cancel", "Close")
+            Tooltip: ="Save draft"
+            Visible: =locShowAdminNotes
+            Width: =200
+            X: =623
+            Y: =490
+      - RS_AdminNotesSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 96, 178, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: =If(RS_AdminNotes.Text = Coalesce(varCurrentRequest.ReviewerComments, ""), DisplayMode.Disabled, DisplayMode.Edit)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =If(
+                  Coalesce(varCurrentRequest.ID, 0) > 0,
+                  IfError(
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ReviewerComments: RS_AdminNotes.Text, AdminNotesUpdatedOn: Now()}));
+                      // keep the management-screen cache in step, so reopening shows the new notes
+                      If(
+                          Not(IsBlank(LookUp(colMyReqs, ID = varCurrentRequest.ID))),
+                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {ReviewerComments: RS_AdminNotes.Text, AdminNotesUpdatedOn: Now()})
+                      );
+                      Notify("Administrator notes saved.", NotificationType.Success);
+                      UpdateContext({locShowAdminNotes: false}),
+                      Notify("Administrator notes could not be saved: " & FirstError.Message, NotificationType.Error)
+                  ),
+                  // new request: the text stays in the box and is saved with Save Draft / Submit
+                  Notify("Notes kept. They are saved with the request when you press Save Draft or Submit.", NotificationType.Information);
+                  UpdateContext({locShowAdminNotes: false})
+              )
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="Save"
+            Tooltip: ="Save draft"
+            Visible: =locShowAdminNotes And varUserRole = "ADMINISTRATOR"
+            Width: =200
+            X: =843
+            Y: =490
+      - RS_RequestorNotesBackdrop:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.45)
+            Height: =768
+            OnSelect: |-
+              =Reset(RS_RequestorNotes);
+              UpdateContext({locShowRequestorNotes: false})
+            Visible: =locShowRequestorNotes
+            Width: =1366
+      - RS_RequestorNotesPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =420
+            OnSelect: =
+            Visible: =locShowRequestorNotes
+            Width: =800
+            X: =283
+            Y: =134
+      - RS_RequestorNotesTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =34
+            Size: =18
+            Text: ="Requestor notes · " & Coalesce(varCurrentRequest.RequestNumber, "new request")
+            Visible: =locShowRequestorNotes
+            Width: =752
+            X: =307
+            Y: =150
+      - RS_RequestorNotesHint:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: =If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), "Notes for Central Deposit. You can edit them at any time, also while the request is processed.", "Notes from the requestor (read-only).")
+            Visible: =locShowRequestorNotes
+            Width: =752
+            X: =307
+            Y: =186
+      - RS_RequestorNotes:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(Not((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))) And IsBlank(PlainText(Coalesce(varCurrentRequest.Notes, ""))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Default: |-
+              =If(
+                  (Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) Or Not(IsBlank(PlainText(Coalesce(varCurrentRequest.Notes, "")))),
+                  PlainText(Coalesce(varCurrentRequest.Notes, "")),
+                  "No notes from the requestor"
+              )
+            DisplayMode: |-
+              =// the request owner can always write here, also while Processing (P1-01)
+              If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), DisplayMode.Edit, DisplayMode.View)
+            Font: =Font.'Open Sans'
+            Height: =260
+            HintText: ="Comments for Central Deposit - editable at any time"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            OnChange: |-
+              =// saved by the pop-up's Save button (or with Save Draft / Submit on a new request)
+              false
+            Visible: =locShowRequestorNotes
+            Width: =752
+            X: =307
+            Y: =216
+      - RS_RequestorNotesCancel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(60, 66, 80, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =// discard what was typed since the last save
+              Reset(RS_RequestorNotes);
+              UpdateContext({locShowRequestorNotes: false})
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: =If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), "Cancel", "Close")
+            Tooltip: ="Save draft"
+            Visible: =locShowRequestorNotes
+            Width: =200
+            X: =623
+            Y: =490
+      - RS_RequestorNotesSave:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 96, 178, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: =If(RS_RequestorNotes.Text = PlainText(Coalesce(varCurrentRequest.Notes, "")), DisplayMode.Disabled, DisplayMode.Edit)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =If(
+                  Coalesce(varCurrentRequest.ID, 0) > 0,
+                  IfError(
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {Notes: RS_RequestorNotes.Text, RequestorNotesUpdatedOn: Now()}));
+                      // keep the management-screen cache in step, so reopening shows the new notes
+                      If(
+                          Not(IsBlank(LookUp(colMyReqs, ID = varCurrentRequest.ID))),
+                          Patch(colMyReqs, LookUp(colMyReqs, ID = varCurrentRequest.ID), {Notes: RS_RequestorNotes.Text, RequestorNotesUpdatedOn: Now()})
+                      );
+                      Notify("Requestor notes saved.", NotificationType.Success);
+                      UpdateContext({locShowRequestorNotes: false}),
+                      Notify("Requestor notes could not be saved: " & FirstError.Message, NotificationType.Error)
+                  ),
+                  // new request: the text stays in the box and is saved with Save Draft / Submit
+                  Notify("Notes kept. They are saved with the request when you press Save Draft or Submit.", NotificationType.Information);
+                  UpdateContext({locShowRequestorNotes: false})
+              )
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="Save"
+            Tooltip: ="Save draft"
+            Visible: =locShowRequestorNotes And (Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))
+            Width: =200
+            X: =843
+            Y: =490
+      - DOA_List1RowBadge_2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(77, 77, 77, 1)
+            DisabledBorderColor: =Self.BorderColor
+            DisabledColor: =RGBA(77, 77, 77, 1)
+            DisabledFill: =RGBA(215, 223, 240, 1)
+            Fill: =RGBA(215, 223, 240, 1)
+            Font: =Font.'Open Sans'
+            Height: =26
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
+            OnSelect: |-
+              =// open the request, the same way as a HomeGallery row on the Requests screen
+              With(
+                  {req: LookUp(colOpeReqs, ID = ThisItem.ID)},
+                  Set(varCurrentRequest, req);
+                  Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
+                  Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
+                  Set(varRequestDG, Coalesce(req.DG.Value, ""));
+                  Set(varRequestDescription1, Coalesce(req.Description, ""));
+                  Set(varRequestDescription, Coalesce(req.Description, ""));
+                  Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
+                  Set(varRequestMediaType, "");
+                  Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Size: =9
+            Text: ="----"
+            Tooltip: ="Open request"
+            Width: =143
+            X: =48
+            Y: =70
+      - DOA_List1RowBadge_3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =Color.White
+            DisabledBorderColor: =Self.BorderColor
+            DisplayMode: =DisplayMode.View
+            Fill: |-
+              =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
+                 "Approved" in ThisItem.Status.Value, Color.DarkGreen,
+                 "Pending" in ThisItem.Status.Value, Color.Orange,
+                 "Draft" in ThisItem.Status.Value, Color.Gray,
+                 "Rejected" in ThisItem.Status.Value, Color.Red,
+                 "Processing" in ThisItem.Status.Value, Color.DarkOrchid,
+                 Color.Gray)
+            Font: =Font.'Open Sans'
+            Height: =26
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Size: =8
+            Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
+            Tooltip: ="Status"
+            Width: =157
+            X: =220
+            Y: =70

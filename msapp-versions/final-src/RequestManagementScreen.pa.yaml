@@ -67,6 +67,59 @@ Screens:
             Set(varReqFiltersInit, true)
         );
 
+        // The list opens on the first status that has requests (per role) when the
+        // screen is entered with "All Status" and "All Media":
+        //   REQUESTOR:     Pending -> Draft -> Processing -> All
+        //   ADMINISTRATOR: Processing -> Pending -> All (drafts are never shown to admins)
+        // "Has requests" = what HomeGallery would show for that status with the other
+        // filters as they are now. A status handed over from the dashboard still wins.
+        If(
+            varFilter = "All" And IsBlank(locProdTypeFilter) And IsBlank(varNavFilter),
+            With(
+                {
+                    visible: Filter(
+                        colMyReqs,
+                        'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
+                        varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
+                        (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(
+                                    RequestNumber,
+                                    HomeFilterRequestID.Text
+                                )) And (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(
+                                    RequestTitle,
+                                    HomeFilterRequestName.Text
+                                )),
+                        IsEmpty(cmbFilterRequestor.SelectedItems) Or "All" in cmbFilterRequestor.SelectedItems.Value Or 'Created By'.DisplayName in cmbFilterRequestor.SelectedItems.Value,
+                        IsEmpty(cmbFilterAssignee_1.SelectedItems) Or "All" in cmbFilterAssignee_1.SelectedItems.Value Or Assignee.DisplayName in cmbFilterAssignee_1.SelectedItems.Value,
+                        IsBlank(HomeFilterBeluga.Text) Or HomeFilterBeluga.Text = "" Or !IsEmpty(Filter(colMyMedia, ParentRequest = RequestNumber And StartsWith(BelugaReference, HomeFilterBeluga.Text))),
+                        IsBlank(varFilterStartDate) Or Created >= varFilterStartDate,
+                        IsBlank(varFilterEndDate) Or Created <= varFilterEndDate,
+                        IsBlank(locProdTypeFilter) Or !IsEmpty(
+                                    Filter(
+                                        colMyMedia,
+                                        ParentRequest = RequestNumber And First(MediaType).Value = locProdTypeFilter
+                                    )
+                                )
+                    )
+                },
+                Set(
+                    varFilter,
+                    Coalesce(
+                        First(
+                            Filter(
+                                If(
+                                    varUserRole = "ADMINISTRATOR",
+                                    ["Processing", "Pending"],
+                                    ["Pending", "Draft", "Processing"]
+                                ) As step,
+                                CountRows(Filter(visible, Status.Value = step.Value)) > 0
+                            )
+                        ).Value,
+                        "All"
+                    )
+                )
+            )
+        );
+
         // A status handed over from the dashboard still wins on every visit.
         If(
             Not(IsBlank(varNavFilter)),
@@ -174,7 +227,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
@@ -219,7 +272,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
@@ -265,7 +318,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
@@ -311,7 +364,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
@@ -357,7 +410,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
@@ -572,7 +625,7 @@ Screens:
               =Sort(
                   Filter(
                       colMyReqs,
-                      varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                      'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                       varFilter = "All" Or Status.Value = varFilter,
                       varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                       (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(
@@ -595,7 +648,8 @@ Screens:
                       )
                   ),
                   Created,
-                  SortOrder.Descending
+                  // one status: oldest first (waiting longest on top); All Status: newest first
+                  If(varFilter = "All", SortOrder.Descending, SortOrder.Ascending)
               )
             ShowNavigation: =true
             TemplateSize: =60
@@ -1182,7 +1236,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
                           (IsBlank(HomeFilterRequestName.Text) Or HomeFilterRequestName.Text = "" Or StartsWith(RequestTitle, HomeFilterRequestName.Text)),
@@ -1229,7 +1283,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilter = "All" Or Status.Value = varFilter,
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
@@ -1276,7 +1330,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilter = "All" Or Status.Value = varFilter,
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
@@ -1325,7 +1379,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilter = "All" Or Status.Value = varFilter,
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
@@ -1372,7 +1426,7 @@ Screens:
                   CountRows(
                       Filter(
                           colMyReqs,
-                          varUserRole = "ADMINISTRATOR" Or 'Created By'.Email = User().Email,
+                          'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
                           varFilter = "All" Or Status.Value = varFilter,
                           varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                           (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(RequestNumber, HomeFilterRequestID.Text)) And
@@ -1595,7 +1649,7 @@ Screens:
             VerticalAlign: =VerticalAlign.Bottom
             Width: =193
             X: =244
-            Y: =8
+            Y: =4
       - Logo_EC_Form_15:
           Control: Image@2.2.3
           Group: Header_3
@@ -1616,7 +1670,7 @@ Screens:
             Image: =cd_badge_play
             Width: =31
             X: =208
-            Y: =20
+            Y: =16
       - HomeAppSubtitle_9:
           Control: Label@2.5.1
           Group: Header_3
@@ -1629,7 +1683,7 @@ Screens:
             Text: ="Ticket System"
             VerticalAlign: =VerticalAlign.Top
             X: =266
-            Y: =32
+            Y: =28
       - NavPanel_MyRequestScreen_16:
           Control: Classic/Button@2.2.0
           Group: Header_3
@@ -1701,7 +1755,13 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(DashboardScreen)
+            OnSelect: |-
+              =// the operational dashboard of the user's role
+              If(
+                  varUserRole = "ADMINISTRATOR",
+                  Navigate('Dashboard-Ope-Administrator'),
+                  Navigate('Dashboard-Ope-Requestor')
+              )
             PressedBorderColor: =Self.Fill
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
@@ -1840,3 +1900,17 @@ Screens:
             Width: =174
             X: =1139
             Y: =6
+      - HomeAppTitle_17:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Text: ="| Administrator"
+            VerticalAlign: =VerticalAlign.Bottom
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =193
+            X: =409
+            Y: =14

@@ -81,4 +81,12 @@ App:
       Set(varKpiAllMonthSuccess, 0);
       Set(varKpiAvgPublishDays, If(false, 0));
       Set(varNavArm, "")
+    StartScreen: |-
+      =// opens the operational dashboard of the user's role (roles list, not varUserRole:
+      // StartScreen is evaluated before App.OnStart has finished)
+      If(
+          Coalesce(LookUp('AV-CD-RolesPermissionsList', UserEmail.Email = User().Email, Role.Value), "REQUESTOR") = "ADMINISTRATOR",
+          'Dashboard-Ope-Administrator',
+          'Dashboard-Ope-Requestor'
+      )
     Theme: =PowerAppsTheme
