@@ -17,7 +17,9 @@ Screens:
         Set(varUserRole, Coalesce(LookUp('AV-CD-RolesPermissionsList', UserEmail.Email = User().Email, Role.Value), "REQUESTOR"));
         Refresh('AV-CD-Requests');
         // the requestor's own requests, all statuses (delegable filter)
-        ClearCollect(colOpeReqs, Filter('AV-CD-Requests', 'Created By'.Email = User().Email))
+        ClearCollect(colOpeReqs, Filter('AV-CD-Requests', 'Created By'.Email = User().Email));
+        // the requestor's media items, for the TODO bell (delegable filter)
+        ClearCollect(colOpeMedia, Filter('AV-CD-Mediafiles', 'Created By'.Email = User().Email))
     Children:
       - DOR_HeaderDivider:
           Control: Rectangle@2.3.0
@@ -604,6 +606,111 @@ Screens:
                   X: =72
                   Y: =53
                   ZIndex: =8
+                Children: []
+            - DOR_List1RowBell:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: |-
+                    =// days left to the media item's key date; one column (CaptureDate) holds the
+                    // shooting day (Photo), the filming date (Video) and the capture date (Podcast)
+                    With(
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(CaptureDate))), CaptureDate, SortOrder.Ascending)},
+                        With(
+                            {
+                                m: If(
+                                    IsEmpty(Filter(dated, CaptureDate >= Today())),
+                                    Last(dated),                                 // every date is past: the latest
+                                    First(Filter(dated, CaptureDate >= Today()))  // else the next one
+                                )
+                            },
+                            If(
+                                IsBlank(m),
+                                "No shooting / filming / capture date yet",
+                                With(
+                                    {
+                                        days: DateDiff(Today(), m.CaptureDate, TimeUnit.Days),
+                                        what: Switch(First(m.MediaType).Value, "Photo", "Shooting day", "Video", "Filming date", "Capture date")
+                                    },
+                                    what & ": " & Text(m.CaptureDate, "dd mmm 'yy") & "  ·  "
+                                    & If(
+                                        days > 1, days & " days left",
+                                        days = 1, "1 day left",
+                                        days = 0, "today",
+                                        days = -1, "1 day ago",
+                                        -days & " days ago"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// red: fewer than 7 days left (today and past dates included); navy: 7 or more;
+                    // grey: no date. Same date as the tooltip: the next one, else the latest past one.
+                    With(
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(CaptureDate))), CaptureDate, SortOrder.Ascending)},
+                        With(
+                            {
+                                m: If(
+                                    IsEmpty(Filter(dated, CaptureDate >= Today())),
+                                    Last(dated),
+                                    First(Filter(dated, CaptureDate >= Today()))
+                                )
+                            },
+                            If(
+                                IsBlank(m), RGBA(166, 166, 166, 1),
+                                DateDiff(Today(), m.CaptureDate, TimeUnit.Days) < 7, Color.Red,
+                                RGBA(0, 18, 107, 1)
+                            )
+                        )
+                    )
+                  DisplayMode: =DisplayMode.Edit
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Bell
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: |-
+                    =// days left to the media item's key date; one column (CaptureDate) holds the
+                    // shooting day (Photo), the filming date (Video) and the capture date (Podcast)
+                    With(
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(CaptureDate))), CaptureDate, SortOrder.Ascending)},
+                        With(
+                            {
+                                m: If(
+                                    IsEmpty(Filter(dated, CaptureDate >= Today())),
+                                    Last(dated),                                 // every date is past: the latest
+                                    First(Filter(dated, CaptureDate >= Today()))  // else the next one
+                                )
+                            },
+                            If(
+                                IsBlank(m),
+                                "No shooting / filming / capture date yet",
+                                With(
+                                    {
+                                        days: DateDiff(Today(), m.CaptureDate, TimeUnit.Days),
+                                        what: Switch(First(m.MediaType).Value, "Photo", "Shooting day", "Video", "Filming date", "Capture date")
+                                    },
+                                    what & ": " & Text(m.CaptureDate, "dd mmm 'yy") & "  ·  "
+                                    & If(
+                                        days > 1, days & " days left",
+                                        days = 1, "1 day left",
+                                        days = 0, "today",
+                                        days = -1, "1 day ago",
+                                        -days & " days ago"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                  Visible: =true
+                  Width: =20
+                  X: =96
+                  Y: =53
+                  ZIndex: =9
                 Children: []
       - DOR_List1Empty:
           Control: Label@2.5.1
