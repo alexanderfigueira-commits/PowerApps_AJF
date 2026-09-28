@@ -660,7 +660,7 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =13
             Size: =8
-            Text: ="Newest first · Pending and Processing (" & Text(CountRows(DOA_List2Gallery.AllItems)) & ")"
+            Text: ="Newest first · Pending and Processing · the 5 latest of " & Text(CountRows(Filter(colOpeReqs, Status.Value in ["Pending", "Processing"])))
             Visible: =false
             Width: =416
             X: =475
@@ -672,10 +672,14 @@ Screens:
             BorderColor: =RGBA(220, 224, 230, 1)
             Height: =459
             Items: |-
-              =Sort(
-                  Filter(colOpeReqs, Status.Value in ["Pending", "Processing"]),
-                  Modified,
-                  SortOrder.Descending
+              =// the 5 latest only (newest first)
+              FirstN(
+                  Sort(
+                      Filter(colOpeReqs, Status.Value in ["Pending", "Processing"]),
+                      Modified,
+                      SortOrder.Descending
+                  ),
+                  5
               )
             ShowNavigation: =true
             ShowScrollbar: =false
@@ -920,7 +924,7 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =13
             Size: =8
-            Text: ="Newest first · Published, Approved, Rejected (" & Text(CountRows(DOA_List3Gallery.AllItems)) & ")"
+            Text: ="Newest first · Published, Approved, Rejected · the 5 latest of " & Text(CountRows(Filter(colOpeReqs, Status.Value in ["Published", "Approved", "Partially approved", "Rejected"])))
             Visible: =false
             Width: =416
             X: =902
@@ -932,10 +936,14 @@ Screens:
             BorderColor: =RGBA(220, 224, 230, 1)
             Height: =459
             Items: |-
-              =Sort(
-                  Filter(colOpeReqs, Status.Value in ["Published", "Approved", "Partially approved", "Rejected"]),
-                  Modified,
-                  SortOrder.Descending
+              =// the 5 latest only (newest first)
+              FirstN(
+                  Sort(
+                      Filter(colOpeReqs, Status.Value in ["Published", "Approved", "Partially approved", "Rejected"]),
+                      Modified,
+                      SortOrder.Descending
+                  ),
+                  5
               )
             ShowNavigation: =true
             ShowScrollbar: =false
