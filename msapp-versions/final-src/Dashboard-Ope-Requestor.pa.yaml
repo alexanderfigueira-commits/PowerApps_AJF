@@ -218,6 +218,7 @@ Screens:
             Height: =13
             Size: =8
             Text: ="Oldest first · Pending, then Draft (" & Text(CountRows(DOR_List1Gallery.AllItems)) & ")"
+            Visible: =false
             Width: =416
             X: =48
             Y: =201
@@ -452,6 +453,7 @@ Screens:
             Height: =13
             Size: =8
             Text: ="Newest first · Draft and Pending (" & Text(CountRows(DOR_List2Gallery.AllItems)) & ")"
+            Visible: =false
             Width: =416
             X: =475
             Y: =201
@@ -682,6 +684,7 @@ Screens:
             Height: =13
             Size: =8
             Text: ="Newest first · Published, Approved, Rejected (" & Text(CountRows(DOR_List3Gallery.AllItems)) & ")"
+            Visible: =false
             Width: =416
             X: =902
             Y: =201
@@ -1055,3 +1058,69 @@ Screens:
             X: =951
             Y: =8
             ZIndex: =50
+      - DOR_List1Info:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            AccessibleLabel: |-
+              ="About this list: " & DOR_List1Sub.Text
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =20
+            Icon: =Icon.Information
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            Tooltip: =DOR_List1Sub.Text
+            Visible: =true
+            Width: =20
+            X: =394
+            Y: =181
+            ZIndex: =69
+          Children: []
+      - DOR_List2Info:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            AccessibleLabel: |-
+              ="About this list: " & DOR_List2Sub.Text
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =20
+            Icon: =Icon.Information
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            Tooltip: =DOR_List2Sub.Text
+            Visible: =true
+            Width: =20
+            X: =771
+            Y: =181
+            ZIndex: =70
+          Children: []
+      - DOR_List3Info:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            AccessibleLabel: |-
+              ="About this list: " & DOR_List3Sub.Text
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =20
+            Icon: =Icon.Information
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            Tooltip: =DOR_List3Sub.Text
+            Visible: =true
+            Width: =20
+            X: =1197
+            Y: =181
+            ZIndex: =71
+          Children: []
