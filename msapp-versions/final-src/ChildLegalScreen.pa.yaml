@@ -43,54 +43,6 @@ Screens:
             Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
             Width: =700
             X: =200
-      - HomeAppTitle_CL:
-          Control: Label@2.5.1
-          Group: Header_CL
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =30
-            Size: =18
-            Text: ="Central Deposit"
-            VerticalAlign: =VerticalAlign.Bottom
-            Width: =180
-            X: =264
-            Y: =6
-      - HomeUserName_CL:
-          Control: Label@2.5.1
-          Group: Header_CL
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.'Open Sans'
-            Height: =28
-            Text: =User().FullName
-            Width: =204
-            X: =1103
-            Y: =18
-      - Logo_EC_CL:
-          Control: Image@2.2.3
-          Group: Header_CL
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =42
-            Image: ='logo--en'
-            PaddingLeft: =15
-            Width: =170
-            X: =16
-            Y: =8
-      - CD_Logo_CL:
-          Control: Image@2.2.3
-          Group: Header_CL
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =40
-            Image: =cd_badge_play
-            Width: =40
-            X: =214
-            Y: =8
       - CL_TabsBg:
           Control: Rectangle@2.3.0
           Properties:
@@ -231,19 +183,6 @@ Screens:
             Width: =140
             X: =32
             Y: =720
-      - HomeAppSubtitle_CL:
-          Control: Label@2.5.1
-          Group: Header_CL
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.'Open Sans'
-            Height: =22
-            Size: =10
-            Text: ="Ticket System"
-            VerticalAlign: =VerticalAlign.Top
-            X: =264
-            Y: =30
       - CL_Gallery:
           Control: Gallery@2.15.0
           Variant: Vertical
@@ -948,9 +887,9 @@ Screens:
             Width: =900
             X: =190
             Y: =720
-      - HomeAppTitle_12:
+      - CL_Header_Title:
           Control: Label@2.5.1
-          Group: Header_10
+          Group: CL_Header
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(255, 255, 255, 1)
@@ -962,10 +901,11 @@ Screens:
             VerticalAlign: =VerticalAlign.Bottom
             Width: =193
             X: =244
-            Y: =8
-      - Logo_EC_Form_18:
+            Y: =4
+            ZIndex: =33
+      - CL_Header_LogoEC:
           Control: Image@2.2.3
-          Group: Header_10
+          Group: CL_Header
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Height: =50
@@ -974,19 +914,21 @@ Screens:
             Width: =186
             X: =2
             Y: =2
-      - CD_Logo_12:
+            ZIndex: =34
+      - CL_Header_LogoCD:
           Control: Image@2.2.3
-          Group: Header_10
+          Group: CL_Header
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Height: =31
             Image: =cd_badge_play
             Width: =31
             X: =208
-            Y: =20
-      - HomeAppSubtitle_12:
+            Y: =16
+            ZIndex: =35
+      - CL_Header_Subtitle:
           Control: Label@2.5.1
-          Group: Header_10
+          Group: CL_Header
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(186, 202, 226, 1)
@@ -996,10 +938,66 @@ Screens:
             Text: ="Ticket System"
             VerticalAlign: =VerticalAlign.Top
             X: =266
-            Y: =32
-      - NavPanel_MyRequestScreen_11:
+            Y: =28
+            ZIndex: =36
+      - CL_Header_Photo:
+          Control: Image@2.2.3
+          Group: CL_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+            Y: =1
+            ZIndex: =37
+      - CL_Header_UserName:
+          Control: Label@2.5.1
+          Group: CL_Header
+          Properties:
+            Align: =Align.Right
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =37
+            Size: =11
+            Text: |-
+              =User().FullName 
+              & Char(10) &
+              If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =216
+            X: =1089
+            Y: =16
+            ZIndex: =38
+      - CL_RoleTag:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Text: ="| Administrator"
+            VerticalAlign: =VerticalAlign.Bottom
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =193
+            X: =409
+            Y: =14
+            ZIndex: =39
+      - CL_Menu_Panel:
           Control: Classic/Button@2.2.0
-          Group: Header_10
+          Group: CL_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -1024,11 +1022,12 @@ Screens:
             TabIndex: =-1
             Text: =""
             Width: =424
-            X: =666
-            Y: =4
-      - NavBtnRequests_MyRequestScreen_11:
+            X: =686
+            Y: =5
+            ZIndex: =40
+      - CL_Menu_Requests:
           Control: Classic/Button@2.2.0
-          Group: Header_10
+          Group: CL_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -1052,17 +1051,18 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =678
-            Y: =9
-      - NavBtnDashboard_MyRequestScreen_22:
+            X: =797
+            Y: =8
+            ZIndex: =41
+      - CL_Menu_Dashboard:
           Control: Classic/Button@2.2.0
-          Group: Header_10
+          Group: CL_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Fill: =If(App.ActiveScreen = DashboardScreen Or App.ActiveScreen = 'Dashboard-Ope-Administrator' Or App.ActiveScreen = 'Dashboard-Ope-Requestor', RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             Height: =38
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
@@ -1087,11 +1087,41 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =769
-            Y: =9
-      - NavBtnReview_MyRequestScreen_11:
+            X: =705
+            Y: =10
+            ZIndex: =42
+      - CL_Menu_Help:
           Control: Classic/Button@2.2.0
-          Group: Header_10
+          Group: CL_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Width: =83
+            X: =1030
+            Y: =10
+            ZIndex: =43
+      - CL_Menu_Review:
+          Control: Classic/Button@2.2.0
+          Group: CL_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -1116,45 +1146,18 @@ Screens:
             Tooltip: ="Review"
             Visible: =varUserRole = "ADMINISTRATOR"
             Width: =83
-            X: =854
-            Y: =9
-      - NavBtnHelp_MyRequestScreen_11:
+            X: =875
+            Y: =8
+            ZIndex: =44
+      - CL_Menu_Export:
           Control: Classic/Button@2.2.0
-          Group: Header_10
+          Group: CL_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(HelpScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="🔎" & Char(10) & "Help"
-            Tooltip: ="Help"
-            Width: =83
-            X: =1010
-            Y: =9
-      - NavBtnDashboard_MyRequestScreen_23:
-          Control: Classic/Button@2.2.0
-          Group: Header_10
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Fill: =If(App.ActiveScreen = HomePrintScreen Or App.ActiveScreen = PrintPhotoDetailScreen Or App.ActiveScreen = PrintVideoDetailScreen Or App.ActiveScreen = PrintPodcastDetailScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
@@ -1175,41 +1178,7 @@ Screens:
               Export"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =927
-            Y: =9
-      - Image1_18:
-          Control: Image@2.2.3
-          Group: Header_10
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =56
-            Image: =User().Image
-            RadiusBottomLeft: =3
-            RadiusBottomRight: =3
-            RadiusTopLeft: =3
-            RadiusTopRight: =3
-            Tooltip: |-
-              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
-              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
-            Width: =61
-            X: =1305
-            Y: =1
-      - HomeUserName_18:
-          Control: Label@2.5.1
-          Group: Header_10
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.Arial
-            Height: =47
-            Size: =11
-            Text: |-
-              =User().FullName & " - " & If(
-                  Find(".", Office365Users.MyProfile().Department) > 0,
-                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
-                  Office365Users.MyProfile().Department
-              )
-            Width: =174
-            X: =1139
-            Y: =6
+            X: =951
+            Y: =8
+
+            ZIndex: =45

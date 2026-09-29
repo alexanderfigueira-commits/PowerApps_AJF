@@ -61,41 +61,6 @@ Screens:
             Width: =1270
             X: =48
             Y: =126
-      - DOR_HomeUserName_1:
-          Control: Label@2.5.1
-          Group: DOR_Header_1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.Arial
-            Height: =47
-            Size: =11
-            Text: |-
-              =User().FullName & " - " & If(
-                  Find(".", Office365Users.MyProfile().Department) > 0,
-                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
-                  Office365Users.MyProfile().Department
-              )
-            Width: =174
-            X: =1139
-            Y: =6
-      - DOR_Image1_6:
-          Control: Image@2.2.3
-          Group: DOR_Header_1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =56
-            Image: =User().Image
-            RadiusBottomLeft: =3
-            RadiusBottomRight: =3
-            RadiusTopLeft: =3
-            RadiusTopRight: =3
-            Tooltip: |-
-              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
-              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
-            Width: =61
-            X: =1305
       - DOR_Label12_4:
           Control: Label@2.5.1
           Properties:
@@ -128,235 +93,6 @@ Screens:
             Visible: =!Connection.Connected
             X: =16
             Y: =719
-      - DOR_HomeAppTitle_4:
-          Control: Label@2.5.1
-          Group: DOR_Group4_1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =37
-            Size: =14
-            Text: ="Central Deposit"
-            VerticalAlign: =VerticalAlign.Bottom
-            Width: =193
-            X: =244
-            Y: =8
-      - DOR_Logo_EC_Form_9:
-          Control: Image@2.2.3
-          Group: DOR_Group4_1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =50
-            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
-            PaddingLeft: =15
-            Width: =186
-            X: =2
-            Y: =2
-      - DOR_CD_Logo_4:
-          Control: Image@2.2.3
-          Group: DOR_Group4_1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =31
-            Image: =cd_badge_play
-            Width: =31
-            X: =208
-            Y: =20
-      - DOR_HomeAppSubtitle_4:
-          Control: Label@2.5.1
-          Group: DOR_Group4_1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.'Open Sans'
-            Height: =22
-            Size: =10
-            Text: ="Ticket System"
-            VerticalAlign: =VerticalAlign.Top
-            X: =266
-            Y: =32
-      - DOR_NavPanel_MyRequestScreen_6:
-          Control: Classic/Button@2.2.0
-          Group: DOR_menu_2
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledFill: =RGBA(255, 255, 255, 0.10)
-            DisplayMode: =DisplayMode.View
-            Fill: =RGBA(255, 255, 255, 0.10)
-            Font: =Font.'Open Sans'
-            Height: =52
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(255, 255, 255, 0.10)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(255, 255, 255, 0.10)
-            RadiusBottomLeft: =24
-            RadiusBottomRight: =24
-            RadiusTopLeft: =24
-            RadiusTopRight: =24
-            Size: =10
-            TabIndex: =-1
-            Text: =""
-            Width: =424
-            X: =686
-            Y: =5
-      - DOR_NavBtnRequests_MyRequestScreen_6:
-          Control: Classic/Button@2.2.0
-          Group: DOR_menu_2
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(RequestManagementScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="📋 Requests"
-            Tooltip: ="Requests"
-            Width: =83
-            X: =698
-            Y: =10
-      - DOR_NavBtnDashboard_MyRequestScreen_12:
-          Control: Classic/Button@2.2.0
-          Group: DOR_menu_2
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            Height: =38
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: |-
-              =// the operational dashboard of the user's role
-              If(
-                  varUserRole = "ADMINISTRATOR",
-                  Navigate('Dashboard-Ope-Administrator'),
-                  Navigate('Dashboard-Ope-Requestor')
-              )
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="📊" & Char(10) & "Dashboard"
-            Tooltip: ="Dashboard"
-            Width: =83
-            X: =789
-            Y: =10
-      - DOR_NavBtnHelp_MyRequestScreen_7:
-          Control: Classic/Button@2.2.0
-          Group: DOR_menu_2
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(HelpScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="🔎" & Char(10) & "Help"
-            Tooltip: ="Help"
-            Width: =83
-            X: =1030
-            Y: =10
-      - DOR_NavBtnReview_MyRequestScreen_6:
-          Control: Classic/Button@2.2.0
-          Group: DOR_menu_2
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(ReviewScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="👁" & Char(10) & "Review"
-            Tooltip: ="Review"
-            Visible: =varUserRole = "ADMINISTRATOR"
-            Width: =83
-            X: =874
-            Y: =10
-      - DOR_NavBtnDashboard_MyRequestScreen_13:
-          Control: Classic/Button@2.2.0
-          Group: DOR_menu_2
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: |-
-              =ClearCollect(colPrintData, HomeGallery.AllItems);
-              Navigate(HomePrintScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="📂
-              Export"
-            Tooltip: ="Dashboard"
-            Width: =83
-            X: =947
-            Y: =10
       - DOR_List1Card:
           Control: Rectangle@2.3.0
           Properties:
@@ -367,6 +103,7 @@ Screens:
             Width: =416
             X: =48
             Y: =160
+            ZIndex: =52
       - DOR_List1Accent:
           Control: Rectangle@2.3.0
           Properties:
@@ -376,6 +113,7 @@ Screens:
             Width: =416
             X: =48
             Y: =160
+            ZIndex: =53
       - DOR_List1Title:
           Control: Label@2.5.1
           Properties:
@@ -390,6 +128,7 @@ Screens:
             Width: =416
             X: =48
             Y: =176
+            ZIndex: =54
       - DOR_List1Sub:
           Control: Label@2.5.1
           Properties:
@@ -404,6 +143,7 @@ Screens:
             Width: =416
             X: =48
             Y: =201
+            ZIndex: =55
       - DOR_List1Gallery:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
@@ -426,6 +166,7 @@ Screens:
             Width: =400
             X: =56
             Y: =231
+            ZIndex: =56
           Children:
             - DOR_List1RowSelect:
                 Control: Rectangle@2.3.0
@@ -444,29 +185,9 @@ Screens:
                   Height: =1
                   Width: =400
                   Y: =75
-            - DOR_List1RowTitle:
-                Control: Label@2.5.1
-                Properties:
-                  Align: =Align.Left
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(0, 0, 0, 1)
-                  DisabledColor: =RGBA(116, 116, 116, 1)
-                  DisplayMode: =DisplayMode.Disabled
-                  Font: =Font.'Open Sans'
-                  Height: =47
-                  OnSelect: =Select(Parent)
-                  Overflow: =Overflow.Scroll
-                  Size: =9
-                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
-                  Tooltip: ="Title"
-                  Width: =268
-                  X: =123
-                  Y: =4
-                  ZIndex: =5
             - DOR_List1RowMeta:
                 Control: Label@2.5.1
                 Properties:
-                  Align: =Align.Left
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =RGBA(32, 31, 30, 1)
                   DisplayMode: =DisplayMode.Disabled
@@ -480,41 +201,49 @@ Screens:
                   Width: =190
                   X: =123
                   Y: =51
-                  ZIndex: =3
-            - DOR_List1RowBadge:
-                Control: Classic/Button@2.2.0
+            - DOR_List1RowDate:
+                Control: Label@2.5.1
                 Properties:
-                  BorderColor: =ColorFade(Self.Fill, -15%)
-                  BorderThickness: =0
-                  Color: =Color.White
-                  DisabledBorderColor: =Self.BorderColor
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(77, 77, 77, 1)
                   DisplayMode: =DisplayMode.View
-                  Fill: |-
-                    =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
-                       "Approved" in ThisItem.Status.Value, Color.DarkGreen,
-                       "Pending" in ThisItem.Status.Value, Color.Orange,
-                       "Draft" in ThisItem.Status.Value, Color.Gray,
-                       "Rejected" in ThisItem.Status.Value, Color.Red,
-                       "Processing" in ThisItem.Status.Value, Color.DarkOrchid,
-                       Color.Gray)
                   Font: =Font.'Open Sans'
-                  Height: =19
-                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-                  HoverColor: =RGBA(255, 255, 255, 1)
-                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
-                  PressedBorderColor: =Self.Fill
-                  PressedColor: =Self.Fill
-                  PressedFill: =Self.Color
-                  RadiusBottomLeft: =14
-                  RadiusBottomRight: =14
-                  RadiusTopLeft: =14
-                  RadiusTopRight: =14
+                  FontWeight: =FontWeight.Semibold
+                  Height: =23
+                  OnSelect: =Select(Parent)
                   Size: =8
-                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
-                  Tooltip: ="Status"
-                  Width: =80
-                  X: =312
-                  Y: =51
+                  Text: |-
+                    =If(
+                        ThisItem.Status.Value = "Draft",
+                        "Created " & Text(ThisItem.Created, "dd mmm 'yy"),
+                        "Submitted " & Text(ThisItem.SubmittedOn, "dd mmm 'yy")
+                    )
+                  Tooltip: |-
+                    =If(
+                        ThisItem.Status.Value = "Draft",
+                        "Created on:  " & Text(ThisItem.Created, "dd mmm 'yy  (hh:mm)"),
+                        "Submitted on:  " & Text(ThisItem.SubmittedOn, "dd mmm 'yy  (hh:mm)")
+                    )
+                  Width: =70
+                  X: =6
+                  Y: =47
+            - DOR_List1RowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DisabledColor: =RGBA(116, 116, 116, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =47
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
+                  Tooltip: ="Title"
+                  Width: =268
+                  X: =123
+                  Y: =4
             - DOR_List1RowNumber:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -552,32 +281,46 @@ Screens:
                   RadiusTopLeft: =14
                   RadiusTopRight: =14
                   Size: =9
-                  Text: ="📷 " & ThisItem.RequestNumber
+                  Text: |-
+                    ="📷 " & ThisItem.RequestNumber
                   Tooltip: ="Open request"
                   Width: =100
                   X: =10
                   Y: =14
-                Children: []
-            - DOR_List1RowDate:
-                Control: Label@2.5.1
+            - DOR_List1RowBadge:
+                Control: Classic/Button@2.2.0
                 Properties:
-                  Align: =Align.Center
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(77, 77, 77, 1)
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =Color.White
+                  DisabledBorderColor: =Self.BorderColor
                   DisplayMode: =DisplayMode.View
+                  Fill: |-
+                    =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
+                       "Approved" in ThisItem.Status.Value, Color.DarkGreen,
+                       "Pending" in ThisItem.Status.Value, Color.Orange,
+                       "Draft" in ThisItem.Status.Value, Color.Gray,
+                       "Rejected" in ThisItem.Status.Value, Color.Red,
+                       "Processing" in ThisItem.Status.Value, Color.DarkOrchid,
+                       Color.Gray)
                   Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =20
-                  OnSelect: =Select(Parent)
+                  Height: =19
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
                   Size: =8
-                  Text: =Text(ThisItem.Modified, "dd mmm 'yy")
-                  Tooltip: |-
-                    ="Updated at:  " & Text(ThisItem.Modified, "dd mmm 'yy  (hh:mm)")
-                    
-                    
-                  Width: =70
-                  Y: =53
-                Children: []
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
+                  Tooltip: ="Status"
+                  Width: =80
+                  X: =312
+                  Y: =51
             - DOR_List1RowNotes:
                 Control: Classic/Icon@2.5.0
                 Properties:
@@ -591,7 +334,6 @@ Screens:
                         Color.Red,
                         RGBA(77, 77, 77, 1)
                     )
-                  DisplayMode: =DisplayMode.Edit
                   FocusedBorderThickness: =0
                   Height: =20
                   Icon: =Icon.Note
@@ -601,12 +343,9 @@ Screens:
                   PaddingRight: =2
                   PaddingTop: =2
                   Tooltip: ="Are there any new notes?"
-                  Visible: =true
                   Width: =20
                   X: =72
                   Y: =53
-                  ZIndex: =8
-                Children: []
             - DOR_List1RowBell:
                 Control: Classic/Icon@2.5.0
                 Properties:
@@ -664,7 +403,6 @@ Screens:
                             )
                         )
                     )
-                  DisplayMode: =DisplayMode.Edit
                   FocusedBorderThickness: =0
                   Height: =20
                   Icon: =Icon.Bell
@@ -706,12 +444,9 @@ Screens:
                             )
                         )
                     )
-                  Visible: =true
                   Width: =20
                   X: =96
                   Y: =53
-                  ZIndex: =9
-                Children: []
       - DOR_List1Empty:
           Control: Label@2.5.1
           Properties:
@@ -726,6 +461,7 @@ Screens:
             Width: =416
             X: =48
             Y: =300
+            ZIndex: =57
       - DOR_List2Card:
           Control: Rectangle@2.3.0
           Properties:
@@ -736,6 +472,7 @@ Screens:
             Width: =416
             X: =475
             Y: =160
+            ZIndex: =58
       - DOR_List2Accent:
           Control: Rectangle@2.3.0
           Properties:
@@ -745,6 +482,7 @@ Screens:
             Width: =416
             X: =475
             Y: =160
+            ZIndex: =59
       - DOR_List2Title:
           Control: Label@2.5.1
           Properties:
@@ -755,10 +493,11 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =30
             Size: =12
-            Text: ="MY LATEST UPDATES"
+            Text: ="5 MY LATEST UPDATES"
             Width: =416
             X: =475
             Y: =176
+            ZIndex: =60
       - DOR_List2Sub:
           Control: Label@2.5.1
           Properties:
@@ -773,6 +512,7 @@ Screens:
             Width: =416
             X: =475
             Y: =201
+            ZIndex: =61
       - DOR_List2Gallery:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
@@ -795,6 +535,7 @@ Screens:
             Width: =400
             X: =483
             Y: =231
+            ZIndex: =62
           Children:
             - DOR_List2RowSelect:
                 Control: Rectangle@2.3.0
@@ -813,29 +554,9 @@ Screens:
                   Height: =1
                   Width: =400
                   Y: =75
-            - DOR_List2RowTitle:
-                Control: Label@2.5.1
-                Properties:
-                  Align: =Align.Left
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(0, 0, 0, 1)
-                  DisabledColor: =RGBA(116, 116, 116, 1)
-                  DisplayMode: =DisplayMode.Disabled
-                  Font: =Font.'Open Sans'
-                  Height: =47
-                  OnSelect: =Select(Parent)
-                  Overflow: =Overflow.Scroll
-                  Size: =9
-                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
-                  Tooltip: ="Title"
-                  Width: =268
-                  X: =123
-                  Y: =4
-                  ZIndex: =5
             - DOR_List2RowMeta:
                 Control: Label@2.5.1
                 Properties:
-                  Align: =Align.Left
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =RGBA(32, 31, 30, 1)
                   DisplayMode: =DisplayMode.Disabled
@@ -849,41 +570,48 @@ Screens:
                   Width: =190
                   X: =123
                   Y: =51
-                  ZIndex: =3
-            - DOR_List2RowBadge:
-                Control: Classic/Button@2.2.0
+            - DOR_List2RowDate:
+                Control: Label@2.5.1
                 Properties:
-                  BorderColor: =ColorFade(Self.Fill, -15%)
-                  BorderThickness: =0
-                  Color: =Color.White
-                  DisabledBorderColor: =Self.BorderColor
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(77, 77, 77, 1)
                   DisplayMode: =DisplayMode.View
-                  Fill: |-
-                    =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
-                       "Approved" in ThisItem.Status.Value, Color.DarkGreen,
-                       "Pending" in ThisItem.Status.Value, Color.Orange,
-                       "Draft" in ThisItem.Status.Value, Color.Gray,
-                       "Rejected" in ThisItem.Status.Value, Color.Red,
-                       "Processing" in ThisItem.Status.Value, Color.DarkOrchid,
-                       Color.Gray)
                   Font: =Font.'Open Sans'
-                  Height: =19
-                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-                  HoverColor: =RGBA(255, 255, 255, 1)
-                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
-                  PressedBorderColor: =Self.Fill
-                  PressedColor: =Self.Fill
-                  PressedFill: =Self.Color
-                  RadiusBottomLeft: =14
-                  RadiusBottomRight: =14
-                  RadiusTopLeft: =14
-                  RadiusTopRight: =14
+                  FontWeight: =FontWeight.Semibold
+                  Height: =23
+                  OnSelect: =Select(Parent)
                   Size: =8
-                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
-                  Tooltip: ="Status"
-                  Width: =80
-                  X: =312
-                  Y: =51
+                  Text: |-
+                    =If(
+                        ThisItem.Status.Value = "Draft",
+                        "Created " & Text(ThisItem.Created, "dd mmm 'yy"),
+                        "Submitted " & Text(ThisItem.SubmittedOn, "dd mmm 'yy")
+                    )
+                  Tooltip: |+
+                    =If(
+                        ThisItem.Status.Value = "Draft",
+                        "Created on:  " & Text(ThisItem.Created, "dd mmm 'yy  (hh:mm)"),
+                        "Submitted on:  " & Text(ThisItem.SubmittedOn, "dd mmm 'yy  (hh:mm)")
+                    )
+                  Width: =72
+                  Y: =53
+            - DOR_List2RowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DisabledColor: =RGBA(116, 116, 116, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =47
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
+                  Tooltip: ="Title"
+                  Width: =268
+                  X: =123
+                  Y: =4
             - DOR_List2RowNumber:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -921,200 +649,13 @@ Screens:
                   RadiusTopLeft: =14
                   RadiusTopRight: =14
                   Size: =9
-                  Text: ="📷 " & ThisItem.RequestNumber
+                  Text: |-
+                    ="📷 " & ThisItem.RequestNumber
                   Tooltip: ="Open request"
                   Width: =100
                   X: =10
                   Y: =14
-                Children: []
-            - DOR_List2RowDate:
-                Control: Label@2.5.1
-                Properties:
-                  Align: =Align.Center
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(77, 77, 77, 1)
-                  DisplayMode: =DisplayMode.View
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =20
-                  OnSelect: =Select(Parent)
-                  Size: =8
-                  Text: =Text(ThisItem.Modified, "dd mmm 'yy")
-                  Tooltip: |-
-                    ="Updated at:  " & Text(ThisItem.Modified, "dd mmm 'yy  (hh:mm)")
-                    
-                    
-                  Width: =70
-                  Y: =53
-                Children: []
-            - DOR_List2RowNotes:
-                Control: Classic/Icon@2.5.0
-                Properties:
-                  AccessibleLabel: ="Are there any new notes?"
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: |-
-                    =// red: the administrator notes changed less than 15 days ago
-                    If(
-                        Not(IsBlank(ThisItem.AdminNotesUpdatedOn))
-                            And DateDiff(ThisItem.AdminNotesUpdatedOn, Today(), TimeUnit.Days) < 15,
-                        Color.Red,
-                        RGBA(77, 77, 77, 1)
-                    )
-                  DisplayMode: =DisplayMode.Edit
-                  FocusedBorderThickness: =0
-                  Height: =20
-                  Icon: =Icon.Note
-                  OnSelect: =Select(Parent)
-                  PaddingBottom: =2
-                  PaddingLeft: =2
-                  PaddingRight: =2
-                  PaddingTop: =2
-                  Tooltip: ="Are there any new notes?"
-                  Visible: =true
-                  Width: =20
-                  X: =72
-                  Y: =53
-                  ZIndex: =8
-                Children: []
-      - DOR_List2Empty:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(60, 66, 80, 1)
-            Font: =Font.'Open Sans'
-            Height: =30
-            Size: =11
-            Text: ="Nothing here"
-            Visible: =CountRows(DOR_List2Gallery.AllItems) = 0
-            Width: =416
-            X: =475
-            Y: =300
-      - DOR_List3Card:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =1
-            Fill: =RGBA(255, 255, 255, 1)
-            Height: =540
-            Width: =416
-            X: =902
-            Y: =160
-      - DOR_List3Accent:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(46, 125, 50, 1)
-            Height: =6
-            Width: =416
-            X: =902
-            Y: =160
-      - DOR_List3Title:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =30
-            Size: =12
-            Text: ="FINAL VALIDATIONS"
-            Width: =416
-            X: =902
-            Y: =176
-      - DOR_List3Sub:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(60, 66, 80, 1)
-            Font: =Font.'Open Sans'
-            Height: =13
-            Size: =8
-            Text: ="Newest first · Published, Approved, Rejected · the 5 latest of " & Text(CountRows(Filter(colOpeReqs, Status.Value in ["Published", "Approved", "Partially approved", "Rejected"])))
-            Visible: =false
-            Width: =416
-            X: =902
-            Y: =201
-      - DOR_List3Gallery:
-          Control: Gallery@2.15.0
-          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            Height: =459
-            Items: |-
-              =// the 5 latest only (newest first)
-              FirstN(
-                  Sort(
-                      Filter(colOpeReqs, Status.Value in ["Published", "Approved", "Partially approved", "Rejected"]),
-                      Modified,
-                      SortOrder.Descending
-                  ),
-                  5
-              )
-            ShowNavigation: =true
-            ShowScrollbar: =false
-            TemplateSize: =86
-            Width: =400
-            X: =910
-            Y: =231
-          Children:
-            - DOR_List3RowSelect:
-                Control: Rectangle@2.3.0
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Fill: =RGBA(241, 244, 249, 1)
-                  Height: =75
-                  HoverFill: =RGBA(240, 242, 246, 1)
-                  OnSelect: =
-                  Width: =400
-            - DOR_List3RowDivider:
-                Control: Rectangle@2.3.0
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Fill: =RGBA(230, 232, 238, 1)
-                  Height: =1
-                  Width: =400
-                  Y: =75
-            - DOR_List3RowTitle:
-                Control: Label@2.5.1
-                Properties:
-                  Align: =Align.Left
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(0, 0, 0, 1)
-                  DisabledColor: =RGBA(116, 116, 116, 1)
-                  DisplayMode: =DisplayMode.Disabled
-                  Font: =Font.'Open Sans'
-                  Height: =47
-                  OnSelect: =Select(Parent)
-                  Overflow: =Overflow.Scroll
-                  Size: =9
-                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
-                  Tooltip: ="Title"
-                  Width: =268
-                  X: =123
-                  Y: =4
-                  ZIndex: =5
-            - DOR_List3RowMeta:
-                Control: Label@2.5.1
-                Properties:
-                  Align: =Align.Left
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(32, 31, 30, 1)
-                  DisplayMode: =DisplayMode.Disabled
-                  Font: =Font.'Open Sans'
-                  Height: =22
-                  OnSelect: =Select(Parent)
-                  Overflow: =Overflow.Scroll
-                  Size: =7
-                  Text: =Coalesce(ThisItem.'Modified By'.DisplayName, "—")
-                  Tooltip: ="Last updated by"
-                  Width: =190
-                  X: =123
-                  Y: =51
-                  ZIndex: =3
-            - DOR_List3RowBadge:
+            - DOR_List2RowBadge:
                 Control: Classic/Button@2.2.0
                 Properties:
                   BorderColor: =ColorFade(Self.Fill, -15%)
@@ -1148,6 +689,188 @@ Screens:
                   Width: =80
                   X: =312
                   Y: =51
+            - DOR_List2RowNotes:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: ="Are there any new notes?"
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// red: the administrator notes changed less than 15 days ago
+                    If(
+                        Not(IsBlank(ThisItem.AdminNotesUpdatedOn))
+                            And DateDiff(ThisItem.AdminNotesUpdatedOn, Today(), TimeUnit.Days) < 15,
+                        Color.Red,
+                        RGBA(77, 77, 77, 1)
+                    )
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Note
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: ="Are there any new notes?"
+                  Width: =20
+                  X: =72
+                  Y: =53
+      - DOR_List2Empty:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =11
+            Text: ="Nothing here"
+            Visible: =CountRows(DOR_List2Gallery.AllItems) = 0
+            Width: =416
+            X: =475
+            Y: =300
+            ZIndex: =63
+      - DOR_List3Card:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =540
+            Width: =416
+            X: =902
+            Y: =160
+            ZIndex: =64
+      - DOR_List3Accent:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(46, 125, 50, 1)
+            Height: =6
+            Width: =416
+            X: =902
+            Y: =160
+            ZIndex: =65
+      - DOR_List3Title:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =12
+            Text: ="5 FINAL VALIDATIONS"
+            Width: =416
+            X: =902
+            Y: =176
+            ZIndex: =66
+      - DOR_List3Sub:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =13
+            Size: =8
+            Text: ="Newest first · Published, Approved, Rejected · the 5 latest of " & Text(CountRows(Filter(colOpeReqs, Status.Value in ["Published", "Approved", "Partially approved", "Rejected"])))
+            Visible: =false
+            Width: =416
+            X: =902
+            Y: =201
+            ZIndex: =67
+      - DOR_List3Gallery:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =459
+            Items: |-
+              =// the 5 latest only (newest first)
+              FirstN(
+                  Sort(
+                      Filter(colOpeReqs, Status.Value in ["Published", "Approved", "Partially approved", "Rejected"]),
+                      Modified,
+                      SortOrder.Descending
+                  ),
+                  5
+              )
+            ShowNavigation: =true
+            ShowScrollbar: =false
+            TemplateSize: =86
+            Width: =400
+            X: =910
+            Y: =231
+            ZIndex: =68
+          Children:
+            - DOR_List3RowSelect:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(241, 244, 249, 1)
+                  Height: =75
+                  HoverFill: =RGBA(240, 242, 246, 1)
+                  OnSelect: =
+                  Width: =400
+            - DOR_List3RowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =400
+                  Y: =75
+            - DOR_List3RowMeta:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =22
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =7
+                  Text: =Coalesce(ThisItem.'Modified By'.DisplayName, "—")
+                  Tooltip: ="Last updated by"
+                  Width: =190
+                  X: =123
+                  Y: =51
+            - DOR_List3RowDate:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(77, 77, 77, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  OnSelect: =Select(Parent)
+                  Size: =8
+                  Text: =Text(ThisItem.SubmittedOn, "dd mmm 'yy")
+                  Tooltip: |+
+                    ="Submitted on:  " & Text(ThisItem.Modified, "dd mmm 'yy  (hh:mm)")
+
+                  Width: =70
+                  Y: =53
+            - DOR_List3RowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DisabledColor: =RGBA(116, 116, 116, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =47
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled request", ThisItem.RequestTitle)
+                  Tooltip: ="Title"
+                  Width: =268
+                  X: =123
+                  Y: =4
             - DOR_List3RowNumber:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -1185,32 +908,46 @@ Screens:
                   RadiusTopLeft: =14
                   RadiusTopRight: =14
                   Size: =9
-                  Text: ="📷 " & ThisItem.RequestNumber
+                  Text: |-
+                    ="📷 " & ThisItem.RequestNumber
                   Tooltip: ="Open request"
                   Width: =100
                   X: =10
                   Y: =14
-                Children: []
-            - DOR_List3RowDate:
-                Control: Label@2.5.1
+            - DOR_List3RowBadge:
+                Control: Classic/Button@2.2.0
                 Properties:
-                  Align: =Align.Center
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(77, 77, 77, 1)
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =Color.White
+                  DisabledBorderColor: =Self.BorderColor
                   DisplayMode: =DisplayMode.View
+                  Fill: |-
+                    =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
+                       "Approved" in ThisItem.Status.Value, Color.DarkGreen,
+                       "Pending" in ThisItem.Status.Value, Color.Orange,
+                       "Draft" in ThisItem.Status.Value, Color.Gray,
+                       "Rejected" in ThisItem.Status.Value, Color.Red,
+                       "Processing" in ThisItem.Status.Value, Color.DarkOrchid,
+                       Color.Gray)
                   Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =20
-                  OnSelect: =Select(Parent)
+                  Height: =19
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
                   Size: =8
-                  Text: =Text(ThisItem.Modified, "dd mmm 'yy")
-                  Tooltip: |-
-                    ="Updated at:  " & Text(ThisItem.Modified, "dd mmm 'yy  (hh:mm)")
-                    
-                    
-                  Width: =70
-                  Y: =53
-                Children: []
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
+                  Tooltip: ="Status"
+                  Width: =80
+                  X: =312
+                  Y: =51
             - DOR_List3RowNotes:
                 Control: Classic/Icon@2.5.0
                 Properties:
@@ -1224,7 +961,6 @@ Screens:
                         Color.Red,
                         RGBA(77, 77, 77, 1)
                     )
-                  DisplayMode: =DisplayMode.Edit
                   FocusedBorderThickness: =0
                   Height: =20
                   Icon: =Icon.Note
@@ -1234,12 +970,9 @@ Screens:
                   PaddingRight: =2
                   PaddingTop: =2
                   Tooltip: ="Are there any new notes?"
-                  Visible: =true
                   Width: =20
                   X: =72
                   Y: =53
-                  ZIndex: =8
-                Children: []
       - DOR_List3Empty:
           Control: Label@2.5.1
           Properties:
@@ -1254,69 +987,424 @@ Screens:
             Width: =416
             X: =902
             Y: =300
+            ZIndex: =69
       - DOR_List1Info:
           Control: Classic/Icon@2.5.0
           Properties:
             AccessibleLabel: |-
               ="About this list: " & DOR_List1Sub.Text
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(136, 160, 209, 1)
             DisplayMode: =DisplayMode.View
             FocusedBorderThickness: =0
-            Height: =20
+            Height: =18
             Icon: =Icon.Information
-            PaddingBottom: =0
-            PaddingLeft: =0
-            PaddingRight: =0
-            PaddingTop: =0
             Tooltip: =DOR_List1Sub.Text
-            Visible: =true
-            Width: =20
-            X: =394
-            Y: =181
-            ZIndex: =69
-          Children: []
+            Width: =18
+            X: =60
+            Y: =174
+            ZIndex: =70
       - DOR_List2Info:
           Control: Classic/Icon@2.5.0
           Properties:
             AccessibleLabel: |-
               ="About this list: " & DOR_List2Sub.Text
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(136, 160, 209, 1)
             DisplayMode: =DisplayMode.View
             FocusedBorderThickness: =0
-            Height: =20
+            Height: =18
             Icon: =Icon.Information
-            PaddingBottom: =0
-            PaddingLeft: =0
-            PaddingRight: =0
-            PaddingTop: =0
             Tooltip: =DOR_List2Sub.Text
-            Visible: =true
-            Width: =20
-            X: =771
-            Y: =181
-            ZIndex: =70
-          Children: []
+            Width: =18
+            X: =487
+            Y: =174
+            ZIndex: =71
       - DOR_List3Info:
           Control: Classic/Icon@2.5.0
           Properties:
             AccessibleLabel: |-
               ="About this list: " & DOR_List3Sub.Text
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(136, 160, 209, 1)
             DisplayMode: =DisplayMode.View
             FocusedBorderThickness: =0
-            Height: =20
+            Height: =18
             Icon: =Icon.Information
-            PaddingBottom: =0
-            PaddingLeft: =0
-            PaddingRight: =0
-            PaddingTop: =0
             Tooltip: =DOR_List3Sub.Text
-            Visible: =true
+            Width: =18
+            X: =914
+            Y: =174
+            ZIndex: =72
+      - DOR_List1CounterCircle:
+          Control: Circle@2.3.0
+          Group: DOR_List1Counter
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(136, 160, 209, 1)
+            Height: =19
             Width: =20
-            X: =1197
-            Y: =181
-            ZIndex: =71
-          Children: []
+            X: =431
+            Y: =189
+            ZIndex: =73
+      - DOR_List1CounterText:
+          Control: Label@2.5.1
+          Group: DOR_List1Counter
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =19
+            Size: =9
+            Text: =Text(CountRows(DOR_List1Gallery.AllItems)) 
+            Width: =20
+            X: =431
+            Y: =189
+            ZIndex: =74
+      - DOR_List2CounterCircle:
+          Control: Circle@2.3.0
+          Group: DOR_List2Counter
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(136, 160, 209, 1)
+            Height: =19
+            Width: =20
+            X: =858
+            Y: =189
+            ZIndex: =75
+      - DOR_List2CounterText:
+          Control: Label@2.5.1
+          Group: DOR_List2Counter
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =19
+            Size: =9
+            Text: =Text(CountRows(DOR_List2Gallery.AllItems)) 
+            Width: =20
+            X: =858
+            Y: =189
+            ZIndex: =76
+      - DOR_List3CounterCircle:
+          Control: Circle@2.3.0
+          Group: DOR_List3Counter
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(136, 160, 209, 1)
+            Height: =19
+            Width: =20
+            X: =1285
+            Y: =189
+            ZIndex: =77
+      - DOR_List3CounterText:
+          Control: Label@2.5.1
+          Group: DOR_List3Counter
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =19
+            Size: =9
+            Text: =Text(CountRows(DOR_List3Gallery.AllItems)) 
+            Width: =20
+            X: =1285
+            Y: =189
+            ZIndex: =78
+      - DOR_Header_Title:
+          Control: Label@2.5.1
+          Group: DOR_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Size: =14
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =193
+            X: =244
+            Y: =4
+            ZIndex: =26
+      - DOR_Header_LogoEC:
+          Control: Image@2.2.3
+          Group: DOR_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =50
+            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
+            PaddingLeft: =15
+            Width: =186
+            X: =2
+            Y: =2
+            ZIndex: =27
+      - DOR_Header_LogoCD:
+          Control: Image@2.2.3
+          Group: DOR_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =31
+            Image: =cd_badge_play
+            Width: =31
+            X: =208
+            Y: =16
+            ZIndex: =41
+      - DOR_Header_Subtitle:
+          Control: Label@2.5.1
+          Group: DOR_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =266
+            Y: =28
+            ZIndex: =42
+      - DOR_Header_Photo:
+          Control: Image@2.2.3
+          Group: DOR_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+            Y: =1
+            ZIndex: =43
+      - DOR_Header_UserName:
+          Control: Label@2.5.1
+          Group: DOR_Header
+          Properties:
+            Align: =Align.Right
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =37
+            Size: =11
+            Text: |-
+              =User().FullName 
+              & Char(10) &
+              If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =216
+            X: =1089
+            Y: =16
+            ZIndex: =44
+      - DOR_RoleTag:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Text: ="| Administrator"
+            VerticalAlign: =VerticalAlign.Bottom
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =193
+            X: =409
+            Y: =14
+            ZIndex: =45
+      - DOR_Menu_Panel:
+          Control: Classic/Button@2.2.0
+          Group: DOR_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =RGBA(255, 255, 255, 0.10)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(255, 255, 255, 0.10)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 0.10)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(255, 255, 255, 0.10)
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            Size: =10
+            TabIndex: =-1
+            Text: =""
+            Width: =424
+            X: =686
+            Y: =5
+            ZIndex: =46
+      - DOR_Menu_Requests:
+          Control: Classic/Button@2.2.0
+          Group: DOR_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(RequestManagementScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📋 Requests"
+            Tooltip: ="Requests"
+            Width: =83
+            X: =797
+            Y: =8
+            ZIndex: =47
+      - DOR_Menu_Dashboard:
+          Control: Classic/Button@2.2.0
+          Group: DOR_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = DashboardScreen Or App.ActiveScreen = 'Dashboard-Ope-Administrator' Or App.ActiveScreen = 'Dashboard-Ope-Requestor', RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =// the operational dashboard of the user's role
+              If(
+                  varUserRole = "ADMINISTRATOR",
+                  Navigate('Dashboard-Ope-Administrator'),
+                  Navigate('Dashboard-Ope-Requestor')
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📊" & Char(10) & "Dashboard"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =705
+            Y: =10
+            ZIndex: =48
+      - DOR_Menu_Help:
+          Control: Classic/Button@2.2.0
+          Group: DOR_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Width: =83
+            X: =1030
+            Y: =10
+            ZIndex: =49
+      - DOR_Menu_Review:
+          Control: Classic/Button@2.2.0
+          Group: DOR_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(ReviewScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="👁" & Char(10) & "Review"
+            Tooltip: ="Review"
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =83
+            X: =875
+            Y: =8
+            ZIndex: =50
+      - DOR_Menu_Export:
+          Control: Classic/Button@2.2.0
+          Group: DOR_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HomePrintScreen Or App.ActiveScreen = PrintPhotoDetailScreen Or App.ActiveScreen = PrintVideoDetailScreen Or App.ActiveScreen = PrintPodcastDetailScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =ClearCollect(colPrintData, HomeGallery.AllItems);
+              Navigate(HomePrintScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📂
+              Export"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =951
+            Y: =8
+            ZIndex: =51

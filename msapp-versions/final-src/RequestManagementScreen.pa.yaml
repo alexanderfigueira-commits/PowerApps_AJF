@@ -169,9 +169,9 @@ Screens:
             FontWeight: =FontWeight.Bold
             Size: =22
             Text: =If(varUserRole = "ADMINISTRATOR", "Request Management", "Requests")
-            Width: =600
-            X: =48
-            Y: =68
+            Width: =344
+            X: =33
+            Y: =73
       - HomeBtnNew:
           Control: Classic/Button@2.2.0
           Properties:
@@ -519,7 +519,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Fill: =RGBA(240, 242, 246, 1)
-            Height: =50
+            Height: =49
             Width: =1324
             X: =21
             Y: =If(locShowFilters,330,200)
@@ -532,12 +532,12 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =50
-            Size: =11
+            Height: =46
+            Size: =9
             Text: ="REQUEST ID"
             Width: =116
-            X: =48
-            Y: =If(locShowFilters,330,200)
+            X: =26
+            Y: =333
       - HomeThName:
           Control: Label@2.5.1
           Group: Group2
@@ -548,11 +548,11 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =50
-            Size: =11
+            Size: =9
             Text: ="TITLE"
             Width: =199
-            X: =164
-            Y: =If(locShowFilters,330,200)
+            X: =217
+            Y: =330
       - HomeThAssignee:
           Control: Label@2.5.1
           Group: Group2
@@ -563,11 +563,11 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =50
-            Size: =11
+            Size: =9
             Text: ="ASSIGNEE"
-            Width: =141
-            X: =638
-            Y: =333
+            Width: =113
+            X: =989
+            Y: =330
       - HomeThDG:
           Control: Label@2.5.1
           Group: Group2
@@ -577,11 +577,11 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =50
-            Size: =11
+            Height: =46
+            Size: =9
             Text: ="DG"
-            Width: =92
-            X: =370
+            Width: =62
+            X: =474
             Y: =333
       - HomeThArchives:
           Control: Label@2.5.1
@@ -592,14 +592,13 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =50
-            Size: =11
+            Height: =45
+            Size: =9
             Text: |-
-              ="# 
-              MEDIA 
+              ="MEDIAS 
               "
-            Width: =71
-            X: =459
+            Width: =70
+            X: =140
             Y: =333
       - HomeThStatus:
           Control: Label@2.5.1
@@ -611,11 +610,11 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =50
-            Size: =11
+            Size: =9
             Text: ="STATUS"
             Width: =70
-            X: =547
-            Y: =If(locShowFilters,330,200)
+            X: =1115
+            Y: =329
       - HomeGallery:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
@@ -662,9 +661,10 @@ Screens:
                 Control: Rectangle@2.3.0
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+                  DisplayMode: =DisplayMode.View
+                  Fill: =RGBA(0, 0, 0, 0)
                   Height: =61
-                  HoverFill: =RGBA(240, 242, 246, 1)
+                  HoverFill: =RGBA(241, 244, 249, 1)
                   OnSelect: |-
                     =Set(varCurrentRequest, ThisItem);
                     Set(varRequestTitle1, Coalesce(ThisItem.RequestTitle, ""));
@@ -676,6 +676,16 @@ Screens:
                     Set(varRequestMediaType, "");
                     Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
                   Width: =1323
+            - Circle2:
+                Control: Circle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(204, 208, 225, 1)
+                  Height: =22
+                  OnSelect: =Select(Parent)
+                  Width: =22
+                  X: =140
+                  Y: =16
             - HomeRowDivider:
                 Control: Rectangle@2.3.0
                 Properties:
@@ -732,8 +742,8 @@ Screens:
                   OnSelect: =Select(Parent)
                   Size: =10
                   Text: =If(IsBlank(ThisItem.RequestTitle), "—", ThisItem.RequestTitle)
-                  Width: =242
-                  X: =120
+                  Width: =260
+                  X: =185
             - HomeRowDG:
                 Control: Label@2.5.1
                 Properties:
@@ -750,29 +760,8 @@ Screens:
                         Find(" - ", ThisItem.DG.Value) - 1
                     )
                   Tooltip: =If(IsBlank(ThisItem.DG.Value),"—",ThisItem.DG.Value)
-                  Width: =88
-                  X: =353
-            - HomeRowArchives:
-                Control: Label@2.5.1
-                Properties:
-                  Align: =Align.Center
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(96, 104, 120, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =59
-                  OnSelect: =Select(Parent)
-                  Size: =10
-                  Text: |-
-                    =Text(
-                        CountRows(
-                            Filter(
-                                colMyMedia,
-                                ParentRequest = ThisItem.RequestNumber
-                            )
-                        )
-                    )
-                  Width: =65
-                  X: =441
+                  Width: =73
+                  X: =445
             - HomeRowBadge:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -782,12 +771,12 @@ Screens:
                   DisabledBorderColor: =Self.BorderColor
                   DisplayMode: =DisplayMode.View
                   Fill: |-
-                    =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
+                    =If("Draft" in ThisItem.Status.Value, Color.LightGray,
+                       "Pending" in ThisItem.Status.Value, Color.DarkKhaki,
+                       "Processing" in ThisItem.Status.Value, Color.SlateBlue,
+                       "Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
                        "Approved" in ThisItem.Status.Value, Color.DarkGreen,
-                       "Pending" in ThisItem.Status.Value, Color.Orange,
-                       "Draft" in ThisItem.Status.Value, Color.Gray,
-                       "Rejected" in ThisItem.Status.Value, Color.Red,
-                       "Processing" in ThisItem.Status.Value, Color.DarkOrchid,
+                       "Rejected" in ThisItem.Status.Value, ColorValue("#F08080"),
                        Color.Gray)
                   Font: =Font.'Open Sans'
                   Height: =30
@@ -804,8 +793,8 @@ Screens:
                   Size: =11
                   Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
                   Width: =88
-                  X: =520
-                  Y: =16
+                  X: =1086
+                  Y: =14
             - HomeRowReview:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -849,8 +838,8 @@ Screens:
                         Trim(Left(ThisItem.Assignee.DisplayName, Find("(", ThisItem.Assignee.DisplayName) - 1)),
                         ThisItem.Assignee.DisplayName
                     )
-                  Width: =120
-                  X: =626
+                  Width: =110
+                  X: =970
             - HomeRowAssignee_1:
                 Control: Label@2.5.1
                 Properties:
@@ -860,23 +849,18 @@ Screens:
                   Font: =Font.'Open Sans'
                   Height: =59
                   OnSelect: =Select(Parent)
-                  Size: =10
+                  Size: =9
                   Text: |-
                     =Trim(
                         Left(
                             ThisItem.'Created By'.DisplayName,
                             Find("(", ThisItem.'Created By'.DisplayName) - 1
                         )
-                    ) &
-                    Char(10) &
-                    Mid(
-                        ThisItem.'Created By'.DisplayName,
-                        Find("(", ThisItem.'Created By'.DisplayName) + 1,
-                        Find(")", ThisItem.'Created By'.DisplayName) - Find("(", ThisItem.'Created By'.DisplayName) - 1
-                    )
-                  Width: =218
-                  X: =746
-                  Y: =1
+                    ) 
+                    & Char(10) 
+                    & Text(ThisItem.SubmittedOn, "dd mmm 'yy  (hh:mm)")
+                  Width: =177
+                  X: =528
             - HomeRowAssignee_2:
                 Control: Label@2.5.1
                 Properties:
@@ -886,10 +870,18 @@ Screens:
                   Font: =Font.'Open Sans'
                   Height: =59
                   OnSelect: =Select(Parent)
-                  Size: =10
-                  Text: =If(IsBlank(ThisItem.Created), "—", Text(ThisItem.Created, "dd-mm-yyyy"))
-                  Width: =115
-                  X: =1058
+                  Size: =9
+                  Text: |-
+                    =Trim(
+                        Left(
+                            ThisItem.'Modified By'.DisplayName,
+                            Find("(", ThisItem.'Modified By'.DisplayName) - 1
+                        )
+                    ) 
+                    & Char(10)
+                    & Text(ThisItem.Created, "dd mmm 'yy  (hh:mm)")
+                  Width: =166
+                  X: =705
                   Y: =1
             - HomeRowUserAction:
                 Control: Classic/Button@2.2.0
@@ -956,6 +948,223 @@ Screens:
                   Visible: =ThisItem.Status.Value = "Approved" Or ThisItem.Status.Value = "Partially approved"
                   Width: =30
                   X: =1214
+                  Y: =16
+            - DOA_List1RowBadge_5:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =RGBA(77, 77, 77, 1)
+                  DisabledBorderColor: =Self.BorderColor
+                  DisabledColor: =RGBA(77, 77, 77, 1)
+                  DisabledFill: =RGBA(215, 223, 240, 1)
+                  Fill: =RGBA(215, 223, 240, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =31
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
+                  OnSelect: |-
+                    =// open the request, the same way as a HomeGallery row on the Requests screen
+                    With(
+                        {req: LookUp(colOpeReqs, ID = ThisItem.ID)},
+                        Set(varCurrentRequest, req);
+                        Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestDG, Coalesce(req.DG.Value, ""));
+                        Set(varRequestDescription1, Coalesce(req.Description, ""));
+                        Set(varRequestDescription, Coalesce(req.Description, ""));
+                        Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
+                        Set(varRequestMediaType, "");
+                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Size: =11
+                  Text: |+
+                    =Switch(
+                      First(LookUp('AV-CD-Mediafiles', ParentRequest = ThisItem.RequestNumber).MediaType).Value, 
+                      "Photo","📷 ","Video","🎬 ","Podcast","🎙️ ") 
+                    & ThisItem.RequestNumber
+
+                  Tooltip: ="Open request (v." & ThisItem.'Version number' & ")"
+                  Width: =110
+                  X: =10
+                  Y: =14
+            - DOA_List1RowNotes_1:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: =
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// red: the administrator notes changed less than 15 days ago
+                    If(
+                        Not(IsBlank(ThisItem.AdminNotesUpdatedOn))
+                            And DateDiff(ThisItem.AdminNotesUpdatedOn, Today(), TimeUnit.Days) < 15,
+                        Color.Orange,
+                        RGBA(77, 77, 77, 1)
+                    )
+                  DisplayMode: =DisplayMode.View
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Note
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: |-
+                    ="Notes: " & Char(10) & Char(10) & 
+                    Coalesce(ThisItem.'Created By'.DisplayName, "—") & ", updated on " & Text(ThisItem.RequestorNotesUpdatedOn, "dd mmm 'yy hh:mm" )
+                    & Char(10) & 
+                    PlainText(Coalesce(ThisItem.Notes, ""))
+                    & Char(10) & Char(10) & 
+                    "Central Deposit: " &  ", updated on " & Text(ThisItem.AdminNotesUpdatedOn, "dd mmm 'yy hh:mm" )
+                    & Char(10) & 
+                    Coalesce(ThisItem.ReviewerComments, "")
+                  Width: =20
+                  X: =896
+                  Y: =24
+            - DOA_List1RowBell_1:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: |-
+                    =// days left to the media item's key date; one column (CaptureDate) holds the
+                    // shooting day (Photo), the filming date (Video) and the capture date (Podcast)
+                    With(
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(CaptureDate))), CaptureDate, SortOrder.Ascending)},
+                        With(
+                            {
+                                m: If(
+                                    IsEmpty(Filter(dated, CaptureDate >= Today())),
+                                    Last(dated),                                 // every date is past: the latest
+                                    First(Filter(dated, CaptureDate >= Today()))  // else the next one
+                                )
+                            },
+                            If(
+                                IsBlank(m),
+                                "No shooting / filming / capture date yet",
+                                With(
+                                    {
+                                        days: DateDiff(Today(), m.CaptureDate, TimeUnit.Days),
+                                        what: Switch(First(m.MediaType).Value, "Photo", "Shooting day", "Video", "Filming date", "Capture date")
+                                    },
+                                    what & ": " & Text(m.CaptureDate, "dd mmm 'yy") 
+                                    & Char(10) & Char(10) 
+                                    & If(
+                                        days > 1, days & " days left",
+                                        days = 1, "1 day left",
+                                        days = 0, "today",
+                                        days = -1, "1 day ago",
+                                        -days & " days ago"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// red: fewer than 7 days left (today and past dates included); navy: 7 or more;
+                    // grey: no date. Same date as the tooltip: the next one, else the latest past one.
+                    With(
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(CaptureDate))), CaptureDate, SortOrder.Ascending)},
+                        With(
+                            {
+                                m: If(
+                                    IsEmpty(Filter(dated, CaptureDate >= Today())),
+                                    Last(dated),
+                                    First(Filter(dated, CaptureDate >= Today()))
+                                )
+                            },
+                            If(
+                                IsBlank(m), RGBA(166, 166, 166, 1),
+                                DateDiff(Today(), m.CaptureDate, TimeUnit.Days) < 7, Color.Orange,
+                                RGBA(0, 18, 107, 1)
+                            )
+                        )
+                    )
+                  DisplayMode: =DisplayMode.View
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Clock
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: |-
+                    =// days left to the media item's key date; one column (CaptureDate) holds the
+                    // shooting day (Photo), the filming date (Video) and the capture date (Podcast)
+                    With(
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(CaptureDate))), CaptureDate, SortOrder.Ascending)},
+                        With(
+                            {
+                                m: If(
+                                    IsEmpty(Filter(dated, CaptureDate >= Today())),
+                                    Last(dated),                                 // every date is past: the latest
+                                    First(Filter(dated, CaptureDate >= Today()))  // else the next one
+                                )
+                            },
+                            If(
+                                IsBlank(m),
+                                "No shooting / filming / capture date yet",
+                                With(
+                                    {
+                                        days: DateDiff(Today(), m.CaptureDate, TimeUnit.Days),
+                                        what: Switch(First(m.MediaType).Value, "Photo", "Shooting day", "Video", "Filming date", "Capture date")
+                                    },
+                                    what & ": " & Text(m.CaptureDate, "dd mmm 'yy")
+                                    & Char(10)
+                                    & If(
+                                        days > 1, days & " days left!",
+                                        days = 1, "1 day left!",
+                                        days = 0, "today!!",
+                                        days = -1, "1 day ago!!!",
+                                        -days & " days ago!!!"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                  Width: =20
+                  X: =925
+                  Y: =24
+            - HomeRowArchives:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =22
+                  OnSelect: =Select(Parent)
+                  Size: =9
+                  Text: |-
+                    =If(
+                    CountRows(
+                        Filter(
+                            colMyMedia,
+                            ParentRequest = ThisItem.RequestNumber
+                        )
+                    )
+                     > 0
+                    ,
+                    Text(
+                        CountRows(
+                            Filter(
+                                colMyMedia,
+                                ParentRequest = ThisItem.RequestNumber
+                            )
+                        )
+                    ),
+                    "-")
+                  Width: =22
+                  X: =140
                   Y: =16
       - HomeEmptyState:
           Control: Label@2.5.1
@@ -1492,11 +1701,11 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =50
-            Size: =11
+            Size: =9
             Text: ="ACTION"
             Width: =108
-            X: =1200
-            Y: =If(locShowFilters,330,200)
+            X: =1211
+            Y: =329
       - HomeDateArrow_1:
           Control: Label@2.5.1
           Properties:
@@ -1608,11 +1817,11 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =50
-            Size: =11
-            Text: ="CREATOR"
-            Width: =120
-            X: =819
+            Height: =46
+            Size: =9
+            Text: ="SUBMITED"
+            Width: =169
+            X: =553
             Y: =333
       - HomeThAction_2:
           Control: Label@2.5.1
@@ -1622,14 +1831,12 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =50
-            Size: =11
-            Text: |-
-              ="CREATION
-              DATE"
-            Width: =120
-            X: =1104
-            Y: =If(locShowFilters,330,200)
+            Height: =48
+            Size: =9
+            Text: ="UPDATED"
+            Width: =157
+            X: =734
+            Y: =331
       - HomeFilterRequestName:
           Control: Classic/TextInput@2.3.2
           Properties:
@@ -1660,9 +1867,9 @@ Screens:
             Width: =579
             X: =36
             Y: =196
-      - HomeAppTitle_9:
+      - RM_Header_Title:
           Control: Label@2.5.1
-          Group: Header_3
+          Group: RM_Header
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(255, 255, 255, 1)
@@ -1675,9 +1882,10 @@ Screens:
             Width: =193
             X: =244
             Y: =4
-      - Logo_EC_Form_15:
+            ZIndex: =63
+      - RM_Header_LogoEC:
           Control: Image@2.2.3
-          Group: Header_3
+          Group: RM_Header
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Height: =50
@@ -1686,9 +1894,10 @@ Screens:
             Width: =186
             X: =2
             Y: =2
-      - CD_Logo_9:
+            ZIndex: =64
+      - RM_Header_LogoCD:
           Control: Image@2.2.3
-          Group: Header_3
+          Group: RM_Header
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Height: =31
@@ -1696,9 +1905,10 @@ Screens:
             Width: =31
             X: =208
             Y: =16
-      - HomeAppSubtitle_9:
+            ZIndex: =65
+      - RM_Header_Subtitle:
           Control: Label@2.5.1
-          Group: Header_3
+          Group: RM_Header
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(186, 202, 226, 1)
@@ -1709,9 +1919,79 @@ Screens:
             VerticalAlign: =VerticalAlign.Top
             X: =266
             Y: =28
-      - NavPanel_MyRequestScreen_16:
+            ZIndex: =66
+      - RM_Header_Photo:
+          Control: Image@2.2.3
+          Group: RM_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+            Y: =1
+            ZIndex: =67
+      - RM_Header_UserName:
+          Control: Label@2.5.1
+          Group: RM_Header
+          Properties:
+            Align: =Align.Right
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =37
+            Size: =11
+            Text: |-
+              =User().FullName 
+              & Char(10) &
+              If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =216
+            X: =1089
+            Y: =16
+            ZIndex: =68
+      - RM_RoleTag:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Text: ="| Administrator"
+            VerticalAlign: =VerticalAlign.Bottom
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =193
+            X: =409
+            Y: =14
+            ZIndex: =69
+      - HomeThAction_3:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =48
+            Size: =9
+            Text: ="NOTES"
+            Width: =132
+            X: =875
+            Y: =331
+      - RM_Menu_Panel:
           Control: Classic/Button@2.2.0
-          Group: Header_3
+          Group: RM_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -1736,11 +2016,12 @@ Screens:
             TabIndex: =-1
             Text: =""
             Width: =424
-            X: =666
-            Y: =4
-      - NavBtnRequests_MyRequestScreen_16:
+            X: =686
+            Y: =5
+            ZIndex: =70
+      - RM_Menu_Requests:
           Control: Classic/Button@2.2.0
-          Group: Header_3
+          Group: RM_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -1764,17 +2045,18 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =678
-            Y: =9
-      - NavBtnDashboard_MyRequestScreen_32:
+            X: =797
+            Y: =8
+            ZIndex: =71
+      - RM_Menu_Dashboard:
           Control: Classic/Button@2.2.0
-          Group: Header_3
+          Group: RM_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Fill: =If(App.ActiveScreen = DashboardScreen Or App.ActiveScreen = 'Dashboard-Ope-Administrator' Or App.ActiveScreen = 'Dashboard-Ope-Requestor', RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             Height: =38
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
@@ -1799,11 +2081,41 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =769
-            Y: =9
-      - NavBtnReview_MyRequestScreen_16:
+            X: =705
+            Y: =10
+            ZIndex: =72
+      - RM_Menu_Help:
           Control: Classic/Button@2.2.0
-          Group: Header_3
+          Group: RM_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Width: =83
+            X: =1030
+            Y: =10
+            ZIndex: =73
+      - RM_Menu_Review:
+          Control: Classic/Button@2.2.0
+          Group: RM_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
@@ -1828,45 +2140,18 @@ Screens:
             Tooltip: ="Review"
             Visible: =varUserRole = "ADMINISTRATOR"
             Width: =83
-            X: =854
-            Y: =9
-      - NavBtnHelp_MyRequestScreen_16:
+            X: =875
+            Y: =8
+            ZIndex: =74
+      - RM_Menu_Export:
           Control: Classic/Button@2.2.0
-          Group: Header_3
+          Group: RM_Menu
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =0
             Color: =RGBA(255, 255, 255, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(56, 96, 178, 0.75)
-            OnSelect: =Navigate(HelpScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =RGBA(255, 255, 255, 1)
-            PressedFill: =RGBA(0, 18, 107, 1)
-            RadiusBottomLeft: =20
-            RadiusBottomRight: =20
-            RadiusTopLeft: =20
-            RadiusTopRight: =20
-            Size: =10
-            Text: |-
-              ="🔎" & Char(10) & "Help"
-            Tooltip: ="Help"
-            Width: =83
-            X: =1010
-            Y: =9
-      - NavBtnDashboard_MyRequestScreen_33:
-          Control: Classic/Button@2.2.0
-          Group: Header_3
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Fill: =If(App.ActiveScreen = HomePrintScreen Or App.ActiveScreen = PrintPhotoDetailScreen Or App.ActiveScreen = PrintVideoDetailScreen Or App.ActiveScreen = PrintPodcastDetailScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
@@ -1887,55 +2172,7 @@ Screens:
               Export"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =927
-            Y: =9
-      - Image1_16:
-          Control: Image@2.2.3
-          Group: Header_3
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =56
-            Image: =User().Image
-            RadiusBottomLeft: =3
-            RadiusBottomRight: =3
-            RadiusTopLeft: =3
-            RadiusTopRight: =3
-            Tooltip: |-
-              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
-              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
-            Width: =61
-            X: =1305
-            Y: =1
-      - HomeUserName_16:
-          Control: Label@2.5.1
-          Group: Header_3
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.Arial
-            Height: =47
-            Size: =11
-            Text: |-
-              =User().FullName & " - " & If(
-                  Find(".", Office365Users.MyProfile().Department) > 0,
-                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
-                  Office365Users.MyProfile().Department
-              )
-            Width: =174
-            X: =1139
-            Y: =6
-      - HomeAppTitle_17:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =37
-            Text: ="| Administrator"
-            VerticalAlign: =VerticalAlign.Bottom
-            Visible: =varUserRole = "ADMINISTRATOR"
-            Width: =193
-            X: =409
-            Y: =14
+            X: =951
+            Y: =8
+
+            ZIndex: =75
