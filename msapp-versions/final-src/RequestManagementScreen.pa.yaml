@@ -25,6 +25,7 @@ Screens:
         // instead of on every visit. Use HomeBtnRefresh to reload on demand.
         If(
             Not(varReqDataLoaded) Or IsEmpty(colMyReqs),
+            Set(varReqReady, false);
             ClearCollect(colDGOptions, {Value: "All"});
             Collect(colDGOptions, Choices('AV-CD-Requests'.DG));
             ClearCollect(colAssignees, {Value: "All"});
@@ -58,7 +59,8 @@ Screens:
         // Filters initialise once, so the selection survives navigating away and back.
         If(
             Not(varReqFiltersInit),
-            Set(varFilter, "All");
+            // ADMINISTRATOR opens on Processing from the first render; REQUESTOR starts on "All" and the ladder below picks the status
+            Set(varFilter, If(varUserRole = "ADMINISTRATOR", "Processing", "All"));
             Set(varFilterDG, "");
             Set(varFilterRequestName, "");
             Set(varFilterStartDate, Today()-31);
@@ -108,13 +110,13 @@ Screens:
                             Filter(
                                 If(
                                     varUserRole = "ADMINISTRATOR",
-                                    ["Processing", "Pending"],
+                                    ["Processing"],
                                     ["Pending", "Draft", "Processing"]
                                 ) As step,
                                 CountRows(Filter(visible, Status.Value = step.Value)) > 0
                             )
                         ).Value,
-                        "All"
+                        If(varUserRole = "ADMINISTRATOR", "Processing", "All")
                     )
                 )
             )
@@ -125,7 +127,9 @@ Screens:
             Not(IsBlank(varNavFilter)),
             Set(varFilter, varNavFilter)
         );
-        Set(varNavFilter, Blank())
+        Set(varNavFilter, Blank());
+        // data loaded and the status is settled: only now is the list shown
+        Set(varReqReady, true)
     Children:
       - Label12_3:
           Control: Label@2.5.1
@@ -195,7 +199,7 @@ Screens:
               Set(varRequestMediaType, "");
               // drop manual contacts left by a new request that was never saved
               RemoveIf(colManualContacts, IsBlank(ParentRequest) Or ParentRequest = "");
-              Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: true, locResetContacts: true})
+              Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: true, locResetContacts: true, locFromReview: false})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -246,8 +250,8 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =110
-            X: =639
+            Width: =122
+            X: =619
             Y: =147
       - HomeChipDraft:
           Control: Classic/Button@2.2.0
@@ -292,8 +296,8 @@ Screens:
                       )
                   )
               ) & ")"
-            Width: =80
-            X: =759
+            Width: =91
+            X: =748
             Y: =146
       - HomeChipSubmitted:
           Control: Classic/Button@2.2.0
@@ -626,7 +630,7 @@ Screens:
                   Filter(
                       colMyReqs,
                       'Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft"),
-                      varFilter = "All" Or Status.Value = varFilter,
+                      Coalesce(varFilter, If(varUserRole = "ADMINISTRATOR", "Processing", "Pending")) = "All" Or Status.Value = Coalesce(varFilter, If(varUserRole = "ADMINISTRATOR", "Processing", "Pending")),
                       varFilterDG = "All" Or IsBlank(varFilterDG) Or DG.Value = varFilterDG,
                       (IsBlank(HomeFilterRequestID.Text) Or HomeFilterRequestID.Text = "" Or StartsWith(
                           RequestNumber,
@@ -649,10 +653,11 @@ Screens:
                   ),
                   Created,
                   // one status: oldest first (waiting longest on top); All Status: newest first
-                  If(varFilter = "All", SortOrder.Descending, SortOrder.Ascending)
+                  If(Coalesce(varFilter, If(varUserRole = "ADMINISTRATOR", "Processing", "Pending")) = "All", SortOrder.Descending, SortOrder.Ascending)
               )
             ShowNavigation: =true
             TemplateSize: =60
+            Visible: =varReqReady
             Width: =1326
             X: =21
             Y: =If(locShowFilters,380,250)
@@ -674,7 +679,7 @@ Screens:
                     Set(varRequestDescription, Coalesce(ThisItem.Description, ""));
                     Set(varRequestOwnerContact, Coalesce(First(ThisItem.DG_Agency_Contact).DisplayName, ""));
                     Set(varRequestMediaType, "");
-                    Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
+                    Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
                   Width: =1323
             - Circle2:
                 Control: Circle@2.3.0
@@ -811,6 +816,7 @@ Screens:
                   OnSelect: |-
                     =Set(varReviewProject, ThisItem);
                     Set(varReviewComment, Blank());
+                    Set(varReviewFromRow, true);
                     Navigate(ReviewScreen)
                   PressedBorderColor: =Self.Fill
                   PressedColor: =Self.Fill
@@ -976,7 +982,7 @@ Screens:
                         Set(varRequestDescription, Coalesce(req.Description, ""));
                         Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
                         Set(varRequestMediaType, "");
-                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
+                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
                     )
                   PressedBorderColor: =Self.Fill
                   PressedColor: =Self.Fill
@@ -1175,10 +1181,23 @@ Screens:
             Font: =Font.'Open Sans'
             Size: =14
             Text: ="No requests yet - press the button + New request to create your first one."
-            Visible: =CountRows(HomeGallery.AllItems) = 0
+            Visible: =varReqReady And CountRows(HomeGallery.AllItems) = 0
             Width: =1270
             X: =48
             Y: =If(locShowFilters,500,400)
+      - HomeLoadingHint:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Size: =14
+            Text: ="Loading requests…"
+            Visible: =Not(varReqReady)
+            Width: =1270
+            X: =48
+            Y: =If(locShowFilters, 500, 400)
       - HomeBtnClear:
           Control: Classic/Button@2.2.0
           Properties:
@@ -1257,7 +1276,7 @@ Screens:
             Color: |-
               =If(
                   CountIf(HomeGallery.AllItems, Status.Value = "Rejected") > 0,
-                  RGBA(193, 40, 40, 1),
+                  ColorValue("#F08080"),
                   If(
                       CountRows(HomeGallery.AllItems) > 0
                       And CountIf(HomeGallery.AllItems, Status.Value = "Approved") = CountRows(HomeGallery.AllItems),
@@ -1284,6 +1303,7 @@ Screens:
                       )
                   )
               )
+            Visible: =varReqReady
             Width: =215
             X: =21
             Y: =712
@@ -1882,7 +1902,6 @@ Screens:
             Width: =193
             X: =244
             Y: =4
-            ZIndex: =63
       - RM_Header_LogoEC:
           Control: Image@2.2.3
           Group: RM_Header
@@ -1894,7 +1913,6 @@ Screens:
             Width: =186
             X: =2
             Y: =2
-            ZIndex: =64
       - RM_Header_LogoCD:
           Control: Image@2.2.3
           Group: RM_Header
@@ -1905,7 +1923,6 @@ Screens:
             Width: =31
             X: =208
             Y: =16
-            ZIndex: =65
       - RM_Header_Subtitle:
           Control: Label@2.5.1
           Group: RM_Header
@@ -1919,7 +1936,6 @@ Screens:
             VerticalAlign: =VerticalAlign.Top
             X: =266
             Y: =28
-            ZIndex: =66
       - RM_Header_Photo:
           Control: Image@2.2.3
           Group: RM_Header
@@ -1937,7 +1953,6 @@ Screens:
             Width: =61
             X: =1305
             Y: =1
-            ZIndex: =67
       - RM_Header_UserName:
           Control: Label@2.5.1
           Group: RM_Header
@@ -1959,7 +1974,6 @@ Screens:
             Width: =216
             X: =1089
             Y: =16
-            ZIndex: =68
       - RM_RoleTag:
           Control: Label@2.5.1
           Properties:
@@ -1974,21 +1988,6 @@ Screens:
             Width: =193
             X: =409
             Y: =14
-            ZIndex: =69
-      - HomeThAction_3:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =48
-            Size: =9
-            Text: ="NOTES"
-            Width: =132
-            X: =875
-            Y: =331
       - RM_Menu_Panel:
           Control: Classic/Button@2.2.0
           Group: RM_Menu
@@ -2018,7 +2017,6 @@ Screens:
             Width: =424
             X: =686
             Y: =5
-            ZIndex: =70
       - RM_Menu_Requests:
           Control: Classic/Button@2.2.0
           Group: RM_Menu
@@ -2047,7 +2045,6 @@ Screens:
             Width: =83
             X: =797
             Y: =8
-            ZIndex: =71
       - RM_Menu_Dashboard:
           Control: Classic/Button@2.2.0
           Group: RM_Menu
@@ -2083,7 +2080,6 @@ Screens:
             Width: =83
             X: =705
             Y: =10
-            ZIndex: =72
       - RM_Menu_Help:
           Control: Classic/Button@2.2.0
           Group: RM_Menu
@@ -2112,7 +2108,6 @@ Screens:
             Width: =83
             X: =1030
             Y: =10
-            ZIndex: =73
       - RM_Menu_Review:
           Control: Classic/Button@2.2.0
           Group: RM_Menu
@@ -2142,7 +2137,6 @@ Screens:
             Width: =83
             X: =875
             Y: =8
-            ZIndex: =74
       - RM_Menu_Export:
           Control: Classic/Button@2.2.0
           Group: RM_Menu
@@ -2174,5 +2168,17 @@ Screens:
             Width: =83
             X: =951
             Y: =8
-
-            ZIndex: =75
+      - HomeThAction_3:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =48
+            Size: =9
+            Text: ="NOTES"
+            Width: =132
+            X: =875
+            Y: =331

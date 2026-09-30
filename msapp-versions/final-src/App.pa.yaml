@@ -14,6 +14,7 @@ App:
       Set(varChildPubSpotify, false);
       Set(varReqDataLoaded, false);
       Set(varReqFiltersInit, false);
+      Set(varReqReady, false);
       Set(varUserRole, Coalesce(LookUp('AV-CD-RolesPermissionsList', UserEmail.Email = User().Email, Role.Value), "REQUESTOR"));
       Set(MyProfile, IfError(Office365Users.MyProfile(), Blank()));
       Set(varCurrentRequest, Defaults('AV-CD-Requests'));

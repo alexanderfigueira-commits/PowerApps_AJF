@@ -723,42 +723,47 @@ Screens:
                     // CM_EpisodeVisual) and the audio files (Metadata tab, CM_AudioFiles) are edited in
                     // their own forms; their changes are merged here so one SubmitForm saves every file
                     // and no form removes another form's files.
-                    With(
-                        {
-                            podcast: varChildMediaType = "Podcast",
-                            saved: varAttachRecord.Attachments.DisplayName,
-                            here: CL_DCAttachValue.Attachments.Name
-                        },
-                        // shaped as SharePoint attachment records: each needs its Id (the saved
-                        // attachment's Id, or the file name for a new file), else Save fails with
-                        // "Field 'Id' is required"
-                        ForAll(
-                            Ungroup(
-                                Table(
-                                    // this panel's files, minus the podcast files removed on Info / Metadata
-                                    {pre: "", files: Filter(
-                                        CL_DCAttachValue.Attachments,
-                                        Not(podcast)
-                                            Or Not(Name in saved)
-                                            Or (Not(EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")) Or Name in CI_PodcastVisual.Attachments.Name Or Name in CM_EpisodeVisual.Attachments.Name)
-                                                And (Not(EndsWith(Lower(Name), ".mp3") Or EndsWith(Lower(Name), ".wav") Or EndsWith(Lower(Name), ".m4a") Or EndsWith(Lower(Name), ".aac")) Or Name in CM_AudioFiles.Attachments.Name)
-                                    )},
-                                    // new files added on Info / Metadata
-                                    {pre: "", files: Filter(CI_PodcastVisual.Attachments, podcast And Not(Name in saved) And Not(Name in here))},
-                                    {pre: "", files: Filter(CM_AudioFiles.Attachments, podcast And Not(Name in saved) And Not(Name in here))},
-                                    // a new episode visual is saved as "EpisodeVisual_<name>", which keeps it apart from the podcast visual
-                                    {pre: "EpisodeVisual_", files: Filter(
-                                        CM_EpisodeVisual.Attachments,
-                                        podcast And Not(Name in saved) And Not(("EpisodeVisual_" & Name) in saved) And Not(("EpisodeVisual_" & Name) in here)
-                                    )}
-                                ),
-                                files
-                            ) As f,
+                    // photos and videos: the standard attachment save; only podcasts merge the extra visuals / audio
+                    If(
+                        varChildMediaType <> "Podcast",
+                        CL_DCAttachValue.Attachments,
+                        With(
                             {
-                                DisplayName: f.pre & f.Name,
-                                Id: Coalesce(LookUp(varAttachRecord.Attachments, DisplayName = f.Name).Id, f.pre & f.Name),
-                                Value: f.Value
-                            }
+                                podcast: varChildMediaType = "Podcast",
+                                saved: varAttachRecord.Attachments.DisplayName,
+                                here: CL_DCAttachValue.Attachments.Name
+                            },
+                            // shaped as SharePoint attachment records: each needs its Id (the saved
+                            // attachment's Id, or the file name for a new file), else Save fails with
+                            // "Field 'Id' is required"
+                            ForAll(
+                                Ungroup(
+                                    Table(
+                                        // this panel's files, minus the podcast files removed on Info / Metadata
+                                        {pre: "", files: Filter(
+                                            CL_DCAttachValue.Attachments,
+                                            Not(podcast)
+                                                Or Not(Name in saved)
+                                                Or (Not(EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png")) Or Name in CI_PodcastVisual.Attachments.Name Or Name in CM_EpisodeVisual.Attachments.Name)
+                                                    And (Not(EndsWith(Lower(Name), ".mp3") Or EndsWith(Lower(Name), ".wav") Or EndsWith(Lower(Name), ".m4a") Or EndsWith(Lower(Name), ".aac")) Or Name in CM_AudioFiles.Attachments.Name)
+                                        )},
+                                        // new files added on Info / Metadata
+                                        {pre: "", files: Filter(CI_PodcastVisual.Attachments, podcast And Not(Name in saved) And Not(Name in here))},
+                                        {pre: "", files: Filter(CM_AudioFiles.Attachments, podcast And Not(Name in saved) And Not(Name in here))},
+                                        // a new episode visual is saved as "EpisodeVisual_<name>", which keeps it apart from the podcast visual
+                                        {pre: "EpisodeVisual_", files: Filter(
+                                            CM_EpisodeVisual.Attachments,
+                                            podcast And Not(Name in saved) And Not(("EpisodeVisual_" & Name) in saved) And Not(("EpisodeVisual_" & Name) in here)
+                                        )}
+                                    ),
+                                    files
+                                ) As f,
+                                {
+                                    DisplayName: f.pre & f.Name,
+                                    Id: Coalesce(LookUp(varAttachRecord.Attachments, DisplayName = f.Name).Id, f.pre & f.Name),
+                                    Value: f.Value
+                                }
+                            )
                         )
                     )
                   Width: =484
@@ -902,7 +907,6 @@ Screens:
             Width: =193
             X: =244
             Y: =4
-            ZIndex: =33
       - CL_Header_LogoEC:
           Control: Image@2.2.3
           Group: CL_Header
@@ -914,7 +918,6 @@ Screens:
             Width: =186
             X: =2
             Y: =2
-            ZIndex: =34
       - CL_Header_LogoCD:
           Control: Image@2.2.3
           Group: CL_Header
@@ -925,7 +928,6 @@ Screens:
             Width: =31
             X: =208
             Y: =16
-            ZIndex: =35
       - CL_Header_Subtitle:
           Control: Label@2.5.1
           Group: CL_Header
@@ -939,7 +941,6 @@ Screens:
             VerticalAlign: =VerticalAlign.Top
             X: =266
             Y: =28
-            ZIndex: =36
       - CL_Header_Photo:
           Control: Image@2.2.3
           Group: CL_Header
@@ -957,7 +958,6 @@ Screens:
             Width: =61
             X: =1305
             Y: =1
-            ZIndex: =37
       - CL_Header_UserName:
           Control: Label@2.5.1
           Group: CL_Header
@@ -979,7 +979,6 @@ Screens:
             Width: =216
             X: =1089
             Y: =16
-            ZIndex: =38
       - CL_RoleTag:
           Control: Label@2.5.1
           Properties:
@@ -994,7 +993,6 @@ Screens:
             Width: =193
             X: =409
             Y: =14
-            ZIndex: =39
       - CL_Menu_Panel:
           Control: Classic/Button@2.2.0
           Group: CL_Menu
@@ -1024,7 +1022,6 @@ Screens:
             Width: =424
             X: =686
             Y: =5
-            ZIndex: =40
       - CL_Menu_Requests:
           Control: Classic/Button@2.2.0
           Group: CL_Menu
@@ -1053,7 +1050,6 @@ Screens:
             Width: =83
             X: =797
             Y: =8
-            ZIndex: =41
       - CL_Menu_Dashboard:
           Control: Classic/Button@2.2.0
           Group: CL_Menu
@@ -1089,7 +1085,6 @@ Screens:
             Width: =83
             X: =705
             Y: =10
-            ZIndex: =42
       - CL_Menu_Help:
           Control: Classic/Button@2.2.0
           Group: CL_Menu
@@ -1118,7 +1113,6 @@ Screens:
             Width: =83
             X: =1030
             Y: =10
-            ZIndex: =43
       - CL_Menu_Review:
           Control: Classic/Button@2.2.0
           Group: CL_Menu
@@ -1148,7 +1142,6 @@ Screens:
             Width: =83
             X: =875
             Y: =8
-            ZIndex: =44
       - CL_Menu_Export:
           Control: Classic/Button@2.2.0
           Group: CL_Menu
@@ -1180,5 +1173,3 @@ Screens:
             Width: =83
             X: =951
             Y: =8
-
-            ZIndex: =45

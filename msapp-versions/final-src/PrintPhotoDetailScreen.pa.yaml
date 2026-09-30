@@ -821,7 +821,6 @@ Screens:
             Width: =193
             X: =244
             Y: =4
-            ZIndex: =16
       - PPD_Header_LogoEC:
           Control: Image@2.2.3
           Group: PPD_Header
@@ -833,7 +832,6 @@ Screens:
             Width: =186
             X: =2
             Y: =2
-            ZIndex: =17
       - PPD_Header_LogoCD:
           Control: Image@2.2.3
           Group: PPD_Header
@@ -844,7 +842,6 @@ Screens:
             Width: =31
             X: =208
             Y: =16
-            ZIndex: =18
       - PPD_Header_Subtitle:
           Control: Label@2.5.1
           Group: PPD_Header
@@ -858,7 +855,6 @@ Screens:
             VerticalAlign: =VerticalAlign.Top
             X: =266
             Y: =28
-            ZIndex: =19
       - PPD_Header_Photo:
           Control: Image@2.2.3
           Group: PPD_Header
@@ -876,7 +872,6 @@ Screens:
             Width: =61
             X: =1305
             Y: =1
-            ZIndex: =20
       - PPD_Header_UserName:
           Control: Label@2.5.1
           Group: PPD_Header
@@ -898,7 +893,6 @@ Screens:
             Width: =216
             X: =1089
             Y: =16
-            ZIndex: =21
       - PPD_RoleTag:
           Control: Label@2.5.1
           Properties:
@@ -913,7 +907,6 @@ Screens:
             Width: =193
             X: =409
             Y: =14
-            ZIndex: =22
       - PPD_Menu_Panel:
           Control: Classic/Button@2.2.0
           Group: PPD_Menu
@@ -943,7 +936,6 @@ Screens:
             Width: =424
             X: =686
             Y: =5
-            ZIndex: =23
       - PPD_Menu_Requests:
           Control: Classic/Button@2.2.0
           Group: PPD_Menu
@@ -972,7 +964,6 @@ Screens:
             Width: =83
             X: =797
             Y: =8
-            ZIndex: =24
       - PPD_Menu_Dashboard:
           Control: Classic/Button@2.2.0
           Group: PPD_Menu
@@ -1008,7 +999,6 @@ Screens:
             Width: =83
             X: =705
             Y: =10
-            ZIndex: =25
       - PPD_Menu_Help:
           Control: Classic/Button@2.2.0
           Group: PPD_Menu
@@ -1037,7 +1027,6 @@ Screens:
             Width: =83
             X: =1030
             Y: =10
-            ZIndex: =26
       - PPD_Menu_Review:
           Control: Classic/Button@2.2.0
           Group: PPD_Menu
@@ -1067,7 +1056,6 @@ Screens:
             Width: =83
             X: =875
             Y: =8
-            ZIndex: =27
       - PPD_Menu_Export:
           Control: Classic/Button@2.2.0
           Group: PPD_Menu
@@ -1099,5 +1087,3 @@ Screens:
             Width: =83
             X: =951
             Y: =8
-
-            ZIndex: =28

@@ -67,6 +67,32 @@ Screens:
             Width: =795
             X: =48
             Y: =124
+      - DOA_Header_Title:
+          Control: Label@2.5.1
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Size: =14
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =193
+            X: =244
+            Y: =4
+      - DOA_Header_LogoEC:
+          Control: Image@2.2.3
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =50
+            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
+            PaddingLeft: =15
+            Width: =186
+            X: =2
+            Y: =2
       - DOA_Label12_4:
           Control: Label@2.5.1
           Properties:
@@ -99,6 +125,67 @@ Screens:
             Visible: =!Connection.Connected
             X: =16
             Y: =719
+      - DOA_Header_LogoCD:
+          Control: Image@2.2.3
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =31
+            Image: =cd_badge_play
+            Width: =31
+            X: =208
+            Y: =16
+      - DOA_Header_Subtitle:
+          Control: Label@2.5.1
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =266
+            Y: =28
+      - DOA_Header_Photo:
+          Control: Image@2.2.3
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+            Y: =1
+      - DOA_Header_UserName:
+          Control: Label@2.5.1
+          Group: DOA_Header
+          Properties:
+            Align: =Align.Right
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =37
+            Size: =11
+            Text: |-
+              =User().FullName 
+              & Char(10) &
+              If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =216
+            X: =1089
+            Y: =16
       - DOA_Menu_Panel:
           Control: Classic/Button@2.2.0
           Group: DOA_Menu
@@ -431,7 +518,7 @@ Screens:
                         Set(varRequestDescription, Coalesce(req.Description, ""));
                         Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
                         Set(varRequestMediaType, "");
-                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
+                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
                     )
                   PressedBorderColor: =Self.Fill
                   PressedColor: =Self.Fill
@@ -487,12 +574,20 @@ Screens:
                   AccessibleLabel: =
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: |-
-                    =// red: the administrator notes changed less than 15 days ago
-                    If(
-                        Not(IsBlank(ThisItem.AdminNotesUpdatedOn))
-                            And DateDiff(ThisItem.AdminNotesUpdatedOn, Today(), TimeUnit.Days) < 15,
-                        Color.Orange,
-                        RGBA(77, 77, 77, 1)
+                    =// amber = the most recent note on this request is from the requestor (waiting for you)
+                    // gray = the most recent note is yours; light gray = no notes yet
+                    With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            Color.LightGray,
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), RGBA(255, 193, 7, 1), Color.Gray)
+                        )
                     )
                   DisplayMode: =DisplayMode.View
                   FocusedBorderThickness: =0
@@ -504,14 +599,27 @@ Screens:
                   PaddingRight: =2
                   PaddingTop: =2
                   Tooltip: |-
-                    ="Notes: " & Char(10) & Char(10) & 
+                    =With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            "No notes",
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), "New notes to check", "Notes sent")
+                        )
+                    ) & Char(10) & Char(10) &
+                    ("Notes: " & Char(10) & Char(10) & 
                     Coalesce(ThisItem.'Created By'.DisplayName, "—") & ", updated on " & Text(ThisItem.RequestorNotesUpdatedOn, "dd mmm 'yy hh:mm" )
                     & Char(10) & 
                     PlainText(Coalesce(ThisItem.Notes, ""))
                     & Char(10) & Char(10) & 
                     "Central Deposit: " &  ", updated on " & Text(ThisItem.AdminNotesUpdatedOn, "dd mmm 'yy hh:mm" )
                     & Char(10) & 
-                    Coalesce(ThisItem.ReviewerComments, "")
+                    Coalesce(ThisItem.ReviewerComments, ""))
                   Width: =20
                   X: =72
                   Y: =53
@@ -797,7 +905,7 @@ Screens:
                         Set(varRequestDescription, Coalesce(req.Description, ""));
                         Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
                         Set(varRequestMediaType, "");
-                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
+                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
                     )
                   PressedBorderColor: =Self.Fill
                   PressedColor: =Self.Fill
@@ -853,12 +961,20 @@ Screens:
                   AccessibleLabel: ="Are there any new notes?"
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: |-
-                    =// red: the administrator notes changed less than 15 days ago
-                    If(
-                        Not(IsBlank(ThisItem.AdminNotesUpdatedOn))
-                            And DateDiff(ThisItem.AdminNotesUpdatedOn, Today(), TimeUnit.Days) < 15,
-                        Color.Red,
-                        RGBA(77, 77, 77, 1)
+                    =// amber = the most recent note on this request is from the requestor (waiting for you)
+                    // gray = the most recent note is yours; light gray = no notes yet
+                    With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            Color.LightGray,
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), RGBA(255, 193, 7, 1), Color.Gray)
+                        )
                     )
                   FocusedBorderThickness: =0
                   Height: =20
@@ -868,7 +984,20 @@ Screens:
                   PaddingLeft: =2
                   PaddingRight: =2
                   PaddingTop: =2
-                  Tooltip: ="Are there any new notes?"
+                  Tooltip: |-
+                    =With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            "No notes",
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), "New notes to check", "Notes sent")
+                        )
+                    )
                   Width: =20
                   X: =72
                   Y: =53
@@ -1050,7 +1179,7 @@ Screens:
                         Set(varRequestDescription, Coalesce(req.Description, ""));
                         Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
                         Set(varRequestMediaType, "");
-                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true})
+                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
                     )
                   PressedBorderColor: =Self.Fill
                   PressedColor: =Self.Fill
@@ -1106,12 +1235,20 @@ Screens:
                   AccessibleLabel: ="Are there any new notes?"
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: |-
-                    =// red: the administrator notes changed less than 15 days ago
-                    If(
-                        Not(IsBlank(ThisItem.AdminNotesUpdatedOn))
-                            And DateDiff(ThisItem.AdminNotesUpdatedOn, Today(), TimeUnit.Days) < 15,
-                        Color.Red,
-                        RGBA(77, 77, 77, 1)
+                    =// amber = the most recent note on this request is from the requestor (waiting for you)
+                    // gray = the most recent note is yours; light gray = no notes yet
+                    With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            Color.LightGray,
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), RGBA(255, 193, 7, 1), Color.Gray)
+                        )
                     )
                   FocusedBorderThickness: =0
                   Height: =20
@@ -1121,7 +1258,20 @@ Screens:
                   PaddingLeft: =2
                   PaddingRight: =2
                   PaddingTop: =2
-                  Tooltip: ="Are there any new notes?"
+                  Tooltip: |-
+                    =With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            "No notes",
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), "New notes to check", "Notes sent")
+                        )
+                    )
                   Width: =20
                   X: =72
                   Y: =53
@@ -1139,6 +1289,20 @@ Screens:
             Width: =416
             X: =902
             Y: =294
+      - DOA_RoleTag:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Text: ="| Administrator"
+            VerticalAlign: =VerticalAlign.Bottom
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =193
+            X: =409
+            Y: =14
       - DOA_List1Info:
           Control: Classic/Icon@2.5.0
           Properties:
@@ -1190,6 +1354,54 @@ Screens:
             Width: =18
             X: =914
             Y: =168
+      - DOA_List2CounterCircle:
+          Control: Circle@2.3.0
+          Group: DOA_List2Counter
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(136, 160, 209, 1)
+            Height: =19
+            Width: =20
+            X: =858
+            Y: =183
+      - DOA_List2CounterText:
+          Control: Label@2.5.1
+          Group: DOA_List2Counter
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =19
+            Size: =9
+            Text: '=Text(CountRows(DOA_List2Gallery.AllItems)) '
+            Width: =20
+            X: =858
+            Y: =183
+      - DOA_List3CounterCircle:
+          Control: Circle@2.3.0
+          Group: DOA_List3Counter
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(136, 160, 209, 1)
+            Height: =19
+            Width: =20
+            X: =1285
+            Y: =183
+      - DOA_List3CounterText:
+          Control: Label@2.5.1
+          Group: DOA_List3Counter
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =19
+            Size: =9
+            Text: '=Text(CountRows(DOA_List3Gallery.AllItems)) '
+            Width: =20
+            X: =1285
+            Y: =183
       - DOA_List1CounterCircle:
           Control: Circle@2.3.0
           Group: DOA_List1Counter
@@ -1210,167 +1422,7 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =19
             Size: =9
-            Text: "=Text(CountRows(DOA_List1Gallery.AllItems)) "
+            Text: '=Text(CountRows(DOA_List1Gallery.AllItems)) '
             Width: =20
             X: =431
             Y: =183
-      - DOA_List2CounterCircle:
-          Control: Circle@2.3.0
-          Group: DOA_List2Counter
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(136, 160, 209, 1)
-            Height: =19
-            Width: =20
-            X: =858
-            Y: =183
-            ZIndex: =40
-      - DOA_List2CounterText:
-          Control: Label@2.5.1
-          Group: DOA_List2Counter
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            Height: =19
-            Size: =9
-            Text: =Text(CountRows(DOA_List2Gallery.AllItems)) 
-            Width: =20
-            X: =858
-            Y: =183
-            ZIndex: =41
-      - DOA_List3CounterCircle:
-          Control: Circle@2.3.0
-          Group: DOA_List3Counter
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(136, 160, 209, 1)
-            Height: =19
-            Width: =20
-            X: =1285
-            Y: =183
-            ZIndex: =42
-      - DOA_List3CounterText:
-          Control: Label@2.5.1
-          Group: DOA_List3Counter
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            Height: =19
-            Size: =9
-            Text: =Text(CountRows(DOA_List3Gallery.AllItems)) 
-            Width: =20
-            X: =1285
-            Y: =183
-            ZIndex: =43
-      - DOA_Header_Title:
-          Control: Label@2.5.1
-          Group: DOA_Header
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =37
-            Size: =14
-            Text: ="Central Deposit"
-            VerticalAlign: =VerticalAlign.Bottom
-            Width: =193
-            X: =244
-            Y: =4
-            ZIndex: =5
-      - DOA_Header_LogoEC:
-          Control: Image@2.2.3
-          Group: DOA_Header
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =50
-            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
-            PaddingLeft: =15
-            Width: =186
-            X: =2
-            Y: =2
-            ZIndex: =6
-      - DOA_Header_LogoCD:
-          Control: Image@2.2.3
-          Group: DOA_Header
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =31
-            Image: =cd_badge_play
-            Width: =31
-            X: =208
-            Y: =16
-            ZIndex: =9
-      - DOA_Header_Subtitle:
-          Control: Label@2.5.1
-          Group: DOA_Header
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.'Open Sans'
-            Height: =22
-            Size: =10
-            Text: ="Ticket System"
-            VerticalAlign: =VerticalAlign.Top
-            X: =266
-            Y: =28
-            ZIndex: =10
-      - DOA_Header_Photo:
-          Control: Image@2.2.3
-          Group: DOA_Header
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Height: =56
-            Image: =User().Image
-            RadiusBottomLeft: =3
-            RadiusBottomRight: =3
-            RadiusTopLeft: =3
-            RadiusTopRight: =3
-            Tooltip: |-
-              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
-              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
-            Width: =61
-            X: =1305
-            Y: =1
-            ZIndex: =11
-      - DOA_Header_UserName:
-          Control: Label@2.5.1
-          Group: DOA_Header
-          Properties:
-            Align: =Align.Right
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(186, 202, 226, 1)
-            Font: =Font.Arial
-            Height: =37
-            Size: =11
-            Text: |-
-              =User().FullName 
-              & Char(10) &
-              If(
-                  Find(".", Office365Users.MyProfile().Department) > 0,
-                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
-                  Office365Users.MyProfile().Department
-              )
-            Width: =216
-            X: =1089
-            Y: =16
-            ZIndex: =12
-      - DOA_RoleTag:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =37
-            Text: ="| Administrator"
-            VerticalAlign: =VerticalAlign.Bottom
-            Visible: =varUserRole = "ADMINISTRATOR"
-            Width: =193
-            X: =409
-            Y: =14
-            ZIndex: =36

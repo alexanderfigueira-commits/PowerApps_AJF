@@ -1199,7 +1199,6 @@ Screens:
             Width: =193
             X: =244
             Y: =4
-            ZIndex: =16
       - PVD_Header_LogoEC:
           Control: Image@2.2.3
           Group: PVD_Header
@@ -1211,7 +1210,6 @@ Screens:
             Width: =186
             X: =2
             Y: =2
-            ZIndex: =17
       - PVD_Header_LogoCD:
           Control: Image@2.2.3
           Group: PVD_Header
@@ -1222,7 +1220,6 @@ Screens:
             Width: =31
             X: =208
             Y: =16
-            ZIndex: =18
       - PVD_Header_Subtitle:
           Control: Label@2.5.1
           Group: PVD_Header
@@ -1236,7 +1233,6 @@ Screens:
             VerticalAlign: =VerticalAlign.Top
             X: =266
             Y: =28
-            ZIndex: =19
       - PVD_Header_Photo:
           Control: Image@2.2.3
           Group: PVD_Header
@@ -1254,7 +1250,6 @@ Screens:
             Width: =61
             X: =1305
             Y: =1
-            ZIndex: =20
       - PVD_Header_UserName:
           Control: Label@2.5.1
           Group: PVD_Header
@@ -1276,7 +1271,6 @@ Screens:
             Width: =216
             X: =1089
             Y: =16
-            ZIndex: =21
       - PVD_RoleTag:
           Control: Label@2.5.1
           Properties:
@@ -1291,7 +1285,6 @@ Screens:
             Width: =193
             X: =409
             Y: =14
-            ZIndex: =22
       - PVD_Menu_Panel:
           Control: Classic/Button@2.2.0
           Group: PVD_Menu
@@ -1321,7 +1314,6 @@ Screens:
             Width: =424
             X: =686
             Y: =5
-            ZIndex: =23
       - PVD_Menu_Requests:
           Control: Classic/Button@2.2.0
           Group: PVD_Menu
@@ -1350,7 +1342,6 @@ Screens:
             Width: =83
             X: =797
             Y: =8
-            ZIndex: =24
       - PVD_Menu_Dashboard:
           Control: Classic/Button@2.2.0
           Group: PVD_Menu
@@ -1386,7 +1377,6 @@ Screens:
             Width: =83
             X: =705
             Y: =10
-            ZIndex: =25
       - PVD_Menu_Help:
           Control: Classic/Button@2.2.0
           Group: PVD_Menu
@@ -1415,7 +1405,6 @@ Screens:
             Width: =83
             X: =1030
             Y: =10
-            ZIndex: =26
       - PVD_Menu_Review:
           Control: Classic/Button@2.2.0
           Group: PVD_Menu
@@ -1445,7 +1434,6 @@ Screens:
             Width: =83
             X: =875
             Y: =8
-            ZIndex: =27
       - PVD_Menu_Export:
           Control: Classic/Button@2.2.0
           Group: PVD_Menu
@@ -1477,5 +1465,3 @@ Screens:
             Width: =83
             X: =951
             Y: =8
-
-            ZIndex: =28

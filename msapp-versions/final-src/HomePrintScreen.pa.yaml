@@ -858,7 +858,6 @@ Screens:
             Width: =193
             X: =244
             Y: =4
-            ZIndex: =115
       - HP_Header_LogoEC:
           Control: Image@2.2.3
           Group: HP_Header
@@ -870,7 +869,6 @@ Screens:
             Width: =186
             X: =2
             Y: =2
-            ZIndex: =116
       - HP_Header_LogoCD:
           Control: Image@2.2.3
           Group: HP_Header
@@ -881,7 +879,6 @@ Screens:
             Width: =31
             X: =208
             Y: =16
-            ZIndex: =117
       - HP_Header_Subtitle:
           Control: Label@2.5.1
           Group: HP_Header
@@ -895,7 +892,6 @@ Screens:
             VerticalAlign: =VerticalAlign.Top
             X: =266
             Y: =28
-            ZIndex: =118
       - HP_Header_Photo:
           Control: Image@2.2.3
           Group: HP_Header
@@ -913,7 +909,6 @@ Screens:
             Width: =61
             X: =1305
             Y: =1
-            ZIndex: =126
       - HP_Header_UserName:
           Control: Label@2.5.1
           Group: HP_Header
@@ -935,7 +930,6 @@ Screens:
             Width: =216
             X: =1089
             Y: =16
-            ZIndex: =127
       - HP_RoleTag:
           Control: Label@2.5.1
           Properties:
@@ -950,7 +944,6 @@ Screens:
             Width: =193
             X: =409
             Y: =14
-            ZIndex: =128
       - HP_Menu_Panel:
           Control: Classic/Button@2.2.0
           Group: HP_Menu
@@ -980,7 +973,6 @@ Screens:
             Width: =424
             X: =686
             Y: =5
-            ZIndex: =129
       - HP_Menu_Requests:
           Control: Classic/Button@2.2.0
           Group: HP_Menu
@@ -1009,7 +1001,6 @@ Screens:
             Width: =83
             X: =797
             Y: =8
-            ZIndex: =130
       - HP_Menu_Dashboard:
           Control: Classic/Button@2.2.0
           Group: HP_Menu
@@ -1045,7 +1036,6 @@ Screens:
             Width: =83
             X: =705
             Y: =10
-            ZIndex: =131
       - HP_Menu_Help:
           Control: Classic/Button@2.2.0
           Group: HP_Menu
@@ -1074,7 +1064,6 @@ Screens:
             Width: =83
             X: =1030
             Y: =10
-            ZIndex: =132
       - HP_Menu_Review:
           Control: Classic/Button@2.2.0
           Group: HP_Menu
@@ -1104,7 +1093,6 @@ Screens:
             Width: =83
             X: =875
             Y: =8
-            ZIndex: =133
       - HP_Menu_Export:
           Control: Classic/Button@2.2.0
           Group: HP_Menu
@@ -1136,5 +1124,3 @@ Screens:
             Width: =83
             X: =951
             Y: =8
-
-            ZIndex: =134
