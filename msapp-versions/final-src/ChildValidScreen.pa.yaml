@@ -553,7 +553,7 @@ Screens:
                                           LookUp('AV-CD-Mediafiles', ID = spId)
                                       ),
                                       {
-                                          CD_MediaNumber: If(spId = 0, With({rn: varCurrentRequest.RequestNumber}, rn & "-" & Text(With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, "")}, If(Left(lastMed, Len(rn) + 1) = rn & "-", Value(Right(lastMed, 4)), 0)) + 1, "0000")), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
+                                          CD_MediaNumber: If(spId = 0, With({rn: varCurrentRequest.RequestNumber}, rn & "-" & Text(With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, "")}, If(Left(lastMed, Len(rn) + 1) = rn & "-", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1, "00")), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
                                           Description: varChildDescription1,
                                           BelugaReference: varChildBelugaRef,
                                                       // single-choice column: one record (both ticked -> "Beluga; Spotify"), Blank() when none

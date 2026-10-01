@@ -247,7 +247,10 @@ Screens:
             - CL_Case:
                 Control: Classic/DropDown@2.3.1
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CL_LblCase.Visible And IsBlank(CL_Case.Selected.Value), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CL_LblCase.Visible And IsBlank(CL_Case.Selected.Value), 3, 2)
                   ChevronBackground: =RGBA(56, 96, 178, 1)
                   ChevronFill: =RGBA(255, 255, 255, 1)
                   ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
@@ -789,7 +792,10 @@ Screens:
                       Control: Attachments@2.3.0
                       MetadataKey: FieldValue
                       Properties:
-                        BorderColor: =If(IsBlank(Parent.Error), Parent.BorderColor, Color.Red)
+                        BorderColor: |-
+                          =// yellow while a mandatory VTT file is missing; red on a form error
+                          If(Not(IsBlank(Parent.Error)), Color.Red, CL_LblVTT.Visible And CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) = 0, RGBA(255, 204, 0, 1), Parent.BorderColor)
+                        BorderThickness: =If(CL_LblVTT.Visible And CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) = 0, 3, 2)
                         DisplayMode: =Parent.DisplayMode
                         Font: =Font.'Open Sans'
                         Height: =280
@@ -863,34 +869,6 @@ Screens:
             Text: ="Validations  ➤"
             Width: =220
             X: =1110
-            Y: =720
-      - CL_LblMissing:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(224, 134, 0, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Size: =12
-            Text: |-
-              =With(
-                  {miss:
-                      Concat(
-                          Filter(
-                              Table(
-                              {lbl: CL_LblCase.Text, gone: CL_LblCase.Visible And IsBlank(CL_Case.Selected.Value)},
-                              {lbl: "VTT subtitle file(s)", gone: CL_LblVTT.Visible And CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) = 0}
-                              ),
-                              gone
-                          ),
-                          ", " & Trim(Substitute(lbl, "*", ""))
-                      )
-                  },
-                  If(IsBlank(miss), "", "Still to complete:  " & Mid(miss, 3))
-              )
-            Visible: =Not(IsBlank(Self.Text))
-            Width: =900
-            X: =190
             Y: =720
       - CL_Header_Title:
           Control: Label@2.5.1

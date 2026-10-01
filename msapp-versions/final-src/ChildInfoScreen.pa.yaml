@@ -218,7 +218,10 @@ Screens:
             - CI_Title:
                 Control: Classic/TextInput@2.3.2
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CI_LblTitle.Visible And IsBlank(Trim(CI_Title.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CI_LblTitle.Visible And IsBlank(Trim(CI_Title.Text)), 3, 2)
                   Default: =varChildTitle1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -303,7 +306,10 @@ Screens:
             - CI_CaptureDate:
                 Control: Classic/DatePicker@2.6.0
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CI_LblCaptureDate.Visible And IsBlank(CI_CaptureDate.SelectedDate), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CI_LblCaptureDate.Visible And IsBlank(CI_CaptureDate.SelectedDate), 3, 2)
                   DefaultDate: =varChildCaptureDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -359,7 +365,10 @@ Screens:
             - CI_ProductType:
                 Control: Classic/DropDown@2.3.1
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CI_LblProductType.Visible And IsBlank(CI_ProductType.Selected.Value), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CI_LblProductType.Visible And IsBlank(CI_ProductType.Selected.Value), 3, 2)
                   ChevronBackground: =RGBA(35, 31, 32, 1)
                   ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
                   ChevronDisabledFill: =RGBA(235, 233, 229, 1)
@@ -634,7 +643,10 @@ Screens:
             - CI_Language:
                 Control: Classic/DropDown@2.3.1
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CI_LblLanguage.Visible And IsBlank(CI_Language.Selected.Value), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CI_LblLanguage.Visible And IsBlank(CI_Language.Selected.Value), 3, 2)
                   ChevronBackground: =RGBA(56, 96, 178, 1)
                   ChevronFill: =RGBA(255, 255, 255, 1)
                   ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
@@ -694,7 +706,10 @@ Screens:
             - CI_PodcastTitle:
                 Control: Classic/TextInput@2.3.2
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CI_LblPodcastTitle.Visible And IsBlank(Trim(CI_PodcastTitle.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CI_LblPodcastTitle.Visible And IsBlank(Trim(CI_PodcastTitle.Text)), 3, 2)
                   Default: =Coalesce(varRequestTitle, varRequestTitle1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -722,7 +737,10 @@ Screens:
             - CI_PodcastDesc:
                 Control: Classic/TextInput@2.3.2
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CI_LblPodcastDesc.Visible And IsBlank(Trim(CI_PodcastDesc.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CI_LblPodcastDesc.Visible And IsBlank(Trim(CI_PodcastDesc.Text)), 3, 2)
                   Default: =Coalesce(varRequestDescription, varRequestDescription1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -765,8 +783,10 @@ Screens:
             - CI_BtnOpenAttach:
                 Control: Classic/Button@2.2.0
                 Properties:
-                  BorderColor: =RGBA(56, 96, 178, 1)
-                  BorderThickness: =1
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CI_LblPodcastVisual.Visible And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, RGBA(255, 204, 0, 1), RGBA(56, 96, 178, 1))
+                  BorderThickness: =If(CI_LblPodcastVisual.Visible And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, 3, 1)
                   Color: =RGBA(56, 96, 178, 1)
                   DisabledBorderColor: =RGBA(166, 166, 166, 1)
                   Fill: =RGBA(255, 255, 255, 1)
@@ -1214,39 +1234,6 @@ Screens:
             Text: ="⯬ Exit"
             Width: =140
             X: =31
-            Y: =720
-      - CI_LblMissing:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(224, 134, 0, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Size: =12
-            Text: |-
-              =With(
-                  {miss:
-                      Concat(
-                          Filter(
-                              Table(
-                              {lbl: CI_LblTitle.Text, gone: CI_LblTitle.Visible And IsBlank(Trim(CI_Title.Text))},
-                              {lbl: CI_LblPodcastTitle.Text, gone: CI_LblPodcastTitle.Visible And IsBlank(Trim(CI_PodcastTitle.Text))},
-                              {lbl: CI_LblPodcastDesc.Text, gone: CI_LblPodcastDesc.Visible And IsBlank(Trim(CI_PodcastDesc.Text))},
-                              {lbl: CI_LblCaptureDate.Text, gone: CI_LblCaptureDate.Visible And IsBlank(CI_CaptureDate.SelectedDate)},
-                              {lbl: CI_LblProductType.Text, gone: CI_LblProductType.Visible And IsBlank(CI_ProductType.Selected.Value)},
-                              {lbl: CI_LblPodcastVisual.Text, gone: CI_LblPodcastVisual.Visible And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0},
-                              {lbl: CI_LblLanguage.Text, gone: CI_LblLanguage.Visible And IsBlank(CI_Language.Selected.Value)}
-                              ),
-                              gone
-                          ),
-                          ", " & Trim(Substitute(lbl, "*", ""))
-                      )
-                  },
-                  If(IsBlank(miss), "", "Still to complete:  " & Mid(miss, 3))
-              )
-            Visible: =Not(IsBlank(Self.Text))
-            Width: =930
-            X: =190
             Y: =720
       - CI_Header_Title:
           Control: Label@2.5.1
