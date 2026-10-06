@@ -1030,11 +1030,11 @@ Screens:
                         Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
                         Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
                         Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
-                        Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
+                        Set(varChildModelRelease, Coalesce(varTplCandidate.ModelRelease, false) Or Coalesce(varTplCandidate.ModelReleaseProvided, false));
                         Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
                         Set(varChildMusicLicenceProvided, Coalesce(varTplCandidate.MusicLicenseProvided, false));
                         Set(varChildPreexistingProvided, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
-                        Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+                        Set(varChildPreexisting, Coalesce(varTplCandidate.Preexisting, false) Or Coalesce(varTplCandidate.PreexistingRightsProvided, false));
                         Set(varChildAIVoiceover, varTplCandidate.AIVoiceover = "Yes");
                         Set(varShowTemplatePicker, false)
                     )
@@ -1181,11 +1181,11 @@ Screens:
               Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
               Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
               Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
-              Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
+              Set(varChildModelRelease, Coalesce(varTplCandidate.ModelRelease, false) Or Coalesce(varTplCandidate.ModelReleaseProvided, false));
               Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
               Set(varChildMusicLicenceProvided, Coalesce(varTplCandidate.MusicLicenseProvided, false));
               Set(varChildPreexistingProvided, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
-              Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+              Set(varChildPreexisting, Coalesce(varTplCandidate.Preexisting, false) Or Coalesce(varTplCandidate.PreexistingRightsProvided, false));
               Set(varChildAIVoiceover, varTplCandidate.AIVoiceover = "Yes");
               Set(varShowTplConfirm, false);
               Set(varShowTemplatePicker, false)

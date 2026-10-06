@@ -179,7 +179,7 @@ Screens:
                             First(ContractCase1Sub).Value,
                             ""
                         ),
-                        ModelRelease: false,
+                        ModelRelease: Coalesce(ModelRelease, false),
                         NoThirdPartyRights: Coalesce(
                             NoThirdPartyRights,
                             false
@@ -196,11 +196,15 @@ Screens:
                             MusicLicenseProvided,
                             false
                         ),
-                        Preexisting: false,
+                        Preexisting: Coalesce(Preexisting, false),
                         PreexistingProvided: Coalesce(
                             PreexistingRightsProvided,
                             false
-                        )
+                        ),
+                                SubtitlesProvided: Coalesce(SubtitlesProvided, false),
+                                DocFramework: Coalesce(DocFramework, false),
+                                DocSpecific: Coalesce(DocSpecific, false),
+                                DocOffer: Coalesce(DocOffer, false)
                     }
                 )
             )
@@ -326,7 +330,8 @@ Screens:
                     Set(varChildAIVoiceover, Coalesce(ThisItem.AIVoiceover, false));
                     Set(varChildContractCase, Coalesce(ThisItem.ContractCase, ""));
                     Set(varChildContractCase1Sub, Coalesce(ThisItem.ContractCase1Sub, ""));
-                    Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false);
+                    Set(varDocFramework, Coalesce(ThisItem.DocFramework, false)); Set(varDocSpecific, Coalesce(ThisItem.DocSpecific, false)); Set(varDocOffer, Coalesce(ThisItem.DocOffer, false));
+                    Set(varChildSubtitlesProvided, Coalesce(ThisItem.SubtitlesProvided, false));
                     Set(varChildContractingAuthority, Coalesce(ThisItem.ContractingAuthority, ""));
                     Set(varChildExecProducer, Coalesce(ThisItem.ExecProducer, ""));
                     Set(varChildProducerSel, ThisItem.Producer);
@@ -2947,6 +2952,7 @@ Screens:
               Set(varChildMusicUsed, false);
               Set(varChildMusicLicenceProvided, false);
               Set(varChildPreexisting, false);
+              Set(varChildSubtitlesProvided, false);
               Set(varChildPreexistingProvided, false);
               Set(varChildEpisodeTitle1, "");
               Set(varChildEpisodeSummary1, "");

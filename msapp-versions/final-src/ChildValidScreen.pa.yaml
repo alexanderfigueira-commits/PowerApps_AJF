@@ -535,7 +535,11 @@ Screens:
                       MusicUsed: varChildMusicUsed,
                       MusicLicenceProvided: varChildMusicLicenceProvided,
                       Preexisting: varChildPreexisting,
-                      PreexistingProvided: varChildPreexistingProvided
+                      PreexistingProvided: varChildPreexistingProvided,
+                      SubtitlesProvided: varChildSubtitlesProvided,
+                      DocFramework: varDocFramework,
+                      DocSpecific: varDocSpecific,
+                      DocOffer: varDocOffer
                   })
               );
               If(
@@ -590,6 +594,12 @@ Screens:
                                           MusicUsed: varChildMusicUsed,
                                           MusicLicenseProvided: varChildMusicLicenceProvided,
                                           PreexistingRightsProvided: varChildPreexistingProvided,
+                                          ModelRelease: varChildModelRelease,
+                                          Preexisting: varChildPreexisting,
+                                          SubtitlesProvided: varChildSubtitlesProvided,
+                                          DocFramework: varDocFramework,
+                                          DocSpecific: varDocSpecific,
+                                          DocOffer: varDocOffer,
                                           ModelReleaseProvided: varChildModelReleaseProvided,
                                           NoThirdPartyRights: varChildNoThirdParty,
                                           CreditContact: varChildCredits1,
