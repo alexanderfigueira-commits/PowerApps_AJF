@@ -524,6 +524,7 @@ Screens:
                       FTPPath: varChildFTPPath1,
                       BelugaReference: varChildBelugaRef,
                       Notes: varChildNotes,
+                      ScriptShotlist: varChildScript,
                       LanguageVersions: varChildLanguageVersions,
                       AIVoiceover: varChildAIVoiceover,
                       ContractCase: varChildContractCase,
@@ -556,6 +557,7 @@ Screens:
                                           Description: varChildDescription1,
                                           BelugaReference: varChildBelugaRef,
                                           Notes: varChildNotes,
+                                          ScriptShotlist: varChildScript,
                                           // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
                                           MediaType: Table({Value: varChildMediaType}),
                                                               CaptureDate: varChildCaptureDate,

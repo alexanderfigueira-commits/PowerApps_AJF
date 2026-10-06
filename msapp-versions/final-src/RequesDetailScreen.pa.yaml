@@ -85,6 +85,7 @@ Screens:
                             ""
                         )),
                         MediaApproved: Coalesce(MediaApproved, false),
+                        ScriptShotlist: Coalesce(ScriptShotlist, ""),
                         ProductionTitle: Coalesce(
                             ProductionTitle,
                             ""
@@ -354,6 +355,7 @@ Screens:
                     Set(varChildFTPPath1, Coalesce(ThisItem.FTPPath, ""));
                     Set(varChildBelugaRef, Coalesce(ThisItem.BelugaReference, ""));
                     Set(varChildNotes, Coalesce(ThisItem.Notes, ""));
+                    Set(varChildScript, Coalesce(ThisItem.ScriptShotlist, ""));
                     Navigate(ChildInfoScreen)
                   Width: =1300
             - RS_CRowDivider:
@@ -2960,6 +2962,7 @@ Screens:
               Set(varChildFTPPath1, "");
               Set(varChildBelugaRef, "");
               Set(varChildNotes, "");
+              Set(varChildScript, "");
               Navigate(ChildInfoScreen),
                   Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
               )

@@ -22,7 +22,6 @@ Screens:
             Set(varVideoMetaChildId, varCurrentChildId);
             Set(varChildProducer, "");
             Set(varChildExecProducer, "");
-            Set(varChildScript, "");
             Set(varChildSubtitlesProvided, false));
         If(varChildMediaType = "Podcast" And varPodMetaChildId <> varCurrentChildId,
             Set(varPodMetaChildId, varCurrentChildId);
@@ -300,7 +299,10 @@ Screens:
             - CM_Credits:
                 Control: Classic/TextInput@2.3.2
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory (starred) field is empty
+                    If(CM_LblCredits.Visible And Right(Trim(CM_LblCredits.Text), 1) = "*" And (IsBlank(Trim(CM_Credits.Text))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblCredits.Visible And Right(Trim(CM_LblCredits.Text), 1) = "*" And (IsBlank(Trim(CM_Credits.Text))), 3, 2)
                   Default: =varChildCredits1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -553,7 +555,10 @@ Screens:
             - CM_ShootDate:
                 Control: Classic/DatePicker@2.6.0
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory (starred) field is empty
+                    If(CM_LblShootDate.Visible And Right(Trim(CM_LblShootDate.Text), 1) = "*" And (IsBlank(varChildCaptureDate) Or IsBlank(CM_ShootDate.SelectedDate)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblShootDate.Visible And Right(Trim(CM_LblShootDate.Text), 1) = "*" And (IsBlank(varChildCaptureDate) Or IsBlank(CM_ShootDate.SelectedDate)), 3, 2)
                   DefaultDate: =varChildCaptureDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -581,7 +586,10 @@ Screens:
             - CM_PlacePhoto:
                 Control: Classic/TextInput@2.3.2
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory (starred) field is empty
+                    If(CM_LblPlacePhoto.Visible And Right(Trim(CM_LblPlacePhoto.Text), 1) = "*" And (IsBlank(Trim(CM_PlacePhoto.Text))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblPlacePhoto.Visible And Right(Trim(CM_LblPlacePhoto.Text), 1) = "*" And (IsBlank(Trim(CM_PlacePhoto.Text))), 3, 2)
                   Default: =varChildProductionPlace1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -711,8 +719,8 @@ Screens:
                 Properties:
                   BorderColor: |-
                     =// yellow while this mandatory field is empty
-                    If(CM_LblProdEnd.Visible And IsBlank(CM_ProdEnd.SelectedDate), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblProdEnd.Visible And IsBlank(CM_ProdEnd.SelectedDate), 3, 2)
+                    If(CM_LblProdEnd.Visible And (IsBlank(varChildProductionEndDate) Or IsBlank(CM_ProdEnd.SelectedDate)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblProdEnd.Visible And (IsBlank(varChildProductionEndDate) Or IsBlank(CM_ProdEnd.SelectedDate)), 3, 2)
                   DefaultDate: =varChildProductionEndDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -742,8 +750,8 @@ Screens:
                 Properties:
                   BorderColor: |-
                     =// yellow while this mandatory field is empty
-                    If(CM_LblPubStartV.Visible And IsBlank(CM_PubStartV.SelectedDate), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblPubStartV.Visible And IsBlank(CM_PubStartV.SelectedDate), 3, 2)
+                    If(CM_LblPubStartV.Visible And (IsBlank(varChildPublicationStartDate) Or IsBlank(CM_PubStartV.SelectedDate)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblPubStartV.Visible And (IsBlank(varChildPublicationStartDate) Or IsBlank(CM_PubStartV.SelectedDate)), 3, 2)
                   DefaultDate: =varChildPublicationStartDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -773,8 +781,8 @@ Screens:
                 Properties:
                   BorderColor: |-
                     =// yellow while this mandatory field is empty
-                    If(CM_LblPubEndV.Visible And IsBlank(CM_PubEndV.SelectedDate), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblPubEndV.Visible And IsBlank(CM_PubEndV.SelectedDate), 3, 2)
+                    If(CM_LblPubEndV.Visible And (IsBlank(varChildPublicationEndDate) Or IsBlank(CM_PubEndV.SelectedDate)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblPubEndV.Visible And (IsBlank(varChildPublicationEndDate) Or IsBlank(CM_PubEndV.SelectedDate)), 3, 2)
                   DefaultDate: =varChildPublicationEndDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
