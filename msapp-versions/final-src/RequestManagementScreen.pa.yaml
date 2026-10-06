@@ -20,7 +20,7 @@ Screens:
                 "REQUESTOR"
             )
         );
-
+        
         // Data loads once per session, or whenever the cache is empty (self-heal),
         // instead of on every visit. Use HomeBtnRefresh to reload on demand.
         If(
@@ -55,7 +55,7 @@ Screens:
             );
             Set(varReqDataLoaded, true)
         );
-
+        
         // Filters initialise once, so the selection survives navigating away and back.
         If(
             Not(varReqFiltersInit),
@@ -64,11 +64,12 @@ Screens:
             Set(varFilterDG, "");
             Set(varFilterRequestName, "");
             Set(varFilterStartDate, Today()-31);
-            Set(varFilterEndDate, Today());
+            // end of today: Created has a time of day, so plain Today() (00:00) hid everything created today
+            Set(varFilterEndDate, Today() + Time(23, 59, 59));
             UpdateContext({locProdTypeFilter: Blank(), locShowFilters: true});
             Set(varReqFiltersInit, true)
         );
-
+        
         // The list opens on the first status that has requests (per role) when the
         // screen is entered with "All Status" and "All Media":
         //   REQUESTOR:     Pending -> Draft -> Processing -> All
@@ -121,7 +122,7 @@ Screens:
                 )
             )
         );
-
+        
         // A status handed over from the dashboard still wins on every visit.
         If(
             Not(IsBlank(varNavFilter)),
