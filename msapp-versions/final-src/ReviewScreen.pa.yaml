@@ -586,7 +586,9 @@ Screens:
             DisplayMode: |-
               =If(
                   Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
-                  And varReviewProject.Status.Value = "Processing",
+                  And varReviewProject.Status.Value = "Processing"
+                  // turning archive-only ON needs a reason (it goes to the requestor)
+                  And Not(RV_ArchiveOnly.Value And Not(Coalesce(varReviewProject.ArchivedOnly, false)) And IsBlank(Trim(varReviewComment))),
                   DisplayMode.Edit,
                   DisplayMode.Disabled
               )
@@ -618,14 +620,41 @@ Screens:
                               JobTitle: "",
                               Picture: ""
                           }),
-                          ReviewedDate: Now()
+                          ReviewedDate: Now(),
+                          // "archive only": saved with the decision; the reason (RV_Comment) goes to ReviewerComments for the email
+                          ArchivedOnly: RV_ArchiveOnly.Value,
+                          ReviewerComments: If(RV_ArchiveOnly.Value And Not(Coalesce(varReviewProject.ArchivedOnly, false)), Trim(varReviewComment), varReviewProject.ReviewerComments)
                       }
                   );
+                  // archive-only decision: the reason is also a note of the request (AV-CD-Notes), the email comes from the notification flow
+                  If(
+                      RV_ArchiveOnly.Value And Not(Coalesce(varReviewProject.ArchivedOnly, false)),
+                      IfError(
+                          Patch(
+                              'AV-CD-Notes',
+                              Defaults('AV-CD-Notes'),
+                              {
+                                  Title: varReviewProject.RequestNumber,
+                                  ParentRequest: varReviewProject.RequestNumber,
+                                  NoteText: "<b>Approved - archive only</b> · " & Substitute(Trim(varReviewComment), Char(10), "<br>"),
+                                  AuthorRole: {Value: "Administrator"},
+                                  AuthorName: User().FullName,
+                                  AuthorEmail: User().Email,
+                                  NoteDate: Now()
+                              }
+                          ),
+                          Notify("The reason could not be added to the notes: " & FirstError.Message, NotificationType.Warning)
+                      )
+                  );
                   Notify(
-                      If(With(
+                      If(
+                          RV_ArchiveOnly.Value And Not(Coalesce(varReviewProject.ArchivedOnly, false)),
+                          "Approved as archive only. The reason is added to the notes and the requestor is notified.",
+                          If(With(
                               {n: CountRows(RV_ChildrenGallery.AllItems), ok: CountRows(Filter(RV_ChildrenGallery.AllItems, MediaApproved = true))},
                               ok > 0 And ok < n
-                          ), "Request partially approved: only the ticked media files are approved.", "Request approved."),
+                          ), "Request partially approved: only the ticked media files are approved.", "Request approved.")
+                      ),
                       NotificationType.Success
                   );
                   Set(varReviewProject, Blank());
@@ -641,7 +670,7 @@ Screens:
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
             Size: =14
-            Text: ="✓  Approve"
+            Text: =If(RV_ArchiveOnly.Value, "✓  Approve · Archive", "✓  Approve")
             Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
             Width: =200
             X: =460
@@ -775,7 +804,8 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =27
             Size: =11
-            Text: ="A reviewer comment is required before rejecting."
+            Text: |-
+              =If(RV_ArchiveOnly.Value And Not(Coalesce(varReviewProject.ArchivedOnly, false)), "A reason is required for archive-only: it is sent to the requestor.", "A reviewer comment is required before rejecting.")
             Visible: |-
               =Not(IsBlank(varReviewProject))
               And (IsBlank(varReviewComment) Or varReviewComment = "")
@@ -1184,3 +1214,24 @@ Screens:
             Width: =110
             X: =594
             Y: =144
+      - RV_ArchiveOnly:
+          Control: Classic/CheckBox@2.1.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+            CheckmarkFill: =RGBA(0, 0, 0, 1)
+            Default: =Coalesce(varReviewProject.ArchivedOnly, false)
+            DisplayMode: =If(varUserRole = "ADMINISTRATOR" And Coalesce(varReviewProject.Status.Value, "") = "Processing", DisplayMode.Edit, DisplayMode.View)
+            Font: =Font.'Open Sans'
+            Height: =48
+            HoverColor: =RGBA(0, 18, 107, 1)
+            OnCheck: =false
+            OnUncheck: =false
+            Size: =10
+            Text: |-
+              ="Archive only: the conditions for publication are not met"
+            Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
+            Width: =470
+            X: =870
+            Y: =506
+          Children: []
