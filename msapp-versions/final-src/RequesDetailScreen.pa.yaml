@@ -241,58 +241,57 @@ Screens:
         );
         If(
             Coalesce(varCurrentRequest.ID, 0) > 0,
-            With(
-                {
-                    // the side of the thread the current user is on; notes from the other side can be new for them
-                    noteSide: If(
-                        varUserRole = "ADMINISTRATOR",
-                        "Administrator",
-                        If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
-                    )
-                },
-                ClearCollect(
-                    colReqNotes,
-                    ForAll(
-                        Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                        {
-                            NRole: AuthorRole.Value,
-                            NAuthor: Coalesce(AuthorName, "-"),
-                            NDate: Coalesce(NoteDate, Created),
-                            NText: PlainText(Coalesce(NoteText, "")),
-                            NKey: ID,
-                            // not read yet by the side it was written for
-                            NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
-                        }
-                    )
-                )
-            );
-            // notes written before the thread existed stay as the first entry of each column
-            Collect(
+            ClearCollect(
                 colReqNotes,
+                // notes written before the thread existed stay as the first entry of each column
                 Filter(
-                    Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
+                    Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0}),
                     Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                )
-            );
-            // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
-            With(
-                {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
-                With(
-                    {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
-                    Collect(
-                        colReqNotes,
-                        Filter(
-                            Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
-                            rc <> "" And Not(inThread)
-                        )
-                    )
+                ),
+                Filter(
+                    Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0}),
+                    Not(IsBlank(Trim(Coalesce(varCurrentRequest.ReviewerComments, ""))))
+                ),
+                ForAll(
+                    Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
+                    {NRole: AuthorRole.Value, NAuthor: Coalesce(AuthorName, "-"), NDate: Coalesce(NoteDate, Created), NText: PlainText(Coalesce(NoteText, "")), NKey: ID}
                 )
             ),
             Clear(colReqNotes)
         );
         // "Archiving only, not publication": an opened request shows what is saved, a new request starts at No
-        Set(varRequestArchivingOnly, Coalesce(varCurrentRequest.ArchivingOnly, false))
+        Set(varRequestArchivedOnly, Coalesce(varCurrentRequest.ArchivedOnly, false))
     Children:
+      - DOA_List1RowBadge_7:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =1
+            Color: =RGBA(0, 13, 75, 1)
+            DisabledBorderColor: =Self.BorderColor
+            DisabledColor: =RGBA(0, 0, 0, 1)
+            DisabledFill: =RGBA(237, 237, 237, 1)
+            Fill: =RGBA(215, 223, 240, 1)
+            Font: =Font.'Open Sans'
+            Height: =28
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext({locShowNotes: true});
+              UpdateContext({ currentIndex: If(currentIndex >= CountRows(MessageCenter.AllItems), 1, currentIndex + 1) });
+            PaddingBottom: =0
+            PaddingTop: =0
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =18
+            Text: ="✉️"
+            Tooltip: ="Open Message Center"
+            Visible: =Coalesce(varCurrentRequest.ID, 0) > 0
+            Width: =70
+            X: =385
+            Y: =72
       - RS_ChildrenGallery:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
@@ -575,8 +574,8 @@ Screens:
             Size: =16
             Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") exactin "Draft", "New Request", "Request Details")
             Width: =182
-            X: =68
-            Y: =65
+            X: =58
+            Y: =70
       - RS_BtnDraftSave:
           Control: Classic/Button@2.2.0
           Properties:
@@ -635,7 +634,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
-                                  ArchivingOnly: varRequestArchivingOnly,
+                                  ArchivedOnly: varRequestArchivedOnly,
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
                                       {
@@ -679,7 +678,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
-                                  ArchivingOnly: varRequestArchivingOnly,
+                                  ArchivedOnly: varRequestArchivedOnly,
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
                                       {
@@ -723,7 +722,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
-                                  ArchivingOnly: varRequestArchivingOnly,
+                                  ArchivedOnly: varRequestArchivedOnly,
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
                                       {
@@ -766,7 +765,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
-                                  ArchivingOnly: varRequestArchivingOnly,
+                                  ArchivedOnly: varRequestArchivedOnly,
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
                                       {
@@ -855,8 +854,8 @@ Screens:
             Tooltip: ="Copy to clipboard"
             Visible: =Coalesce(varCurrentRequest.ID, 0) > 0
             Width: =120
-            X: =250
-            Y: =67
+            X: =240
+            Y: =72
       - RS_TopBar:
           Control: Rectangle@2.3.0
           Properties:
@@ -864,6 +863,43 @@ Screens:
             Fill: =RGBA(0, 18, 107, 1)
             Height: =56
             Width: =1366
+      - RS_Archive:
+          Control: Classic/CheckBox@2.1.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+            CheckmarkFill: =RGBA(0, 0, 0, 1)
+            Default: =varRequestArchivedOnly
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverColor: =RGBA(0, 18, 107, 1)
+            OnCheck: |-
+              =Set(varRequestArchivedOnly, true);
+              // a saved request stores the answer straight away, so it survives opening a media item and coming back
+              If(
+                  Coalesce(varCurrentRequest.ID, 0) > 0 And Coalesce(varCurrentRequest.ArchivedOnly, false) <> true,
+                  IfError(
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ArchivedOnly: true})),
+                      Notify("Could not save the answer: " & FirstError.Message, NotificationType.Error)
+                  )
+              )
+            OnUncheck: |-
+              =Set(varRequestArchivedOnly, false);
+              // a saved request stores the answer straight away, so it survives opening a media item and coming back
+              If(
+                  Coalesce(varCurrentRequest.ID, 0) > 0 And Coalesce(varCurrentRequest.ArchivedOnly, false) <> false,
+                  IfError(
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ArchivedOnly: false})),
+                      Notify("Could not save the answer: " & FirstError.Message, NotificationType.Error)
+                  )
+              )
+            Size: =10
+            Text: ="Archiving only, not publication"
+            Visible: =Not(locDetailsCollapsed)
+            Width: =374
+            X: =916
+            Y: =266
       - RS_RequestCard:
           Control: Rectangle@2.3.0
           Properties:
@@ -1167,9 +1203,10 @@ Screens:
           Control: Classic/ComboBox@2.4.0
           Properties:
             BorderColor: |-
-              =// yellow while this mandatory field is empty
-              If(RS_LblOwner.Visible And IsEmpty(RS_Owner.SelectedItems), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-            BorderThickness: =If(RS_LblOwner.Visible And IsEmpty(RS_Owner.SelectedItems), 3, 2)
+              =// yellow only while nothing is picked and there is no manual contact either
+              If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_DG_Agency_Contact)}, RS_LblOwner.Visible And IsEmpty(RS_Owner.SelectedItems) And IsBlank(manual)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+            BorderThickness: |-
+              =If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_DG_Agency_Contact)}, RS_LblOwner.Visible And IsEmpty(RS_Owner.SelectedItems) And IsBlank(manual)), 3, 2)
             ChevronBackground: =RGBA(35, 31, 32, 1)
             ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
             ChevronDisabledFill: =RGBA(235, 233, 229, 1)
@@ -1245,7 +1282,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =759
             X: =64
-            Y: =288
+            Y: =285
       - RS_LblContractor:
           Control: Label@2.5.1
           Properties:
@@ -1264,9 +1301,10 @@ Screens:
           Control: Classic/ComboBox@2.4.0
           Properties:
             BorderColor: |-
-              =// yellow while this mandatory field is empty
-              If(RS_LblContractor.Visible And IsEmpty(RS_Contractor.SelectedItems), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-            BorderThickness: =If(RS_LblContractor.Visible And IsEmpty(RS_Contractor.SelectedItems), 3, 2)
+              =// yellow only while nothing is picked and there is no manual contact either
+              If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_Contractor_Contact)}, RS_LblContractor.Visible And IsEmpty(RS_Contractor.SelectedItems) And IsBlank(manual)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+            BorderThickness: |-
+              =If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_Contractor_Contact)}, RS_LblContractor.Visible And IsEmpty(RS_Contractor.SelectedItems) And IsBlank(manual)), 3, 2)
             ChevronBackground: =RGBA(35, 31, 32, 1)
             ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
             ChevronDisabledFill: =RGBA(235, 233, 229, 1)
@@ -1298,7 +1336,7 @@ Screens:
             DisplayFields: =["DisplayName"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
-            Height: =35
+            Height: =37
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search the contractor / production company"
@@ -1348,7 +1386,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             Fill: =RGBA(241, 244, 249, 1)
-            Height: =260
+            Height: =220
             Visible: =Not(locDetailsCollapsed)
             Width: =2
             X: =883
@@ -1367,56 +1405,6 @@ Screens:
             Width: =634
             X: =64
             Y: =185
-      - RS_LblAdminNotes:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(60, 66, 80, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =22
-            Size: =10
-            Text: ="Adminstrator Notes:"
-            Visible: =Not(locDetailsCollapsed)
-            Width: =166
-            X: =1136
-            Y: =327
-      - RS_AdminNotesUpdated:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            Height: =16
-            Size: =8
-            Text: |-
-              =If(
-                  IsBlank(varCurrentRequest.AdminNotesUpdatedOn),
-                  "Last updated on: -",
-                  "Last updated on " & Text(varCurrentRequest.AdminNotesUpdatedOn, DateTimeFormat.ShortDateTime)
-              )
-            Visible: =Not(locDetailsCollapsed)
-            Width: =190
-            X: =1138
-            Y: =380
-      - RS_RequestorNotesUpdated:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            Height: =16
-            Size: =8
-            Text: |-
-              =If(
-                  IsBlank(varCurrentRequest.RequestorNotesUpdatedOn),
-                  "Last updated on: -",
-                  "Last updated on " & Text(varCurrentRequest.RequestorNotesUpdatedOn, DateTimeFormat.ShortDateTime)
-              )
-            Visible: =Not(locDetailsCollapsed)
-            Width: =190
-            X: =919
-            Y: =380
       - RS_Description:
           Control: Classic/TextInput@2.3.2
           Properties:
@@ -1434,216 +1422,6 @@ Screens:
             Width: =794
             X: =64
             Y: =206
-      - RS_AdminNotesOpen:
-          Control: Classic/Button@2.2.0
-          Properties:
-            Align: =Align.Left
-            BorderColor: |-
-              =// red while there are notes you have not read yet
-              If(CountRows(Filter(colReqNotes, Lower(NRole) = "administrator", NNew)) > 0, RGBA(193, 40, 40, 1), RGBA(220, 224, 230, 1))
-            BorderThickness: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "administrator", NNew)) > 0, 2, 1)
-            Color: =RGBA(60, 66, 80, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledColor: =RGBA(186, 196, 214, 1)
-            DisabledFill: =RGBA(240, 242, 246, 1)
-            Fill: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            Height: =28
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(60, 66, 80, 1)
-            HoverFill: =RGBA(240, 242, 246, 1)
-            OnSelect: |-
-              =If(
-                  Coalesce(varCurrentRequest.ID, 0) > 0,
-                  With(
-                      {
-                          // the side of the thread the current user is on; notes from the other side can be new for them
-                          noteSide: If(
-                              varUserRole = "ADMINISTRATOR",
-                              "Administrator",
-                              If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
-                          )
-                      },
-                      ClearCollect(
-                          colReqNotes,
-                          ForAll(
-                              Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                              {
-                                  NRole: AuthorRole.Value,
-                                  NAuthor: Coalesce(AuthorName, "-"),
-                                  NDate: Coalesce(NoteDate, Created),
-                                  NText: PlainText(Coalesce(NoteText, "")),
-                                  NKey: ID,
-                                  // not read yet by the side it was written for
-                                  NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
-                              }
-                          )
-                      )
-                  );
-                  // notes written before the thread existed stay as the first entry of each column
-                  Collect(
-                      colReqNotes,
-                      Filter(
-                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
-                          Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                      )
-                  );
-                  // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
-                  With(
-                      {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
-                      With(
-                          {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
-                          Collect(
-                              colReqNotes,
-                              Filter(
-                                  Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
-                                  rc <> "" And Not(inThread)
-                              )
-                          )
-                      )
-                  ),
-                  Clear(colReqNotes)
-              );
-              // unread notes from the other side show as "New" in the pop-up, then are saved as read
-              UpdateContext({locNewNotes: ForAll(Filter(colReqNotes, NNew), NKey)});
-              IfError(
-                  ForAll(
-                      Filter(colReqNotes, NNew) As nn,
-                      Patch('AV-CD-Notes', LookUp('AV-CD-Notes', ID = nn.NKey), {ReadOn: Now(), ReadBy: User().FullName})
-                  ),
-                  Notify("The notes could not be marked as read: " & FirstError.Message, NotificationType.Warning)
-              );
-              UpdateIf(colReqNotes, NNew, {NNew: false});
-              UpdateContext({locShowNotes: true})
-            PaddingBottom: =0
-            PaddingTop: =0
-            PressedBorderColor: =RGBA(0, 0, 0, 1)
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            RadiusBottomLeft: =14
-            RadiusBottomRight: =14
-            RadiusTopLeft: =14
-            RadiusTopRight: =14
-            Size: =11
-            Text: |-
-              =With(
-                  {n: CountRows(Filter(colReqNotes, Lower(NRole) = "administrator")), nNew: CountRows(Filter(colReqNotes, Lower(NRole) = "administrator", NNew))},
-                  If(
-                      n = 0,
-                      If(varUserRole = "ADMINISTRATOR" , "✎  Add a note", "No notes yet"),
-                      "💬  " & n & If(n = 1, " note", " notes") & If(nNew > 0, "  ·  " & nNew & " new", "")
-                  )
-              )
-            Tooltip: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "administrator", NNew)) > 0, "You have unread notes. Opening them marks them as read.", "Open the notes of this request")
-            Visible: =Not(locDetailsCollapsed)
-            Width: =168
-            X: =1134
-            Y: =351
-      - RS_RequestorNotesOpen:
-          Control: Classic/Button@2.2.0
-          Properties:
-            Align: =Align.Left
-            BorderColor: |-
-              =// red while there are notes you have not read yet
-              If(CountRows(Filter(colReqNotes, Lower(NRole) = "requestor", NNew)) > 0, RGBA(193, 40, 40, 1), RGBA(220, 224, 230, 1))
-            BorderThickness: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "requestor", NNew)) > 0, 2, 1)
-            Color: =RGBA(60, 66, 80, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledColor: =RGBA(186, 196, 214, 1)
-            DisabledFill: =RGBA(240, 242, 246, 1)
-            Fill: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            Height: =28
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(60, 66, 80, 1)
-            HoverFill: =RGBA(240, 242, 246, 1)
-            OnSelect: |-
-              =If(
-                  Coalesce(varCurrentRequest.ID, 0) > 0,
-                  With(
-                      {
-                          // the side of the thread the current user is on; notes from the other side can be new for them
-                          noteSide: If(
-                              varUserRole = "ADMINISTRATOR",
-                              "Administrator",
-                              If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
-                          )
-                      },
-                      ClearCollect(
-                          colReqNotes,
-                          ForAll(
-                              Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                              {
-                                  NRole: AuthorRole.Value,
-                                  NAuthor: Coalesce(AuthorName, "-"),
-                                  NDate: Coalesce(NoteDate, Created),
-                                  NText: PlainText(Coalesce(NoteText, "")),
-                                  NKey: ID,
-                                  // not read yet by the side it was written for
-                                  NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
-                              }
-                          )
-                      )
-                  );
-                  // notes written before the thread existed stay as the first entry of each column
-                  Collect(
-                      colReqNotes,
-                      Filter(
-                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
-                          Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                      )
-                  );
-                  // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
-                  With(
-                      {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
-                      With(
-                          {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
-                          Collect(
-                              colReqNotes,
-                              Filter(
-                                  Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
-                                  rc <> "" And Not(inThread)
-                              )
-                          )
-                      )
-                  ),
-                  Clear(colReqNotes)
-              );
-              // unread notes from the other side show as "New" in the pop-up, then are saved as read
-              UpdateContext({locNewNotes: ForAll(Filter(colReqNotes, NNew), NKey)});
-              IfError(
-                  ForAll(
-                      Filter(colReqNotes, NNew) As nn,
-                      Patch('AV-CD-Notes', LookUp('AV-CD-Notes', ID = nn.NKey), {ReadOn: Now(), ReadBy: User().FullName})
-                  ),
-                  Notify("The notes could not be marked as read: " & FirstError.Message, NotificationType.Warning)
-              );
-              UpdateIf(colReqNotes, NNew, {NNew: false});
-              UpdateContext({locShowNotes: true})
-            PaddingBottom: =0
-            PaddingTop: =0
-            PressedBorderColor: =RGBA(0, 0, 0, 1)
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            RadiusBottomLeft: =14
-            RadiusBottomRight: =14
-            RadiusTopLeft: =14
-            RadiusTopRight: =14
-            Size: =11
-            Text: |-
-              =With(
-                  {n: CountRows(Filter(colReqNotes, Lower(NRole) = "requestor")), nNew: CountRows(Filter(colReqNotes, Lower(NRole) = "requestor", NNew))},
-                  If(
-                      n = 0,
-                      If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) , "✎  Add a note", "No notes yet"),
-                      "💬  " & n & If(n = 1, " note", " notes") & If(nNew > 0, "  ·  " & nNew & " new", "")
-                  )
-              )
-            Tooltip: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "requestor", NNew)) > 0, "You have unread notes. Opening them marks them as read.", "Open the notes of this request")
-            Visible: =Not(locDetailsCollapsed)
-            Width: =168
-            X: =915
-            Y: =351
       - RS_RejectionBanner:
           Control: Rectangle@2.3.0
           Group: Group1
@@ -1719,9 +1497,9 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Fill: =RGBA(240, 242, 246, 1)
             Height: =46
-            Width: =1304
-            X: =26
-            Y: =If(locDetailsCollapsed, 150, 448)
+            Width: =1284
+            X: =30
+            Y: =452
       - RS_ThTitle:
           Control: Label@2.5.1
           Group: Group1
@@ -1867,7 +1645,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
-                                  ArchivingOnly: varRequestArchivingOnly,
+                                  ArchivedOnly: varRequestArchivedOnly,
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
@@ -1894,8 +1672,6 @@ Screens:
                       RemoveIf(colManualContacts, ParentRequest = varCurrentRequest.RequestNumber);
                       Set(varReqDataLoaded, false);
                       Notify("Request submitted successfully.", NotificationType.Success);
-                      // open the list on the status the request is in now
-                      Set(varNavFilter, "Processing");
                       Navigate(RequestManagementScreen)
                   ),
                   Notify("Error submitting request: " & FirstError.Message, NotificationType.Error)
@@ -2001,7 +1777,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
-                                  ArchivingOnly: varRequestArchivingOnly,
+                                  ArchivedOnly: varRequestArchivedOnly,
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
@@ -2028,8 +1804,6 @@ Screens:
                       RemoveIf(colManualContacts, ParentRequest = varCurrentRequest.RequestNumber);
                       Set(varReqDataLoaded, false);
                       Notify("Request resubmitted for review.", NotificationType.Success);
-                      // open the list on the status the request is in now
-                      Set(varNavFilter, "Processing");
                       Navigate(RequestManagementScreen)
                   ),
                   Notify("Error resubmitting: " & FirstError.Message, NotificationType.Error)
@@ -2112,8 +1886,10 @@ Screens:
       - RS_TypeIconBtn:
           Control: Classic/Button@2.2.0
           Properties:
-            BorderColor: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", RGBA(210, 216, 224, 1), RGBA(56, 96, 178, 1))
-            BorderThickness: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", 1, 2)
+            BorderColor: |-
+              =// yellow while the production type is not chosen (it is needed before media can be added)
+              If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", RGBA(255, 204, 0, 1), RGBA(56, 96, 178, 1))
+            BorderThickness: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", 3, 2)
             Color: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisabledColor: =RGBA(150, 158, 170, 1)
@@ -2185,7 +1961,7 @@ Screens:
             Visible: =Not(locDetailsCollapsed)
             Width: =374
             X: =916
-            Y: =224
+            Y: =212
       - Label12_6:
           Control: Label@2.5.1
           Properties:
@@ -2441,20 +2217,6 @@ Screens:
             OnSelect: =
             Visible: =locShowContactPopup
             Width: =1366
-      - RS_LblAdminNotes_1:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(60, 66, 80, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =22
-            Size: =10
-            Text: ="Requestor Notes:"
-            Visible: =Not(locDetailsCollapsed)
-            Width: =166
-            X: =916
-            Y: =327
       - RS_Menu_Help:
           Control: Classic/Button@2.2.0
           Group: RS_Menu
@@ -2898,7 +2660,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
-                                  ArchivingOnly: varRequestArchivingOnly,
+                                  ArchivedOnly: varRequestArchivedOnly,
                                   Description: varRequestDescription, 
                                   Status: {Value: "Draft"}
                               
@@ -2918,7 +2680,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
-                                  ArchivingOnly: varRequestArchivingOnly,
+                                  ArchivedOnly: varRequestArchivedOnly,
                                   Description: varRequestDescription, 
                                   Status: {Value: "Draft"}
                               
@@ -2937,7 +2699,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
-                                  ArchivingOnly: varRequestArchivingOnly,
+                                  ArchivedOnly: varRequestArchivedOnly,
                                   Description: varRequestDescription, 
                                   Status: {Value: "Draft"}
                               
@@ -3062,352 +2824,6 @@ Screens:
             Width: =27
             X: =1303
             Y: =106
-      - Rectangle1:
-          Control: Rectangle@2.3.0
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(237, 237, 237, 0.86)
-            Height: =662
-            Visible: =locShowTypePicker
-            Width: =1366
-            Y: =57
-      - RS_TypePickerOverlay:
-          Control: Rectangle@2.3.0
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(24, 28, 40, 0.86)
-            Height: =Parent.Height
-            OnSelect: =Notify("Select a production type to continue.", NotificationType.Warning)
-            Visible: =locShowTypePicker
-            Width: =Parent.Width
-      - RS_TypePickerHalo:
-          Control: Rectangle@2.3.0
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(230, 234, 240, 1)
-            Fill: =RGBA(255, 255, 255, 0.16)
-            Height: =400
-            Visible: =locShowTypePicker
-            Width: =620
-            X: =373
-            Y: =240
-      - RS_TypePickerPanel:
-          Control: Rectangle@2.3.0
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(230, 234, 240, 1)
-            BorderThickness: =1
-            Fill: =RGBA(255, 255, 255, 1)
-            Height: =380
-            Visible: =locShowTypePicker
-            Width: =600
-            X: =383
-            Y: =250
-      - RS_TypePickerAccent:
-          Control: Rectangle@2.3.0
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(0, 18, 107, 1)
-            Height: =6
-            Visible: =locShowTypePicker
-            Width: =600
-            X: =383
-            Y: =250
-      - RS_TypePickerTitle:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Bold
-            Height: =30
-            Size: =17
-            Text: ="Choose a production type"
-            Visible: =locShowTypePicker
-            Width: =520
-            X: =407
-            Y: =280
-      - RS_TypePickerSubtitle:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            Height: =22
-            Size: =11
-            Text: |-
-              ="Required: one request = one media type. Choose the format to continue."
-            Visible: =locShowTypePicker
-            Width: =520
-            X: =407
-            Y: =310
-      - RS_CardPhoto:
-          Control: Rectangle@2.3.0
-          Group: Group4
-          Properties:
-            BorderColor: =If(varRequestMediaType = "Photo", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
-            BorderThickness: =If(varRequestMediaType = "Photo", 2, 1)
-            Fill: =If(varRequestMediaType = "Photo", RGBA(204, 229, 255, 1), RGBA(250, 251, 253, 1))
-            Height: =210
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =407
-            Y: =350
-      - RS_CardPhotoIcon:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            Height: =72
-            Size: =40
-            Text: |-
-              ="📷"
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =407
-            Y: =380
-      - RS_CardPhotoName:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =24
-            Text: ="Photo / Reportage"
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =407
-            Y: =462
-      - RS_CardPhotoDesc:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            Height: =46
-            Size: =10
-            Text: ="Still images, photo reportage"
-            Visible: =locShowTypePicker
-            Width: =154
-            X: =415
-            Y: =492
-      - RS_CardPhotoBtn:
-          Control: Classic/Button@2.2.0
-          Group: Group4
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(0, 0, 0, 0)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(0, 0, 0, 0)
-            Font: =Font.'Open Sans'
-            Height: =210
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(204, 229, 255, 0.35)
-            OnSelect: |-
-              =Set(varRequestMediaType, "Photo");
-              Set(varConfirmed, true);
-              UpdateContext({locShowTypePicker: false})
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =RGBA(204, 229, 255, 0.6)
-            RadiusBottomLeft: =14
-            RadiusBottomRight: =14
-            RadiusTopLeft: =14
-            RadiusTopRight: =14
-            Text: =""
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =407
-            Y: =350
-      - RS_CardVideo:
-          Control: Rectangle@2.3.0
-          Group: Group4
-          Properties:
-            BorderColor: =If(varRequestMediaType = "Video", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
-            BorderThickness: =If(varRequestMediaType = "Video", 2, 1)
-            Fill: =If(varRequestMediaType = "Video", RGBA(204, 229, 255, 1), RGBA(250, 251, 253, 1))
-            Height: =210
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =593
-            Y: =350
-      - RS_CardVideoIcon:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            Height: =72
-            Size: =40
-            Text: |-
-              ="🎬"
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =593
-            Y: =380
-      - RS_CardVideoName:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =24
-            Text: ="Video"
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =593
-            Y: =462
-      - RS_CardVideoDesc:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            Height: =46
-            Size: =10
-            Text: ="Films, clips and motion content"
-            Visible: =locShowTypePicker
-            Width: =154
-            X: =601
-            Y: =492
-      - RS_CardVideoBtn:
-          Control: Classic/Button@2.2.0
-          Group: Group4
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(0, 0, 0, 0)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(0, 0, 0, 0)
-            Font: =Font.'Open Sans'
-            Height: =210
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(204, 229, 255, 0.35)
-            OnSelect: |-
-              =Set(varRequestMediaType, "Video");
-              Set(varConfirmed, true);
-              UpdateContext({locShowTypePicker: false})
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =RGBA(204, 229, 255, 0.6)
-            RadiusBottomLeft: =14
-            RadiusBottomRight: =14
-            RadiusTopLeft: =14
-            RadiusTopRight: =14
-            Text: =""
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =593
-            Y: =350
-      - RS_CardPodcast:
-          Control: Rectangle@2.3.0
-          Group: Group4
-          Properties:
-            BorderColor: =If(varRequestMediaType = "Podcast", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
-            BorderThickness: =If(varRequestMediaType = "Podcast", 2, 1)
-            Fill: =If(varRequestMediaType = "Podcast", RGBA(204, 229, 255, 1), RGBA(250, 251, 253, 1))
-            Height: =210
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =779
-            Y: =350
-      - RS_CardPodcastIcon:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            Height: =72
-            Size: =40
-            Text: |-
-              ="🎙️"
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =779
-            Y: =380
-      - RS_CardPodcastName:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =24
-            Text: ="Podcast"
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =779
-            Y: =462
-      - RS_CardPodcastDesc:
-          Control: Label@2.5.1
-          Group: Group4
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            Height: =46
-            Size: =10
-            Text: ="Audio episodes/series"
-            Visible: =locShowTypePicker
-            Width: =154
-            X: =787
-            Y: =492
-      - RS_CardPodcastBtn:
-          Control: Classic/Button@2.2.0
-          Group: Group4
-          Properties:
-            AutoDisableOnSelect: =false
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(0, 0, 0, 0)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(0, 0, 0, 0)
-            Font: =Font.'Open Sans'
-            Height: =210
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(204, 229, 255, 0.35)
-            OnSelect: |-
-              =Set(varRequestMediaType, "Podcast");
-              Set(varConfirmed, true);
-              UpdateContext({locShowTypePicker: false})
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =RGBA(204, 229, 255, 0.6)
-            RadiusBottomLeft: =14
-            RadiusBottomRight: =14
-            RadiusTopLeft: =14
-            RadiusTopRight: =14
-            Text: =""
-            Visible: =locShowTypePicker
-            Width: =170
-            X: =779
-            Y: =350
       - DOA_List1CounterCircle_1:
           Control: Circle@2.3.0
           Group: DOA_List1Counter_1
@@ -3472,23 +2888,25 @@ Screens:
             Width: =873
             X: =197
             Y: =57
-      - Gallery1:
+      - MessageCenter:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Flexible_SocialFeed_ver5.0
           Group: Group3
           Properties:
             BorderColor: =RGBA(102, 113, 166, 1)
             BorderThickness: =3
+            Default: =Index(MessageCenter.AllItems, currentIndex)
             DisplayMode: =DisplayMode.View
             Fill: =RGBA(215, 223, 240, 0.18)
             Height: =444
             Items: =Filter('AV-CD-Notes', Title = varCurrentRequest.RequestNumber)
             Selectable: =false
             TemplateSize: =440
+            Transition: =Transition.Pop
             Visible: =locShowNotes
-            Width: =610
+            Width: =600
             X: =336
-            Y: =132
+            Y: =138
           Children:
             - Title1:
                 Control: Label@2.5.1
@@ -3508,8 +2926,8 @@ Screens:
                   Text: =PlainText(ThisItem.NoteText)
                   VerticalAlign: =VerticalAlign.Top
                   Width: =300
-                  X: =If(ThisItem.AuthorRole.Value = "Administrator", 280, 40)
-                  Y: =25
+                  X: =If(ThisItem.AuthorRole.Value = "Administrator", 280, 25)
+                  Y: =35
             - Body1_1:
                 Control: Label@2.5.1
                 Properties:
@@ -3531,58 +2949,21 @@ Screens:
                   VerticalAlign: =VerticalAlign.Top
                   Width: =549
                   X: =29
-                  Y: =8
-            - NT_ReadStatus:
-                Control: Label@2.5.1
-                Properties:
-                  Align: =If(ThisItem.AuthorRole.Value = "Administrator", Align.Right, Align.Left)
-                  AutoHeight: =true
-                  BorderColor: =RGBA(0, 0, 0, 1)
-                  Color: =If(ThisItem.ID in locNewNotes.Value, RGBA(193, 40, 40, 1), IsBlank(ThisItem.ReadOn), RGBA(140, 148, 160, 1), RGBA(22, 128, 80, 1))
-                  DisabledColor: =RGBA(186, 186, 186, 1)
-                  DisplayMode: =DisplayMode.View
-                  Font: =Font.'Open Sans'
-                  FontWeight: =If(ThisItem.ID in locNewNotes.Value, FontWeight.Semibold, FontWeight.Normal)
-                  Height: =18
-                  OnSelect: =Select(Parent)
-                  PaddingBottom: =0
-                  PaddingLeft: =0
-                  PaddingRight: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: |-
-                    =// New = unread when this pop-up was opened (now saved as read)
-                    If(
-                        ThisItem.ID in locNewNotes.Value,
-                        "●  New",
-                        IsBlank(ThisItem.ReadOn),
-                        "Not read yet",
-                        "✓  Read" & If(IsBlank(ThisItem.ReadBy), "", " by " & ThisItem.ReadBy) & " on " & If(
-                            Hour(ThisItem.ReadOn) = 0 And Minute(ThisItem.ReadOn) = 0,
-                            Text(ThisItem.ReadOn, DateTimeFormat.ShortDate),
-                            Text(ThisItem.ReadOn, DateTimeFormat.ShortDateTime)
-                        )
-                    )
-                  VerticalAlign: =VerticalAlign.Top
-                  Width: =Title1.Width
-                  X: =Title1.X
-                  Y: =Title1.Y + Title1.Height + 2
-                Children: []
+                  Y: =18
       - NT_Hint:
           Control: Label@2.5.1
           Group: Group3
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(60, 66, 80, 1)
+            Color: =RGBA(102, 102, 102, 1)
             Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =36
-            Size: =11
-            Text: ="Add a note as Requestor:"
+            Height: =19
+            Size: =10
+            Text: ="Add a note as a Requestor:"
             Visible: =locShowNotes
             Width: =434
             X: =324
-            Y: =584
+            Y: =599
       - NT_AdmHeader:
           Control: Label@2.5.1
           Group: Group3
@@ -3596,8 +2977,8 @@ Screens:
             Text: ="Administrator  ·  Central Deposit"
             Visible: =locShowNotes
             Width: =310
-            X: =629
-            Y: =87
+            X: =627
+            Y: =95
       - NT_Input:
           Control: Classic/TextInput@2.3.2
           Group: Group3
@@ -3720,56 +3101,25 @@ Screens:
                               )
                           );
                           If(
-                              Coalesce(varCurrentRequest.ID, 0) > 0,
-                              With(
-                                  {
-                                      // the side of the thread the current user is on; notes from the other side can be new for them
-                                      noteSide: If(
-                                          varUserRole = "ADMINISTRATOR",
-                                          "Administrator",
-                                          If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
-                                      )
-                                  },
-                                  ClearCollect(
-                                      colReqNotes,
-                                      ForAll(
-                                          Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                                          {
-                                              NRole: AuthorRole.Value,
-                                              NAuthor: Coalesce(AuthorName, "-"),
-                                              NDate: Coalesce(NoteDate, Created),
-                                              NText: PlainText(Coalesce(NoteText, "")),
-                                              NKey: ID,
-                                              // not read yet by the side it was written for
-                                              NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
-                                          }
-                                      )
-                                  )
-                              );
-                              // notes written before the thread existed stay as the first entry of each column
-                              Collect(
-                                  colReqNotes,
-                                  Filter(
-                                      Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
-                                      Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                                  )
-                              );
-                              // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
-                              With(
-                                  {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
-                                  With(
-                                      {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
-                                      Collect(
-                                          colReqNotes,
-                                          Filter(
-                                              Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
-                                              rc <> "" And Not(inThread)
-                                          )
-                                      )
-                                  )
-                              ),
-                              Clear(colReqNotes)
-                          );
+                  Coalesce(varCurrentRequest.ID, 0) > 0,
+                  ClearCollect(
+                      colReqNotes,
+                      // notes written before the thread existed stay as the first entry of each column
+                      Filter(
+                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0}),
+                          Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
+                      ),
+                      Filter(
+                          Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0}),
+                          Not(IsBlank(Trim(Coalesce(varCurrentRequest.ReviewerComments, ""))))
+                      ),
+                      ForAll(
+                          Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
+                          {NRole: AuthorRole.Value, NAuthor: Coalesce(AuthorName, "-"), NDate: Coalesce(NoteDate, Created), NText: PlainText(Coalesce(NoteText, "")), NKey: ID}
+                      )
+                  ),
+                  Clear(colReqNotes)
+              );
                           Reset(NT_Input);
                           Notify("Note added.", NotificationType.Success),
                           Notify("Could not save the note: " & FirstError.Message, NotificationType.Error)
@@ -3804,8 +3154,8 @@ Screens:
               )
             Visible: =locShowNotes
             Width: =243
-            X: =692
-            Y: =108
+            X: =686
+            Y: =118
       - NT_ReqHeader:
           Control: Label@2.5.1
           Group: Group3
@@ -3824,18 +3174,17 @@ Screens:
           Control: Label@2.5.1
           Group: Group3
           Properties:
-            Align: =Align.Center
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(0, 18, 107, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =36
-            Size: =20
-            Text: ="Notes"
+            Height: =54
+            Size: =16
+            Text: ="Message Center"
             Visible: =locShowNotes
-            Width: =100
-            X: =214
-            Y: =80
+            Width: =102
+            X: =222
+            Y: =78
       - DOA_List1RowBadge_6:
           Control: Classic/Button@2.2.0
           Group: Group3
@@ -3846,6 +3195,7 @@ Screens:
             DisabledBorderColor: =Self.BorderColor
             DisabledColor: =RGBA(0, 13, 75, 1)
             DisabledFill: =RGBA(215, 223, 240, 1)
+            DisplayMode: =DisplayMode.View
             Fill: =RGBA(215, 223, 240, 1)
             Font: =Font.'Open Sans'
             Height: =28
@@ -3868,7 +3218,7 @@ Screens:
             Visible: =locShowNotes
             Width: =97
             X: =217
-            Y: =128
+            Y: =143
       - RS_ContactPopup:
           Control: Rectangle@2.3.0
           Group: Pop-up Contact Extra
@@ -4041,55 +3391,349 @@ Screens:
             Width: =200
             X: =682
             Y: =373
-      - RS_ArchiveOnlyCheck:
-          Control: Classic/CheckBox@2.1.0
+      - Rectangle1:
+          Control: Rectangle@2.3.0
+          Group: Group4
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
-            CheckmarkFill: =RGBA(0, 0, 0, 1)
-            Color: =RGBA(0, 0, 0, 1)
-            Default: =varRequestArchivingOnly
-            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
-            Font: =Font.'Open Sans'
-            Height: =44
-            HoverColor: =RGBA(0, 18, 107, 1)
-            OnCheck: |-
-              =Set(varRequestArchivingOnly, true);
-              // a saved request stores the answer straight away, so it survives opening a media item and coming back
-              If(
-                  Coalesce(varCurrentRequest.ID, 0) > 0 And Coalesce(varCurrentRequest.ArchivingOnly, false) <> true,
-                  IfError(
-                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ArchivingOnly: true})),
-                      Notify("Could not save the answer: " & FirstError.Message, NotificationType.Error)
-                  )
-              )
-            OnUncheck: |-
-              =Set(varRequestArchivingOnly, false);
-              // a saved request stores the answer straight away, so it survives opening a media item and coming back
-              If(
-                  Coalesce(varCurrentRequest.ID, 0) > 0 And Coalesce(varCurrentRequest.ArchivingOnly, false) <> false,
-                  IfError(
-                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ArchivingOnly: false})),
-                      Notify("Could not save the answer: " & FirstError.Message, NotificationType.Error)
-                  )
-              )
-            Size: =10
-            Text: ="Archiving only, not publication"
-            Visible: =Not(locDetailsCollapsed)
-            Width: =374
-            X: =916
-            Y: =276
-            ZIndex: =8
-          Children: []
-      - RS_NotesBand:
+            Fill: =RGBA(237, 237, 237, 0.86)
+            Height: =662
+            Visible: =locShowTypePicker
+            Width: =1366
+            Y: =57
+      - RS_TypePickerOverlay:
           Control: Rectangle@2.3.0
+          Group: Group4
           Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            Fill: =RGBA(241, 244, 249, 1)
-            Height: =77
-            Visible: =Not(locDetailsCollapsed)
-            Width: =449
-            X: =885
-            Y: =322
-            ZIndex: =10
-          Children: []
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(24, 28, 40, 0.86)
+            Height: =Parent.Height
+            OnSelect: =Notify("Select a production type to continue.", NotificationType.Warning)
+            Visible: =locShowTypePicker
+            Width: =Parent.Width
+      - RS_TypePickerHalo:
+          Control: Rectangle@2.3.0
+          Group: Group4
+          Properties:
+            BorderColor: =RGBA(230, 234, 240, 1)
+            Fill: =RGBA(255, 255, 255, 0.16)
+            Height: =400
+            Visible: =locShowTypePicker
+            Width: =620
+            X: =373
+            Y: =240
+      - RS_TypePickerPanel:
+          Control: Rectangle@2.3.0
+          Group: Group4
+          Properties:
+            BorderColor: =RGBA(230, 234, 240, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =380
+            Visible: =locShowTypePicker
+            Width: =600
+            X: =383
+            Y: =250
+      - RS_TypePickerAccent:
+          Control: Rectangle@2.3.0
+          Group: Group4
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =6
+            Visible: =locShowTypePicker
+            Width: =600
+            X: =383
+            Y: =250
+      - RS_TypePickerTitle:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =17
+            Text: ="Choose a production type"
+            Visible: =locShowTypePicker
+            Width: =520
+            X: =407
+            Y: =280
+      - RS_TypePickerSubtitle:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =11
+            Text: |-
+              ="Required: one request = one media type. Choose the format to continue."
+            Visible: =locShowTypePicker
+            Width: =520
+            X: =407
+            Y: =310
+      - RS_CardPhoto:
+          Control: Rectangle@2.3.0
+          Group: Group4
+          Properties:
+            BorderColor: =If(varRequestMediaType = "Photo", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(varRequestMediaType = "Photo", 2, 1)
+            Fill: =If(varRequestMediaType = "Photo", RGBA(204, 229, 255, 1), RGBA(250, 251, 253, 1))
+            Height: =210
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =407
+            Y: =350
+      - RS_CardPhotoBtn:
+          Control: Classic/Button@2.2.0
+          Group: Group4
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(0, 0, 0, 0)
+            Font: =Font.'Open Sans'
+            Height: =210
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(204, 229, 255, 0.35)
+            OnSelect: |-
+              =Set(varRequestMediaType, "Photo");
+              Set(varConfirmed, true);
+              UpdateContext({locShowTypePicker: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(204, 229, 255, 0.6)
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Text: =""
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =407
+            Y: =350
+      - RS_CardVideo:
+          Control: Rectangle@2.3.0
+          Group: Group4
+          Properties:
+            BorderColor: =If(varRequestMediaType = "Video", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(varRequestMediaType = "Video", 2, 1)
+            Fill: =If(varRequestMediaType = "Video", RGBA(204, 229, 255, 1), RGBA(250, 251, 253, 1))
+            Height: =210
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =593
+            Y: =350
+      - RS_CardVideoBtn:
+          Control: Classic/Button@2.2.0
+          Group: Group4
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(0, 0, 0, 0)
+            Font: =Font.'Open Sans'
+            Height: =210
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(204, 229, 255, 0.35)
+            OnSelect: |-
+              =Set(varRequestMediaType, "Video");
+              Set(varConfirmed, true);
+              UpdateContext({locShowTypePicker: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(204, 229, 255, 0.6)
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Text: =""
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =593
+            Y: =350
+      - RS_CardPodcast:
+          Control: Rectangle@2.3.0
+          Group: Group4
+          Properties:
+            BorderColor: =If(varRequestMediaType = "Podcast", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(varRequestMediaType = "Podcast", 2, 1)
+            Fill: =If(varRequestMediaType = "Podcast", RGBA(204, 229, 255, 1), RGBA(250, 251, 253, 1))
+            Height: =210
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =779
+            Y: =350
+      - RS_CardPodcastBtn:
+          Control: Classic/Button@2.2.0
+          Group: Group4
+          Properties:
+            AutoDisableOnSelect: =false
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(0, 0, 0, 0)
+            Font: =Font.'Open Sans'
+            Height: =210
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(204, 229, 255, 0.35)
+            OnSelect: |-
+              =Set(varRequestMediaType, "Podcast");
+              Set(varConfirmed, true);
+              UpdateContext({locShowTypePicker: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(204, 229, 255, 0.6)
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Text: =""
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =779
+            Y: =350
+      - RS_CardPhotoIcon:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =72
+            Size: =40
+            Text: |-
+              ="📷"
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =407
+            Y: =380
+      - RS_CardPhotoName:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: ="Photo / Reportage"
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =407
+            Y: =462
+      - RS_CardPhotoDesc:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =46
+            Size: =10
+            Text: ="Still images, photo reportage"
+            Visible: =locShowTypePicker
+            Width: =154
+            X: =415
+            Y: =492
+      - RS_CardVideoIcon:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =72
+            Size: =40
+            Text: |-
+              ="🎬"
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =593
+            Y: =380
+      - RS_CardVideoName:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: ="Video"
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =593
+            Y: =462
+      - RS_CardVideoDesc:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =46
+            Size: =10
+            Text: ="Films, clips and motion content"
+            Visible: =locShowTypePicker
+            Width: =154
+            X: =601
+            Y: =492
+      - RS_CardPodcastIcon:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =72
+            Size: =40
+            Text: |-
+              ="🎙️"
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =779
+            Y: =380
+      - RS_CardPodcastName:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: ="Podcast"
+            Visible: =locShowTypePicker
+            Width: =170
+            X: =779
+            Y: =462
+      - RS_CardPodcastDesc:
+          Control: Label@2.5.1
+          Group: Group4
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =46
+            Size: =10
+            Text: ="Audio episodes/series"
+            Visible: =locShowTypePicker
+            Width: =154
+            X: =787
+            Y: =492

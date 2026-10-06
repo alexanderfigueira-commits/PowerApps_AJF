@@ -26,14 +26,7 @@ Screens:
             Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
         );
         // the podcast visual preview starts closed
-        UpdateContext({locShowVisualPreview: false});
-        // A Video's Language and Type of product dropdowns show their first item (EN / Clip) while nothing is
-        // stored yet. Store what is shown, or the Validations tab sees them empty until they are re-selected.
-        If(
-            varChildMediaType = "Video" And Not(varRequestorLocked),
-            If(Coalesce(varChildLanguageVersions, "") = "", Set(varChildLanguageVersions, "EN"));
-            If(Coalesce(varChildProductType, varChildProductType1, "") = "", Set(varChildProductType, "Clip"))
-        )
+        UpdateContext({locShowVisualPreview: false})
     Children:
       - CI_Breadcrumb:
           Control: Label@2.5.1
@@ -204,9 +197,8 @@ Screens:
                   FontWeight: =FontWeight.Semibold
                   PaddingLeft: =12
                   Size: =14
-                  Text: |-
-                    ="Product type:  " & If(varChildMediaType = "Photo", "Photo / Reportage", varChildMediaType)
-                  Width: =500
+                  Text: =If(varChildMediaType = "Photo", "Photo / Reportage", varChildMediaType)
+                  Width: =262
                   X: =56
                   Y: =66
             - CI_LblTitle:
@@ -217,7 +209,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="Archive / production title *"
+                  Text: =If(varChildMediaType = "Photo","Photo/Reportage Title",If(varChildMediaType = "Podcast","Podcast Title",If(varChildMediaType ="Video","Video Title")))
                   Visible: =varChildMediaType <> "Podcast"
                   Width: =800
                   X: =56
@@ -232,10 +224,11 @@ Screens:
                   Default: =varChildTitle1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
-                  HintText: ="Descriptive name of this specific archive item"
+                  HintText: ="Media Production Title"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildTitle1, Self.Text)
+                  Size: =11
                   Visible: =varChildMediaType <> "Podcast"
                   Width: =900
                   X: =56
@@ -266,6 +259,7 @@ Screens:
                   HoverFill: =RGBA(186, 202, 226, 1)
                   Mode: =TextMode.MultiLine
                   OnChange: =Set(varChildDescription1, Self.Text)
+                  Size: =11
                   Visible: =varChildMediaType <> "Podcast"
                   Width: =900
                   X: =56
@@ -277,7 +271,7 @@ Screens:
                   Default: =varChildNotes
                   Font: =Font.'Open Sans'
                   Height: =60
-                  HintText: ="Anything Central Deposit should know about this media file"
+                  HintText: ="Relevant Details about this Media File"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
                   Mode: =TextMode.MultiLine
@@ -294,9 +288,10 @@ Screens:
                             NotificationType.Error
                         )
                     )
+                  Size: =11
                   Width: =900
                   X: =56
-                  Y: =If(varChildMediaType = "Photo", 458, If(varChildMediaType = "Video", 508, If(varChildMediaType = "Podcast", 578, 834)))
+                  Y: =503
             - CI_LblCaptureDate:
                 Control: Label@2.5.1
                 Properties:
@@ -439,21 +434,6 @@ Screens:
                   Width: =390
                   X: =56
                   Y: =474
-            - CI_EpisodeTitle:
-                Control: Classic/TextInput@2.3.2
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Default: =varChildEpisodeTitle1
-                  DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
-                  Font: =Font.'Open Sans'
-                  HintText: ="Episode or segment title"
-                  HoverBorderColor: =RGBA(0, 18, 107, 1)
-                  HoverFill: =RGBA(186, 202, 226, 1)
-                  OnChange: =Set(varChildEpisodeTitle, Self.Text)
-                  Visible: =false
-                  Width: =390
-                  X: =56
-                  Y: =500
             - CI_LblProductionEndDate:
                 Control: Label@2.5.1
                 Properties:
@@ -618,6 +598,7 @@ Screens:
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
                   OnChange: =Set(varChildFTPPath1, Self.Text)
+                  Size: =11
                   Visible: =varChildMediaType = "Photo"
                   Width: =900
                   X: =56
@@ -646,7 +627,7 @@ Screens:
                   Text: ="Notes"
                   Width: =400
                   X: =56
-                  Y: =If(varChildMediaType = "Photo", 432, If(varChildMediaType = "Video", 482, If(varChildMediaType = "Podcast", 552, 808)))
+                  Y: =471
             - CI_Language:
                 Control: Classic/DropDown@2.3.1
                 Properties:
@@ -769,7 +750,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="Podcast visual - Episode*"
+                  Text: ="Podcast visual*"
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =56
@@ -909,7 +890,7 @@ Screens:
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
             Size: =12
-            Text: ="Use previous archive as template"
+            Text: ="Copy from previous media item"
             Width: =300
             X: =1011
             Y: =125
@@ -1885,3 +1866,24 @@ Screens:
             Width: =40
             X: =1031
             Y: =74
+      - Button1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext({locShowPodcastVisual: false});
+              UpdateContext({locShowVisualPreview: true})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Visualize"
+            Visible: =locShowPodcastVisual And varChildMediaType = "Podcast"
+            X: =1030
+            Y: =603

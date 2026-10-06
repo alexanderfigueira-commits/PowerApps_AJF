@@ -118,13 +118,13 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =RGBA(96, 104, 120, 1)
                   Font: =Font.'Open Sans'
-                  Height: =33
+                  Height: =38
                   OnSelect: =Select(Parent)
                   Size: =10
-                  Text: =Coalesce(ThisItem.DG.Value, "—") & "  ·  " & Coalesce(First(ThisItem.DG_Agency_Contact).DisplayName, "—")
-                  Width: =370
-                  X: =20
-                  Y: =56
+                  Text: =Coalesce(ThisItem.DG.Value, "—") & "  ·  " & Coalesce(ThisItem.Assignee.DisplayName, "— Not Assigned —") & If(IsBlank(ThisItem.CoAssignee.DisplayName), "", " + " & ThisItem.CoAssignee.DisplayName)
+                  Width: =417
+                  X: =13
+                  Y: =51
             - Icon1:
                 Control: Classic/Icon@2.5.0
                 Properties:
@@ -244,7 +244,8 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =28
-            Text: ="Media Files in the request:"
+            Size: =11
+            Text: ="View Request:"
             Visible: =Not(IsBlank(varReviewProject))
             Width: =400
             X: =460
@@ -306,6 +307,7 @@ Screens:
                       Created, SortOrder.Descending
                   )
               )
+            ShowNavigation: =true
             TemplateSize: =100
             Visible: =Not(IsBlank(varReviewProject))
             Width: =900
@@ -327,7 +329,7 @@ Screens:
                   Color: =RGBA(32, 31, 30, 1)
                   Font: =Font.'Open Sans'
                   Height: =36
-                  Size: =12
+                  Size: =11
                   Text: =If(IsBlank(ThisItem.CD_MediaNumber) Or ThisItem.CD_MediaNumber = "New archive", "— untitled —", ThisItem.CD_MediaNumber)
                   Width: =340
                   X: =24
@@ -349,7 +351,7 @@ Screens:
                   Color: =RGBA(96, 104, 120, 1)
                   Font: =Font.'Open Sans'
                   Height: =22
-                  Size: =10
+                  Size: =11
                   Text: ="Internal Notes"
                   Width: =110
                   X: =24
@@ -369,7 +371,7 @@ Screens:
                     )
                   Font: =Font.'Open Sans'
                   Height: =36
-                  Size: =12
+                  Size: =11
                   Text: |-
                     =If(
                         Not(IsBlank(ThisItem.CD_MediaNumber)) And ThisItem.CD_MediaNumber <> "New archive"
@@ -381,35 +383,19 @@ Screens:
                     )
                   Width: =160
                   X: =540
-            - RV_CRowNotesSave:
-                Control: Classic/Icon@2.5.0
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(Self.DisplayMode = DisplayMode.Edit, RGBA(56, 96, 178, 1), RGBA(186, 196, 214, 1))
-                  DisplayMode: =If(varUserRole = "ADMINISTRATOR" And RV_CRowNotes.Text <> PlainText(Coalesce(ThisItem.Notes, "")), DisplayMode.Edit, DisplayMode.Disabled)
-                  Height: =32
-                  Icon: =Icon.Save
-                  OnSelect: |-
-                    =IfError(
-                        Patch('AV-CD-Mediafiles', LookUp('AV-CD-Mediafiles', ID = ThisItem.ID), {Notes: RV_CRowNotes.Text});
-                        Notify("Internal notes saved for " & ThisItem.CD_MediaNumber & ".", NotificationType.Success),
-                        Notify("Internal notes could not be saved: " & FirstError.Message, NotificationType.Error)
-                    )
-                  Width: =32
-                  X: =846
-                  Y: =50
             - RV_CRowNotes:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Default: =PlainText(Coalesce(ThisItem.Notes, ""))
-                  DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+                  DisplayMode: =DisplayMode.View
                   Font: =Font.'Open Sans'
                   Height: =56
                   HintText: ="Internal notes for this media item"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
                   Mode: =TextMode.MultiLine
+                  Size: =11
                   Width: =690
                   X: =140
                   Y: =38
@@ -431,7 +417,7 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =28
-            Text: ="Co-assignee when needed                                           Assignee  -  approver is added on approval "
+            Text: ="Assignee / Co-assignee                                        "
             Visible: =Not(IsBlank(varReviewProject))
             Width: =800
             X: =454
@@ -445,50 +431,77 @@ Screens:
             ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             ChevronHoverFill: =RGBA(255, 255, 255, 1)
             DefaultSelectedItems: |-
-              =Filter(
-                  Table({
-                      DisplayName: Coalesce(
-                          varReviewProject.Assignee.DisplayName,
-                          First(varReviewProject.DG_Agency_Contact).DisplayName
-                      ),
-                      Mail: Coalesce(
-                          varReviewProject.Assignee.Email,
-                          First(varReviewProject.DG_Agency_Contact).Email
-                      )
-                  }),
+              =// only what is saved on the request: the assignee, then the co-assignee (no default from the DG contact)
+              Filter(
+                  Table(
+                      {DisplayName: Coalesce(varReviewProject.Assignee.DisplayName, ""), Mail: Coalesce(varReviewProject.Assignee.Email, "")},
+                      {DisplayName: Coalesce(varReviewProject.CoAssignee.DisplayName, ""), Mail: Coalesce(varReviewProject.CoAssignee.Email, "")}
+                  ),
                   Not(IsBlank(DisplayName))
               )
             DisplayFields: =["DisplayName"]
+            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
             Font: =Font.'Open Sans'
             HoverFill: =RGBA(186, 202, 226, 1)
-            InputTextPlaceholder: ="Search people to add as assignee…"
+            InputTextPlaceholder: |-
+              ="Search people: assignee, and co-assignee when needed (max 2)…"
             Items: |-
               =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
+            OnChange: |-
+              =// saves as soon as the selection changes (this replaces the Assign button)
+              With(
+                  {
+                      sel: Self.SelectedItems,
+                      id: varReviewProject.ID,
+                      oldA: Lower(Coalesce(varReviewProject.Assignee.Email, "")),
+                      oldC: Lower(Coalesce(varReviewProject.CoAssignee.Email, ""))
+                  },
+                  If(
+                      CountRows(sel) > 2,
+                      Notify("Only two people can be assigned: an assignee and a co-assignee.", NotificationType.Warning);
+                      Reset(Self),
+                      With(
+                          // the saved assignee stays the assignee while still picked; otherwise the first person picked
+                          {a: If(oldA <> "" And Not(IsBlank(LookUp(sel, Lower(Mail) = oldA))), LookUp(sel, Lower(Mail) = oldA), First(sel))},
+                          With(
+                              {c: First(Filter(sel, Lower(Mail) <> Lower(Coalesce(a.Mail, ""))))},
+                              If(
+                                  Lower(Coalesce(a.Mail, "")) <> oldA Or Lower(Coalesce(c.Mail, "")) <> oldC,
+                                  IfError(
+                                      Patch(
+                                          'AV-CD-Requests',
+                                          LookUp('AV-CD-Requests', ID = id),
+                                          {
+                                              Assignee: If(IsBlank(a.Mail), Blank(), {Claims: "i:0#.f|membership|" & Lower(a.Mail), DisplayName: a.DisplayName, Email: a.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                              CoAssignee: If(IsBlank(c.Mail), Blank(), {Claims: "i:0#.f|membership|" & Lower(c.Mail), DisplayName: c.DisplayName, Email: c.Mail, Department: "", JobTitle: "", Picture: ""})
+                                          }
+                                      );
+                                      Notify(
+                                          "Assignment saved: " & Coalesce(a.DisplayName, "no assignee") & If(IsBlank(c.DisplayName), "", " + " & c.DisplayName & " (co-assignee)") & ". A new assignee receives an email.",
+                                          NotificationType.Success
+                                      );
+                                      Refresh('AV-CD-Requests');
+                                      ClearCollect(colRevReqs, 'AV-CD-Requests');
+                                      // keep the same request open, now with the new assignment
+                                      Set(varReviewProject, LookUp(colRevReqs, ID = id));
+                                      Set(varReqDataLoaded, false),
+                                      Notify("Assign failed: " & FirstError.Message, NotificationType.Error)
+                                  )
+                              )
+                          )
+                      )
+                  )
+              )
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
             SearchFields: =["DisplayName"]
-            SelectMultiple: =false
+            SelectMultiple: =true
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(56, 96, 178, 1)
             Size: =11
             Visible: =Not(IsBlank(varReviewProject))
             Width: =380
             X: =460
-            Y: =512
-      - RV_OwnerEmail:
-          Control: Classic/TextInput@2.3.2
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Default: =Coalesce(First(varReviewProject.Contractor_Contact).DisplayName, varReviewProject.Manual_Contractor_Contact, "—")
-            DisplayMode: =DisplayMode.View
-            Font: =Font.'Open Sans'
-            HintText: ="Contractor contact"
-            HoverBorderColor: =RGBA(0, 18, 107, 1)
-            HoverFill: =RGBA(186, 202, 226, 1)
-            Size: =11
-            Visible: =Not(IsBlank(varReviewProject))
-            Width: =380
-            X: =860
             Y: =512
       - RV_DetailDivider3:
           Control: Rectangle@2.3.0
@@ -508,7 +521,8 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =24
-            Text: ="Reviewer comment  (required to pending or reject)  ·  saved as a note for the requestor"
+            Size: =11
+            Text: ="Reviewer comment  (required to pending or reject)"
             Visible: =Not(IsBlank(varReviewProject))
             Width: =600
             X: =460
@@ -519,13 +533,13 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Default: =Coalesce(varReviewComment, "")
             Font: =Font.'Open Sans'
-            Height: =60
-            HintText: ="Explain what needs to be corrected before the project can be approved."
+            Height: =92
+            HintText: ="List the changes required for this request to be approved"
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             Mode: =TextMode.MultiLine
             OnChange: =Set(varReviewComment, Self.Text)
-            Tooltip: ="Saved with your decision and added to the request's notes (AV-CD-Notes)"
+            Size: =11
             Visible: =Not(IsBlank(varReviewProject))
             Width: =880
             X: =460
@@ -596,18 +610,6 @@ Screens:
                           "Partially approved",
                           "Approved"
                       )},
-                         Assignee: If(
-                              IsBlank(RV_Assignee.Selected.Mail),
-                              Blank(),
-                              {
-                                  Claims: "i:0#.f|membership|" & Lower(RV_Assignee.Selected.Mail),
-                                  DisplayName: RV_Assignee.Selected.DisplayName,
-                                  Email: RV_Assignee.Selected.Mail,
-                                  Department: "",
-                                  JobTitle: "",
-                                  Picture: ""
-                              }
-                          ),
                           ReviewedByContact: Table({
                               Claims: "i:0#.f|membership|" & Lower(User().Email),
                               DisplayName: User().FullName,
@@ -616,30 +618,8 @@ Screens:
                               JobTitle: "",
                               Picture: ""
                           }),
-                          ReviewedDate: Now(),
-                          // the dashboards' notes icon reads this date
-                          AdminNotesUpdatedOn: If(IsBlank(Trim(varReviewComment)), varReviewProject.AdminNotesUpdatedOn, Now())
+                          ReviewedDate: Now()
                       }
-                  );
-                  // the comment is also a note of the request (AV-CD-Notes): the requestor sees it in the notes pop-up
-                  If(
-                      Not(IsBlank(Trim(varReviewComment))),
-                      IfError(
-                          Patch(
-                              'AV-CD-Notes',
-                              Defaults('AV-CD-Notes'),
-                              {
-                                  Title: varReviewProject.RequestNumber,
-                                  ParentRequest: varReviewProject.RequestNumber,
-                                  NoteText: "<b>Approved</b> · " & Substitute(Trim(varReviewComment), Char(10), "<br>"),
-                                  AuthorRole: {Value: "Administrator"},
-                                  AuthorName: User().FullName,
-                                  AuthorEmail: User().Email,
-                                  NoteDate: Now()
-                              }
-                          ),
-                          Notify("The comment could not be added to the notes: " & FirstError.Message, NotificationType.Warning)
-                      )
                   );
                   Notify(
                       If(With(
@@ -708,26 +688,6 @@ Screens:
                           ReviewedDate: Now()
                       }
                   );
-                  // the comment is also a note of the request (AV-CD-Notes): the requestor sees it in the notes pop-up
-                  If(
-                      Not(IsBlank(Trim(varReviewComment))),
-                      IfError(
-                          Patch(
-                              'AV-CD-Notes',
-                              Defaults('AV-CD-Notes'),
-                              {
-                                  Title: varReviewProject.RequestNumber,
-                                  ParentRequest: varReviewProject.RequestNumber,
-                                  NoteText: "<b>Rejected</b> · " & Substitute(Trim(varReviewComment), Char(10), "<br>"),
-                                  AuthorRole: {Value: "Administrator"},
-                                  AuthorName: User().FullName,
-                                  AuthorEmail: User().Email,
-                                  NoteDate: Now()
-                              }
-                          ),
-                          Notify("The comment could not be added to the notes: " & FirstError.Message, NotificationType.Warning)
-                      )
-                  );
                   Notify("Request rejected. The owner will see your comment on their next visit.", NotificationType.Warning);
                   Set(varReviewProject, Blank());
                   Set(varReviewComment, "");
@@ -746,71 +706,6 @@ Screens:
             Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
             X: =676
             Y: =720
-      - RV_BtnAssign:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(224, 134, 0, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledColor: =RGBA(186, 196, 214, 1)
-            DisabledFill: =RGBA(240, 242, 246, 1)
-            DisplayMode: |-
-              =// enabled when a person is picked who is not already the assignee
-              If(
-                  IsBlank(RV_Assignee.Selected.Mail)
-                      Or Lower(RV_Assignee.Selected.Mail) = Lower(Coalesce(varReviewProject.Assignee.Email, "")),
-                  DisplayMode.Disabled,
-                  DisplayMode.Edit
-              )
-            Fill: =RGBA(224, 134, 0, 1)
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =ColorFade(RGBA(224, 134, 0, 1), -20%)
-            OnSelect: |-
-              =// Hand-off: saves only the Assignee. The "AV-CD assignee hand-off" flow sees the
-              // change in SharePoint and emails the new assignee (previous assignee in copy).
-              With(
-                  {id: varReviewProject.ID, who: RV_Assignee.Selected.DisplayName},
-                  IfError(
-                      Patch(
-                          'AV-CD-Requests',
-                          LookUp('AV-CD-Requests', ID = id),
-                          {
-                              Assignee: {
-                                  Claims: "i:0#.f|membership|" & Lower(RV_Assignee.Selected.Mail),
-                                  DisplayName: RV_Assignee.Selected.DisplayName,
-                                  Email: RV_Assignee.Selected.Mail,
-                                  Department: "",
-                                  JobTitle: "",
-                                  Picture: ""
-                              }
-                          }
-                      );
-                      Notify(
-                          who & " is now the assignee of " & varReviewProject.RequestNumber
-                              & ". They will receive an email.",
-                          NotificationType.Success
-                      );
-                      Refresh('AV-CD-Requests');
-                      ClearCollect(colRevReqs, 'AV-CD-Requests');
-                      // keep the same request open, now with the new assignee
-                      Set(varReviewProject, LookUp(colRevReqs, ID = id));
-                      Set(varReqDataLoaded, false),
-                      Notify("Assign failed: " & FirstError.Message, NotificationType.Error)
-                  )
-              )
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =14
-            Text: ="Assign"
-            Tooltip: ="Save this person as the assignee now. The new assignee gets an email (AV-CD assignee hand-off flow)."
-            Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
-            Width: =90
-            X: =1250
-            Y: =512
       - RV_BtnNeedInfo:
           Control: Classic/Button@2.2.0
           Properties:
@@ -853,26 +748,6 @@ Screens:
                           ReviewedDate: Now()
                       }
                   );
-                  // the comment is also a note of the request (AV-CD-Notes): the requestor sees it in the notes pop-up
-                  If(
-                      Not(IsBlank(Trim(varReviewComment))),
-                      IfError(
-                          Patch(
-                              'AV-CD-Notes',
-                              Defaults('AV-CD-Notes'),
-                              {
-                                  Title: varReviewProject.RequestNumber,
-                                  ParentRequest: varReviewProject.RequestNumber,
-                                  NoteText: "<b>More information needed</b> · " & Substitute(Trim(varReviewComment), Char(10), "<br>"),
-                                  AuthorRole: {Value: "Administrator"},
-                                  AuthorName: User().FullName,
-                                  AuthorEmail: User().Email,
-                                  NoteDate: Now()
-                              }
-                          ),
-                          Notify("The comment could not be added to the notes: " & FirstError.Message, NotificationType.Warning)
-                      )
-                  );
                   Notify("Sent back to the requestor for more information.", NotificationType.Success);
                   Set(varReviewProject, Blank());
                   Set(varReviewComment, "");
@@ -899,7 +774,7 @@ Screens:
             Color: =RGBA(140, 148, 160, 1)
             Font: =Font.'Open Sans'
             Height: =27
-            Size: =12
+            Size: =11
             Text: ="A reviewer comment is required before rejecting."
             Visible: |-
               =Not(IsBlank(varReviewProject))
@@ -1307,5 +1182,5 @@ Screens:
             Tooltip: ="Click to navigate to the Request Details"
             Visible: =Not(IsBlank(varReviewProject))
             Width: =110
-            X: =708
-            Y: =146
+            X: =594
+            Y: =144

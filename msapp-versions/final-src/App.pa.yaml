@@ -81,7 +81,8 @@ App:
       Set(varKpiAllMonthTotal, 0);
       Set(varKpiAllMonthSuccess, 0);
       Set(varKpiAvgPublishDays, If(false, 0));
-      Set(varNavArm, "")
+      Set(varNavArm, "");
+      Set(currentIndex, 1);
     StartScreen: |-
       =// opens the operational dashboard of the user's role (roles list, not varUserRole:
       // StartScreen is evaluated before App.OnStart has finished)
