@@ -241,20 +241,51 @@ Screens:
         );
         If(
             Coalesce(varCurrentRequest.ID, 0) > 0,
-            ClearCollect(
+            With(
+                {
+                    // the side of the thread the current user is on; notes from the other side can be new for them
+                    noteSide: If(
+                        varUserRole = "ADMINISTRATOR",
+                        "Administrator",
+                        If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
+                    )
+                },
+                ClearCollect(
+                    colReqNotes,
+                    ForAll(
+                        Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
+                        {
+                            NRole: AuthorRole.Value,
+                            NAuthor: Coalesce(AuthorName, "-"),
+                            NDate: Coalesce(NoteDate, Created),
+                            NText: PlainText(Coalesce(NoteText, "")),
+                            NKey: ID,
+                            // not read yet by the side it was written for
+                            NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
+                        }
+                    )
+                )
+            );
+            // notes written before the thread existed stay as the first entry of each column
+            Collect(
                 colReqNotes,
-                // notes written before the thread existed stay as the first entry of each column
                 Filter(
-                    Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0}),
+                    Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
                     Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                ),
-                Filter(
-                    Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0}),
-                    Not(IsBlank(Trim(Coalesce(varCurrentRequest.ReviewerComments, ""))))
-                ),
-                ForAll(
-                    Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                    {NRole: AuthorRole.Value, NAuthor: Coalesce(AuthorName, "-"), NDate: Coalesce(NoteDate, Created), NText: PlainText(Coalesce(NoteText, "")), NKey: ID}
+                )
+            );
+            // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
+            With(
+                {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
+                With(
+                    {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
+                    Collect(
+                        colReqNotes,
+                        Filter(
+                            Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
+                            rc <> "" And Not(inThread)
+                        )
+                    )
                 )
             ),
             Clear(colReqNotes)
@@ -949,8 +980,10 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             Align: =Align.Left
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =1
+            BorderColor: |-
+              =// red while there are notes you have not read yet
+              If(CountRows(Filter(colReqNotes, Lower(NRole) = "administrator", NNew)) > 0, RGBA(193, 40, 40, 1), RGBA(220, 224, 230, 1))
+            BorderThickness: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "administrator", NNew)) > 0, 2, 1)
             Color: =RGBA(60, 66, 80, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisabledColor: =RGBA(186, 196, 214, 1)
@@ -964,24 +997,65 @@ Screens:
             OnSelect: |-
               =If(
                   Coalesce(varCurrentRequest.ID, 0) > 0,
-                  ClearCollect(
+                  With(
+                      {
+                          // the side of the thread the current user is on; notes from the other side can be new for them
+                          noteSide: If(
+                              varUserRole = "ADMINISTRATOR",
+                              "Administrator",
+                              If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
+                          )
+                      },
+                      ClearCollect(
+                          colReqNotes,
+                          ForAll(
+                              Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
+                              {
+                                  NRole: AuthorRole.Value,
+                                  NAuthor: Coalesce(AuthorName, "-"),
+                                  NDate: Coalesce(NoteDate, Created),
+                                  NText: PlainText(Coalesce(NoteText, "")),
+                                  NKey: ID,
+                                  // not read yet by the side it was written for
+                                  NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
+                              }
+                          )
+                      )
+                  );
+                  // notes written before the thread existed stay as the first entry of each column
+                  Collect(
                       colReqNotes,
-                      // notes written before the thread existed stay as the first entry of each column
                       Filter(
-                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0}),
+                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
                           Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                      ),
-                      Filter(
-                          Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0}),
-                          Not(IsBlank(Trim(Coalesce(varCurrentRequest.ReviewerComments, ""))))
-                      ),
-                      ForAll(
-                          Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                          {NRole: AuthorRole.Value, NAuthor: Coalesce(AuthorName, "-"), NDate: Coalesce(NoteDate, Created), NText: PlainText(Coalesce(NoteText, "")), NKey: ID}
+                      )
+                  );
+                  // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
+                  With(
+                      {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
+                      With(
+                          {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
+                          Collect(
+                              colReqNotes,
+                              Filter(
+                                  Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
+                                  rc <> "" And Not(inThread)
+                              )
+                          )
                       )
                   ),
                   Clear(colReqNotes)
               );
+              // unread notes from the other side show as "New" in the pop-up, then are saved as read
+              UpdateContext({locNewNotes: ForAll(Filter(colReqNotes, NNew), NKey)});
+              IfError(
+                  ForAll(
+                      Filter(colReqNotes, NNew) As nn,
+                      Patch('AV-CD-Notes', LookUp('AV-CD-Notes', ID = nn.NKey), {ReadOn: Now(), ReadBy: User().FullName})
+                  ),
+                  Notify("The notes could not be marked as read: " & FirstError.Message, NotificationType.Warning)
+              );
+              UpdateIf(colReqNotes, NNew, {NNew: false});
               UpdateContext({locShowNotes: true})
             PressedBorderColor: =RGBA(0, 0, 0, 1)
             PressedColor: =Self.Fill
@@ -989,14 +1063,14 @@ Screens:
             Size: =11
             Text: |-
               =With(
-                  {n: CountRows(Filter(colReqNotes, Lower(NRole) = "administrator"))},
+                  {n: CountRows(Filter(colReqNotes, Lower(NRole) = "administrator")), nNew: CountRows(Filter(colReqNotes, Lower(NRole) = "administrator", NNew))},
                   If(
                       n = 0,
                       If(varUserRole = "ADMINISTRATOR" , "✎  Add a note", "No notes yet"),
-                      "💬  " & n & If(n = 1, " note", " notes")
+                      "💬  " & n & If(n = 1, " note", " notes") & If(nNew > 0, "  ·  " & nNew & " new", "")
                   )
               )
-            Tooltip: ="Open the notes of this request"
+            Tooltip: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "administrator", NNew)) > 0, "You have unread notes. Opening them marks them as read.", "Open the notes of this request")
             Visible: =Not(locDetailsCollapsed)
             Width: =168
             X: =915
@@ -1005,8 +1079,10 @@ Screens:
           Control: Classic/Button@2.2.0
           Properties:
             Align: =Align.Left
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =1
+            BorderColor: |-
+              =// red while there are notes you have not read yet
+              If(CountRows(Filter(colReqNotes, Lower(NRole) = "requestor", NNew)) > 0, RGBA(193, 40, 40, 1), RGBA(220, 224, 230, 1))
+            BorderThickness: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "requestor", NNew)) > 0, 2, 1)
             Color: =RGBA(60, 66, 80, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisabledColor: =RGBA(186, 196, 214, 1)
@@ -1020,24 +1096,65 @@ Screens:
             OnSelect: |-
               =If(
                   Coalesce(varCurrentRequest.ID, 0) > 0,
-                  ClearCollect(
+                  With(
+                      {
+                          // the side of the thread the current user is on; notes from the other side can be new for them
+                          noteSide: If(
+                              varUserRole = "ADMINISTRATOR",
+                              "Administrator",
+                              If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
+                          )
+                      },
+                      ClearCollect(
+                          colReqNotes,
+                          ForAll(
+                              Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
+                              {
+                                  NRole: AuthorRole.Value,
+                                  NAuthor: Coalesce(AuthorName, "-"),
+                                  NDate: Coalesce(NoteDate, Created),
+                                  NText: PlainText(Coalesce(NoteText, "")),
+                                  NKey: ID,
+                                  // not read yet by the side it was written for
+                                  NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
+                              }
+                          )
+                      )
+                  );
+                  // notes written before the thread existed stay as the first entry of each column
+                  Collect(
                       colReqNotes,
-                      // notes written before the thread existed stay as the first entry of each column
                       Filter(
-                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0}),
+                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
                           Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                      ),
-                      Filter(
-                          Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0}),
-                          Not(IsBlank(Trim(Coalesce(varCurrentRequest.ReviewerComments, ""))))
-                      ),
-                      ForAll(
-                          Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                          {NRole: AuthorRole.Value, NAuthor: Coalesce(AuthorName, "-"), NDate: Coalesce(NoteDate, Created), NText: PlainText(Coalesce(NoteText, "")), NKey: ID}
+                      )
+                  );
+                  // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
+                  With(
+                      {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
+                      With(
+                          {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
+                          Collect(
+                              colReqNotes,
+                              Filter(
+                                  Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
+                                  rc <> "" And Not(inThread)
+                              )
+                          )
                       )
                   ),
                   Clear(colReqNotes)
               );
+              // unread notes from the other side show as "New" in the pop-up, then are saved as read
+              UpdateContext({locNewNotes: ForAll(Filter(colReqNotes, NNew), NKey)});
+              IfError(
+                  ForAll(
+                      Filter(colReqNotes, NNew) As nn,
+                      Patch('AV-CD-Notes', LookUp('AV-CD-Notes', ID = nn.NKey), {ReadOn: Now(), ReadBy: User().FullName})
+                  ),
+                  Notify("The notes could not be marked as read: " & FirstError.Message, NotificationType.Warning)
+              );
+              UpdateIf(colReqNotes, NNew, {NNew: false});
               UpdateContext({locShowNotes: true})
             PressedBorderColor: =RGBA(0, 0, 0, 1)
             PressedColor: =Self.Fill
@@ -1045,14 +1162,14 @@ Screens:
             Size: =11
             Text: |-
               =With(
-                  {n: CountRows(Filter(colReqNotes, Lower(NRole) = "requestor"))},
+                  {n: CountRows(Filter(colReqNotes, Lower(NRole) = "requestor")), nNew: CountRows(Filter(colReqNotes, Lower(NRole) = "requestor", NNew))},
                   If(
                       n = 0,
                       If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) , "✎  Add a note", "No notes yet"),
-                      "💬  " & n & If(n = 1, " note", " notes")
+                      "💬  " & n & If(n = 1, " note", " notes") & If(nNew > 0, "  ·  " & nNew & " new", "")
                   )
               )
-            Tooltip: ="Open the notes of this request"
+            Tooltip: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "requestor", NNew)) > 0, "You have unread notes. Opening them marks them as read.", "Open the notes of this request")
             Visible: =Not(locDetailsCollapsed)
             Width: =168
             X: =1134
@@ -2686,170 +2803,7 @@ Screens:
             HoverColor: =ColorFade(Color.CadetBlue, 20%)
             HoverFill: =RGBA(0, 0, 0, 0)
             Icon: =Icon.AddLibrary
-            OnSelect: |-
-              =If(
-                  IsBlank(Coalesce(varRequestTitle)) Or Coalesce(varRequestTitle) = ""
-                  Or IsBlank(varRequestDG) Or varRequestDG = "",
-                  Notify("Enter the request title and select a DG/Agency before adding media.", NotificationType.Warning),
-              If(
-                  IsBlank(varRequestMediaType) Or varRequestMediaType = "",
-                  Notify("Please select the production type first.", NotificationType.Warning),
-              IfError(
-                  If(
-                      IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0,
-                      Set(varNextReqSeq, With(
-                          {yr4: Text(Year(Today())), yr2: Right(Text(Year(Today())), 2), lastNum: Coalesce(First(Sort('AV-CD-Requests', ID, SortOrder.Descending)).RequestNumber, "")},
-                          If(
-                              Left(lastNum, 3) = yr2 & "-",
-                              Value(Mid(lastNum, 4, 10)),
-                              If(Left(lastNum, 5) = yr4 & "-", Value(Right(lastNum, 4)), 0)
-                          ) + 1
-                      ));
-                      Set(varCurrentRequest, IfError(
-                                  Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
-                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq, "0000"),
-                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
-                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
-                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
-                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
-                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
-                                  DG: {Value: varRequestDG},
-                                  MediaType_Request: If(
-                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
-                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
-                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
-                                      {Value: varRequestMediaType}
-                                  ),
-                                  Description: varRequestDescription, 
-                                  Status: {Value: "Draft"}
-                              
-                      }),
-                                  IfError(
-                                      Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
-                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq + 1, "0000"),
-                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
-                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
-                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
-                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
-                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
-                                  DG: {Value: varRequestDG},
-                                  MediaType_Request: If(
-                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
-                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
-                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
-                                      {Value: varRequestMediaType}
-                                  ),
-                                  Description: varRequestDescription, 
-                                  Status: {Value: "Draft"}
-                              
-                      }),
-                                      Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
-                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq + 2, "0000"),
-                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
-                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
-                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
-                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
-                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
-                                  DG: {Value: varRequestDG},
-                                  MediaType_Request: If(
-                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
-                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
-                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
-                                      {Value: varRequestMediaType}
-                                  ),
-                                  Description: varRequestDescription, 
-                                  Status: {Value: "Draft"}
-                              
-                      })
-                                  )
-                              ))
-                  );
-              // Manual contacts typed before the first save are keyed to a blank request
-              // number; move them onto the number this save assigned.
-              UpdateIf(
-                  colManualContacts,
-                  IsBlank(ParentRequest) Or ParentRequest = "",
-                  {ParentRequest: varCurrentRequest.RequestNumber}
-              );
-              Set(varCurrentChildId, Text(GUID()));
-              Set(varCurrentChildSPId,
-                  IfError(
-                      With(
-                          {rn: varCurrentRequest.RequestNumber},
-                          With(
-                              {
-                                  n0: With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, "")}, If(Left(lastMed, Len(rn) + 1) = rn & "-", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1
-                              },
-                              IfError(
-                                  Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {
-                                          CD_MediaNumber: rn & "-" & Text(n0, "00"),
-                                          MediaType: Table({Value: varRequestMediaType}),
-                                          ParentRequest: varCurrentRequest.RequestNumber,
-                                          DepositStatus: Table({Value: "Draft"})
-                                      }),
-                                  IfError(
-                                      Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {
-                                          CD_MediaNumber: rn & "-" & Text(n0 + 1, "00"),
-                                          MediaType: Table({Value: varRequestMediaType}),
-                                          ParentRequest: varCurrentRequest.RequestNumber,
-                                          DepositStatus: Table({Value: "Draft"})
-                                      }),
-                                      Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {
-                                          CD_MediaNumber: rn & "-" & Text(n0 + 2, "00"),
-                                          MediaType: Table({Value: varRequestMediaType}),
-                                          ParentRequest: varCurrentRequest.RequestNumber,
-                                          DepositStatus: Table({Value: "Draft"})
-                                      })
-                                  )
-                              )
-                          ).ID
-                      ),
-                      0
-                  )
-              );
-              Set(varChildTitle, Blank());
-              Set(varChildTitle1, "");
-              Set(varChildProductType, "");
-              Set(varChildTags, "");
-              Set(varChildEpisodeTitle, "");
-              Set(varChildMediaType, varRequestMediaType);
-              Set(varChildDescription1, "");
-              Set(varChildCaptureDate, Blank());
-              Set(varChildProductionPlace1, "");
-              Set(varChildCredits1, "");
-              Set(varChildLanguageVersions, "");
-              Set(varChildAIVoiceover, false);
-              Set(varChildContractCase, "");
-              Set(varChildContractCase1Sub, "");
-              Set(varChildModelRelease, false);
-              Set(varChildNoThirdParty, false);
-              Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, "");
-              Set(varChildModelReleaseProvided, false);
-              Set(varChildMusicUsed, false);
-              Set(varChildMusicLicenceProvided, false);
-              Set(varChildPreexisting, false);
-              Set(varChildPreexistingProvided, false);
-              Set(varChildEpisodeTitle1, "");
-              Set(varChildEpisodeSummary1, "");
-              Set(varChildSeasonNumber, 0);
-              Set(varChildEpisodeNumber, 0);
-              Set(varChildSeriesTitle1, "");
-              Set(varChildProductType1, "");
-              Set(varChildProductionEndDate, Blank());
-              Set(varChildPublicationStartDate, Blank());
-              Set(varChildPublicationEndDate, Blank());
-              Set(varChildLinks1, "");
-              Set(varChildTags1, "");
-              Set(varChildFTPPath1, "");
-              Set(varChildBelugaRef, "");
-              Set(varChildNotes, "");
-              Set(varChildPubBeluga, false);
-              Set(varChildPubSpotify, false);
-              Navigate(ChildInfoScreen),
-                  Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
-              )
-              )
-              )
+            OnSelect: "=If(\r\n    IsBlank(Coalesce(varRequestTitle)) Or Coalesce(varRequestTitle) = \"\"\r\n    Or IsBlank(varRequestDG) Or varRequestDG = \"\",\r\n    Notify(\"Enter the request title and select a DG/Agency before adding media.\", NotificationType.Warning),\r\nIf(\r\n    IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n    Notify(\"Please select the production type first.\", NotificationType.Warning),\r\nIfError(\r\n    If(\r\n        IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0,\r\n        Set(varNextReqSeq, With(\r\n            {yr4: Text(Year(Today())), yr2: Right(Text(Year(Today())), 2), lastNum: Coalesce(First(Sort('AV-CD-Requests', ID, SortOrder.Descending)).RequestNumber, \"\")},\r\n            If(\r\n                Left(lastNum, 3) = yr2 & \"-\",\r\n                Value(Mid(lastNum, 4, 10)),\r\n                If(Left(lastNum, 5) = yr4 & \"-\", Value(Right(lastNum, 4)), 0)\r\n            ) + 1\r\n        ));\r\n        Set(varCurrentRequest, IfError(\r\n                    Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription, \r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        }),\r\n                    IfError(\r\n                        Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq + 1, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription, \r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        }),\r\n                        Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq + 2, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription, \r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        })\r\n                    )\r\n                ))\r\n    );\r\n// Manual contacts typed before the first save are keyed to a blank request\r\n// number; move them onto the number this save assigned.\r\nUpdateIf(\r\n    colManualContacts,\r\n    IsBlank(ParentRequest) Or ParentRequest = \"\",\r\n    {ParentRequest: varCurrentRequest.RequestNumber}\r\n);\r\nSet(varCurrentChildId, Text(GUID()));\r\nSet(varCurrentChildSPId,\r\n    IfError(\r\n        With(\r\n            {rn: varCurrentRequest.RequestNumber},\r\n            With(\r\n                {\r\n                    n0: With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, \"\")}, If(Left(lastMed, Len(rn) + 1) = rn & \"-\", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1\r\n                },\r\n                IfError(\r\n                    Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {\r\n                            CD_MediaNumber: rn & \"-\" & Text(n0, \"00\"),\r\n                            MediaType: Table({Value: varRequestMediaType}),\r\n                            ParentRequest: varCurrentRequest.RequestNumber,\r\n                            DepositStatus: Table({Value: \"Draft\"})\r\n                        }),\r\n                    IfError(\r\n                        Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {\r\n                            CD_MediaNumber: rn & \"-\" & Text(n0 + 1, \"00\"),\r\n                            MediaType: Table({Value: varRequestMediaType}),\r\n                            ParentRequest: varCurrentRequest.RequestNumber,\r\n                            DepositStatus: Table({Value: \"Draft\"})\r\n                        }),\r\n                        Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {\r\n                            CD_MediaNumber: rn & \"-\" & Text(n0 + 2, \"00\"),\r\n                            MediaType: Table({Value: varRequestMediaType}),\r\n                            ParentRequest: varCurrentRequest.RequestNumber,\r\n                            DepositStatus: Table({Value: \"Draft\"})\r\n                        })\r\n                    )\r\n                )\r\n            ).ID\r\n        ),\r\n        0\r\n    )\r\n);\r\nSet(varChildTitle, Blank());\r\nSet(varChildTitle1, \"\");\r\nSet(varChildProductType, \"\");\r\nSet(varChildTags, \"\");\r\nSet(varChildEpisodeTitle, \"\");\r\nSet(varChildMediaType, varRequestMediaType);\r\nSet(varChildDescription1, \"\");\r\nSet(varChildCaptureDate, Blank());\r\nSet(varChildProductionPlace1, \"\");\r\nSet(varChildCredits1, \"\");\r\nSet(varChildLanguageVersions, \"\");\r\nSet(varChildAIVoiceover, false);\r\nSet(varChildContractCase, \"\");\r\nSet(varChildContractCase1Sub, \"\");\r\nSet(varChildModelRelease, false);\r\nSet(varChildNoThirdParty, false);\r\nSet(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, \"\"); Set(varChildExecProducer, \"\"); Set(varChildProducer, \"\"); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, \"\");\r\nSet(varChildModelReleaseProvided, false);\r\nSet(varChildMusicUsed, false);\r\nSet(varChildMusicLicenceProvided, false);\r\nSet(varChildPreexisting, false);\r\nSet(varChildPreexistingProvided, false);\r\nSet(varChildEpisodeTitle1, \"\");\r\nSet(varChildEpisodeSummary1, \"\");\r\nSet(varChildSeasonNumber, 0);\r\nSet(varChildEpisodeNumber, 0);\r\nSet(varChildSeriesTitle1, \"\");\r\nSet(varChildProductType1, \"\");\r\nSet(varChildProductionEndDate, Blank());\r\nSet(varChildPublicationStartDate, Blank());\r\nSet(varChildPublicationEndDate, Blank());\r\nSet(varChildLinks1, \"\");\r\nSet(varChildTags1, \"\");\r\nSet(varChildFTPPath1, \"\");\r\nSet(varChildBelugaRef, \"\");\r\nSet(varChildNotes, \"\");\r\nSet(varChildPubBeluga, false);\r\nSet(varChildPubSpotify, false);\r\nNavigate(ChildInfoScreen),\r\n    Notify(\"Could not start a new media item: \" & FirstError.Message, NotificationType.Error)\r\n)\r\n)\r\n)"
             Tooltip: ="Add Media"
             Width: =39
             X: =32
@@ -3267,12 +3221,12 @@ Screens:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =640
+            Height: =680
             OnSelect: =
             Visible: =locShowNotes
             Width: =1000
-            X: =183
-            Y: =64
+            X: =184
+            Y: =57
       - NT_Title:
           Control: Label@2.5.1
           Properties:
@@ -3280,11 +3234,11 @@ Screens:
             Color: =RGBA(0, 18, 107, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =34
+            Height: =36
             Size: =18
             Text: ="Notes  ·  " & Coalesce(varCurrentRequest.RequestNumber, "new request")
             Visible: =locShowNotes
-            Width: =940
+            Width: =208
             X: =207
             Y: =80
       - NT_ReqHeader:
@@ -3294,13 +3248,13 @@ Screens:
             Color: =RGBA(0, 18, 107, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =28
+            Height: =34
             Size: =14
             Text: ="Requestor"
             Visible: =locShowNotes
-            Width: =470
-            X: =207
-            Y: =124
+            Width: =122
+            X: =447
+            Y: =72
       - NT_AdmHeader:
           Control: Label@2.5.1
           Properties:
@@ -3308,20 +3262,20 @@ Screens:
             Color: =RGBA(0, 18, 107, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =28
+            Height: =27
             Size: =14
             Text: ="Administrator  ·  Central Deposit"
             Visible: =locShowNotes
-            Width: =470
-            X: =693
-            Y: =124
+            Width: =310
+            X: =704
+            Y: =81
       - NT_ReqUpdated:
           Control: Label@2.5.1
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
-            Height: =20
+            Height: =21
             Size: =9
             Text: |-
               =With(
@@ -3329,16 +3283,16 @@ Screens:
                   If(IsBlank(last), "Last updated on: -", "Last updated on " & Text(last, DateTimeFormat.ShortDateTime))
               )
             Visible: =locShowNotes
-            Width: =470
-            X: =207
-            Y: =152
+            Width: =230
+            X: =452
+            Y: =113
       - NT_AdmUpdated:
           Control: Label@2.5.1
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
-            Height: =20
+            Height: =24
             Size: =9
             Text: |-
               =With(
@@ -3346,59 +3300,9 @@ Screens:
                   If(IsBlank(last), "Last updated on: -", "Last updated on " & Text(last, DateTimeFormat.ShortDateTime))
               )
             Visible: =locShowNotes
-            Width: =470
-            X: =693
-            Y: =152
-      - NT_ReqList:
-          Control: Classic/TextInput@2.3.2
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(30, 34, 44, 1)
-            Default: |-
-              =If(
-                  CountRows(Filter(colReqNotes, Lower(NRole) = "requestor")) = 0,
-                  "No notes from the requestor yet.",
-                  Concat(
-                      Sort(Filter(colReqNotes, Lower(NRole) = "requestor"), NKey, SortOrder.Ascending),
-                      NAuthor & "  ·  " & If(NKey = 0, "earlier note", Text(NDate, DateTimeFormat.ShortDateTime)) & Char(10) & NText & Char(10) & Char(10)
-                  )
-              )
-            DisplayMode: =DisplayMode.View
-            Fill: =RGBA(247, 248, 250, 1)
-            Font: =Font.'Open Sans'
-            Height: =320
-            HoverBorderColor: =RGBA(0, 18, 107, 1)
-            HoverFill: =RGBA(186, 202, 226, 1)
-            Mode: =TextMode.MultiLine
-            Visible: =locShowNotes
-            Width: =470
-            X: =207
-            Y: =178
-      - NT_AdmList:
-          Control: Classic/TextInput@2.3.2
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(30, 34, 44, 1)
-            Default: |-
-              =If(
-                  CountRows(Filter(colReqNotes, Lower(NRole) = "administrator")) = 0,
-                  "No notes from the administrator yet.",
-                  Concat(
-                      Sort(Filter(colReqNotes, Lower(NRole) = "administrator"), NKey, SortOrder.Ascending),
-                      NAuthor & "  ·  " & If(NKey = 0, "earlier note", Text(NDate, DateTimeFormat.ShortDateTime)) & Char(10) & NText & Char(10) & Char(10)
-                  )
-              )
-            DisplayMode: =DisplayMode.View
-            Fill: =RGBA(247, 248, 250, 1)
-            Font: =Font.'Open Sans'
-            Height: =320
-            HoverBorderColor: =RGBA(0, 18, 107, 1)
-            HoverFill: =RGBA(186, 202, 226, 1)
-            Mode: =TextMode.MultiLine
-            Visible: =locShowNotes
-            Width: =470
-            X: =693
-            Y: =178
+            Width: =243
+            X: =716
+            Y: =114
       - NT_Hint:
           Control: Label@2.5.1
           Properties:
@@ -3412,8 +3316,8 @@ Screens:
               =If(Coalesce(varCurrentRequest.ID, 0) <= 0, "Save the request as a draft first, then you can add notes.", If((Coalesce(varCurrentRequest.ID, 0) > 0 And (varUserRole = "ADMINISTRATOR" Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))), "Add a note as " & If(varUserRole = "ADMINISTRATOR", "Administrator", "Requestor") & ". It is added with your name and the date and cannot be changed afterwards.", "Read-only: only the requestor and the administrators can add notes."))
             Visible: =locShowNotes
             Width: =956
-            X: =207
-            Y: =508
+            X: =210
+            Y: =586
       - NT_Input:
           Control: Classic/TextInput@2.3.2
           Properties:
@@ -3429,8 +3333,8 @@ Screens:
             Mode: =TextMode.MultiLine
             Visible: =locShowNotes And (Coalesce(varCurrentRequest.ID, 0) > 0 And (varUserRole = "ADMINISTRATOR" Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)))
             Width: =740
-            X: =207
-            Y: =536
+            X: =208
+            Y: =622
       - NT_BtnAdd:
           Control: Classic/Button@2.2.0
           Properties:
@@ -3487,25 +3391,56 @@ Screens:
                               )
                           );
                           If(
-                  Coalesce(varCurrentRequest.ID, 0) > 0,
-                  ClearCollect(
-                      colReqNotes,
-                      // notes written before the thread existed stay as the first entry of each column
-                      Filter(
-                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0}),
-                          Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                      ),
-                      Filter(
-                          Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0}),
-                          Not(IsBlank(Trim(Coalesce(varCurrentRequest.ReviewerComments, ""))))
-                      ),
-                      ForAll(
-                          Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                          {NRole: AuthorRole.Value, NAuthor: Coalesce(AuthorName, "-"), NDate: Coalesce(NoteDate, Created), NText: PlainText(Coalesce(NoteText, "")), NKey: ID}
-                      )
-                  ),
-                  Clear(colReqNotes)
-              );
+                              Coalesce(varCurrentRequest.ID, 0) > 0,
+                              With(
+                                  {
+                                      // the side of the thread the current user is on; notes from the other side can be new for them
+                                      noteSide: If(
+                                          varUserRole = "ADMINISTRATOR",
+                                          "Administrator",
+                                          If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
+                                      )
+                                  },
+                                  ClearCollect(
+                                      colReqNotes,
+                                      ForAll(
+                                          Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
+                                          {
+                                              NRole: AuthorRole.Value,
+                                              NAuthor: Coalesce(AuthorName, "-"),
+                                              NDate: Coalesce(NoteDate, Created),
+                                              NText: PlainText(Coalesce(NoteText, "")),
+                                              NKey: ID,
+                                              // not read yet by the side it was written for
+                                              NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
+                                          }
+                                      )
+                                  )
+                              );
+                              // notes written before the thread existed stay as the first entry of each column
+                              Collect(
+                                  colReqNotes,
+                                  Filter(
+                                      Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
+                                      Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
+                                  )
+                              );
+                              // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
+                              With(
+                                  {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
+                                  With(
+                                      {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
+                                      Collect(
+                                          colReqNotes,
+                                          Filter(
+                                              Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
+                                              rc <> "" And Not(inThread)
+                                          )
+                                      )
+                                  )
+                              ),
+                              Clear(colReqNotes)
+                          );
                           Reset(NT_Input);
                           Notify("Note added.", NotificationType.Success),
                           Notify("Could not save the note: " & FirstError.Message, NotificationType.Error)
@@ -3520,8 +3455,8 @@ Screens:
             Tooltip: ="Add the note to the thread"
             Visible: =locShowNotes And (Coalesce(varCurrentRequest.ID, 0) > 0 And (varUserRole = "ADMINISTRATOR" Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)))
             Width: =200
-            X: =963
-            Y: =536
+            X: =966
+            Y: =618
       - NT_BtnClose:
           Control: Classic/Button@2.2.0
           Properties:
@@ -3548,7 +3483,7 @@ Screens:
             Visible: =locShowNotes
             Width: =200
             X: =963
-            Y: =588
+            Y: =672
       - BackButton_ReviewScreen:
           Control: Classic/Icon@2.5.0
           Properties:
@@ -3565,3 +3500,111 @@ Screens:
               =// only after opening this request from ReviewScreen (RV_RequestIDNav / RV_RequestIDNav_Gallery)
               Coalesce(locFromReview, false)
             Y: =65
+      - Gallery1:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Flexible_SocialFeed_ver5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =416
+            Items: =Filter('AV-CD-Notes', Title = varCurrentRequest.RequestNumber)
+            TemplateSize: =412
+            Visible: =locShowNotes
+            Width: =610
+            X: =384
+            Y: =150
+          Children:
+            - Title1:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Justify
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =RGBA(71, 69, 64, 1)
+                  DisabledColor: =RGBA(186, 186, 186, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                  Height: =89
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =0
+                  PaddingLeft: =If(ThisItem.AuthorRole.Value = "Administrator", 200, 0)
+                  PaddingRight: =If(ThisItem.AuthorRole.Value = "Administrator", 0, 200)
+                  PaddingTop: =0
+                  Size: =14
+                  Text: =PlainText(ThisItem.NoteText)
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =549
+                  X: =29
+                  Y: =43
+            - Body1:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =If(ThisItem.AuthorRole.Value = "Administrator", Align.Right, Align.Left)
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =RGBA(128, 128, 128, 1)
+                  DisabledColor: =RGBA(186, 186, 186, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  Height: =23
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =0
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  Size: =10
+                  Text: =ThisItem.Created
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =549
+                  X: =29
+                  Y: =20
+            - Body1_1:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =If(ThisItem.AuthorRole.Value = "Administrator", Align.Right, Align.Left)
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =RGBA(102, 102, 102, 1)
+                  DisabledColor: =RGBA(186, 186, 186, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  Height: =20
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =0
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  Size: =12
+                  Text: =ThisItem.AuthorName
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =549
+                  X: =29
+            - NT_ReadStatus:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =If(ThisItem.AuthorRole.Value = "Administrator", Align.Right, Align.Left)
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =If(ThisItem.ID in locNewNotes.Value, RGBA(193, 40, 40, 1), IsBlank(ThisItem.ReadOn), RGBA(140, 148, 160, 1), RGBA(22, 128, 80, 1))
+                  DisabledColor: =RGBA(186, 186, 186, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  FontWeight: =If(ThisItem.ID in locNewNotes.Value, FontWeight.Semibold, FontWeight.Normal)
+                  Height: =20
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =0
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: |-
+                    =// New = unread when this pop-up was opened (now saved as read)
+                    If(
+                        ThisItem.ID in locNewNotes.Value,
+                        "●  New",
+                        IsBlank(ThisItem.ReadOn),
+                        "Not read yet",
+                        "✓  Read" & If(IsBlank(ThisItem.ReadBy), "", " by " & ThisItem.ReadBy) & " on " & Text(ThisItem.ReadOn, DateTimeFormat.ShortDateTime)
+                    )
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =549
+                  X: =29
+                  Y: =134
+                Children: []

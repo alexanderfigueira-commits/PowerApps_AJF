@@ -65,8 +65,8 @@ Screens:
             Text: |-
               ="All users' requests except drafts: what waits for validation, latest progress and final decisions"
             Width: =795
-            X: =48
-            Y: =124
+            X: =239
+            Y: =99
       - DOA_Header_Title:
           Control: Label@2.5.1
           Group: DOA_Header
@@ -372,10 +372,10 @@ Screens:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =540
+            Height: =574
             Width: =416
             X: =48
-            Y: =154
+            Y: =130
       - DOA_List1Title:
           Control: Label@2.5.1
           Properties:
@@ -389,7 +389,7 @@ Screens:
             Text: ="TODO"
             Width: =416
             X: =48
-            Y: =171
+            Y: =147
       - DOA_List1Accent:
           Control: Rectangle@2.3.0
           Properties:
@@ -398,13 +398,13 @@ Screens:
             Height: =6
             Width: =416
             X: =48
-            Y: =154
+            Y: =130
       - DOA_List1Gallery:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
-            Height: =476
+            Height: =503
             Items: |-
               =// oldest first: every Pending request, then every Processing request.
               // One Sort with a two-part key (status group, then seconds since 2000), so the
@@ -420,7 +420,7 @@ Screens:
             TemplateSize: =86
             Width: =400
             X: =56
-            Y: =208
+            Y: =184
           Children:
             - DOA_List1RowSelect:
                 Control: Rectangle@2.3.0
@@ -449,10 +449,10 @@ Screens:
                   Height: =22
                   OnSelect: =Select(Parent)
                   Overflow: =Overflow.Scroll
-                  Size: =7
+                  Size: =8
                   Text: =Coalesce(ThisItem.'Created By'.DisplayName, "—")
                   Tooltip: ="Created by"
-                  Width: =190
+                  Width: =201
                   X: =123
                   Y: =51
             - DOA_List1RowDate:
@@ -485,7 +485,7 @@ Screens:
                   Height: =47
                   OnSelect: =Select(Parent)
                   Overflow: =Overflow.Scroll
-                  Size: =9
+                  Size: =10
                   Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled", ThisItem.RequestTitle)
                   Tooltip: ="Title"
                   Width: =268
@@ -527,7 +527,7 @@ Screens:
                   RadiusBottomRight: =14
                   RadiusTopLeft: =14
                   RadiusTopRight: =14
-                  Size: =9
+                  Size: =11
                   Text: |-
                     ="📷 " & ThisItem.RequestNumber
                   Tooltip: ="Open request (v." & ThisItem.'Version number' & ")"
@@ -562,7 +562,7 @@ Screens:
                   RadiusBottomRight: =14
                   RadiusTopLeft: =14
                   RadiusTopRight: =14
-                  Size: =8
+                  Size: =9
                   Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
                   Tooltip: ="Status"
                   Width: =80
@@ -740,17 +740,17 @@ Screens:
             Visible: =CountRows(DOA_List1Gallery.AllItems) = 0
             Width: =416
             X: =48
-            Y: =294
+            Y: =270
       - DOA_List2Card:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =540
+            Height: =574
             Width: =416
             X: =475
-            Y: =154
+            Y: =130
       - DOA_List2Accent:
           Control: Rectangle@2.3.0
           Properties:
@@ -759,7 +759,7 @@ Screens:
             Height: =6
             Width: =416
             X: =475
-            Y: =154
+            Y: =130
       - DOA_List2Title:
           Control: Label@2.5.1
           Properties:
@@ -773,7 +773,7 @@ Screens:
             Text: ="5 LATEST IN-PROGRESS UPDATES"
             Width: =416
             X: =475
-            Y: =170
+            Y: =146
       - DOA_List2Sub:
           Control: Label@2.5.1
           Properties:
@@ -787,13 +787,13 @@ Screens:
             Visible: =false
             Width: =416
             X: =475
-            Y: =195
+            Y: =171
       - DOA_List2Gallery:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
-            Height: =459
+            Height: =503
             Items: |-
               =// the 5 latest only (newest first)
               FirstN(
@@ -809,7 +809,7 @@ Screens:
             TemplateSize: =86
             Width: =400
             X: =483
-            Y: =225
+            Y: =184
           Children:
             - DOA_List2RowSelect:
                 Control: Rectangle@2.3.0
@@ -1014,17 +1014,17 @@ Screens:
             Visible: =CountRows(DOA_List2Gallery.AllItems) = 0
             Width: =416
             X: =475
-            Y: =294
+            Y: =270
       - DOA_List3Card:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =540
+            Height: =574
             Width: =416
             X: =902
-            Y: =154
+            Y: =130
       - DOA_List3Accent:
           Control: Rectangle@2.3.0
           Properties:
@@ -1033,7 +1033,7 @@ Screens:
             Height: =6
             Width: =416
             X: =902
-            Y: =154
+            Y: =130
       - DOA_List3Title:
           Control: Label@2.5.1
           Properties:
@@ -1047,7 +1047,7 @@ Screens:
             Text: ="5 FINAL VALIDATIONS"
             Width: =416
             X: =902
-            Y: =170
+            Y: =146
       - DOA_List3Sub:
           Control: Label@2.5.1
           Properties:
@@ -1061,13 +1061,13 @@ Screens:
             Visible: =false
             Width: =416
             X: =902
-            Y: =195
+            Y: =171
       - DOA_List3Gallery:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
-            Height: =459
+            Height: =503
             Items: |-
               =// the 5 latest only (newest first)
               FirstN(
@@ -1083,7 +1083,7 @@ Screens:
             TemplateSize: =86
             Width: =400
             X: =910
-            Y: =225
+            Y: =183
           Children:
             - DOA_List3RowSelect:
                 Control: Rectangle@2.3.0
@@ -1288,7 +1288,7 @@ Screens:
             Visible: =CountRows(DOA_List3Gallery.AllItems) = 0
             Width: =416
             X: =902
-            Y: =294
+            Y: =270
       - DOA_RoleTag:
           Control: Label@2.5.1
           Properties:
@@ -1323,7 +1323,7 @@ Screens:
 
             Width: =18
             X: =60
-            Y: =168
+            Y: =144
       - DOA_List2Info:
           Control: Classic/Icon@2.5.0
           Properties:
@@ -1338,7 +1338,7 @@ Screens:
             Tooltip: =DOA_List2Sub.Text
             Width: =18
             X: =487
-            Y: =168
+            Y: =144
       - DOA_List3Info:
           Control: Classic/Icon@2.5.0
           Properties:
@@ -1353,7 +1353,7 @@ Screens:
             Tooltip: =DOA_List3Sub.Text
             Width: =18
             X: =914
-            Y: =168
+            Y: =144
       - DOA_List2CounterCircle:
           Control: Circle@2.3.0
           Group: DOA_List2Counter
@@ -1363,7 +1363,7 @@ Screens:
             Height: =19
             Width: =20
             X: =858
-            Y: =183
+            Y: =159
       - DOA_List2CounterText:
           Control: Label@2.5.1
           Group: DOA_List2Counter
@@ -1377,7 +1377,7 @@ Screens:
             Text: '=Text(CountRows(DOA_List2Gallery.AllItems)) '
             Width: =20
             X: =858
-            Y: =183
+            Y: =159
       - DOA_List3CounterCircle:
           Control: Circle@2.3.0
           Group: DOA_List3Counter
@@ -1387,7 +1387,7 @@ Screens:
             Height: =19
             Width: =20
             X: =1285
-            Y: =183
+            Y: =159
       - DOA_List3CounterText:
           Control: Label@2.5.1
           Group: DOA_List3Counter
@@ -1401,7 +1401,7 @@ Screens:
             Text: '=Text(CountRows(DOA_List3Gallery.AllItems)) '
             Width: =20
             X: =1285
-            Y: =183
+            Y: =159
       - DOA_List1CounterCircle:
           Control: Circle@2.3.0
           Group: DOA_List1Counter
@@ -1411,7 +1411,7 @@ Screens:
             Height: =19
             Width: =20
             X: =431
-            Y: =183
+            Y: =159
       - DOA_List1CounterText:
           Control: Label@2.5.1
           Group: DOA_List1Counter
@@ -1425,4 +1425,4 @@ Screens:
             Text: '=Text(CountRows(DOA_List1Gallery.AllItems)) '
             Width: =20
             X: =431
-            Y: =183
+            Y: =159

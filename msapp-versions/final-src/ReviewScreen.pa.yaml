@@ -508,7 +508,7 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =24
-            Text: ="Reviewer comment  (required to pending or reject)"
+            Text: ="Reviewer comment  (required to pending or reject)  ·  saved as a note for the requestor"
             Visible: =Not(IsBlank(varReviewProject))
             Width: =600
             X: =460
@@ -525,6 +525,7 @@ Screens:
             HoverFill: =RGBA(186, 202, 226, 1)
             Mode: =TextMode.MultiLine
             OnChange: =Set(varReviewComment, Self.Text)
+            Tooltip: ="Saved with your decision and added to the request's notes (AV-CD-Notes)"
             Visible: =Not(IsBlank(varReviewProject))
             Width: =880
             X: =460
@@ -615,8 +616,30 @@ Screens:
                               JobTitle: "",
                               Picture: ""
                           }),
-                          ReviewedDate: Now()
+                          ReviewedDate: Now(),
+                          // the dashboards' notes icon reads this date
+                          AdminNotesUpdatedOn: If(IsBlank(Trim(varReviewComment)), varReviewProject.AdminNotesUpdatedOn, Now())
                       }
+                  );
+                  // the comment is also a note of the request (AV-CD-Notes): the requestor sees it in the notes pop-up
+                  If(
+                      Not(IsBlank(Trim(varReviewComment))),
+                      IfError(
+                          Patch(
+                              'AV-CD-Notes',
+                              Defaults('AV-CD-Notes'),
+                              {
+                                  Title: varReviewProject.RequestNumber,
+                                  ParentRequest: varReviewProject.RequestNumber,
+                                  NoteText: "<b>Approved</b> · " & Substitute(Trim(varReviewComment), Char(10), "<br>"),
+                                  AuthorRole: {Value: "Administrator"},
+                                  AuthorName: User().FullName,
+                                  AuthorEmail: User().Email,
+                                  NoteDate: Now()
+                              }
+                          ),
+                          Notify("The comment could not be added to the notes: " & FirstError.Message, NotificationType.Warning)
+                      )
                   );
                   Notify(
                       If(With(
@@ -684,6 +707,26 @@ Screens:
                           }),
                           ReviewedDate: Now()
                       }
+                  );
+                  // the comment is also a note of the request (AV-CD-Notes): the requestor sees it in the notes pop-up
+                  If(
+                      Not(IsBlank(Trim(varReviewComment))),
+                      IfError(
+                          Patch(
+                              'AV-CD-Notes',
+                              Defaults('AV-CD-Notes'),
+                              {
+                                  Title: varReviewProject.RequestNumber,
+                                  ParentRequest: varReviewProject.RequestNumber,
+                                  NoteText: "<b>Rejected</b> · " & Substitute(Trim(varReviewComment), Char(10), "<br>"),
+                                  AuthorRole: {Value: "Administrator"},
+                                  AuthorName: User().FullName,
+                                  AuthorEmail: User().Email,
+                                  NoteDate: Now()
+                              }
+                          ),
+                          Notify("The comment could not be added to the notes: " & FirstError.Message, NotificationType.Warning)
+                      )
                   );
                   Notify("Request rejected. The owner will see your comment on their next visit.", NotificationType.Warning);
                   Set(varReviewProject, Blank());
@@ -809,6 +852,26 @@ Screens:
                           }),
                           ReviewedDate: Now()
                       }
+                  );
+                  // the comment is also a note of the request (AV-CD-Notes): the requestor sees it in the notes pop-up
+                  If(
+                      Not(IsBlank(Trim(varReviewComment))),
+                      IfError(
+                          Patch(
+                              'AV-CD-Notes',
+                              Defaults('AV-CD-Notes'),
+                              {
+                                  Title: varReviewProject.RequestNumber,
+                                  ParentRequest: varReviewProject.RequestNumber,
+                                  NoteText: "<b>More information needed</b> · " & Substitute(Trim(varReviewComment), Char(10), "<br>"),
+                                  AuthorRole: {Value: "Administrator"},
+                                  AuthorName: User().FullName,
+                                  AuthorEmail: User().Email,
+                                  NoteDate: Now()
+                              }
+                          ),
+                          Notify("The comment could not be added to the notes: " & FirstError.Message, NotificationType.Warning)
+                      )
                   );
                   Notify("Sent back to the requestor for more information.", NotificationType.Success);
                   Set(varReviewProject, Blank());
@@ -1235,13 +1298,12 @@ Screens:
             RadiusTopLeft: =14
             RadiusTopRight: =14
             Size: =11
-            Text: |-
+            Text: |+
               =Switch(
                 First(LookUp('AV-CD-Mediafiles', ParentRequest = varReviewProject.RequestNumber).MediaType).Value, 
                 "Photo","📷 ","Video","🎬 ","Podcast","🎙️ ") 
               & varReviewProject.RequestNumber
-              
-              
+
             Tooltip: ="Click to navigate to the Request Details"
             Visible: =Not(IsBlank(varReviewProject))
             Width: =110
