@@ -442,18 +442,19 @@ Screens:
                             With(
                                 {
                                     id: pre & "-" & core,
-                                    ok: t <> "" And core <> "" And (Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved")
+                                    // none = no Beluga ID; archive = archiving only; link = publishing + approved; pending = publishing, not approved yet
+                                    mode: If(
+                                        t = "" Or core = "",
+                                        "none",
+                                        If(
+                                            Coalesce(varRequestArchivedOnly, false),
+                                            "archive",
+                                            If(Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved", "link", "pending")
+                                        )
+                                    ),
+                                    url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & pre & "-" & core
                                 },
-                                With(
-                                    {url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & id},
-                                    If(ok, RGBA(0, 18, 107, 1), If(
-                        Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
-                        And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
-                        And Not(Coalesce(ThisItem.AIVoiceover, false)),
-                        RGBA(22, 128, 80, 1),
-                        RGBA(193, 40, 40, 1)
-                    ))
-                                )
+                                Switch(mode, "archive", RGBA(255, 255, 255, 1), "link", RGBA(255, 255, 255, 1), RGBA(110, 118, 132, 1))
                             )
                         )
                     )
@@ -471,12 +472,19 @@ Screens:
                             With(
                                 {
                                     id: pre & "-" & core,
-                                    ok: t <> "" And core <> "" And (Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved")
+                                    // none = no Beluga ID; archive = archiving only; link = publishing + approved; pending = publishing, not approved yet
+                                    mode: If(
+                                        t = "" Or core = "",
+                                        "none",
+                                        If(
+                                            Coalesce(varRequestArchivedOnly, false),
+                                            "archive",
+                                            If(Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved", "link", "pending")
+                                        )
+                                    ),
+                                    url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & pre & "-" & core
                                 },
-                                With(
-                                    {url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & id},
-                                    If(ok, DisplayMode.Edit, DisplayMode.View)
-                                )
+                                If(mode = "link", DisplayMode.Edit, DisplayMode.View)
                             )
                         )
                     )
@@ -493,18 +501,19 @@ Screens:
                             With(
                                 {
                                     id: pre & "-" & core,
-                                    ok: t <> "" And core <> "" And (Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved")
+                                    // none = no Beluga ID; archive = archiving only; link = publishing + approved; pending = publishing, not approved yet
+                                    mode: If(
+                                        t = "" Or core = "",
+                                        "none",
+                                        If(
+                                            Coalesce(varRequestArchivedOnly, false),
+                                            "archive",
+                                            If(Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved", "link", "pending")
+                                        )
+                                    ),
+                                    url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & pre & "-" & core
                                 },
-                                With(
-                                    {url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & id},
-                                    If(ok, RGBA(230, 240, 255, 1), If(
-                        Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
-                        And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
-                        And Not(Coalesce(ThisItem.AIVoiceover, false)),
-                        RGBA(240, 253, 244, 1),
-                        RGBA(254, 242, 242, 1)
-                    ))
-                                )
+                                Switch(mode, "archive", RGBA(96, 104, 116, 1), "link", RGBA(22, 128, 80, 1), RGBA(236, 238, 242, 1))
                             )
                         )
                     )
@@ -512,7 +521,35 @@ Screens:
                   Height: =34
                   HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
                   HoverColor: =RGBA(255, 255, 255, 1)
-                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  HoverFill: |-
+                    =With(
+                        {
+                            t: Switch(ThisItem.MediaType, "Podcast", "podcast", "Video", "video", "Photo", "photo", ""),
+                            pre: Switch(ThisItem.MediaType, "Podcast", "S", "Video", "I", "Photo", "P", ""),
+                            ref: Upper(Substitute(Trim(Coalesce(ThisItem.BelugaReference, "")), " ", ""))
+                        },
+                        With(
+                            // the number after the S- / I- / P- of the Beluga reference (the prefix is added when it was typed without)
+                            {core: If(StartsWith(ref, pre & "-"), Mid(ref, 3), If(StartsWith(ref, pre), Mid(ref, 2), ref))},
+                            With(
+                                {
+                                    id: pre & "-" & core,
+                                    // none = no Beluga ID; archive = archiving only; link = publishing + approved; pending = publishing, not approved yet
+                                    mode: If(
+                                        t = "" Or core = "",
+                                        "none",
+                                        If(
+                                            Coalesce(varRequestArchivedOnly, false),
+                                            "archive",
+                                            If(Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved", "link", "pending")
+                                        )
+                                    ),
+                                    url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & pre & "-" & core
+                                },
+                                If(mode = "link", RGBA(15, 90, 55, 1), Self.Fill)
+                            )
+                        )
+                    )
                   OnSelect: |-
                     =With(
                         {
@@ -526,12 +563,19 @@ Screens:
                             With(
                                 {
                                     id: pre & "-" & core,
-                                    ok: t <> "" And core <> "" And (Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved")
+                                    // none = no Beluga ID; archive = archiving only; link = publishing + approved; pending = publishing, not approved yet
+                                    mode: If(
+                                        t = "" Or core = "",
+                                        "none",
+                                        If(
+                                            Coalesce(varRequestArchivedOnly, false),
+                                            "archive",
+                                            If(Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved", "link", "pending")
+                                        )
+                                    ),
+                                    url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & pre & "-" & core
                                 },
-                                With(
-                                    {url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & id},
-                                    If(ok, Launch(url))
-                                )
+                                If(mode = "link", Launch(url))
                             )
                         )
                     )
@@ -552,18 +596,19 @@ Screens:
                             With(
                                 {
                                     id: pre & "-" & core,
-                                    ok: t <> "" And core <> "" And (Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved")
+                                    // none = no Beluga ID; archive = archiving only; link = publishing + approved; pending = publishing, not approved yet
+                                    mode: If(
+                                        t = "" Or core = "",
+                                        "none",
+                                        If(
+                                            Coalesce(varRequestArchivedOnly, false),
+                                            "archive",
+                                            If(Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved", "link", "pending")
+                                        )
+                                    ),
+                                    url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & pre & "-" & core
                                 },
-                                With(
-                                    {url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & id},
-                                    If(ok, "🔗  " & id, If(
-                        Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
-                        And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
-                        And Not(Coalesce(ThisItem.AIVoiceover, false)),
-                        "Ready",
-                        "Incomplete"
-                    ))
-                                )
+                                Switch(mode, "none", "No Beluga ID", "archive", "Archive · " & id, "link", "🔗  " & id, "Not approved yet")
                             )
                         )
                     )
@@ -580,12 +625,19 @@ Screens:
                             With(
                                 {
                                     id: pre & "-" & core,
-                                    ok: t <> "" And core <> "" And (Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved")
+                                    // none = no Beluga ID; archive = archiving only; link = publishing + approved; pending = publishing, not approved yet
+                                    mode: If(
+                                        t = "" Or core = "",
+                                        "none",
+                                        If(
+                                            Coalesce(varRequestArchivedOnly, false),
+                                            "archive",
+                                            If(Coalesce(ThisItem.MediaApproved, false) Or Coalesce(varCurrentRequest.Status.Value, "") = "Approved", "link", "pending")
+                                        )
+                                    ),
+                                    url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & pre & "-" & core
                                 },
-                                With(
-                                    {url: "https://audiovisual.ec.europa.eu/en/media/" & t & "/" & id},
-                                    If(ok, "Open " & id & " on the Audiovisual Service portal", "")
-                                )
+                                Switch(mode, "none", "No Beluga ID yet", "archive", "Archiving only: not published on the portal", "link", "Open " & id & " on the Audiovisual Service portal", "Has a Beluga ID, but the file is not approved yet")
                             )
                         )
                     )
