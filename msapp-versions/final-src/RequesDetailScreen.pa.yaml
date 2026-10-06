@@ -198,11 +198,7 @@ Screens:
                         PreexistingProvided: Coalesce(
                             PreexistingRightsProvided,
                             false
-                        ),
-                                SubtitlesProvided: Coalesce(SubtitlesProvided, false),
-                                DocFramework: Coalesce(DocFramework, false),
-                                DocSpecific: Coalesce(DocSpecific, false),
-                                DocOffer: Coalesce(DocOffer, false)
+                        )
                     }
                 )
             )
@@ -243,51 +239,20 @@ Screens:
         );
         If(
             Coalesce(varCurrentRequest.ID, 0) > 0,
-            With(
-                {
-                    // the side of the thread the current user is on; notes from the other side can be new for them
-                    noteSide: If(
-                        varUserRole = "ADMINISTRATOR",
-                        "Administrator",
-                        If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
-                    )
-                },
-                ClearCollect(
-                    colReqNotes,
-                    ForAll(
-                        Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                        {
-                            NRole: AuthorRole.Value,
-                            NAuthor: Coalesce(AuthorName, "-"),
-                            NDate: Coalesce(NoteDate, Created),
-                            NText: PlainText(Coalesce(NoteText, "")),
-                            NKey: ID,
-                            // not read yet by the side it was written for
-                            NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
-                        }
-                    )
-                )
-            );
-            // notes written before the thread existed stay as the first entry of each column
-            Collect(
+            ClearCollect(
                 colReqNotes,
+                // notes written before the thread existed stay as the first entry of each column
                 Filter(
-                    Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
+                    Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0}),
                     Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                )
-            );
-            // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
-            With(
-                {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
-                With(
-                    {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
-                    Collect(
-                        colReqNotes,
-                        Filter(
-                            Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
-                            rc <> "" And Not(inThread)
-                        )
-                    )
+                ),
+                Filter(
+                    Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0}),
+                    Not(IsBlank(Trim(Coalesce(varCurrentRequest.ReviewerComments, ""))))
+                ),
+                ForAll(
+                    Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
+                    {NRole: AuthorRole.Value, NAuthor: Coalesce(AuthorName, "-"), NDate: Coalesce(NoteDate, Created), NText: PlainText(Coalesce(NoteText, "")), NKey: ID}
                 )
             ),
             Clear(colReqNotes)
@@ -300,91 +265,27 @@ Screens:
           Properties:
             BorderColor: =ColorFade(Self.Fill, -15%)
             BorderThickness: =1
-            Color: =If(CountRows(Filter(colReqNotes, NNew)) > 0, RGBA(255, 255, 255, 1), RGBA(0, 13, 75, 1))
+            Color: =RGBA(0, 13, 75, 1)
             DisabledBorderColor: =Self.BorderColor
             DisabledColor: =RGBA(0, 0, 0, 1)
             DisabledFill: =RGBA(237, 237, 237, 1)
-            Fill: =If(CountRows(Filter(colReqNotes, NNew)) > 0, RGBA(193, 40, 40, 1), RGBA(215, 223, 240, 1))
+            Fill: =RGBA(215, 223, 240, 1)
             Font: =Font.'Open Sans'
             Height: =28
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             OnSelect: |-
-              =// reload the notes, keep the new ones to highlight, mark them as read, then open Message Center
-              If(
-                  Coalesce(varCurrentRequest.ID, 0) > 0,
-                  With(
-                      {
-                          // the side of the thread the current user is on; notes from the other side can be new for them
-                          noteSide: If(
-                              varUserRole = "ADMINISTRATOR",
-                              "Administrator",
-                              If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
-                          )
-                      },
-                      ClearCollect(
-                          colReqNotes,
-                          ForAll(
-                              Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                              {
-                                  NRole: AuthorRole.Value,
-                                  NAuthor: Coalesce(AuthorName, "-"),
-                                  NDate: Coalesce(NoteDate, Created),
-                                  NText: PlainText(Coalesce(NoteText, "")),
-                                  NKey: ID,
-                                  // not read yet by the side it was written for
-                                  NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
-                              }
-                          )
-                      )
-                  );
-                  // notes written before the thread existed stay as the first entry of each column
-                  Collect(
-                      colReqNotes,
-                      Filter(
-                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
-                          Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                      )
-                  );
-                  // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
-                  With(
-                      {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
-                      With(
-                          {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
-                          Collect(
-                              colReqNotes,
-                              Filter(
-                                  Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
-                                  rc <> "" And Not(inThread)
-                              )
-                          )
-                      )
-                  ),
-                  Clear(colReqNotes)
-              );
-              // unread notes from the other side show as "New" in the pop-up, then are saved as read
-              UpdateContext({locNewNotes: ForAll(Filter(colReqNotes, NNew), NKey)});
-              IfError(
-                  ForAll(
-                      Filter(colReqNotes, NNew) As nn,
-                      Patch('AV-CD-Notes', LookUp('AV-CD-Notes', ID = nn.NKey), {ReadOn: Now(), ReadBy: User().FullName})
-                  ),
-                  Notify("The notes could not be marked as read: " & FirstError.Message, NotificationType.Warning)
-              );
-              UpdateIf(colReqNotes, NNew, {NNew: false});
-              UpdateContext({locShowNotes: true});
+              =UpdateContext({locShowNotes: true});
               UpdateContext({ currentIndex: If(currentIndex >= CountRows(MessageCenter.AllItems), 1, currentIndex + 1) });
             PaddingBottom: =0
             PaddingTop: =0
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
-            Size: =If(CountRows(Filter(colReqNotes, NNew)) > 0, 14, 18)
-            Text: |-
-              =With({n: CountRows(Filter(colReqNotes, NNew))}, "✉️" & If(n > 0, " " & n, ""))
-            Tooltip: |-
-              =With({n: CountRows(Filter(colReqNotes, NNew))}, If(n > 0, n & If(n = 1, " unread note", " unread notes") & ". Opening Message Center marks them as read.", "Open Message Center"))
+            Size: =18
+            Text: ="✉️"
+            Tooltip: ="Open Message Center"
             Visible: =Coalesce(varCurrentRequest.ID, 0) > 0
             Width: =70
             X: =385
@@ -423,8 +324,7 @@ Screens:
                     Set(varChildAIVoiceover, Coalesce(ThisItem.AIVoiceover, false));
                     Set(varChildContractCase, Coalesce(ThisItem.ContractCase, ""));
                     Set(varChildContractCase1Sub, Coalesce(ThisItem.ContractCase1Sub, ""));
-                    Set(varDocFramework, Coalesce(ThisItem.DocFramework, false)); Set(varDocSpecific, Coalesce(ThisItem.DocSpecific, false)); Set(varDocOffer, Coalesce(ThisItem.DocOffer, false));
-                    Set(varChildSubtitlesProvided, Coalesce(ThisItem.SubtitlesProvided, false));
+                    Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false);
                     Set(varChildContractingAuthority, Coalesce(ThisItem.ContractingAuthority, ""));
                     Set(varChildExecProducer, Coalesce(ThisItem.ExecProducer, ""));
                     Set(varChildProducerSel, ThisItem.Producer);
@@ -3255,42 +3155,6 @@ Screens:
                   Width: =549
                   X: =29
                   Y: =18
-            - NT_ReadStatus:
-                Control: Label@2.5.1
-                Properties:
-                  Align: =If(ThisItem.AuthorRole.Value = "Administrator", Align.Right, Align.Left)
-                  AutoHeight: =true
-                  BorderColor: =RGBA(0, 0, 0, 1)
-                  Color: =If(ThisItem.ID in locNewNotes.Value, RGBA(193, 40, 40, 1), IsBlank(ThisItem.ReadOn), RGBA(140, 148, 160, 1), RGBA(22, 128, 80, 1))
-                  DisabledColor: =RGBA(186, 186, 186, 1)
-                  DisplayMode: =DisplayMode.View
-                  Font: =Font.'Open Sans'
-                  FontWeight: =If(ThisItem.ID in locNewNotes.Value, FontWeight.Semibold, FontWeight.Normal)
-                  Height: =18
-                  OnSelect: =Select(Parent)
-                  PaddingBottom: =0
-                  PaddingLeft: =0
-                  PaddingRight: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: |-
-                    =// New = unread when Message Center was opened (now saved as read)
-                    If(
-                        ThisItem.ID in locNewNotes.Value,
-                        "●  New",
-                        IsBlank(ThisItem.ReadOn),
-                        "Not read yet",
-                        "✓  Read" & If(IsBlank(ThisItem.ReadBy), "", " by " & ThisItem.ReadBy) & " on " & If(
-                            Hour(ThisItem.ReadOn) = 0 And Minute(ThisItem.ReadOn) = 0,
-                            Text(ThisItem.ReadOn, DateTimeFormat.ShortDate),
-                            Text(ThisItem.ReadOn, DateTimeFormat.ShortDateTime)
-                        )
-                    )
-                  VerticalAlign: =VerticalAlign.Top
-                  Width: =Title1.Width
-                  X: =Title1.X
-                  Y: =Title1.Y + Title1.Height + 2
-                Children: []
       - NT_Hint:
           Control: Label@2.5.1
           Group: Group3
@@ -3442,56 +3306,25 @@ Screens:
                               )
                           );
                           If(
-                              Coalesce(varCurrentRequest.ID, 0) > 0,
-                              With(
-                                  {
-                                      // the side of the thread the current user is on; notes from the other side can be new for them
-                                      noteSide: If(
-                                          varUserRole = "ADMINISTRATOR",
-                                          "Administrator",
-                                          If(Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email), "Requestor", "")
-                                      )
-                                  },
-                                  ClearCollect(
-                                      colReqNotes,
-                                      ForAll(
-                                          Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
-                                          {
-                                              NRole: AuthorRole.Value,
-                                              NAuthor: Coalesce(AuthorName, "-"),
-                                              NDate: Coalesce(NoteDate, Created),
-                                              NText: PlainText(Coalesce(NoteText, "")),
-                                              NKey: ID,
-                                              // not read yet by the side it was written for
-                                              NNew: noteSide <> "" And AuthorRole.Value <> noteSide And IsBlank(ReadOn)
-                                          }
-                                      )
-                                  )
-                              );
-                              // notes written before the thread existed stay as the first entry of each column
-                              Collect(
-                                  colReqNotes,
-                                  Filter(
-                                      Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0, NNew: false}),
-                                      Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
-                                  )
-                              );
-                              // a reviewer comment saved on ReviewScreen is also a note in the thread: count it once
-                              With(
-                                  {rc: Lower(Substitute(Substitute(Substitute(Coalesce(varCurrentRequest.ReviewerComments, ""), Char(13), ""), Char(10), ""), " ", ""))},
-                                  With(
-                                      {inThread: Not(IsBlank(LookUp(colReqNotes, NKey > 0 And EndsWith(Lower(Substitute(Substitute(Substitute(NText, Char(13), ""), Char(10), ""), " ", "")), rc))))},
-                                      Collect(
-                                          colReqNotes,
-                                          Filter(
-                                              Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0, NNew: false}),
-                                              rc <> "" And Not(inThread)
-                                          )
-                                      )
-                                  )
-                              ),
-                              Clear(colReqNotes)
-                          );
+                  Coalesce(varCurrentRequest.ID, 0) > 0,
+                  ClearCollect(
+                      colReqNotes,
+                      // notes written before the thread existed stay as the first entry of each column
+                      Filter(
+                          Table({NRole: "Requestor", NAuthor: Coalesce(varCurrentRequest.'Created By'.DisplayName, "Requestor"), NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: PlainText(Coalesce(varCurrentRequest.Notes, "")), NKey: 0}),
+                          Not(IsBlank(Trim(PlainText(Coalesce(varCurrentRequest.Notes, "")))))
+                      ),
+                      Filter(
+                          Table({NRole: "Administrator", NAuthor: "Central Deposit", NDate: DateTime(1900, 1, 1, 0, 0, 0), NText: Coalesce(varCurrentRequest.ReviewerComments, ""), NKey: 0}),
+                          Not(IsBlank(Trim(Coalesce(varCurrentRequest.ReviewerComments, ""))))
+                      ),
+                      ForAll(
+                          Filter('AV-CD-Notes', ParentRequest = varCurrentRequest.RequestNumber),
+                          {NRole: AuthorRole.Value, NAuthor: Coalesce(AuthorName, "-"), NDate: Coalesce(NoteDate, Created), NText: PlainText(Coalesce(NoteText, "")), NKey: ID}
+                      )
+                  ),
+                  Clear(colReqNotes)
+              );
                           Reset(NT_Input);
                           Notify("Note added.", NotificationType.Success),
                           Notify("Could not save the note: " & FirstError.Message, NotificationType.Error)

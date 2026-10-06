@@ -152,8 +152,8 @@ Screens:
             BorderColor: =RGBA(220, 224, 230, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =208
-            Visible: =locShowFilters
+            Height: =If(locShowFilters,208,80)
+            Visible: =true
             Width: =1328
             X: =19
             Y: =113
@@ -203,11 +203,15 @@ Screens:
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
+            RadiusBottomLeft: =5
+            RadiusBottomRight: =5
+            RadiusTopLeft: =5
+            RadiusTopRight: =5
             Size: =14
             Text: ="➕  New request"
             Width: =168
             X: =1171
-            Y: =717
+            Y: =709
       - HomeChipAll:
           Control: Classic/Button@2.2.0
           Properties:
@@ -541,7 +545,7 @@ Screens:
             Text: ="REQUEST ID"
             Width: =116
             X: =26
-            Y: =333
+            Y: =If(locShowFilters,333,200)
       - HomeThName:
           Control: Label@2.5.1
           Group: Group2
@@ -556,7 +560,7 @@ Screens:
             Text: ="TITLE"
             Width: =199
             X: =217
-            Y: =330
+            Y: =If(locShowFilters,333,200)
       - HomeThAssignee:
           Control: Label@2.5.1
           Group: Group2
@@ -571,7 +575,7 @@ Screens:
             Text: ="ASSIGNEE"
             Width: =113
             X: =989
-            Y: =330
+            Y: =If(locShowFilters,333,200)
       - HomeThDG:
           Control: Label@2.5.1
           Group: Group2
@@ -586,7 +590,7 @@ Screens:
             Text: ="DG"
             Width: =62
             X: =474
-            Y: =333
+            Y: =If(locShowFilters,333,200)
       - HomeThArchives:
           Control: Label@2.5.1
           Group: Group2
@@ -603,7 +607,7 @@ Screens:
               "
             Width: =70
             X: =140
-            Y: =333
+            Y: =If(locShowFilters,333,200)
       - HomeThStatus:
           Control: Label@2.5.1
           Group: Group2
@@ -618,7 +622,7 @@ Screens:
             Text: ="STATUS"
             Width: =70
             X: =1115
-            Y: =329
+            Y: =If(locShowFilters,333,200)
       - HomeGallery:
           Control: Gallery@2.15.0
           Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
@@ -1725,7 +1729,7 @@ Screens:
             Text: ="ACTION"
             Width: =108
             X: =1211
-            Y: =329
+            Y: =If(locShowFilters,333,200)
       - HomeDateArrow_1:
           Control: Label@2.5.1
           Properties:
@@ -1842,7 +1846,7 @@ Screens:
             Text: ="SUBMITED"
             Width: =169
             X: =553
-            Y: =333
+            Y: =If(locShowFilters,333,200)
       - HomeThAction_2:
           Control: Label@2.5.1
           Properties:
@@ -1856,7 +1860,7 @@ Screens:
             Text: ="UPDATED"
             Width: =157
             X: =734
-            Y: =331
+            Y: =If(locShowFilters,333,200)
       - HomeFilterRequestName:
           Control: Classic/TextInput@2.3.2
           Properties:
@@ -2181,4 +2185,4 @@ Screens:
             Text: ="NOTES"
             Width: =132
             X: =875
-            Y: =331
+            Y: =If(locShowFilters,333,200)
