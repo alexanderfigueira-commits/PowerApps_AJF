@@ -1764,7 +1764,7 @@ Screens:
             Color: =RGBA(140, 148, 160, 1)
             Font: =Font.'Open Sans'
             Height: =30
-            Text: ="Save the request first to start adding archives."
+            Text: ="Save the draft first (Draft Save ➤) to start adding media."
             Visible: =IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0
             Width: =1302
             X: =12
@@ -2803,6 +2803,10 @@ Screens:
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(0, 18, 107, 1)
+            DisabledColor: =RGBA(166, 172, 184, 1)
+            DisplayMode: |-
+              =// the media list needs a saved request: enabled once "Draft Save" has been done
+              If(Coalesce(varCurrentRequest.ID, 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             Height: =28
             HoverColor: =ColorFade(Color.CadetBlue, 20%)
             HoverFill: =RGBA(0, 0, 0, 0)
@@ -2974,7 +2978,34 @@ Screens:
               )
               )
               )
-            Tooltip: ="Add Media"
+            Tooltip: |-
+              =If(
+                  Coalesce(varCurrentRequest.ID, 0) > 0,
+                  "Add a media file to this request",
+                  With(
+                      {
+                          // what is still missing before the draft can be saved and media added
+                          need: Concat(
+                              Filter(
+                                  Table(
+                                      {s: "enter the request title", m: IsBlank(Trim(RS_Title.Text))},
+                                      {s: "select the DG / Agency", m: IsBlank(HomeFilterDG.Selected.Value)},
+                                      {s: "choose the production type", m: IsBlank(varRequestMediaType) Or varRequestMediaType = ""}
+                                  ),
+                                  m
+                              ),
+                              s,
+                              ", "
+                          )
+                      },
+                      "Add media is available once the draft is saved. "
+                          & If(
+                              need = "",
+                              "Click “Draft Save ➤” (bottom right).",
+                              "First " & need & ", then click “Draft Save ➤” (bottom right)."
+                          )
+                  )
+              )
             Width: =39
             X: =32
             Y: =If(locDetailsCollapsed, 160, 460)
