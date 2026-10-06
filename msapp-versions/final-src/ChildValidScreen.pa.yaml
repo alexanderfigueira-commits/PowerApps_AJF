@@ -21,6 +21,11 @@ Screens:
         // The attachments form edits a snapshot of the open media item. It is
         // re-read only when a different item is open, so the Patch on Save
         // cannot reload the form and drop files staged but not yet saved.
+        // the item's SharePoint ID: if the variable lost it, take it back from the media list
+        If(
+            Coalesce(varCurrentChildSPId, 0) = 0 And Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
+            Set(varCurrentChildSPId, LookUp(colArchives, ArchiveId = varCurrentChildId).SPId)
+        );
         If(
             Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
             Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
@@ -499,7 +504,7 @@ Screens:
                   RemoveIf(colArchives, ArchiveId = varCurrentChildId);
                   Collect(colArchives, {
                       ArchiveId: varCurrentChildId,
-                      SPId: Coalesce(existingRec.SPId, varCurrentChildSPId, 0),
+                      SPId: If(Coalesce(existingRec.SPId, 0) > 0, existingRec.SPId, Coalesce(varCurrentChildSPId, 0)),
                       Title: If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1),
                       MediaType: varChildMediaType,
                       Description: varChildDescription1,
@@ -540,7 +545,14 @@ Screens:
                   Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
                   IfError(
                       With(
-                          {spId: Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0)},
+                          {
+                                            // the item's SharePoint ID: from the media list, else from varCurrentChildSPId (a 0 never hides a real id)
+                                            spId: If(
+                                                Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
+                                                LookUp(colArchives, ArchiveId = varCurrentChildId).SPId,
+                                                Coalesce(varCurrentChildSPId, 0)
+                                            )
+                                        },
                           With(
                               {
                                   savedMedia: Patch(
@@ -608,8 +620,13 @@ Screens:
                                   // CL_FormAttach.OnSuccess finishes the save; OnFailure stops here.
                                   spId > 0 And Coalesce(varAttachRecord.ID, 0) = spId,
                                   SubmitForm(CL_FormAttach),
-                                  // The item was only just created: the form was disabled, nothing to send.
-                                  Notify("Media saved to SharePoint.", NotificationType.Success);
+                                  // Otherwise the item was only just created (the form was disabled, nothing to send), or its attachments
+                                  // panel is not loaded for this item: say so, so a file is never dropped silently.
+                                  If(
+                                      spId > 0,
+                                      Notify("Media saved, but its attachments panel was not loaded, so no file was sent. Open the media item again and attach the file.", NotificationType.Warning),
+                                      Notify("Media saved to SharePoint.", NotificationType.Success)
+                                  );
                                   Set(varRequestMediaType, "");
                                   Set(varConfirmed, false);
                                   Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})

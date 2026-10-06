@@ -45,7 +45,7 @@ Screens:
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Bold
             Size: =22
-            Text: ="My requests - operational dashboard"
+            Text: ="Dashboard"
             Width: =600
             X: =48
             Y: =84

@@ -20,6 +20,11 @@ Screens:
         Set(varNavArm, "");
         // the attachments panel (CL_FormAttach) edits a snapshot of the open media item;
         // taken here too so the file lists on this tab show the right item
+        // the item's SharePoint ID: if the variable lost it, take it back from the media list
+        If(
+            Coalesce(varCurrentChildSPId, 0) = 0 And Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
+            Set(varCurrentChildSPId, LookUp(colArchives, ArchiveId = varCurrentChildId).SPId)
+        );
         If(
             Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
             Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))

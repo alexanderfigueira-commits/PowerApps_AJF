@@ -60,7 +60,7 @@ Screens:
         If(
             Not(varReqFiltersInit),
             // ADMINISTRATOR opens on Processing from the first render; REQUESTOR starts on "All" and the ladder below picks the status
-            Set(varFilter, If(varUserRole = "ADMINISTRATOR", "Processing", "All"));
+            Set(varFilter,"All");
             Set(varFilterDG, "");
             Set(varFilterRequestName, "");
             Set(varFilterStartDate, Today()-31);
@@ -153,7 +153,6 @@ Screens:
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
             Height: =If(locShowFilters,208,80)
-            Visible: =true
             Width: =1328
             X: =19
             Y: =113

@@ -422,6 +422,24 @@ Screens:
             Width: =800
             X: =454
             Y: =484
+      - RV_ArchiveOnly:
+          Control: Classic/CheckBox@2.1.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+            CheckmarkFill: =RGBA(0, 0, 0, 1)
+            Default: =Coalesce(varReviewProject.ArchivedOnly, false)
+            DisplayMode: =If(varUserRole = "ADMINISTRATOR" And Coalesce(varReviewProject.Status.Value, "") = "Processing", DisplayMode.Edit, DisplayMode.View)
+            Font: =Font.'Open Sans'
+            Height: =48
+            HoverColor: =RGBA(0, 18, 107, 1)
+            Size: =10
+            Text: |-
+              ="Archive only: the conditions for publication are not met"
+            Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
+            Width: =470
+            X: =870
+            Y: =506
       - RV_Assignee:
           Control: Classic/ComboBox@2.4.0
           Properties:
@@ -495,7 +513,6 @@ Screens:
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
             SearchFields: =["DisplayName"]
-            SelectMultiple: =true
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(56, 96, 178, 1)
             Size: =11
@@ -626,26 +643,27 @@ Screens:
                           ReviewerComments: If(RV_ArchiveOnly.Value And Not(Coalesce(varReviewProject.ArchivedOnly, false)), Trim(varReviewComment), varReviewProject.ReviewerComments)
                       }
                   );
-                  // archive-only decision: the reason is also a note of the request (AV-CD-Notes), the email comes from the notification flow
-                  If(
-                      RV_ArchiveOnly.Value And Not(Coalesce(varReviewProject.ArchivedOnly, false)),
-                      IfError(
-                          Patch(
-                              'AV-CD-Notes',
-                              Defaults('AV-CD-Notes'),
-                              {
-                                  Title: varReviewProject.RequestNumber,
-                                  ParentRequest: varReviewProject.RequestNumber,
-                                  NoteText: "<b>Approved - archive only</b> · " & Substitute(Trim(varReviewComment), Char(10), "<br>"),
-                                  AuthorRole: {Value: "Administrator"},
-                                  AuthorName: User().FullName,
-                                  AuthorEmail: User().Email,
-                                  NoteDate: Now()
-                              }
-                          ),
-                          Notify("The reason could not be added to the notes: " & FirstError.Message, NotificationType.Warning)
-                      )
-                  );
+              // archive-only decision: the reason is also a note of the request (AV-CD-Notes), the email comes from the notification flow
+              If(
+                  RV_ArchiveOnly.Value And Not(Coalesce(varReviewProject.ArchivedOnly, false)),
+                  IfError(
+                      Patch(
+                          'AV-CD-Notes',
+                          Defaults('AV-CD-Notes'),
+                          {
+                              Title: varReviewProject.RequestNumber,
+                              ParentRequest: varReviewProject.RequestNumber,
+                              NoteText: "<b>Approved - archive only</b> · " & Substitute(Trim(varReviewComment), Char(10), "<br>"),
+                              AuthorRole: {Value: "Administrator"},
+                              AuthorName: User().FullName,
+                              AuthorEmail: User().Email,
+                              NoteDate: Now()
+                          }
+                      );
+                      true,
+                      Notify("The reason could not be added to the notes: " & FirstError.Message, NotificationType.Warning)
+                  )
+              );
                   Notify(
                       If(
                           RV_ArchiveOnly.Value And Not(Coalesce(varReviewProject.ArchivedOnly, false)),
@@ -1214,24 +1232,3 @@ Screens:
             Width: =110
             X: =594
             Y: =144
-      - RV_ArchiveOnly:
-          Control: Classic/CheckBox@2.1.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
-            CheckmarkFill: =RGBA(0, 0, 0, 1)
-            Default: =Coalesce(varReviewProject.ArchivedOnly, false)
-            DisplayMode: =If(varUserRole = "ADMINISTRATOR" And Coalesce(varReviewProject.Status.Value, "") = "Processing", DisplayMode.Edit, DisplayMode.View)
-            Font: =Font.'Open Sans'
-            Height: =48
-            HoverColor: =RGBA(0, 18, 107, 1)
-            OnCheck: =false
-            OnUncheck: =false
-            Size: =10
-            Text: |-
-              ="Archive only: the conditions for publication are not met"
-            Visible: =Not(IsBlank(varReviewProject)) And varUserRole = "ADMINISTRATOR"
-            Width: =470
-            X: =870
-            Y: =506
-          Children: []
