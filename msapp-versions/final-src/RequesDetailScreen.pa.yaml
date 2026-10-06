@@ -179,7 +179,6 @@ Screens:
                             First(ContractCase1Sub).Value,
                             ""
                         ),
-                        ModelRelease: Coalesce(ModelRelease, false),
                         NoThirdPartyRights: Coalesce(
                             NoThirdPartyRights,
                             false
@@ -196,7 +195,6 @@ Screens:
                             MusicLicenseProvided,
                             false
                         ),
-                        Preexisting: Coalesce(Preexisting, false),
                         PreexistingProvided: Coalesce(
                             PreexistingRightsProvided,
                             false
@@ -432,12 +430,12 @@ Screens:
                     Set(varChildProducerSel, ThisItem.Producer);
                     Set(varChildProducer, Concat(ThisItem.Producer, DisplayName, ", "));
                     Set(varChildPhotoCaption, Coalesce(ThisItem.PhotoCaption, ""));
-                    Set(varChildModelRelease, Coalesce(ThisItem.ModelRelease, false));
+                    Set(varChildModelRelease, Coalesce(ThisItem.ModelReleaseProvided, false));
                     Set(varChildNoThirdParty, Coalesce(ThisItem.NoThirdPartyRights, false));
                     Set(varChildModelReleaseProvided, Coalesce(ThisItem.ModelReleaseProvided, false));
                     Set(varChildMusicUsed, Coalesce(ThisItem.MusicUsed, false));
                     Set(varChildMusicLicenceProvided, Coalesce(ThisItem.MusicLicenceProvided, false));
-                    Set(varChildPreexisting, Coalesce(ThisItem.Preexisting, false));
+                    Set(varChildPreexisting, Coalesce(ThisItem.PreexistingProvided, false));
                     Set(varChildPreexistingProvided, Coalesce(ThisItem.PreexistingProvided, false));
                     Set(varChildEpisodeTitle1, Coalesce(ThisItem.EpisodeTitle, ""));
                     Set(varChildEpisodeSummary1, Coalesce(ThisItem.EpisodeSummary, ""));

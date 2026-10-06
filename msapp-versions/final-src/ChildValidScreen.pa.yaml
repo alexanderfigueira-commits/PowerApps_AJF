@@ -529,12 +529,10 @@ Screens:
                       AIVoiceover: varChildAIVoiceover,
                       ContractCase: varChildContractCase,
                       ContractCase1Sub: varChildContractCase1Sub,
-                      ModelRelease: varChildModelRelease,
                       NoThirdPartyRights: varChildNoThirdParty,
                       ModelReleaseProvided: varChildModelReleaseProvided,
                       MusicUsed: varChildMusicUsed,
                       MusicLicenceProvided: varChildMusicLicenceProvided,
-                      Preexisting: varChildPreexisting,
                       PreexistingProvided: varChildPreexistingProvided,
                       SubtitlesProvided: varChildSubtitlesProvided,
                       DocFramework: varDocFramework,
@@ -606,15 +604,13 @@ Screens:
                                       }
                                   )
                               },
-                              // The Legal tab confirmations are six Yes/No columns. A column missing in the list must not block saving the media file:
+                              // The Legal tab confirmations are Yes/No columns. A column missing in the list must not block saving the media file:
                               // they are saved in a second step, and a warning says so if it fails.
                               IfError(
                                   Patch(
                                       'AV-CD-Mediafiles',
                                       LookUp('AV-CD-Mediafiles', ID = savedMedia.ID),
                                       {
-                                          ModelRelease: varChildModelRelease,
-                                          Preexisting: varChildPreexisting,
                                           SubtitlesProvided: varChildSubtitlesProvided,
                                           DocFramework: varDocFramework,
                                           DocSpecific: varDocSpecific,
@@ -623,7 +619,7 @@ Screens:
                                   ),
                                   Notify(
                                       "Media file saved, but its Legal tab confirmations were NOT stored: " & FirstError.Message
-                                          & " Check that the Yes/No columns ModelRelease, Preexisting, SubtitlesProvided, DocFramework, DocSpecific and DocOffer exist in AV-CD-Mediafiles.",
+                                          & " Check that the Yes/No columns SubtitlesProvided, DocFramework, DocSpecific and DocOffer exist in AV-CD-Mediafiles.",
                                       NotificationType.Warning
                                   )
                               );

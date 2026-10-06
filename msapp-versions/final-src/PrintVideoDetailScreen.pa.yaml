@@ -1267,7 +1267,7 @@ Screens:
                   Visible: =true
                   Width: =1270
                   X: =12
-                  Y: =Max(PVD_Val1.Y + If(PVD_Val1.Visible, PVD_Val1.Height + 3, 0), PVD_Val3.Y + If(PVD_Val3.Visible, PVD_Val3.Height + 3, 0), PVD_Val4.Y + If(PVD_Val4.Visible, PVD_Val4.Height + 3, 0), PVD_Val7.Y + If(PVD_Val7.Visible, PVD_Val7.Height + 3, 0), PVD_Val8.Y + If(PVD_Val8.Visible, PVD_Val8.Height + 3, 0), PVD_Val9.Y + If(PVD_Val9.Visible, PVD_Val9.Height + 3, 0), PVD_Val10.Y + If(PVD_Val10.Visible, PVD_Val10.Height + 3, 0), PVD_Val11.Y + If(PVD_Val11.Visible, PVD_Val11.Height + 3, 0), PVD_Val12.Y + If(PVD_Val12.Visible, PVD_Val12.Height + 3, 0), PVD_Val13.Y + If(PVD_Val13.Visible, PVD_Val13.Height + 3, 0), PVD_Val14.Y + If(PVD_Val14.Visible, PVD_Val14.Height + 3, 0), PVD_Val15.Y + If(PVD_Val15.Visible, PVD_Val15.Height + 3, 0), PVD_Val17.Y + If(PVD_Val17.Visible, PVD_Val17.Height + 3, 0), PVD_Val18.Y + If(PVD_Val18.Visible, PVD_Val18.Height + 3, 0), PVD_Val20.Y + If(PVD_Val20.Visible, PVD_Val20.Height + 3, 0), PVD_Val21.Y + If(PVD_Val21.Visible, PVD_Val21.Height + 3, 0), PVD_Val22.Y + If(PVD_Val22.Visible, PVD_Val22.Height + 3, 0), PVD_Val23.Y + If(PVD_Val23.Visible, PVD_Val23.Height + 3, 0), PVD_Val24.Y + If(PVD_Val24.Visible, PVD_Val24.Height + 3, 0), PVD_Val25.Y + If(PVD_Val25.Visible, PVD_Val25.Height + 3, 0), PVD_Val26.Y + If(PVD_Val26.Visible, PVD_Val26.Height + 3, 0), PVD_Val50.Y + If(PVD_Val50.Visible, PVD_Val50.Height + 3, 0), PVD_Val51.Y + If(PVD_Val51.Visible, PVD_Val51.Height + 3, 0), PVD_Val52.Y + If(PVD_Val52.Visible, PVD_Val52.Height + 3, 0), PVD_Val53.Y + If(PVD_Val53.Visible, PVD_Val53.Height + 3, 0)) + 6
+                  Y: =Max(PVD_Val1.Y + If(PVD_Val1.Visible, PVD_Val1.Height + 3, 0), PVD_Val3.Y + If(PVD_Val3.Visible, PVD_Val3.Height + 3, 0), PVD_Val4.Y + If(PVD_Val4.Visible, PVD_Val4.Height + 3, 0), PVD_Val7.Y + If(PVD_Val7.Visible, PVD_Val7.Height + 3, 0), PVD_Val8.Y + If(PVD_Val8.Visible, PVD_Val8.Height + 3, 0), PVD_Val9.Y + If(PVD_Val9.Visible, PVD_Val9.Height + 3, 0), PVD_Val10.Y + If(PVD_Val10.Visible, PVD_Val10.Height + 3, 0), PVD_Val11.Y + If(PVD_Val11.Visible, PVD_Val11.Height + 3, 0), PVD_Val12.Y + If(PVD_Val12.Visible, PVD_Val12.Height + 3, 0), PVD_Val13.Y + If(PVD_Val13.Visible, PVD_Val13.Height + 3, 0), PVD_Val14.Y + If(PVD_Val14.Visible, PVD_Val14.Height + 3, 0), PVD_Val15.Y + If(PVD_Val15.Visible, PVD_Val15.Height + 3, 0), PVD_Val17.Y + If(PVD_Val17.Visible, PVD_Val17.Height + 3, 0), PVD_Val18.Y + If(PVD_Val18.Visible, PVD_Val18.Height + 3, 0), PVD_Val20.Y + If(PVD_Val20.Visible, PVD_Val20.Height + 3, 0), PVD_Val21.Y + If(PVD_Val21.Visible, PVD_Val21.Height + 3, 0), PVD_Val22.Y + If(PVD_Val22.Visible, PVD_Val22.Height + 3, 0), PVD_Val23.Y + If(PVD_Val23.Visible, PVD_Val23.Height + 3, 0), PVD_Val24.Y + If(PVD_Val24.Visible, PVD_Val24.Height + 3, 0), PVD_Val25.Y + If(PVD_Val25.Visible, PVD_Val25.Height + 3, 0), PVD_Val26.Y + If(PVD_Val26.Visible, PVD_Val26.Height + 3, 0), PVD_Val52.Y + If(PVD_Val52.Visible, PVD_Val52.Height + 3, 0), PVD_Val53.Y + If(PVD_Val53.Visible, PVD_Val53.Height + 3, 0)) + 6
                 Children: []
             - PVD_Lbl40:
                 Control: Label@2.5.1
@@ -1305,78 +1305,6 @@ Screens:
                   X: =194
                   Y: =PVD_Val16.Y + If(PVD_Val16.Visible, PVD_Val16.Height + 3, 0)
                 Children: []
-            - PVD_Lbl50:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Persons appear (model release)"
-                  VerticalAlign: =VerticalAlign.Top
-                  Visible: =PVD_Val50.Visible
-                  Width: =180
-                  X: =872
-                  Y: =PVD_Val50.Y
-                Children: []
-            - PVD_Val50:
-                Control: Label@2.5.1
-                Properties:
-                  AutoHeight: =true
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.ModelRelease, "✅  Yes", "⛔  No")
-                  VerticalAlign: =VerticalAlign.Top
-                  Visible: =true
-                  Width: =240
-                  X: =1054
-                  Y: =PVD_Val26.Y + If(PVD_Val26.Visible, PVD_Val26.Height + 3, 0)
-                Children: []
-            - PVD_Lbl51:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Pre-existing material used"
-                  VerticalAlign: =VerticalAlign.Top
-                  Visible: =PVD_Val51.Visible
-                  Width: =180
-                  X: =872
-                  Y: =PVD_Val51.Y
-                Children: []
-            - PVD_Val51:
-                Control: Label@2.5.1
-                Properties:
-                  AutoHeight: =true
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.Preexisting, "✅  Yes", "⛔  No")
-                  VerticalAlign: =VerticalAlign.Top
-                  Visible: =true
-                  Width: =240
-                  X: =1054
-                  Y: =PVD_Val50.Y + If(PVD_Val50.Visible, PVD_Val50.Height + 3, 0)
-                Children: []
             - PVD_Lbl52:
                 Control: Label@2.5.1
                 Properties:
@@ -1411,7 +1339,7 @@ Screens:
                   Visible: =true
                   Width: =240
                   X: =1054
-                  Y: =PVD_Val51.Y + If(PVD_Val51.Visible, PVD_Val51.Height + 3, 0)
+                  Y: =PVD_Val26.Y + If(PVD_Val26.Visible, PVD_Val26.Height + 3, 0)
                 Children: []
             - PVD_Lbl53:
                 Control: Label@2.5.1
