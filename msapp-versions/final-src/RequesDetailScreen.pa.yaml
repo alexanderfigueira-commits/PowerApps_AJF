@@ -1480,9 +1480,9 @@ Screens:
           Properties:
             BorderColor: |-
               =// yellow only while nothing is picked and there is no manual contact either
-              If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_DG_Agency_Contact)}, RS_LblOwner.Visible And IsEmpty(RS_Owner.SelectedItems) And IsBlank(manual)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+              If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_DG_Agency_Contact)}, RS_LblOwner.Visible And IsEmpty(Filter(RS_Owner.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
             BorderThickness: |-
-              =If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_DG_Agency_Contact)}, RS_LblOwner.Visible And IsEmpty(RS_Owner.SelectedItems) And IsBlank(manual)), 3, 2)
+              =If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_DG_Agency_Contact)}, RS_LblOwner.Visible And IsEmpty(Filter(RS_Owner.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), 3, 2)
             ChevronBackground: =RGBA(35, 31, 32, 1)
             ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
             ChevronDisabledFill: =RGBA(235, 233, 229, 1)
@@ -1502,7 +1502,7 @@ Screens:
               )},
                   Ungroup(
                       Table(
-                          {rows: ForAll(varCurrentRequest.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})},
+                          {rows: ForAll(Filter(varCurrentRequest.DG_Agency_Contact, Not(IsBlank(Email))) As p, {DisplayName: p.DisplayName, Mail: p.Email})},
                           {rows: Filter(
                               Table({DisplayName: locManual, Mail: locManual}),
                               Not(IsBlank(DisplayName))
@@ -1515,7 +1515,7 @@ Screens:
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =37
-            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverBorderColor: =Self.BorderColor
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search the DG official responsible"
             Items: |-
@@ -1578,9 +1578,9 @@ Screens:
           Properties:
             BorderColor: |-
               =// yellow only while nothing is picked and there is no manual contact either
-              If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_Contractor_Contact)}, RS_LblContractor.Visible And IsEmpty(RS_Contractor.SelectedItems) And IsBlank(manual)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+              If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_Contractor_Contact)}, RS_LblContractor.Visible And IsEmpty(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
             BorderThickness: |-
-              =If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_Contractor_Contact)}, RS_LblContractor.Visible And IsEmpty(RS_Contractor.SelectedItems) And IsBlank(manual)), 3, 2)
+              =If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_Contractor_Contact)}, RS_LblContractor.Visible And IsEmpty(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), 3, 2)
             ChevronBackground: =RGBA(35, 31, 32, 1)
             ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
             ChevronDisabledFill: =RGBA(235, 233, 229, 1)
@@ -1600,7 +1600,7 @@ Screens:
               )},
                   Ungroup(
                       Table(
-                          {rows: ForAll(varCurrentRequest.Contractor_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})},
+                          {rows: ForAll(Filter(varCurrentRequest.Contractor_Contact, Not(IsBlank(Email))) As p, {DisplayName: p.DisplayName, Mail: p.Email})},
                           {rows: Filter(
                               Table({DisplayName: locManual, Mail: locManual}),
                               Not(IsBlank(DisplayName))
@@ -1613,7 +1613,7 @@ Screens:
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =37
-            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverBorderColor: =Self.BorderColor
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Search the contractor / production company"
             Items: |-
