@@ -798,9 +798,9 @@ Screens:
                       MetadataKey: FieldValue
                       Properties:
                         BorderColor: |-
-                          =// yellow while a mandatory VTT file is missing; red on a form error
-                          If(Not(IsBlank(Parent.Error)), Color.Red, CL_LblVTT.Visible And CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) = 0, RGBA(255, 204, 0, 1), Parent.BorderColor)
-                        BorderThickness: =If(CL_LblVTT.Visible And CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) = 0, 3, 2)
+                          =// yellow while no file is attached or a mandatory VTT file is missing; red on a form error
+                          If(Not(IsBlank(Parent.Error)), Color.Red, (CountRows(CL_DCAttachValue.Attachments) = 0 And Not(varRequestorLocked)) Or (CL_LblVTT.Visible And CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) = 0), RGBA(255, 204, 0, 1), Parent.BorderColor)
+                        BorderThickness: =If((CountRows(CL_DCAttachValue.Attachments) = 0 And Not(varRequestorLocked)) Or (CL_LblVTT.Visible And CountRows(Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))) = 0), 3, 2)
                         DisplayMode: =Parent.DisplayMode
                         Font: =Font.'Open Sans'
                         Height: =280
