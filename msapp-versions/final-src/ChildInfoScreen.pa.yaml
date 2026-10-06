@@ -26,7 +26,14 @@ Screens:
             Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
         );
         // the podcast visual preview starts closed
-        UpdateContext({locShowVisualPreview: false})
+        UpdateContext({locShowVisualPreview: false});
+        // A Video's Language and Type of product dropdowns show their first item (EN / Clip) while nothing is
+        // stored yet. Store what is shown, or the Validations tab sees them empty until they are re-selected.
+        If(
+            varChildMediaType = "Video" And Not(varRequestorLocked),
+            If(Coalesce(varChildLanguageVersions, "") = "", Set(varChildLanguageVersions, "EN"));
+            If(Coalesce(varChildProductType, varChildProductType1, "") = "", Set(varChildProductType, "Clip"))
+        )
     Children:
       - CI_Breadcrumb:
           Control: Label@2.5.1

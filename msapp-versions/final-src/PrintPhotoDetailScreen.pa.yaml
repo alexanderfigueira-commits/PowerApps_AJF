@@ -20,7 +20,8 @@ Screens:
                 ID,
                 SortOrder.Ascending
             )
-        )
+        );
+        UpdateContext({locPrintPage: 1})
     Children:
       - PPD_TopBar:
           Control: Rectangle@2.3.0
@@ -78,24 +79,23 @@ Screens:
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
               =UpdateContext({locPrinting: true});
-              Print();
+              Download(PDF(PrintPhotoDetailScreen));
               UpdateContext({locPrinting: false})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
             Size: =13
-            Text: |-
-              ="🖨  Print"
+            Text: ="⬇  PDF (this file)"
             Visible: =Not(locPrinting)
-            Width: =130
-            X: =1204
+            Width: =170
+            X: =1002
             Y: =68
       - PPD_HeaderCard:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Fill: =RGBA(247, 248, 250, 1)
-            Height: =88
+            Height: =100
             Width: =1302
             X: =32
             Y: =112
@@ -223,9 +223,10 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =22
+            Height: =34
             Size: =10
             Text: =Coalesce(varPrintRequest.RequestNumber, "—")
+            VerticalAlign: =VerticalAlign.Top
             Width: =176
             X: =56
             Y: =166
@@ -235,9 +236,10 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =22
+            Height: =34
             Size: =10
             Text: =Text(varPrintRequest.ID)
+            VerticalAlign: =VerticalAlign.Top
             Width: =176
             X: =238
             Y: =166
@@ -247,10 +249,11 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =22
+            Height: =34
             Size: =10
             Text: |-
               ="📷  Photo"
+            VerticalAlign: =VerticalAlign.Top
             Width: =176
             X: =420
             Y: =166
@@ -260,9 +263,10 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =22
+            Height: =34
             Size: =10
             Text: =Coalesce(varPrintRequest.'Created By'.DisplayName, "Not provided")
+            VerticalAlign: =VerticalAlign.Top
             Width: =176
             X: =602
             Y: =166
@@ -272,9 +276,10 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =22
+            Height: =34
             Size: =10
             Text: =Coalesce(varPrintRequest.DG.Value, "Not provided")
+            VerticalAlign: =VerticalAlign.Top
             Width: =176
             X: =784
             Y: =166
@@ -284,9 +289,10 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =22
+            Height: =34
             Size: =10
             Text: =If(IsBlank(varPrintRequest.StartRequestDate), "Not provided", Text(varPrintRequest.StartRequestDate, "dd-mm-yyyy"))
+            VerticalAlign: =VerticalAlign.Top
             Width: =176
             X: =966
             Y: =166
@@ -296,9 +302,10 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =22
+            Height: =34
             Size: =10
             Text: =Coalesce(varPrintRequest.Assignee.DisplayName, "Not assigned")
+            VerticalAlign: =VerticalAlign.Top
             Width: =176
             X: =1148
             Y: =166
@@ -308,17 +315,17 @@ Screens:
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             DelayItemLoading: =false
-            Height: |-
-              =// whole media rows only: a row is never cut by the page edge
-              126 * Min(CountRows(colPrintReqMedia), RoundDown((740 - Self.Y) / 126, 0))
-            Items: =colPrintReqMedia
+            Height: =520
+            Items: |-
+              =// one media file per page (pager above); the page is always a whole file
+              LastN(FirstN(colPrintReqMedia, Min(Max(Coalesce(locPrintPage, 1), 1), CountRows(colPrintReqMedia))), 1)
             LoadingSpinner: =LoadingSpinner.None
             ShowScrollbar: =false
             TemplatePadding: =0
-            TemplateSize: =126
+            TemplateSize: =520
             Width: =1302
             X: =32
-            Y: =208
+            Y: =220
           Children:
             - PPD_RowRule:
                 Control: Rectangle@2.3.0
@@ -327,10 +334,11 @@ Screens:
                   Fill: =RGBA(220, 224, 230, 1)
                   Height: =1
                   Width: =1302
-                  Y: =125
+                  Y: =519
             - PPD_Val1:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(ThisItem.ProductionTitle), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -339,6 +347,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ProductionTitle), "Not provided", ThisItem.ProductionTitle)
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(ThisItem.ProductionTitle))
                   Width: =240
                   X: =194
@@ -346,6 +355,7 @@ Screens:
             - PPD_Val2:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(Trim(PlainText(ThisItem.Description))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -359,13 +369,15 @@ Screens:
                         {plain: Trim(PlainText(ThisItem.Description))},
                         If(IsBlank(plain), "Not provided", plain)
                     )
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(Trim(PlainText(ThisItem.Description))))
-                  Width: =240
+                  Width: =1090
                   X: =194
-                  Y: =PPD_Val1.Y + If(PPD_Val1.Visible, PPD_Val1.Height, 0)
+                  Y: =PPD_Sec41.Y + If(PPD_Sec41.Visible, PPD_Sec41.Height, 0)
             - PPD_Val3:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(ThisItem.FTPPath), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -374,13 +386,15 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.FTPPath), "Not provided", ThisItem.FTPPath)
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(ThisItem.FTPPath))
                   Width: =240
                   X: =194
-                  Y: =PPD_Val2.Y + If(PPD_Val2.Visible, PPD_Val2.Height, 0)
+                  Y: =PPD_Val1.Y + If(PPD_Val1.Visible, PPD_Val1.Height + 3, 0)
             - PPD_Val4:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(Trim(PlainText(ThisItem.Notes))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -394,13 +408,15 @@ Screens:
                         {plain: Trim(PlainText(ThisItem.Notes))},
                         If(IsBlank(plain), "Not provided", plain)
                     )
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(Trim(PlainText(ThisItem.Notes))))
-                  Width: =240
+                  Width: =1090
                   X: =194
-                  Y: =PPD_Val3.Y + If(PPD_Val3.Visible, PPD_Val3.Height, 0)
+                  Y: =PPD_Val8.Y + If(PPD_Val8.Visible, PPD_Val8.Height + 3, 0)
             - PPD_Val10:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(ThisItem.ProductionPlace), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -409,13 +425,15 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ProductionPlace), "Not provided", ThisItem.ProductionPlace)
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(ThisItem.ProductionPlace))
                   Width: =240
-                  X: =1054
-                  Y: =20
+                  X: =194
+                  Y: =PPD_Val9.Y + If(PPD_Val9.Visible, PPD_Val9.Height + 3, 0)
             - PPD_Val11:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(ThisItem.ReferenceLinks), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -424,13 +442,15 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ReferenceLinks), "Not provided", ThisItem.ReferenceLinks)
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(ThisItem.ReferenceLinks))
                   Width: =240
-                  X: =1054
-                  Y: =PPD_Val10.Y + If(PPD_Val10.Visible, PPD_Val10.Height, 0)
+                  X: =624
+                  Y: =PPD_Sec43.Y + If(PPD_Sec43.Visible, PPD_Sec43.Height, 0)
             - PPD_Val12:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(ThisItem.Tags), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -439,13 +459,15 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.Tags), "Not provided", ThisItem.Tags)
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(ThisItem.Tags))
                   Width: =240
-                  X: =1054
-                  Y: =PPD_Val11.Y + If(PPD_Val11.Visible, PPD_Val11.Height, 0)
+                  X: =624
+                  Y: =PPD_Val11.Y + If(PPD_Val11.Visible, PPD_Val11.Height + 3, 0)
             - PPD_Val13:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsEmpty(ThisItem.Photographer), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -454,13 +476,15 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsEmpty(ThisItem.Photographer), "Not provided", Concat(ThisItem.Photographer, DisplayName, ", "))
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsEmpty(ThisItem.Photographer))
                   Width: =240
-                  X: =1054
-                  Y: =PPD_Val12.Y + If(PPD_Val12.Visible, PPD_Val12.Height, 0)
+                  X: =194
+                  Y: =PPD_Val10.Y + If(PPD_Val10.Visible, PPD_Val10.Height + 3, 0)
             - PPD_Val6:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(ThisItem.ContractingAuthority), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -469,13 +493,15 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ContractingAuthority), "Not provided", ThisItem.ContractingAuthority)
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(ThisItem.ContractingAuthority))
                   Width: =240
                   X: =624
-                  Y: =PPD_Sec5.Y + If(PPD_Sec5.Visible, PPD_Sec5.Height, 0)
+                  Y: =PPD_Sec42.Y + If(PPD_Sec42.Visible, PPD_Sec42.Height, 0)
             - PPD_Val7:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(ThisItem.CreditContact), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -484,13 +510,15 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.CreditContact), "Not provided", ThisItem.CreditContact)
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(ThisItem.CreditContact))
                   Width: =240
                   X: =624
-                  Y: =PPD_Val6.Y + If(PPD_Val6.Visible, PPD_Val6.Height, 0)
+                  Y: =PPD_Val6.Y + If(PPD_Val6.Visible, PPD_Val6.Height + 3, 0)
             - PPD_Val8:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(Trim(PlainText(ThisItem.PhotoCaption))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -504,13 +532,15 @@ Screens:
                         {plain: Trim(PlainText(ThisItem.PhotoCaption))},
                         If(IsBlank(plain), "Not provided", plain)
                     )
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(Trim(PlainText(ThisItem.PhotoCaption))))
-                  Width: =240
-                  X: =624
-                  Y: =PPD_Val7.Y + If(PPD_Val7.Visible, PPD_Val7.Height, 0)
+                  Width: =1090
+                  X: =194
+                  Y: =PPD_Val2.Y + If(PPD_Val2.Visible, PPD_Val2.Height + 3, 0)
             - PPD_Val9:
                 Control: Label@2.5.1
                 Properties:
+                  AutoHeight: =true
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =If(IsBlank(ThisItem.CaptureDate), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
@@ -519,10 +549,11 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.CaptureDate), "Not provided", Text(ThisItem.CaptureDate, "dd-mm-yyyy"))
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =Not(IsBlank(ThisItem.CaptureDate))
                   Width: =240
-                  X: =624
-                  Y: =PPD_Val8.Y + If(PPD_Val8.Visible, PPD_Val8.Height, 0)
+                  X: =194
+                  Y: =PPD_Sec5.Y + If(PPD_Sec5.Visible, PPD_Sec5.Height, 0)
             - PPD_RowCaption:
                 Control: Label@2.5.1
                 Properties:
@@ -549,7 +580,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: ="Media Details"
-                  Visible: =PPD_Val1.Visible Or PPD_Val2.Visible Or PPD_Val3.Visible Or PPD_Val4.Visible
+                  Visible: =PPD_Val1.Visible Or PPD_Val3.Visible
                   Width: =420
                   X: =12
                   Y: =20
@@ -565,6 +596,7 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Archive / production title"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val1.Visible
                   Width: =180
                   X: =12
@@ -581,6 +613,7 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Description"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val2.Visible
                   Width: =180
                   X: =12
@@ -597,6 +630,7 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="FTP delivery path"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val3.Visible
                   Width: =180
                   X: =12
@@ -613,6 +647,7 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Notes"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val4.Visible
                   Width: =180
                   X: =12
@@ -629,10 +664,10 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: ="Metadata"
-                  Visible: =PPD_Val6.Visible Or PPD_Val7.Visible Or PPD_Val8.Visible Or PPD_Val9.Visible Or PPD_Val10.Visible Or PPD_Val11.Visible Or PPD_Val12.Visible Or PPD_Val13.Visible
+                  Visible: =PPD_Val9.Visible Or PPD_Val10.Visible Or PPD_Val13.Visible
                   Width: =420
-                  X: =442
-                  Y: =20
+                  X: =12
+                  Y: =PPD_Val3.Y + If(PPD_Val3.Visible, PPD_Val3.Height + 8, 0)
             - PPD_Lbl10:
                 Control: Label@2.5.1
                 Properties:
@@ -645,9 +680,10 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Production place"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val10.Visible
                   Width: =180
-                  X: =872
+                  X: =12
                   Y: =PPD_Val10.Y
             - PPD_Lbl11:
                 Control: Label@2.5.1
@@ -661,9 +697,10 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Links"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val11.Visible
                   Width: =180
-                  X: =872
+                  X: =442
                   Y: =PPD_Val11.Y
             - PPD_Lbl12:
                 Control: Label@2.5.1
@@ -677,9 +714,10 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Pertinent tags"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val12.Visible
                   Width: =180
-                  X: =872
+                  X: =442
                   Y: =PPD_Val12.Y
             - PPD_Lbl13:
                 Control: Label@2.5.1
@@ -693,9 +731,10 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Photographer"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val13.Visible
                   Width: =180
-                  X: =872
+                  X: =12
                   Y: =PPD_Val13.Y
             - PPD_Lbl6:
                 Control: Label@2.5.1
@@ -709,6 +748,7 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Contracting authority"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val6.Visible
                   Width: =180
                   X: =442
@@ -725,6 +765,7 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Contractor / credits"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val7.Visible
                   Width: =180
                   X: =442
@@ -741,9 +782,10 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Photo caption"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val8.Visible
                   Width: =180
-                  X: =442
+                  X: =12
                   Y: =PPD_Val8.Y
             - PPD_Lbl9:
                 Control: Label@2.5.1
@@ -757,10 +799,367 @@ Screens:
                   PaddingTop: =0
                   Size: =8
                   Text: ="Capture / shoot date"
+                  VerticalAlign: =VerticalAlign.Top
                   Visible: =PPD_Val9.Visible
                   Width: =180
-                  X: =442
+                  X: =12
                   Y: =PPD_Val9.Y
+            - PPD_Sec42:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =16
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: ="Contracting"
+                  Visible: =PPD_Val6.Visible Or PPD_Val7.Visible
+                  Width: =420
+                  X: =442
+                  Y: =20
+                Children: []
+            - PPD_Sec43:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =16
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: ="Links & tags"
+                  Visible: =PPD_Val11.Visible Or PPD_Val12.Visible
+                  Width: =420
+                  X: =442
+                  Y: =PPD_Val7.Y + If(PPD_Val7.Visible, PPD_Val7.Height + 8, 0)
+                Children: []
+            - PPD_Sec30:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =16
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: ="Legal & Documents"
+                  Visible: =PPD_Val31.Visible Or PPD_Val32.Visible Or PPD_Val33.Visible Or PPD_Val34.Visible Or PPD_Val35.Visible Or PPD_Val36.Visible Or PPD_Val37.Visible
+                  Width: =420
+                  X: =872
+                  Y: =20
+                Children: []
+            - PPD_Lbl31:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Contract case"
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =PPD_Val31.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PPD_Val31.Y
+                Children: []
+            - PPD_Val31:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(ThisItem.ContractCase), "Not provided", Concat(ThisItem.ContractCase, Value, ", "))
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =true
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Sec30.Y + If(PPD_Sec30.Visible, PPD_Sec30.Height, 0)
+                Children: []
+            - PPD_Lbl32:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Case 1 — required documents"
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =PPD_Val32.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PPD_Val32.Y
+                Children: []
+            - PPD_Val32:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(ThisItem.ContractCase1Sub), "Not provided", Concat(ThisItem.ContractCase1Sub, Value, ", "))
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =true
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val31.Y + If(PPD_Val31.Visible, PPD_Val31.Height + 3, 0)
+                Children: []
+            - PPD_Lbl33:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="No third-party rights"
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =PPD_Val33.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PPD_Val33.Y
+                Children: []
+            - PPD_Val33:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.NoThirdPartyRights, "✅  Yes", "⛔  No")
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =true
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val32.Y + If(PPD_Val32.Visible, PPD_Val32.Height + 3, 0)
+                Children: []
+            - PPD_Lbl34:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Model release provided"
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =PPD_Val34.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PPD_Val34.Y
+                Children: []
+            - PPD_Val34:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.ModelReleaseProvided, "✅  Yes", "⛔  No")
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =true
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val33.Y + If(PPD_Val33.Visible, PPD_Val33.Height + 3, 0)
+                Children: []
+            - PPD_Lbl35:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Music used"
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =PPD_Val35.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PPD_Val35.Y
+                Children: []
+            - PPD_Val35:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.MusicUsed, "✅  Yes", "⛔  No")
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =true
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val34.Y + If(PPD_Val34.Visible, PPD_Val34.Height + 3, 0)
+                Children: []
+            - PPD_Lbl36:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Music licence provided"
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =PPD_Val36.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PPD_Val36.Y
+                Children: []
+            - PPD_Val36:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.MusicLicenseProvided, "✅  Yes", "⛔  No")
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =true
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val35.Y + If(PPD_Val35.Visible, PPD_Val35.Height + 3, 0)
+                Children: []
+            - PPD_Lbl37:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Pre-existing rights provided"
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =PPD_Val37.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PPD_Val37.Y
+                Children: []
+            - PPD_Val37:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.PreexistingRightsProvided, "✅  Yes", "⛔  No")
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =true
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val36.Y + If(PPD_Val36.Visible, PPD_Val36.Height + 3, 0)
+                Children: []
+            - PPD_Sec41:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =16
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: ="Descriptions, notes & files"
+                  Visible: =true
+                  Width: =1270
+                  X: =12
+                  Y: =Max(PPD_Val1.Y + If(PPD_Val1.Visible, PPD_Val1.Height + 3, 0), PPD_Val3.Y + If(PPD_Val3.Visible, PPD_Val3.Height + 3, 0), PPD_Val9.Y + If(PPD_Val9.Visible, PPD_Val9.Height + 3, 0), PPD_Val10.Y + If(PPD_Val10.Visible, PPD_Val10.Height + 3, 0), PPD_Val13.Y + If(PPD_Val13.Visible, PPD_Val13.Height + 3, 0), PPD_Val6.Y + If(PPD_Val6.Visible, PPD_Val6.Height + 3, 0), PPD_Val7.Y + If(PPD_Val7.Visible, PPD_Val7.Height + 3, 0), PPD_Val11.Y + If(PPD_Val11.Visible, PPD_Val11.Height + 3, 0), PPD_Val12.Y + If(PPD_Val12.Visible, PPD_Val12.Height + 3, 0), PPD_Val31.Y + If(PPD_Val31.Visible, PPD_Val31.Height + 3, 0), PPD_Val32.Y + If(PPD_Val32.Visible, PPD_Val32.Height + 3, 0), PPD_Val33.Y + If(PPD_Val33.Visible, PPD_Val33.Height + 3, 0), PPD_Val34.Y + If(PPD_Val34.Visible, PPD_Val34.Height + 3, 0), PPD_Val35.Y + If(PPD_Val35.Visible, PPD_Val35.Height + 3, 0), PPD_Val36.Y + If(PPD_Val36.Visible, PPD_Val36.Height + 3, 0), PPD_Val37.Y + If(PPD_Val37.Visible, PPD_Val37.Height + 3, 0)) + 6
+                Children: []
+            - PPD_Lbl40:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Attached files (" & CountRows(ThisItem.Attachments) & ")"
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =PPD_Val40.Visible
+                  Width: =180
+                  X: =12
+                  Y: =PPD_Val40.Y
+                Children: []
+            - PPD_Val40:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(ThisItem.Attachments), "No files attached", Concat(ThisItem.Attachments, DisplayName, Char(10)))
+                  VerticalAlign: =VerticalAlign.Top
+                  Visible: =true
+                  Width: =1090
+                  X: =194
+                  Y: =PPD_Val4.Y + If(PPD_Val4.Visible, PPD_Val4.Height + 3, 0)
+                Children: []
       - PPD_Empty:
           Control: Label@2.5.1
           Properties:
@@ -776,23 +1175,21 @@ Screens:
               ) = 0
             Width: =1302
             X: =32
-            Y: =218
+            Y: =230
       - PPD_More:
           Control: Label@2.5.1
           Properties:
+            Align: =Align.Center
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(164, 38, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =18
+            Height: =28
             Size: =9
-            Text: |-
-              =With({hidden: CountRows(colPrintReqMedia) - 4},
-                  "+ " & hidden & If(hidden = 1, " more media file", " more media files")
-                  & " on this request: one printed page holds 4.")
-            Visible: =CountRows(colPrintReqMedia) > 4
-            Width: =1302
-            X: =32
-            Y: =PPD_Gallery.Y + PPD_Gallery.Height + 2
+            Text: ="File " & Min(Max(Coalesce(locPrintPage, 1), 1), CountRows(colPrintReqMedia)) & " of " & CountRows(colPrintReqMedia)
+            Visible: =CountRows(colPrintReqMedia) > 1
+            Width: =150
+            X: =748
+            Y: =74
       - PPD_Footer:
           Control: Label@2.5.1
           Properties:
@@ -1087,3 +1484,81 @@ Screens:
             Width: =83
             X: =951
             Y: =8
+      - PPD_PagePrev:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =UpdateContext({locPrintPage: Max(1, Coalesce(locPrintPage, 1) - 1)})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="◀"
+            Visible: =Not(locPrinting) And CountRows(colPrintReqMedia) > 1
+            Width: =44
+            X: =700
+            Y: =68
+          Children: []
+      - PPD_PageNext:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =UpdateContext({locPrintPage: Min(CountRows(colPrintReqMedia), Coalesce(locPrintPage, 1) + 1)})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="▶"
+            Visible: =Not(locPrinting) And CountRows(colPrintReqMedia) > 1
+            Width: =44
+            X: =902
+            Y: =68
+          Children: []
+      - PPD_BtnPdfAll:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |-
+              =UpdateContext({locPrinting: true});
+              // one PDF per media file: show file 1, 2, ... and save each
+              ForAll(
+                  Sequence(CountRows(colPrintReqMedia)) As pg,
+                  UpdateContext({locPrintPage: pg.Value});
+                  Download(PDF(PrintPhotoDetailScreen))
+              );
+              UpdateContext({locPrintPage: 1, locPrinting: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="⬇  PDF (all " & CountRows(colPrintReqMedia) & ")"
+            Visible: =Not(locPrinting) And CountRows(colPrintReqMedia) > 1
+            Width: =152
+            X: =1182
+            Y: =68
+          Children: []

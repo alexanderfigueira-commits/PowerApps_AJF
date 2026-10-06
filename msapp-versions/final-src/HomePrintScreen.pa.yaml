@@ -13,7 +13,8 @@ Screens:
       LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
       OnVisible: |-
         =UpdateContext({locHPProductionType: "All", locHPStatus: "All"});
-        ClearCollect(colPrintMedia, 'AV-CD-Mediafiles')
+        ClearCollect(colPrintMedia, 'AV-CD-Mediafiles');
+        UpdateContext({locHPPage: 1})
     Children:
       - HP_TopBar:
           Control: Rectangle@2.3.0
@@ -78,7 +79,7 @@ Screens:
                       IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
                   )
               ) = 1, " request", " requests") & "   ·   exported " & Text(Now(), "dd-mm-yyyy hh:mm")
-            Width: =700
+            Width: =480
             X: =148
             Y: =68
       - HP_BtnDownload:
@@ -92,16 +93,18 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: |
-              =Set(varPDF, PDF(HomePrintScreen));
-              Download(varPDF)
+            OnSelect: |-
+              =UpdateContext({locHPPrinting: true});
+              Download(PDF(HomePrintScreen));
+              UpdateContext({locHPPrinting: false})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
             Size: =13
-            Text: ="⬇  Download PDF"
-            Width: =180
-            X: =1154
+            Text: ="⬇  PDF (this page)"
+            Visible: =Not(locHPPrinting)
+            Width: =190
+            X: =950
             Y: =68
       - HP_FilterContainer:
           Control: Rectangle@2.3.0
@@ -200,8 +203,7 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             DelayItemLoading: =false
             Height: |-
-              =Max(52, 52 * CountRows(
-                  Filter(
+              =With({rows: Filter(
                       colPrintData,
                       locHPProductionType = "All" Or !IsEmpty(
                           Filter(
@@ -212,10 +214,14 @@ Screens:
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
                       IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )},
+                  With({pg: Min(Max(Coalesce(locHPPage, 1), 1), Max(1, RoundUp(CountRows(rows) / 8, 0)))},
+                      Max(52, 52 * Max(0, Min(8, CountRows(rows) - (pg - 1) * 8)))
                   )
-              ))
+              )
             Items: |-
-              =Filter(
+              =// 8 requests per page (pager above): the page shown is exactly what is printed
+              With({rows: Filter(
                       colPrintData,
                       locHPProductionType = "All" Or !IsEmpty(
                           Filter(
@@ -226,7 +232,11 @@ Screens:
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
                       IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )},
+                  With({pg: Min(Max(Coalesce(locHPPage, 1), 1), Max(1, RoundUp(CountRows(rows) / 8, 0)))},
+                      LastN(FirstN(rows, pg * 8), Max(0, Min(8, CountRows(rows) - (pg - 1) * 8)))
                   )
+              )
             LoadingSpinner: =LoadingSpinner.None
             ShowScrollbar: =false
             TemplatePadding: =0
@@ -369,7 +379,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             OnSelect: |-
-              =UpdateContext({locHPStatus: "All"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPStatus: "All"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -407,7 +418,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             OnSelect: |-
-              =UpdateContext({locHPStatus: "Draft"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPStatus: "Draft"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -446,7 +458,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             OnSelect: |-
-              =UpdateContext({locHPStatus: "Processing"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPStatus: "Processing"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -485,7 +498,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             OnSelect: |-
-              =UpdateContext({locHPStatus: "Pending"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPStatus: "Pending"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -524,7 +538,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             OnSelect: |-
-              =UpdateContext({locHPStatus: "Approved"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPStatus: "Approved"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -563,7 +578,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             OnSelect: |-
-              =UpdateContext({locHPStatus: "Rejected"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPStatus: "Rejected"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -670,7 +686,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(230, 236, 245, 1)
             OnSelect: |-
-              =UpdateContext({locHPProductionType: "All", locHPStatus: "All"});
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPProductionType: "All", locHPStatus: "All"});
               Reset(HP_TxtTitle);
               Reset(HP_TxtRequestID)
             PressedBorderColor: =Self.Fill
@@ -695,7 +712,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
-              =UpdateContext({locHPProductionType: "All"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPProductionType: "All"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =RGBA(230, 236, 245, 1)
@@ -728,7 +746,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
-              =UpdateContext({locHPProductionType: "Photo"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPProductionType: "Photo"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =RGBA(230, 236, 245, 1)
@@ -767,7 +786,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
-              =UpdateContext({locHPProductionType: "Video"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPProductionType: "Video"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =RGBA(230, 236, 245, 1)
@@ -806,7 +826,8 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
-              =UpdateContext({locHPProductionType: "Podcast"})
+              =UpdateContext({locHPPage: 1});
+              UpdateContext({locHPProductionType: "Podcast"})
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =RGBA(230, 236, 245, 1)
@@ -1124,3 +1145,143 @@ Screens:
             Width: =83
             X: =951
             Y: =8
+      - HP_PagePrev:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =UpdateContext({locHPPage: Max(1, Coalesce(locHPPage, 1) - 1)})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="◀"
+            Visible: =Not(locHPPrinting)
+            Width: =44
+            X: =640
+            Y: =68
+          Children: []
+      - HP_PageNext:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =With({rows: Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )},
+                  UpdateContext({locHPPage: Min(Max(1, RoundUp(CountRows(rows) / 8, 0)), Coalesce(locHPPage, 1) + 1)})
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="▶"
+            Visible: =Not(locHPPrinting)
+            Width: =44
+            X: =852
+            Y: =68
+          Children: []
+      - HP_BtnDownloadAll:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |-
+              =UpdateContext({locHPPrinting: true});
+              // one PDF per page of 8 requests: show page 1, 2, ... and save each
+              With({pages: Max(1, RoundUp(CountRows(Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )) / 8, 0))},
+                  ForAll(
+                      Sequence(pages) As pg,
+                      UpdateContext({locHPPage: pg.Value});
+                      Download(PDF(HomePrintScreen))
+                  )
+              );
+              UpdateContext({locHPPage: 1, locHPPrinting: false})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="⬇  PDF (all pages)"
+            Visible: =Not(locHPPrinting)
+            Width: =184
+            X: =1150
+            Y: =68
+          Children: []
+      - HP_PageLbl:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Size: =12
+            Text: |-
+              ="Page " & With({n: CountRows(Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  ))}, Min(Max(Coalesce(locHPPage, 1), 1), Max(1, RoundUp(n / 8, 0)))) & " of " & Max(1, RoundUp(CountRows(Filter(
+                      colPrintData,
+                      locHPProductionType = "All" Or !IsEmpty(
+                          Filter(
+                              colPrintMedia,
+                              ParentRequest = RequestNumber And First(MediaType).Value = locHPProductionType
+                          )
+                      ),
+                      locHPStatus = "All" Or Status.Value = locHPStatus,
+                      IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                  )) / 8, 0))
+            Width: =160
+            X: =688
+            Y: =68
+          Children: []
