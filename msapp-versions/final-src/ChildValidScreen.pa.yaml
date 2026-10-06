@@ -29,7 +29,7 @@ Screens:
             {Check: "Media type is set",
              Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "",
              Note: "Select a production type on the Info tab."},
-            {Check: "Archive title is provided",
+            {Check: "Media file title is provided",
              Pass: Not(IsBlank(varChildTitle1)) And varChildTitle1 <> "" And varChildTitle1 <> "New archive",
              Note: "Enter a descriptive title on the Info tab."},
             {Check: "Capture / production date is set",
@@ -40,7 +40,7 @@ Screens:
              Note: "Select the language on the Info tab (Video) or Metadata tab (Podcast)."},
             {Check: "No AI-generated voice-over (not accepted)",
              Pass: Not(varChildAIVoiceover),
-             Note: "⛔ AI voice-over detected. This archive cannot be submitted."},
+             Note: "⛔ AI voice-over detected. This media file cannot be submitted."},
             {Check: "Contract case (1–6) is selected",
              Pass: Not(IsBlank(varChildContractCase)) And varChildContractCase <> "",
              Note: "Select a contract case on the Legal & Docs tab."},
@@ -118,7 +118,7 @@ Screens:
             {Check: "Pre-existing rights: if declared → annex provided",
              Pass: Not(varChildPreexisting) Or varChildPreexistingProvided,
              Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
-            {Check: "FTP delivery path set on this archive (Photo only)",
+            {Check: "FTP delivery path set on this media file (Photo only)",
              Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath1)) And varChildFTPPath1 <> ""),
              Note: "Enter the FTP path on the Info tab."},
             {Check: "Owner / point of contact set on the request",
@@ -286,7 +286,7 @@ Screens:
             Size: =16
             Text: |-
               =If(CountIf(colValidations, Not(Pass)) = 0,
-                  "Ready - all checks passed. Press Save archive to add to your request.",
+                  "Ready - all checks passed. Press Save Media to add to your request.",
                   Text(CountIf(colValidations, Not(Pass))) & " point(s) missing - resolve before saving")
             Width: =900
             X: =116
@@ -307,10 +307,10 @@ Screens:
             OnSelect: |-
               =ClearCollect(colValidations,
                   {Check: "Media type is set", Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "", Note: "Select a production type on the Info tab."},
-                  {Check: "Archive title is provided", Pass: Not(IsBlank(varChildTitle1)) And varChildTitle1 <> "" And varChildTitle1 <> "New archive", Note: "Enter a descriptive title on the Info tab."},
+                  {Check: "Media file title is provided", Pass: Not(IsBlank(varChildTitle1)) And varChildTitle1 <> "" And varChildTitle1 <> "New archive", Note: "Enter a descriptive title on the Info tab."},
                   {Check: "Capture / production date is set", Pass: Not(IsBlank(varChildCaptureDate)), Note: "Set the date on the Info tab (Metadata tab for Photo/Reportage)."},
                   {Check: "Language version(s) selected (Video / Podcast only)", Pass: (varChildMediaType <> "Video" And varChildMediaType <> "Podcast") Or (Not(IsBlank(varChildLanguageVersions)) And varChildLanguageVersions <> ""), Note: "Select the language on the Info tab (Video) or Metadata tab (Podcast)."},
-                  {Check: "No AI-generated voice-over (not accepted)", Pass: Not(varChildAIVoiceover), Note: "⛔ AI voice-over detected. This archive cannot be submitted."},
+                  {Check: "No AI-generated voice-over (not accepted)", Pass: Not(varChildAIVoiceover), Note: "⛔ AI voice-over detected. This media file cannot be submitted."},
                   {Check: "Contract case (1–6) is selected", Pass: Not(IsBlank(varChildContractCase)) And varChildContractCase <> "", Note: "Select a contract case on the Legal & Docs tab."},
                   {Check: "Case 1: both mandatory contracts confirmed", Pass: Left(varChildContractCase, 6) <> "Case 1" Or (varDocFramework And varDocSpecific), Note: "Confirm the signed framework and specific contracts on the Legal & Docs tab."},
                   {Check: "Contractor / agency provided (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildCredits1)) And varChildCredits1 <> ""), Note: "Enter the contractor / agency on the Metadata tab."},
@@ -338,7 +338,7 @@ Screens:
                   {Check: "Model release: if persons appear → forms provided", Pass: Not(varChildModelRelease) Or varChildModelReleaseProvided, Note: "Recognisable persons declared but model release not confirmed. Attach forms on Legal & Docs."},
                   {Check: "Music licence: if music used → documentation provided", Pass: Not(varChildMusicUsed) Or varChildMusicLicenceProvided, Note: "Music declared but licence/annex not confirmed. Attach on Legal & Docs."},
                   {Check: "Pre-existing rights: if declared → annex provided", Pass: Not(varChildPreexisting) Or varChildPreexistingProvided, Note: "Pre-existing rights declared but annex not confirmed. Attach on Legal & Docs."},
-                  {Check: "FTP delivery path set on this archive (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath1)) And varChildFTPPath1 <> ""), Note: "Enter the FTP path on the Info tab."},
+                  {Check: "FTP delivery path set on this media file (Photo only)", Pass: varChildMediaType <> "Photo" Or (Not(IsBlank(varChildFTPPath1)) And varChildFTPPath1 <> ""), Note: "Enter the FTP path on the Info tab."},
                   {Check: "Owner / point of contact set on the request", Pass: Not(IsBlank(varRequestOwnerContact)) And varRequestOwnerContact <> "", Note: "Set the owner on the Request screen."}
               )
             PressedBorderColor: =Self.Fill
