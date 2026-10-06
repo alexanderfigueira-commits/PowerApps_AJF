@@ -866,7 +866,44 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: =Navigate(ChildValidScreen)
+            OnSelect: |-
+              =// The attachments card needs the media item's SharePoint ID (Save Media uses it as spId). If the card has none,
+              // recover it before leaving this tab: varCurrentChildSPId, else the media list, else the request's latest media item with this title.
+              If(
+                  Coalesce(varAttachRecord.ID, 0) = 0,
+                  With(
+                      {
+                          rid: If(
+                              Coalesce(varCurrentChildSPId, 0) > 0,
+                              varCurrentChildSPId,
+                              If(
+                                  Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
+                                  LookUp(colArchives, ArchiveId = varCurrentChildId).SPId,
+                                  If(
+                                      IsBlank(varChildTitle1) Or varChildTitle1 = "",
+                                      0,
+                                      Coalesce(
+                                          First(
+                                              Sort(
+                                                  Filter('AV-CD-Mediafiles', ParentRequest = varCurrentRequest.RequestNumber, ProductionTitle = varChildTitle1),
+                                                  ID,
+                                                  SortOrder.Descending
+                                              )
+                                          ).ID,
+                                          0
+                                      )
+                                  )
+                              )
+                          )
+                      },
+                      If(
+                          rid > 0,
+                          Set(varCurrentChildSPId, rid);
+                          Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = rid))
+                      )
+                  )
+              );
+              Navigate(ChildValidScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
