@@ -199,7 +199,7 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             Height: =88
-            Text: ="AV Central Deposit is a ticket system for DG COMM and associated services to submit audiovisual productions for archiving. Each request groups one or more archives by production type (Photo, Video or Podcast) and goes through a review workflow before being approved for deposit."
+            Text: ="AV Central Deposit is a ticket system for DG COMM and associated services to submit audiovisual productions for archiving. Each request groups one or more media files by production type (Photo, Video or Podcast) and goes through a review workflow before being approved for deposit."
             Width: =840
             X: =51
             Y: =554

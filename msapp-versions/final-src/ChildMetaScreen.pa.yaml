@@ -361,7 +361,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =44
-                  Text: ="⛔  AI voice-over is NOT accepted. This archive will fail validation and cannot be submitted."
+                  Text: ="⛔  AI voice-over is NOT accepted. This media file will fail validation and cannot be submitted."
                   Visible: =varChildAIVoiceover
                   Width: =880
                   X: =66
@@ -878,7 +878,7 @@ Screens:
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
                   Height: =90
-                  HintText: ="Caption for this photo archive"
+                  HintText: ="Caption for this photo"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
                   Mode: =TextMode.MultiLine

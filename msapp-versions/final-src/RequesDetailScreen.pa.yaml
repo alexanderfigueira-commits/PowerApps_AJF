@@ -388,7 +388,7 @@ Screens:
                   Height: =42
                   OnSelect: =Select(Parent)
                   Size: =10
-                  Text: =If(IsBlank(ThisItem.ProductionTitle) Or ThisItem.ProductionTitle = "", "— untitled archive —", ThisItem.ProductionTitle) & If(Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "", "   ·   " & ThisItem.Title, "")
+                  Text: =If(IsBlank(ThisItem.ProductionTitle) Or ThisItem.ProductionTitle = "", "— untitled media file —", ThisItem.ProductionTitle) & If(Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "", "   ·   " & ThisItem.Title, "")
                   Width: =403
                   Y: =1
             - RS_CRowType:
@@ -816,7 +816,7 @@ Screens:
             HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
             OnSelect: |-
               =Copy(varCurrentRequest.RequestNumber);
-              Notify("Reference copied into clipbaoard", NotificationType.Information);
+              Notify("Reference copied into clipboard", NotificationType.Information);
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -977,7 +977,7 @@ Screens:
             RadiusTopLeft: =18
             RadiusTopRight: =18
             Text: ="+"
-            Tooltip: ="Add Contrator Contact"
+            Tooltip: ="Add Contractor Contact"
             Visible: =Not(locDetailsCollapsed)
             Width: =25
             X: =834
@@ -1267,7 +1267,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =19
             Size: =10
-            Text: ="Contact (Contractor)*"
+            Text: ="Contact (Contractor) *"
             Visible: =Not(locDetailsCollapsed)
             Width: =300
             X: =64
@@ -1448,7 +1448,7 @@ Screens:
             FontWeight: =FontWeight.Bold
             Height: =22
             Size: =11
-            Text: ="Media files*"
+            Text: ="Media files *"
             Width: =188
             X: =625
             Y: =419
@@ -2990,7 +2990,7 @@ Screens:
             HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
             OnSelect: |-
               =Copy(varCurrentRequest.RequestNumber);
-              Notify("Reference copied into clipbaoard", NotificationType.Information);
+              Notify("Reference copied into clipboard", NotificationType.Information);
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -3116,7 +3116,7 @@ Screens:
             PressedFill: =Self.Color
             Size: =13
             Text: ="Cancel"
-            Tooltip: ="Save draft"
+            Tooltip: ="Cancel"
             Visible: =locShowContactPopup
             Width: =200
             X: =459
@@ -3159,7 +3159,7 @@ Screens:
                   }
               );
               Notify(
-                  "Contact Saved: " & RS_txtEmailContact.Text,
+                  "Contact saved: " & RS_txtEmailContact.Text,
                   NotificationType.Success
               );
               Reset(RS_txtEmailContact);
@@ -3172,7 +3172,7 @@ Screens:
             PressedFill: =Self.Color
             Size: =13
             Text: ="Save"
-            Tooltip: ="Save draft"
+            Tooltip: ="Save contact"
             Visible: =locShowContactPopup
             Width: =200
             X: =682

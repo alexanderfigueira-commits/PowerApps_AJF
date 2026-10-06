@@ -765,7 +765,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="Podcast visual*"
+                  Text: ="Podcast visual *"
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =56
@@ -938,7 +938,7 @@ Screens:
             FontWeight: =FontWeight.Bold
             Height: =30
             Size: =16
-            Text: ="Use previous archive as template"
+            Text: ="Use previous media file as template"
             Visible: =varShowTemplatePicker
             Width: =600
             X: =327
@@ -1052,7 +1052,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   Height: =28
                   OnSelect: =Select(Parent)
-                  Text: =If(IsBlank(ThisItem.CD_MediaNumber), "Untitled archive", ThisItem.CD_MediaNumber)
+                  Text: =If(IsBlank(ThisItem.CD_MediaNumber), "Untitled media file", ThisItem.CD_MediaNumber)
                   Width: =500
                   X: =12
                   Y: =4
@@ -1099,7 +1099,7 @@ Screens:
             Color: =RGBA(140, 148, 160, 1)
             Font: =Font.'Open Sans'
             Height: =60
-            Text: ="No previous " & If(varChildMediaType="Photo", "Photo/Reportage", varChildMediaType) & " archives yet."
+            Text: ="No previous " & If(varChildMediaType="Photo", "Photo/Reportage", varChildMediaType) & " media files yet."
             Visible: =varShowTemplatePicker And CountRows(CI_TplGallery.AllItems) = 0
             Width: =712
             X: =327

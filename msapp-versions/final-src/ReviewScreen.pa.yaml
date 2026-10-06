@@ -539,7 +539,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =24
             Size: =11
-            Text: ="Reviewer comment  (required to pending or reject)"
+            Text: ="Reviewer comment  (required to send back or reject)"
             Visible: =Not(IsBlank(varReviewProject))
             Width: =600
             X: =460

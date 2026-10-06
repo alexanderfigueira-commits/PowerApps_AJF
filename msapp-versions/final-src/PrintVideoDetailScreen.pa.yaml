@@ -830,7 +830,7 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Archive / production title"
+                  Text: ="Media file / production title"
                   Visible: =PVD_Val1.Visible
                   Width: =180
                   X: =12

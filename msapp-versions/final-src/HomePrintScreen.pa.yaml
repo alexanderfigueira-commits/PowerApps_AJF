@@ -62,7 +62,7 @@ Screens:
                       ),
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text)
                   )
               )) & If(CountRows(
                   Filter(
@@ -75,7 +75,7 @@ Screens:
                       ),
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text)
                   )
               ) = 1, " request", " requests") & "   ·   exported " & Text(Now(), "dd-mm-yyyy hh:mm")
             Width: =700
@@ -211,7 +211,7 @@ Screens:
                       ),
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text)
                   )
               ))
             Items: |-
@@ -225,7 +225,7 @@ Screens:
                       ),
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text)
                   )
             LoadingSpinner: =LoadingSpinner.None
             ShowScrollbar: =false
@@ -386,7 +386,7 @@ Screens:
                           )
                       ),
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text)
                   )
                   )
               ) & ")"
@@ -424,7 +424,7 @@ Screens:
                           )
                       ),
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text),
                       Status.Value = "Draft"
                   )
                   )
@@ -463,7 +463,7 @@ Screens:
                           )
                       ),
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text),
                       Status.Value = "Processing"
                   )
                   )
@@ -502,7 +502,7 @@ Screens:
                           )
                       ),
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text),
                       Status.Value = "Pending"
                   )
                   )
@@ -541,7 +541,7 @@ Screens:
                           )
                       ),
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text),
                       Status.Value = "Approved"
                   )
                   )
@@ -580,7 +580,7 @@ Screens:
                           )
                       ),
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text),
                       Status.Value = "Rejected"
                   )
                   )
@@ -609,7 +609,7 @@ Screens:
                       ),
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text)
                   )
               ) = 0
             Width: =1302
@@ -707,7 +707,7 @@ Screens:
                       colPrintData,
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text)
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text)
                   )
                   )
               ) & ")"
@@ -740,7 +740,7 @@ Screens:
                       colPrintData,
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text),
                       !IsEmpty(
                           Filter(
                               colPrintMedia,
@@ -779,7 +779,7 @@ Screens:
                       colPrintData,
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text),
                       !IsEmpty(
                           Filter(
                               colPrintMedia,
@@ -818,7 +818,7 @@ Screens:
                       colPrintData,
                       locHPStatus = "All" Or Status.Value = locHPStatus,
                       IsBlank(HP_TxtTitle.Text) Or HP_TxtTitle.Text = "" Or StartsWith(RequestTitle, HP_TxtTitle.Text),
-                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or Not(IsNumeric(HP_TxtRequestID.Text)) Or ID = Value(HP_TxtRequestID.Text),
+                      IsBlank(HP_TxtRequestID.Text) Or HP_TxtRequestID.Text = "" Or StartsWith(RequestNumber, HP_TxtRequestID.Text),
                       !IsEmpty(
                           Filter(
                               colPrintMedia,
