@@ -13,6 +13,11 @@ Screens:
       LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
       OnVisible: |-
         =UpdateContext({locHPProductionType: "All", locHPStatus: "All"});
+        // Export loads its own data: it no longer depends on the Request Management gallery having been opened (or on its filters).
+        // The same visibility rule as that gallery: own requests; an ADMINISTRATOR sees every request except drafts.
+        Refresh('AV-CD-Requests');
+        ClearCollect(colPrintData, 'AV-CD-Requests');
+        RemoveIf(colPrintData, Not('Created By'.Email = User().Email Or (varUserRole = "ADMINISTRATOR" And Status.Value <> "Draft")));
         ClearCollect(colPrintMedia, 'AV-CD-Mediafiles')
     Children:
       - HP_TopBar:

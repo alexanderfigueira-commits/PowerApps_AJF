@@ -597,7 +597,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="FTP delivery path"
+                  Text: ="FTP delivery path *"
                   Visible: =varChildMediaType = "Photo"
                   Width: =800
                   X: =56
@@ -605,7 +605,10 @@ Screens:
             - CI_FTPPath:
                 Control: Classic/TextInput@2.3.2
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CI_LblFTPPath.Visible And IsBlank(Trim(CI_FTPPath.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CI_LblFTPPath.Visible And IsBlank(Trim(CI_FTPPath.Text)), 3, 2)
                   Default: =varChildFTPPath1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
