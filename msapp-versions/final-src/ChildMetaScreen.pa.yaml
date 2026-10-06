@@ -436,15 +436,17 @@ Screens:
                 Properties:
                   BorderColor: |-
                     =// yellow while this mandatory field is empty
-                    If(CM_LblSeasonNumber.Visible And IsBlank(Trim(CM_SeasonNumber.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblSeasonNumber.Visible And IsBlank(Trim(CM_SeasonNumber.Text)), 3, 2)
-                  Default: =Text(varChildSeasonNumber)
+                    If(CM_LblSeasonNumber.Visible And Coalesce(IfError(Value(Trim(CM_SeasonNumber.Text)), 0), 0) <= 0, RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblSeasonNumber.Visible And Coalesce(IfError(Value(Trim(CM_SeasonNumber.Text)), 0), 0) <= 0, 3, 2)
+                  Default: |-
+                    =// empty (showing the hint) until a number above 0 is stored
+                    If(varChildSeasonNumber > 0, Text(varChildSeasonNumber), "")
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
                   HintText: ="1"
-                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverBorderColor: =Self.BorderColor
                   HoverFill: =RGBA(186, 202, 226, 1)
-                  OnChange: =Set(varChildSeasonNumber, Value(Self.Text))
+                  OnChange: =Set(varChildSeasonNumber, Coalesce(IfError(Value(Self.Text), 0), 0))
                   Visible: =varChildMediaType = "Podcast"
                   Width: =139
                   X: =56
@@ -467,15 +469,17 @@ Screens:
                 Properties:
                   BorderColor: |-
                     =// yellow while this mandatory field is empty
-                    If(CM_LblEpisodeNumber.Visible And IsBlank(Trim(CM_EpisodeNumber.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblEpisodeNumber.Visible And IsBlank(Trim(CM_EpisodeNumber.Text)), 3, 2)
-                  Default: =Text(varChildEpisodeNumber)
+                    If(CM_LblEpisodeNumber.Visible And Coalesce(IfError(Value(Trim(CM_EpisodeNumber.Text)), 0), 0) <= 0, RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblEpisodeNumber.Visible And Coalesce(IfError(Value(Trim(CM_EpisodeNumber.Text)), 0), 0) <= 0, 3, 2)
+                  Default: |-
+                    =// empty (showing the hint) until a number above 0 is stored
+                    If(varChildEpisodeNumber > 0, Text(varChildEpisodeNumber), "")
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
                   HintText: ="1"
-                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverBorderColor: =Self.BorderColor
                   HoverFill: =RGBA(186, 202, 226, 1)
-                  OnChange: =Set(varChildEpisodeNumber, Value(Self.Text))
+                  OnChange: =Set(varChildEpisodeNumber, Coalesce(IfError(Value(Self.Text), 0), 0))
                   Visible: =varChildMediaType = "Podcast"
                   Width: =139
                   X: =212
@@ -833,8 +837,8 @@ Screens:
                 Properties:
                   BorderColor: |-
                     =// yellow while this mandatory field is empty
-                    If(CM_LblProducer.Visible And IsEmpty(CM_Producer.SelectedItems), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblProducer.Visible And IsEmpty(CM_Producer.SelectedItems), 3, 2)
+                    If(CM_LblProducer.Visible And (IsBlank(varChildProducer) Or IsEmpty(Filter(CM_Producer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblProducer.Visible And (IsBlank(varChildProducer) Or IsEmpty(Filter(CM_Producer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), 3, 2)
                   ChevronBackground: =RGBA(56, 96, 178, 1)
                   ChevronFill: =RGBA(255, 255, 255, 1)
                   ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
