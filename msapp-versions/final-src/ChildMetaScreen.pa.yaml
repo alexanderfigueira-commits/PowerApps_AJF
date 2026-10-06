@@ -20,13 +20,7 @@ Screens:
         Set(varNavArm, "");
         If(varChildMediaType = "Video" And varVideoMetaChildId <> varCurrentChildId,
             Set(varVideoMetaChildId, varCurrentChildId);
-            Set(varChildProducer, "");
-            Set(varChildExecProducer, "");
             Set(varChildSubtitlesProvided, false));
-        If(varChildMediaType = "Podcast" And varPodMetaChildId <> varCurrentChildId,
-            Set(varPodMetaChildId, varCurrentChildId);
-            Set(varChildProducer, "");
-            Set(varChildExecProducer, ""));
         // the attachments panel (CL_FormAttach) edits a snapshot of the open media item;
         // taken here too so the file lists on this tab show the right item
         If(
