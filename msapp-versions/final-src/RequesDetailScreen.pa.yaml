@@ -289,7 +289,9 @@ Screens:
                 )
             ),
             Clear(colReqNotes)
-        )
+        );
+        // "Archiving only, not publication": an opened request shows what is saved, a new request starts at No
+        Set(varRequestArchivingOnly, Coalesce(varCurrentRequest.ArchivingOnly, false))
     Children:
       - RS_ChildrenGallery:
           Control: Gallery@2.15.0
@@ -599,7 +601,220 @@ Screens:
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(120, 60, 0, 1)
-            OnSelect: "=// save exactly what is on screen\r\nSet(varRequestTitle, RS_Title.Text);\r\nSet(varRequestDescription, RS_Description.Text);\r\nSet(varRequestDG, HomeFilterDG.Selected.Value);\r\nIf(\r\n    IsBlank(varRequestTitle) Or IsBlank(varRequestDG),\r\n    Notify(\"Enter the request title and select a DG/Agency before saving.\", NotificationType.Warning),\r\n\r\n    IfError(\r\n        If(Coalesce(varCurrentRequest.ID, 0) <= 0, Set(varNextReqSeq, With(\r\n            {yr4: Text(Year(Today())), yr2: Right(Text(Year(Today())), 2), lastNum: Coalesce(First(Sort('AV-CD-Requests', ID, SortOrder.Descending)).RequestNumber, \"\")},\r\n            If(\r\n                Left(lastNum, 3) = yr2 & \"-\",\r\n                Value(Mid(lastNum, 4, 10)),\r\n                If(Left(lastNum, 5) = yr4 & \"-\", Value(Right(lastNum, 4)), 0)\r\n            ) + 1\r\n        )));\r\n        Set(varCurrentRequest,\r\n            If(\r\n                Coalesce(varCurrentRequest.ID, 0) > 0,\r\n                Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: varRequestTitle,\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription,\r\n                    DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,\r\n                        {\r\n                            Claims: \"i:0#.f|membership|\" & Lower(u.Mail),\r\n                            DisplayName: u.DisplayName,\r\n                            Email: u.Mail,\r\n                            Department: \"\",\r\n                            JobTitle: \"\",\r\n                            Picture: \"\"\r\n                        }\r\n                    ),\r\n                    Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,\r\n                        {\r\n                            Claims: \"i:0#.f|membership|\" & Lower(u.Mail),\r\n                            DisplayName: u.DisplayName,\r\n                            Email: u.Mail,\r\n                            Department: \"\",\r\n                            JobTitle: \"\",\r\n                            Picture: \"\"\r\n                        }\r\n                    ),\r\n                    // manual (non-Microsoft 365) email picked in RS_Owner; blank when none\r\n                    Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, \"; \"),\r\n                    // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none\r\n                    Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, \"; \"),\r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        }),\r\n                IfError(\r\n                            Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: varRequestTitle,\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription,\r\n                    DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,\r\n                        {\r\n                            Claims: \"i:0#.f|membership|\" & Lower(u.Mail),\r\n                            DisplayName: u.DisplayName,\r\n                            Email: u.Mail,\r\n                            Department: \"\",\r\n                            JobTitle: \"\",\r\n                            Picture: \"\"\r\n                        }\r\n                    ),\r\n                    Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,\r\n                        {\r\n                            Claims: \"i:0#.f|membership|\" & Lower(u.Mail),\r\n                            DisplayName: u.DisplayName,\r\n                            Email: u.Mail,\r\n                            Department: \"\",\r\n                            JobTitle: \"\",\r\n                            Picture: \"\"\r\n                        }\r\n                    ),\r\n                    // manual (non-Microsoft 365) email picked in RS_Owner; blank when none\r\n                    Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, \"; \"),\r\n                    // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none\r\n                    Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, \"; \"),\r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        }),\r\n                            IfError(\r\n                                Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq + 1, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: varRequestTitle,\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription,\r\n                    DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,\r\n                        {\r\n                            Claims: \"i:0#.f|membership|\" & Lower(u.Mail),\r\n                            DisplayName: u.DisplayName,\r\n                            Email: u.Mail,\r\n                            Department: \"\",\r\n                            JobTitle: \"\",\r\n                            Picture: \"\"\r\n                        }\r\n                    ),\r\n                    Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,\r\n                        {\r\n                            Claims: \"i:0#.f|membership|\" & Lower(u.Mail),\r\n                            DisplayName: u.DisplayName,\r\n                            Email: u.Mail,\r\n                            Department: \"\",\r\n                            JobTitle: \"\",\r\n                            Picture: \"\"\r\n                        }\r\n                    ),\r\n                    // manual (non-Microsoft 365) email picked in RS_Owner; blank when none\r\n                    Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, \"; \"),\r\n                    // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none\r\n                    Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, \"; \"),\r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        }),\r\n                                Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq + 2, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: varRequestTitle,\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription,\r\n                    DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,\r\n                        {\r\n                            Claims: \"i:0#.f|membership|\" & Lower(u.Mail),\r\n                            DisplayName: u.DisplayName,\r\n                            Email: u.Mail,\r\n                            Department: \"\",\r\n                            JobTitle: \"\",\r\n                            Picture: \"\"\r\n                        }\r\n                    ),\r\n                    Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,\r\n                        {\r\n                            Claims: \"i:0#.f|membership|\" & Lower(u.Mail),\r\n                            DisplayName: u.DisplayName,\r\n                            Email: u.Mail,\r\n                            Department: \"\",\r\n                            JobTitle: \"\",\r\n                            Picture: \"\"\r\n                        }\r\n                    ),\r\n                    // manual (non-Microsoft 365) email picked in RS_Owner; blank when none\r\n                    Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, \"; \"),\r\n                    // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none\r\n                    Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, \"; \"),\r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        })\r\n                            )\r\n                        )\r\n            )\r\n        );\r\n        // Manual contacts typed before the first save are keyed to a blank request\r\n        // number; move them onto the number this save assigned.\r\n        UpdateIf(\r\n            colManualContacts,\r\n            IsBlank(ParentRequest) Or ParentRequest = \"\",\r\n            {ParentRequest: varCurrentRequest.RequestNumber}\r\n        );\r\n        // the management gallery reloads on its next visit\r\n        // saved on the request now, so it becomes the source for this request\r\n        RemoveIf(colManualContacts, ParentRequest = varCurrentRequest.RequestNumber);\r\n        Set(varReqDataLoaded, false);\r\n        Notify(\"Draft saved.\", NotificationType.Success),\r\n\r\n        Notify(\"Error saving draft: \" & FirstError.Message, NotificationType.Error)\r\n    )\r\n)"
+            OnSelect: |-
+              =// save exactly what is on screen
+              Set(varRequestTitle, RS_Title.Text);
+              Set(varRequestDescription, RS_Description.Text);
+              Set(varRequestDG, HomeFilterDG.Selected.Value);
+              If(
+                  IsBlank(varRequestTitle) Or IsBlank(varRequestDG),
+                  Notify("Enter the request title and select a DG/Agency before saving.", NotificationType.Warning),
+              
+                  IfError(
+                      If(Coalesce(varCurrentRequest.ID, 0) <= 0, Set(varNextReqSeq, With(
+                          {yr4: Text(Year(Today())), yr2: Right(Text(Year(Today())), 2), lastNum: Coalesce(First(Sort('AV-CD-Requests', ID, SortOrder.Descending)).RequestNumber, "")},
+                          If(
+                              Left(lastNum, 3) = yr2 & "-",
+                              Value(Mid(lastNum, 4, 10)),
+                              If(Left(lastNum, 5) = yr4 & "-", Value(Right(lastNum, 4)), 0)
+                          ) + 1
+                      )));
+                      Set(varCurrentRequest,
+                          If(
+                              Coalesce(varCurrentRequest.ID, 0) > 0,
+                              Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
+                                  RequestTitle: varRequestTitle,
+                                  DG: {Value: varRequestDG},
+                                  MediaType_Request: If(
+                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
+                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
+                                      {Value: varRequestMediaType}
+                                  ),
+                                  ArchivingOnly: varRequestArchivingOnly,
+                                  Description: varRequestDescription,
+                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
+                                      {
+                                          Claims: "i:0#.f|membership|" & Lower(u.Mail),
+                                          DisplayName: u.DisplayName,
+                                          Email: u.Mail,
+                                          Department: "",
+                                          JobTitle: "",
+                                          Picture: ""
+                                      }
+                                  ),
+                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
+                                      {
+                                          Claims: "i:0#.f|membership|" & Lower(u.Mail),
+                                          DisplayName: u.DisplayName,
+                                          Email: u.Mail,
+                                          Department: "",
+                                          JobTitle: "",
+                                          Picture: ""
+                                      }
+                                  ),
+                                  // manual (non-Microsoft 365) email picked in RS_Owner; blank when none
+                                  Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none
+                                  Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  Status: {Value: "Draft"}
+                              
+                      }),
+                              IfError(
+                                          Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
+                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq, "0000"),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
+                                  RequestTitle: varRequestTitle,
+                                  DG: {Value: varRequestDG},
+                                  MediaType_Request: If(
+                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
+                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
+                                      {Value: varRequestMediaType}
+                                  ),
+                                  ArchivingOnly: varRequestArchivingOnly,
+                                  Description: varRequestDescription,
+                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
+                                      {
+                                          Claims: "i:0#.f|membership|" & Lower(u.Mail),
+                                          DisplayName: u.DisplayName,
+                                          Email: u.Mail,
+                                          Department: "",
+                                          JobTitle: "",
+                                          Picture: ""
+                                      }
+                                  ),
+                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
+                                      {
+                                          Claims: "i:0#.f|membership|" & Lower(u.Mail),
+                                          DisplayName: u.DisplayName,
+                                          Email: u.Mail,
+                                          Department: "",
+                                          JobTitle: "",
+                                          Picture: ""
+                                      }
+                                  ),
+                                  // manual (non-Microsoft 365) email picked in RS_Owner; blank when none
+                                  Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none
+                                  Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  Status: {Value: "Draft"}
+                              
+                      }),
+                                          IfError(
+                                              Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
+                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq + 1, "0000"),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
+                                  RequestTitle: varRequestTitle,
+                                  DG: {Value: varRequestDG},
+                                  MediaType_Request: If(
+                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
+                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
+                                      {Value: varRequestMediaType}
+                                  ),
+                                  ArchivingOnly: varRequestArchivingOnly,
+                                  Description: varRequestDescription,
+                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
+                                      {
+                                          Claims: "i:0#.f|membership|" & Lower(u.Mail),
+                                          DisplayName: u.DisplayName,
+                                          Email: u.Mail,
+                                          Department: "",
+                                          JobTitle: "",
+                                          Picture: ""
+                                      }
+                                  ),
+                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
+                                      {
+                                          Claims: "i:0#.f|membership|" & Lower(u.Mail),
+                                          DisplayName: u.DisplayName,
+                                          Email: u.Mail,
+                                          Department: "",
+                                          JobTitle: "",
+                                          Picture: ""
+                                      }
+                                  ),
+                                  // manual (non-Microsoft 365) email picked in RS_Owner; blank when none
+                                  Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none
+                                  Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  Status: {Value: "Draft"}
+                              
+                      }),
+                                              Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
+                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq + 2, "0000"),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
+                                  RequestTitle: varRequestTitle,
+                                  DG: {Value: varRequestDG},
+                                  MediaType_Request: If(
+                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
+                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
+                                      {Value: varRequestMediaType}
+                                  ),
+                                  ArchivingOnly: varRequestArchivingOnly,
+                                  Description: varRequestDescription,
+                                  DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
+                                      {
+                                          Claims: "i:0#.f|membership|" & Lower(u.Mail),
+                                          DisplayName: u.DisplayName,
+                                          Email: u.Mail,
+                                          Department: "",
+                                          JobTitle: "",
+                                          Picture: ""
+                                      }
+                                  ),
+                                  Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u,
+                                      {
+                                          Claims: "i:0#.f|membership|" & Lower(u.Mail),
+                                          DisplayName: u.DisplayName,
+                                          Email: u.Mail,
+                                          Department: "",
+                                          JobTitle: "",
+                                          Picture: ""
+                                      }
+                                  ),
+                                  // manual (non-Microsoft 365) email picked in RS_Owner; blank when none
+                                  Manual_DG_Agency_Contact: Concat(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  // manual (non-Microsoft 365) email picked in RS_Contractor; blank when none
+                                  Manual_Contractor_Contact: Concat(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName = Mail), Mail, "; "),
+                                  Status: {Value: "Draft"}
+                              
+                      })
+                                          )
+                                      )
+                          )
+                      );
+                      // Manual contacts typed before the first save are keyed to a blank request
+                      // number; move them onto the number this save assigned.
+                      UpdateIf(
+                          colManualContacts,
+                          IsBlank(ParentRequest) Or ParentRequest = "",
+                          {ParentRequest: varCurrentRequest.RequestNumber}
+                      );
+                      // the management gallery reloads on its next visit
+                      // saved on the request now, so it becomes the source for this request
+                      RemoveIf(colManualContacts, ParentRequest = varCurrentRequest.RequestNumber);
+                      Set(varReqDataLoaded, false);
+                      Notify("Draft saved.", NotificationType.Success),
+              
+                      Notify("Error saving draft: " & FirstError.Message, NotificationType.Error)
+                  )
+              )
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
@@ -1133,7 +1348,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
             Fill: =RGBA(241, 244, 249, 1)
-            Height: =220
+            Height: =260
             Visible: =Not(locDetailsCollapsed)
             Width: =2
             X: =883
@@ -1159,20 +1374,20 @@ Screens:
             Color: =RGBA(60, 66, 80, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =23
+            Height: =22
             Size: =10
             Text: ="Adminstrator Notes:"
             Visible: =Not(locDetailsCollapsed)
             Width: =166
-            X: =916
-            Y: =271
+            X: =1136
+            Y: =327
       - RS_AdminNotesUpdated:
           Control: Label@2.5.1
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
-            Height: =45
+            Height: =16
             Size: =8
             Text: |-
               =If(
@@ -1181,16 +1396,16 @@ Screens:
                   "Last updated on " & Text(varCurrentRequest.AdminNotesUpdatedOn, DateTimeFormat.ShortDateTime)
               )
             Visible: =Not(locDetailsCollapsed)
-            Width: =111
-            X: =919
-            Y: =358
+            Width: =190
+            X: =1138
+            Y: =380
       - RS_RequestorNotesUpdated:
           Control: Label@2.5.1
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
-            Height: =43
+            Height: =16
             Size: =8
             Text: |-
               =If(
@@ -1199,9 +1414,9 @@ Screens:
                   "Last updated on " & Text(varCurrentRequest.RequestorNotesUpdatedOn, DateTimeFormat.ShortDateTime)
               )
             Visible: =Not(locDetailsCollapsed)
-            Width: =160
-            X: =1142
-            Y: =356
+            Width: =190
+            X: =919
+            Y: =380
       - RS_Description:
           Control: Classic/TextInput@2.3.2
           Properties:
@@ -1233,7 +1448,7 @@ Screens:
             DisabledFill: =RGBA(240, 242, 246, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
-            Height: =62
+            Height: =28
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(60, 66, 80, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
@@ -1300,9 +1515,15 @@ Screens:
               );
               UpdateIf(colReqNotes, NNew, {NNew: false});
               UpdateContext({locShowNotes: true})
+            PaddingBottom: =0
+            PaddingTop: =0
             PressedBorderColor: =RGBA(0, 0, 0, 1)
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
             Size: =11
             Text: |-
               =With(
@@ -1316,8 +1537,8 @@ Screens:
             Tooltip: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "administrator", NNew)) > 0, "You have unread notes. Opening them marks them as read.", "Open the notes of this request")
             Visible: =Not(locDetailsCollapsed)
             Width: =168
-            X: =915
-            Y: =295
+            X: =1134
+            Y: =351
       - RS_RequestorNotesOpen:
           Control: Classic/Button@2.2.0
           Properties:
@@ -1332,7 +1553,7 @@ Screens:
             DisabledFill: =RGBA(240, 242, 246, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
-            Height: =62
+            Height: =28
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(60, 66, 80, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
@@ -1399,9 +1620,15 @@ Screens:
               );
               UpdateIf(colReqNotes, NNew, {NNew: false});
               UpdateContext({locShowNotes: true})
+            PaddingBottom: =0
+            PaddingTop: =0
             PressedBorderColor: =RGBA(0, 0, 0, 1)
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
             Size: =11
             Text: |-
               =With(
@@ -1415,8 +1642,8 @@ Screens:
             Tooltip: =If(CountRows(Filter(colReqNotes, Lower(NRole) = "requestor", NNew)) > 0, "You have unread notes. Opening them marks them as read.", "Open the notes of this request")
             Visible: =Not(locDetailsCollapsed)
             Width: =168
-            X: =1134
-            Y: =295
+            X: =915
+            Y: =351
       - RS_RejectionBanner:
           Control: Rectangle@2.3.0
           Group: Group1
@@ -1640,6 +1867,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
+                                  ArchivingOnly: varRequestArchivingOnly,
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
@@ -1773,6 +2001,7 @@ Screens:
                                       If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
                                       {Value: varRequestMediaType}
                                   ),
+                                  ArchivingOnly: varRequestArchivingOnly,
                                   Description: varRequestDescription,
                                   DG_Agency_Contact: ForAll(Filter(RS_Owner.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
                                   Contractor_Contact: ForAll(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Mail)) And DisplayName <> Mail) As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
@@ -2219,13 +2448,13 @@ Screens:
             Color: =RGBA(60, 66, 80, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =23
+            Height: =22
             Size: =10
             Text: ="Requestor Notes:"
             Visible: =Not(locDetailsCollapsed)
             Width: =166
-            X: =1136
-            Y: =269
+            X: =916
+            Y: =327
       - RS_Menu_Help:
           Control: Classic/Button@2.2.0
           Group: RS_Menu
@@ -2635,7 +2864,173 @@ Screens:
             HoverColor: =ColorFade(Color.CadetBlue, 20%)
             HoverFill: =RGBA(0, 0, 0, 0)
             Icon: =Icon.AddLibrary
-            OnSelect: "=If(\r\n    IsBlank(Coalesce(varRequestTitle)) Or Coalesce(varRequestTitle) = \"\"\r\n    Or IsBlank(varRequestDG) Or varRequestDG = \"\",\r\n    Notify(\"Enter the request title and select a DG/Agency before adding media.\", NotificationType.Warning),\r\nIf(\r\n    IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n    Notify(\"Please select the production type first.\", NotificationType.Warning),\r\nIfError(\r\n    If(\r\n        IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0,\r\n        Set(varNextReqSeq, With(\r\n            {yr4: Text(Year(Today())), yr2: Right(Text(Year(Today())), 2), lastNum: Coalesce(First(Sort('AV-CD-Requests', ID, SortOrder.Descending)).RequestNumber, \"\")},\r\n            If(\r\n                Left(lastNum, 3) = yr2 & \"-\",\r\n                Value(Mid(lastNum, 4, 10)),\r\n                If(Left(lastNum, 5) = yr4 & \"-\", Value(Right(lastNum, 4)), 0)\r\n            ) + 1\r\n        ));\r\n        Set(varCurrentRequest, IfError(\r\n                    Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription, \r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        }),\r\n                    IfError(\r\n                        Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq + 1, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription, \r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        }),\r\n                        Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq + 2, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    Description: varRequestDescription, \r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        })\r\n                    )\r\n                ))\r\n    );\r\n// Manual contacts typed before the first save are keyed to a blank request\r\n// number; move them onto the number this save assigned.\r\nUpdateIf(\r\n    colManualContacts,\r\n    IsBlank(ParentRequest) Or ParentRequest = \"\",\r\n    {ParentRequest: varCurrentRequest.RequestNumber}\r\n);\r\nSet(varCurrentChildId, Text(GUID()));\r\nSet(varCurrentChildSPId,\r\n    IfError(\r\n        With(\r\n            {rn: varCurrentRequest.RequestNumber},\r\n            With(\r\n                {\r\n                    n0: With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, \"\")}, If(Left(lastMed, Len(rn) + 1) = rn & \"-\", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1\r\n                },\r\n                IfError(\r\n                    Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {\r\n                            CD_MediaNumber: rn & \"-\" & Text(n0, \"00\"),\r\n                            MediaType: Table({Value: varRequestMediaType}),\r\n                            ParentRequest: varCurrentRequest.RequestNumber,\r\n                            DepositStatus: Table({Value: \"Draft\"})\r\n                        }),\r\n                    IfError(\r\n                        Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {\r\n                            CD_MediaNumber: rn & \"-\" & Text(n0 + 1, \"00\"),\r\n                            MediaType: Table({Value: varRequestMediaType}),\r\n                            ParentRequest: varCurrentRequest.RequestNumber,\r\n                            DepositStatus: Table({Value: \"Draft\"})\r\n                        }),\r\n                        Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {\r\n                            CD_MediaNumber: rn & \"-\" & Text(n0 + 2, \"00\"),\r\n                            MediaType: Table({Value: varRequestMediaType}),\r\n                            ParentRequest: varCurrentRequest.RequestNumber,\r\n                            DepositStatus: Table({Value: \"Draft\"})\r\n                        })\r\n                    )\r\n                )\r\n            ).ID\r\n        ),\r\n        0\r\n    )\r\n);\r\nSet(varChildTitle, Blank());\r\nSet(varChildTitle1, \"\");\r\nSet(varChildProductType, \"\");\r\nSet(varChildTags, \"\");\r\nSet(varChildEpisodeTitle, \"\");\r\nSet(varChildMediaType, varRequestMediaType);\r\nSet(varChildDescription1, \"\");\r\nSet(varChildCaptureDate, Blank());\r\nSet(varChildProductionPlace1, \"\");\r\nSet(varChildCredits1, \"\");\r\nSet(varChildLanguageVersions, \"\");\r\nSet(varChildAIVoiceover, false);\r\nSet(varChildContractCase, \"\");\r\nSet(varChildContractCase1Sub, \"\");\r\nSet(varChildModelRelease, false);\r\nSet(varChildNoThirdParty, false);\r\nSet(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, \"\"); Set(varChildExecProducer, \"\"); Set(varChildProducer, \"\"); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, \"\");\r\nSet(varChildModelReleaseProvided, false);\r\nSet(varChildMusicUsed, false);\r\nSet(varChildMusicLicenceProvided, false);\r\nSet(varChildPreexisting, false);\r\nSet(varChildPreexistingProvided, false);\r\nSet(varChildEpisodeTitle1, \"\");\r\nSet(varChildEpisodeSummary1, \"\");\r\nSet(varChildSeasonNumber, 0);\r\nSet(varChildEpisodeNumber, 0);\r\nSet(varChildSeriesTitle1, \"\");\r\nSet(varChildProductType1, \"\");\r\nSet(varChildProductionEndDate, Blank());\r\nSet(varChildPublicationStartDate, Blank());\r\nSet(varChildPublicationEndDate, Blank());\r\nSet(varChildLinks1, \"\");\r\nSet(varChildTags1, \"\");\r\nSet(varChildFTPPath1, \"\");\r\nSet(varChildBelugaRef, \"\");\r\nSet(varChildNotes, \"\");\r\nSet(varChildPubBeluga, false);\r\nSet(varChildPubSpotify, false);\r\nNavigate(ChildInfoScreen),\r\n    Notify(\"Could not start a new media item: \" & FirstError.Message, NotificationType.Error)\r\n)\r\n)\r\n)"
+            OnSelect: |-
+              =If(
+                  IsBlank(Coalesce(varRequestTitle)) Or Coalesce(varRequestTitle) = ""
+                  Or IsBlank(varRequestDG) Or varRequestDG = "",
+                  Notify("Enter the request title and select a DG/Agency before adding media.", NotificationType.Warning),
+              If(
+                  IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                  Notify("Please select the production type first.", NotificationType.Warning),
+              IfError(
+                  If(
+                      IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0,
+                      Set(varNextReqSeq, With(
+                          {yr4: Text(Year(Today())), yr2: Right(Text(Year(Today())), 2), lastNum: Coalesce(First(Sort('AV-CD-Requests', ID, SortOrder.Descending)).RequestNumber, "")},
+                          If(
+                              Left(lastNum, 3) = yr2 & "-",
+                              Value(Mid(lastNum, 4, 10)),
+                              If(Left(lastNum, 5) = yr4 & "-", Value(Right(lastNum, 4)), 0)
+                          ) + 1
+                      ));
+                      Set(varCurrentRequest, IfError(
+                                  Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
+                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq, "0000"),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
+                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
+                                  DG: {Value: varRequestDG},
+                                  MediaType_Request: If(
+                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
+                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
+                                      {Value: varRequestMediaType}
+                                  ),
+                                  ArchivingOnly: varRequestArchivingOnly,
+                                  Description: varRequestDescription, 
+                                  Status: {Value: "Draft"}
+                              
+                      }),
+                                  IfError(
+                                      Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
+                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq + 1, "0000"),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
+                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
+                                  DG: {Value: varRequestDG},
+                                  MediaType_Request: If(
+                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
+                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
+                                      {Value: varRequestMediaType}
+                                  ),
+                                  ArchivingOnly: varRequestArchivingOnly,
+                                  Description: varRequestDescription, 
+                                  Status: {Value: "Draft"}
+                              
+                      }),
+                                      Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
+                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq + 2, "0000"),
+                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
+                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
+                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
+                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
+                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
+                                  DG: {Value: varRequestDG},
+                                  MediaType_Request: If(
+                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
+                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
+                                      {Value: varRequestMediaType}
+                                  ),
+                                  ArchivingOnly: varRequestArchivingOnly,
+                                  Description: varRequestDescription, 
+                                  Status: {Value: "Draft"}
+                              
+                      })
+                                  )
+                              ))
+                  );
+              // Manual contacts typed before the first save are keyed to a blank request
+              // number; move them onto the number this save assigned.
+              UpdateIf(
+                  colManualContacts,
+                  IsBlank(ParentRequest) Or ParentRequest = "",
+                  {ParentRequest: varCurrentRequest.RequestNumber}
+              );
+              Set(varCurrentChildId, Text(GUID()));
+              Set(varCurrentChildSPId,
+                  IfError(
+                      With(
+                          {rn: varCurrentRequest.RequestNumber},
+                          With(
+                              {
+                                  n0: With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, "")}, If(Left(lastMed, Len(rn) + 1) = rn & "-", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1
+                              },
+                              IfError(
+                                  Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {
+                                          CD_MediaNumber: rn & "-" & Text(n0, "00"),
+                                          MediaType: Table({Value: varRequestMediaType}),
+                                          ParentRequest: varCurrentRequest.RequestNumber,
+                                          DepositStatus: Table({Value: "Draft"})
+                                      }),
+                                  IfError(
+                                      Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {
+                                          CD_MediaNumber: rn & "-" & Text(n0 + 1, "00"),
+                                          MediaType: Table({Value: varRequestMediaType}),
+                                          ParentRequest: varCurrentRequest.RequestNumber,
+                                          DepositStatus: Table({Value: "Draft"})
+                                      }),
+                                      Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {
+                                          CD_MediaNumber: rn & "-" & Text(n0 + 2, "00"),
+                                          MediaType: Table({Value: varRequestMediaType}),
+                                          ParentRequest: varCurrentRequest.RequestNumber,
+                                          DepositStatus: Table({Value: "Draft"})
+                                      })
+                                  )
+                              )
+                          ).ID
+                      ),
+                      0
+                  )
+              );
+              Set(varChildTitle, Blank());
+              Set(varChildTitle1, "");
+              Set(varChildProductType, "");
+              Set(varChildTags, "");
+              Set(varChildEpisodeTitle, "");
+              Set(varChildMediaType, varRequestMediaType);
+              Set(varChildDescription1, "");
+              Set(varChildCaptureDate, Blank());
+              Set(varChildProductionPlace1, "");
+              Set(varChildCredits1, "");
+              Set(varChildLanguageVersions, "");
+              Set(varChildAIVoiceover, false);
+              Set(varChildContractCase, "");
+              Set(varChildContractCase1Sub, "");
+              Set(varChildModelRelease, false);
+              Set(varChildNoThirdParty, false);
+              Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, "");
+              Set(varChildModelReleaseProvided, false);
+              Set(varChildMusicUsed, false);
+              Set(varChildMusicLicenceProvided, false);
+              Set(varChildPreexisting, false);
+              Set(varChildPreexistingProvided, false);
+              Set(varChildEpisodeTitle1, "");
+              Set(varChildEpisodeSummary1, "");
+              Set(varChildSeasonNumber, 0);
+              Set(varChildEpisodeNumber, 0);
+              Set(varChildSeriesTitle1, "");
+              Set(varChildProductType1, "");
+              Set(varChildProductionEndDate, Blank());
+              Set(varChildPublicationStartDate, Blank());
+              Set(varChildPublicationEndDate, Blank());
+              Set(varChildLinks1, "");
+              Set(varChildTags1, "");
+              Set(varChildFTPPath1, "");
+              Set(varChildBelugaRef, "");
+              Set(varChildNotes, "");
+              Set(varChildPubBeluga, false);
+              Set(varChildPubSpotify, false);
+              Navigate(ChildInfoScreen),
+                  Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
+              )
+              )
+              )
             Tooltip: ="Add Media"
             Width: =39
             X: =32
@@ -3646,3 +4041,55 @@ Screens:
             Width: =200
             X: =682
             Y: =373
+      - RS_ArchiveOnlyCheck:
+          Control: Classic/CheckBox@2.1.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+            CheckmarkFill: =RGBA(0, 0, 0, 1)
+            Color: =RGBA(0, 0, 0, 1)
+            Default: =varRequestArchivingOnly
+            DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverColor: =RGBA(0, 18, 107, 1)
+            OnCheck: |-
+              =Set(varRequestArchivingOnly, true);
+              // a saved request stores the answer straight away, so it survives opening a media item and coming back
+              If(
+                  Coalesce(varCurrentRequest.ID, 0) > 0 And Coalesce(varCurrentRequest.ArchivingOnly, false) <> true,
+                  IfError(
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ArchivingOnly: true})),
+                      Notify("Could not save the answer: " & FirstError.Message, NotificationType.Error)
+                  )
+              )
+            OnUncheck: |-
+              =Set(varRequestArchivingOnly, false);
+              // a saved request stores the answer straight away, so it survives opening a media item and coming back
+              If(
+                  Coalesce(varCurrentRequest.ID, 0) > 0 And Coalesce(varCurrentRequest.ArchivingOnly, false) <> false,
+                  IfError(
+                      Set(varCurrentRequest, Patch('AV-CD-Requests', LookUp('AV-CD-Requests', ID = varCurrentRequest.ID), {ArchivingOnly: false})),
+                      Notify("Could not save the answer: " & FirstError.Message, NotificationType.Error)
+                  )
+              )
+            Size: =10
+            Text: ="Archiving only, not publication"
+            Visible: =Not(locDetailsCollapsed)
+            Width: =374
+            X: =916
+            Y: =276
+            ZIndex: =8
+          Children: []
+      - RS_NotesBand:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Fill: =RGBA(241, 244, 249, 1)
+            Height: =77
+            Visible: =Not(locDetailsCollapsed)
+            Width: =449
+            X: =885
+            Y: =322
+            ZIndex: =10
+          Children: []
