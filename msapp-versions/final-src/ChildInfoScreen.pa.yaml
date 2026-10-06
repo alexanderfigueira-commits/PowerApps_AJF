@@ -306,7 +306,7 @@ Screens:
                   Size: =11
                   Width: =900
                   X: =56
-                  Y: =503
+                  Y: =If(varChildMediaType = "Photo", 503, 580)
             - CI_LblCaptureDate:
                 Control: Label@2.5.1
                 Properties:
@@ -645,7 +645,7 @@ Screens:
                   Text: ="Notes"
                   Width: =400
                   X: =56
-                  Y: =471
+                  Y: =If(varChildMediaType = "Photo", 471, 548)
             - CI_Language:
                 Control: Classic/DropDown@2.3.1
                 Properties:
@@ -853,10 +853,10 @@ Screens:
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             OnChange: =Set(varChildBelugaRef, Self.Text)
-            Visible: =Coalesce(varCurrentRequest.Status.Value, "") = "Approved" And varUserRole = "ADMINISTRATOR"
+            Visible: =varUserRole = "ADMINISTRATOR"
             Width: =400
             X: =56
-            Y: =584
+            Y: =If(varChildMediaType = "Photo", 418, 497)
       - CI_BottomBar:
           Control: Rectangle@2.3.0
           Properties:
@@ -1215,10 +1215,10 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Beluga reference"
-            Visible: =Coalesce(varCurrentRequest.Status.Value, "") = "Approved" And varUserRole = "ADMINISTRATOR"
+            Visible: =varUserRole = "ADMINISTRATOR"
             Width: =400
             X: =56
-            Y: =560
+            Y: =If(varChildMediaType = "Photo", 392, 471)
       - CM_BtnPrev_1:
           Control: Classic/Button@2.2.0
           Properties:
