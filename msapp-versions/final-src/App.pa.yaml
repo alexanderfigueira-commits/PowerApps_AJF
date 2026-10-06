@@ -10,9 +10,7 @@ App:
   Properties:
     BackEnabled: =false
     OnStart: |-
-      =Set(varChildPubBeluga, false);
-      Set(varChildPubSpotify, false);
-      Set(varReqDataLoaded, false);
+      =Set(varReqDataLoaded, false);
       Set(varReqFiltersInit, false);
       Set(varReqReady, false);
       Set(varUserRole, Coalesce(LookUp('AV-CD-RolesPermissionsList', UserEmail.Email = User().Email, Role.Value), "REQUESTOR"));

@@ -523,7 +523,6 @@ Screens:
                                   Producer: varChildProducerSel,
                       FTPPath: varChildFTPPath1,
                       BelugaReference: varChildBelugaRef,
-                                  PublicationChannel: Concat(Filter(Table({Value: "Beluga", On: varChildPubBeluga}, {Value: "Spotify", On: varChildPubSpotify}), On), Value, ";"),
                       Notes: varChildNotes,
                       LanguageVersions: varChildLanguageVersions,
                       AIVoiceover: varChildAIVoiceover,
@@ -556,12 +555,6 @@ Screens:
                                           CD_MediaNumber: If(spId = 0, With({rn: varCurrentRequest.RequestNumber}, rn & "-" & Text(With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, "")}, If(Left(lastMed, Len(rn) + 1) = rn & "-", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1, "00")), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
                                           Description: varChildDescription1,
                                           BelugaReference: varChildBelugaRef,
-                                                      // single-choice column: one record (both ticked -> "Beluga; Spotify"), Blank() when none
-                                                      PublicationChannel: If(
-                                                          varChildPubBeluga Or varChildPubSpotify,
-                                                          {Value: Concat(Filter(Table({Value: "Beluga", On: varChildPubBeluga}, {Value: "Spotify", On: varChildPubSpotify}), On), Value, "; ")},
-                                                          Blank()
-                                                      ),
                                           Notes: varChildNotes,
                                           // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
                                           MediaType: Table({Value: varChildMediaType}),
