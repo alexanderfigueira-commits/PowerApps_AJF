@@ -32,6 +32,7 @@ Screens:
                 locDetailsCollapsed: false,
                 locShowMedia: true,
                 locShowAdminNotes: false,
+                locShowDelConfirm: false,
                 locShowRequestorNotes: false,
                 locShowNotes: false
             }
@@ -615,15 +616,7 @@ Screens:
                   HoverColor: =RGBA(255, 255, 255, 1)
                   HoverFill: =RGBA(253, 235, 235, 1)
                   OnSelect: |-
-                    =IfError(
-                        If(
-                            Coalesce(ThisItem.SPId, 0) > 0,
-                            Remove('AV-CD-Mediafiles', LookUp('AV-CD-Mediafiles', ID = ThisItem.SPId))
-                        );
-                        RemoveIf(colArchives, ArchiveId = ThisItem.ArchiveId);
-                        Notify("Media item removed.", NotificationType.Success),
-                        Notify("Could not delete the media item: " & FirstError.Message, NotificationType.Error)
-                    )
+                    =UpdateContext({locDelItem: ThisItem, locShowDelConfirm: true})
                   PressedBorderColor: =Self.Fill
                   PressedColor: =Self.Fill
                   PressedFill: =Self.Color
@@ -3705,3 +3698,122 @@ Screens:
             Width: =154
             X: =40
             Y: =If(locDetailsCollapsed, 150, 460)
+      - RS_DelBackdrop:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.45)
+            Height: =768
+            OnSelect: =
+            Visible: =locShowDelConfirm
+            Width: =1366
+          Children: []
+      - RS_DelPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            BorderThickness: =2
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =230
+            OnSelect: =
+            Visible: =locShowDelConfirm
+            Width: =500
+            X: =433
+            Y: =270
+          Children: []
+      - RS_DelTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =34
+            Size: =18
+            Text: ="Remove media file?"
+            Visible: =locShowDelConfirm
+            Width: =440
+            X: =463
+            Y: =292
+          Children: []
+      - RS_DelText:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Normal
+            Height: =84
+            Size: =18
+            Text: ="Are you sure you want to delete the media file " & Char(34) & Coalesce(locDelItem.ProductionTitle, "") & Char(34) & "? This cannot be undone."
+            Visible: =locShowDelConfirm
+            Width: =440
+            X: =463
+            Y: =338
+          Children: []
+      - RS_DelNo:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(60, 66, 80, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locShowDelConfirm: false, locDelItem: Blank()})
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="No, keep it"
+            Tooltip: ="Save draft"
+            Visible: =locShowDelConfirm
+            Width: =200
+            X: =463
+            Y: =440
+          Children: []
+      - RS_DelYes:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(56, 96, 178, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: =DisplayMode.Edit
+            Fill: =RGBA(192, 57, 43, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(150, 40, 30, 1)
+            OnSelect: |-
+              =IfError(
+                  If(
+                      Coalesce(locDelItem.SPId, 0) > 0,
+                      Remove('AV-CD-Mediafiles', LookUp('AV-CD-Mediafiles', ID = locDelItem.SPId))
+                  );
+                  RemoveIf(colArchives, ArchiveId = locDelItem.ArchiveId);
+                  Notify("Media item removed.", NotificationType.Success),
+                  Notify("Could not delete the media item: " & FirstError.Message, NotificationType.Error)
+              );
+              UpdateContext({locShowDelConfirm: false, locDelItem: Blank()})
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="Yes, delete"
+            Tooltip: ="Save draft"
+            Visible: =locShowDelConfirm
+            Width: =200
+            X: =703
+            Y: =440
+          Children: []
