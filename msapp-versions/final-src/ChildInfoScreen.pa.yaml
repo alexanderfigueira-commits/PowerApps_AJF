@@ -893,6 +893,7 @@ Screens:
             BorderThickness: =1
             Color: =RGBA(56, 96, 178, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: =If(varRequestorLocked, DisplayMode.Disabled, DisplayMode.Edit)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
             Height: =34
@@ -901,6 +902,8 @@ Screens:
             HoverFill: =RGBA(230, 236, 245, 1)
             OnSelect: |-
               =Set(varTplSearch1, "");
+              Set(varTplSearch, "");
+              Reset(CI_TplSearch);
               Set(varTplCandidate, Blank());
               Set(varShowTplConfirm, false);
               Set(varShowTemplatePicker, true)
@@ -953,7 +956,7 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             Size: =12
-            Text: ="Showing only Photo/Reportage media files, newest first. Selecting one pre-fills this form and never modifies the original."
+            Text: ="Showing only " & If(varChildMediaType = "Photo", "Photo/Reportage", varChildMediaType) & " media files, newest first. Selecting one pre-fills this form and never modifies the original."
             Visible: =varShowTemplatePicker
             Width: =712
             X: =327
@@ -1006,9 +1009,13 @@ Screens:
                   Filter(
                       colTplMedia,
                       varChildMediaType in MediaType.Value,
+                      // not the item being edited, and not untitled drafts (nothing to copy)
+                      ID <> Coalesce(varCurrentChildSPId, 0),
+                      Not(IsBlank(ProductionTitle)),
                       IsBlank(varTplSearch)
                           Or varTplSearch in CD_MediaNumber
                           Or varTplSearch in Text(ID)
+                          Or varTplSearch in ProductionTitle
                   ),
                   "ID", SortOrder.Descending
               )
@@ -1029,14 +1036,23 @@ Screens:
                   OnSelect: |-
                     =Set(varTplCandidate, ThisItem);
                     If(
-                        varChildTitle <> "" Or varChildDescription1 <> "",
+                        // something is already typed on this form: ask before overwriting
+                        Coalesce(varChildTitle1, "") <> "" Or Coalesce(varChildDescription1, "") <> "",
                         Set(varShowTplConfirm, true),
-                        Set(varChildTitle, Coalesce(varTplCandidate.CD_MediaNumber, ""));
+                        Set(varChildTitle1, Coalesce(varTplCandidate.ProductionTitle, ""));
                         Set(varChildDescription1, Coalesce(varTplCandidate.Description, ""));
-                        Set(varChildCredits1, Coalesce(First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
-                        Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, ""));
+                        Set(varChildCredits1, Coalesce(varTplCandidate.CreditContact, First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
+                        Set(varChildProductionPlace1, Coalesce(varTplCandidate.ProductionPlace, ""));
+                        Set(varChildLinks1, Coalesce(varTplCandidate.ReferenceLinks, ""));
+                        Set(varChildTags, Coalesce(varTplCandidate.Tags, ""));
+                        Set(varChildTags1, Coalesce(varTplCandidate.Tags, ""));
+                        Set(varChildFTPPath1, Coalesce(varTplCandidate.FTPPath, ""));
+                        Set(varChildProductType, Coalesce(First(varTplCandidate.ProductType).Value, varChildProductType));
+                        Set(varChildProductType1, Coalesce(First(varTplCandidate.ProductType).Value, varChildProductType1));
+                        Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, varChildLanguageVersions));
                         Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
                         Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
+                        Set(varChildNoThirdParty, Coalesce(varTplCandidate.NoThirdPartyRights, false));
                         Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
                         Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
                         Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
@@ -1055,7 +1071,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   Height: =28
                   OnSelect: =Select(Parent)
-                  Text: =If(IsBlank(ThisItem.CD_MediaNumber), "Untitled media file", ThisItem.CD_MediaNumber)
+                  Text: =Coalesce(ThisItem.ProductionTitle, "Untitled media file")
                   Width: =500
                   X: =12
                   Y: =4
@@ -1068,7 +1084,7 @@ Screens:
                   Height: =22
                   OnSelect: =Select(Parent)
                   Size: =11
-                  Text: ="ID " & Text(ThisItem.ID) & If(IsBlank(First(ThisItem.ContractCase).Value), "", "   |   " & Left(First(ThisItem.ContractCase).Value, 30))
+                  Text: =Coalesce(ThisItem.CD_MediaNumber, "") & "   |   ID " & Text(ThisItem.ID) & If(IsBlank(First(ThisItem.ContractCase).Value), "", "   |   " & Left(First(ThisItem.ContractCase).Value, 30))
                   Width: =560
                   X: =12
                   Y: =30
@@ -1182,12 +1198,20 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
-              =Set(varChildTitle, Coalesce(varTplCandidate.CD_MediaNumber, ""));
+              =Set(varChildTitle1, Coalesce(varTplCandidate.ProductionTitle, ""));
               Set(varChildDescription1, Coalesce(varTplCandidate.Description, ""));
-              Set(varChildCredits1, Coalesce(First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
-              Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, ""));
+              Set(varChildCredits1, Coalesce(varTplCandidate.CreditContact, First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
+              Set(varChildProductionPlace1, Coalesce(varTplCandidate.ProductionPlace, ""));
+              Set(varChildLinks1, Coalesce(varTplCandidate.ReferenceLinks, ""));
+              Set(varChildTags, Coalesce(varTplCandidate.Tags, ""));
+              Set(varChildTags1, Coalesce(varTplCandidate.Tags, ""));
+              Set(varChildFTPPath1, Coalesce(varTplCandidate.FTPPath, ""));
+              Set(varChildProductType, Coalesce(First(varTplCandidate.ProductType).Value, varChildProductType));
+              Set(varChildProductType1, Coalesce(First(varTplCandidate.ProductType).Value, varChildProductType1));
+              Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, varChildLanguageVersions));
               Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
               Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
+              Set(varChildNoThirdParty, Coalesce(varTplCandidate.NoThirdPartyRights, false));
               Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
               Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
               Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
