@@ -68,7 +68,7 @@ Screens:
           Properties:
             BorderColor: =ColorFade(Self.Fill, -15%)
             BorderThickness: =0
-            Color: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(56, 96, 178, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'

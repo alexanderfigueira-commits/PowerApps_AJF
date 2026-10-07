@@ -410,36 +410,6 @@ Screens:
                   Width: =240
                   X: =624
                   Y: =20
-            - PPoD_Val7:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsBlank(ThisItem.ExecProducerName), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsBlank(ThisItem.ExecProducerName), "Not provided", ThisItem.ExecProducerName)
-                  Visible: =Not(IsBlank(ThisItem.ExecProducerName))
-                  Width: =240
-                  X: =624
-                  Y: =PPoD_Val6.Y + If(PPoD_Val6.Visible, PPoD_Val6.Height, 0)
-            - PPoD_Val8:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsEmpty(ThisItem.Producer), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsEmpty(ThisItem.Producer), "Not provided", Concat(ThisItem.Producer, DisplayName, ", "))
-                  Visible: =Not(IsEmpty(ThisItem.Producer))
-                  Width: =240
-                  X: =624
-                  Y: =PPoD_Val7.Y + If(PPoD_Val7.Visible, PPoD_Val7.Height, 0)
             - PPoD_Val12:
                 Control: Label@2.5.1
                 Properties:
@@ -470,56 +440,36 @@ Screens:
                   Width: =240
                   X: =1054
                   Y: =PPoD_Val12.Y + If(PPoD_Val12.Visible, PPoD_Val12.Height, 0)
-            - PPoD_Val14:
+            - PPoD_Val7:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsBlank(ThisItem.ReferenceLinks), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Color: =If(IsBlank(ThisItem.ExecProducerName), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
                   Height: =15
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =9
-                  Text: =If(IsBlank(ThisItem.ReferenceLinks), "Not provided", ThisItem.ReferenceLinks)
-                  Visible: =Not(IsBlank(ThisItem.ReferenceLinks))
+                  Text: =If(IsBlank(ThisItem.ExecProducerName), "Not provided", ThisItem.ExecProducerName)
+                  Visible: =Not(IsBlank(ThisItem.ExecProducerName))
                   Width: =240
-                  X: =1054
-                  Y: =PPoD_Val13.Y + If(PPoD_Val13.Visible, PPoD_Val13.Height, 0)
-            - PPoD_Val15:
+                  X: =624
+                  Y: =PPoD_Val6.Y + If(PPoD_Val6.Visible, PPoD_Val6.Height, 0)
+            - PPoD_Val8:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsBlank(ThisItem.Tags), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Color: =If(IsEmpty(ThisItem.Producer), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
                   Height: =15
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =9
-                  Text: =If(IsBlank(ThisItem.Tags), "Not provided", ThisItem.Tags)
-                  Visible: =Not(IsBlank(ThisItem.Tags))
+                  Text: =If(IsEmpty(ThisItem.Producer), "Not provided", Concat(ThisItem.Producer, DisplayName, ", "))
+                  Visible: =Not(IsEmpty(ThisItem.Producer))
                   Width: =240
-                  X: =1054
-                  Y: =PPoD_Val14.Y + If(PPoD_Val14.Visible, PPoD_Val14.Height, 0)
-            - PPoD_Val16:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsBlank(Trim(PlainText(ThisItem.Notes))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
-                  Font: =Font.'Open Sans'
-                  Height: =28
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: |-
-                    =// rich-text column: show the text only, without the HTML
-                    With(
-                        {plain: Trim(PlainText(ThisItem.Notes))},
-                        If(IsBlank(plain), "Not provided", plain)
-                    )
-                  Visible: =Not(IsBlank(Trim(PlainText(ThisItem.Notes))))
-                  Width: =240
-                  X: =1054
-                  Y: =PPoD_Val15.Y + If(PPoD_Val15.Visible, PPoD_Val15.Height, 0)
+                  X: =624
+                  Y: =PPoD_Val7.Y + If(PPoD_Val7.Visible, PPoD_Val7.Height, 0)
             - PPoD_Val9:
                 Control: Label@2.5.1
                 Properties:
@@ -535,36 +485,21 @@ Screens:
                   Width: =240
                   X: =624
                   Y: =PPoD_Val8.Y + If(PPoD_Val8.Visible, PPoD_Val8.Height, 0)
-            - PPoD_Val10:
+            - PPoD_Val14:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsBlank(ThisItem.ProductionEndDate), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Color: =If(IsBlank(ThisItem.ReferenceLinks), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
                   Font: =Font.'Open Sans'
                   Height: =15
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =9
-                  Text: =If(IsBlank(ThisItem.ProductionEndDate), "Not provided", Text(ThisItem.ProductionEndDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.ProductionEndDate))
+                  Text: =If(IsBlank(ThisItem.ReferenceLinks), "Not provided", ThisItem.ReferenceLinks)
+                  Visible: =Not(IsBlank(ThisItem.ReferenceLinks))
                   Width: =240
-                  X: =624
-                  Y: =PPoD_Val9.Y + If(PPoD_Val9.Visible, PPoD_Val9.Height, 0)
-            - PPoD_Val11:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsBlank(ThisItem.PublicationStartDate), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsBlank(ThisItem.PublicationStartDate), "Not provided", Text(ThisItem.PublicationStartDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.PublicationStartDate))
-                  Width: =240
-                  X: =624
-                  Y: =PPoD_Val10.Y + If(PPoD_Val10.Visible, PPoD_Val10.Height, 0)
+                  X: =1054
+                  Y: =PPoD_Val13.Y + If(PPoD_Val13.Visible, PPoD_Val13.Height, 0)
             - PPoD_Val1:
                 Control: Label@2.5.1
                 Properties:
@@ -595,6 +530,51 @@ Screens:
                   Width: =240
                   X: =194
                   Y: =PPoD_Val1.Y + If(PPoD_Val1.Visible, PPoD_Val1.Height, 0)
+            - PPoD_Val10:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.ProductionEndDate), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.ProductionEndDate), "Not provided", Text(ThisItem.ProductionEndDate, "dd-mm-yyyy"))
+                  Visible: =Not(IsBlank(ThisItem.ProductionEndDate))
+                  Width: =240
+                  X: =624
+                  Y: =PPoD_Val9.Y + If(PPoD_Val9.Visible, PPoD_Val9.Height, 0)
+            - PPoD_Val11:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.PublicationStartDate), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.PublicationStartDate), "Not provided", Text(ThisItem.PublicationStartDate, "dd-mm-yyyy"))
+                  Visible: =Not(IsBlank(ThisItem.PublicationStartDate))
+                  Width: =240
+                  X: =624
+                  Y: =PPoD_Val10.Y + If(PPoD_Val10.Visible, PPoD_Val10.Height, 0)
+            - PPoD_Val15:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(ThisItem.Tags), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.Tags), "Not provided", ThisItem.Tags)
+                  Visible: =Not(IsBlank(ThisItem.Tags))
+                  Width: =240
+                  X: =1054
+                  Y: =PPoD_Val14.Y + If(PPoD_Val14.Visible, PPoD_Val14.Height, 0)
             - PPoD_Val3:
                 Control: Label@2.5.1
                 Properties:
@@ -610,6 +590,26 @@ Screens:
                   Width: =240
                   X: =194
                   Y: =PPoD_Val2.Y + If(PPoD_Val2.Visible, PPoD_Val2.Height, 0)
+            - PPoD_Val16:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsBlank(Trim(PlainText(ThisItem.Notes))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  Height: =28
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: |-
+                    =// rich-text column: show the text only, without the HTML
+                    With(
+                        {plain: Trim(PlainText(ThisItem.Notes))},
+                        If(IsBlank(plain), "Not provided", plain)
+                    )
+                  Visible: =Not(IsBlank(Trim(PlainText(ThisItem.Notes))))
+                  Width: =240
+                  X: =1054
+                  Y: =PPoD_Val15.Y + If(PPoD_Val15.Visible, PPoD_Val15.Height, 0)
             - PPoD_Val4:
                 Control: Label@2.5.1
                 Properties:
@@ -686,38 +686,6 @@ Screens:
                   Width: =180
                   X: =442
                   Y: =PPoD_Val6.Y
-            - PPoD_Lbl7:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Executive producer"
-                  Visible: =PPoD_Val7.Visible
-                  Width: =180
-                  X: =442
-                  Y: =PPoD_Val7.Y
-            - PPoD_Lbl8:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Producer"
-                  Visible: =PPoD_Val8.Visible
-                  Width: =180
-                  X: =442
-                  Y: =PPoD_Val8.Y
             - PPoD_Lbl12:
                 Control: Label@2.5.1
                 Properties:
@@ -750,7 +718,7 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPoD_Val13.Y
-            - PPoD_Lbl14:
+            - PPoD_Lbl7:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
@@ -761,12 +729,12 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Links"
-                  Visible: =PPoD_Val14.Visible
+                  Text: ="Executive producer"
+                  Visible: =PPoD_Val7.Visible
                   Width: =180
-                  X: =872
-                  Y: =PPoD_Val14.Y
-            - PPoD_Lbl15:
+                  X: =442
+                  Y: =PPoD_Val7.Y
+            - PPoD_Lbl8:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
@@ -777,27 +745,11 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Pertinent tags"
-                  Visible: =PPoD_Val15.Visible
+                  Text: ="Producer"
+                  Visible: =PPoD_Val8.Visible
                   Width: =180
-                  X: =872
-                  Y: =PPoD_Val15.Y
-            - PPoD_Lbl16:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Notes"
-                  Visible: =PPoD_Val16.Visible
-                  Width: =180
-                  X: =872
-                  Y: =PPoD_Val16.Y
+                  X: =442
+                  Y: =PPoD_Val8.Y
             - PPoD_Lbl9:
                 Control: Label@2.5.1
                 Properties:
@@ -814,7 +766,7 @@ Screens:
                   Width: =180
                   X: =442
                   Y: =PPoD_Val9.Y
-            - PPoD_Lbl10:
+            - PPoD_Lbl14:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
@@ -825,27 +777,11 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Production end date"
-                  Visible: =PPoD_Val10.Visible
+                  Text: ="Links"
+                  Visible: =PPoD_Val14.Visible
                   Width: =180
-                  X: =442
-                  Y: =PPoD_Val10.Y
-            - PPoD_Lbl11:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Publication start date"
-                  Visible: =PPoD_Val11.Visible
-                  Width: =180
-                  X: =442
-                  Y: =PPoD_Val11.Y
+                  X: =872
+                  Y: =PPoD_Val14.Y
             - PPoD_Lbl1:
                 Control: Label@2.5.1
                 Properties:
@@ -878,6 +814,54 @@ Screens:
                   Width: =180
                   X: =12
                   Y: =PPoD_Val2.Y
+            - PPoD_Lbl10:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Production end date"
+                  Visible: =PPoD_Val10.Visible
+                  Width: =180
+                  X: =442
+                  Y: =PPoD_Val10.Y
+            - PPoD_Lbl11:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Publication start date"
+                  Visible: =PPoD_Val11.Visible
+                  Width: =180
+                  X: =442
+                  Y: =PPoD_Val11.Y
+            - PPoD_Lbl15:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Pertinent tags"
+                  Visible: =PPoD_Val15.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PPoD_Val15.Y
             - PPoD_Lbl3:
                 Control: Label@2.5.1
                 Properties:
@@ -894,6 +878,22 @@ Screens:
                   Width: =180
                   X: =12
                   Y: =PPoD_Val3.Y
+            - PPoD_Lbl16:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Notes"
+                  Visible: =PPoD_Val16.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PPoD_Val16.Y
             - PPoD_Lbl4:
                 Control: Label@2.5.1
                 Properties:

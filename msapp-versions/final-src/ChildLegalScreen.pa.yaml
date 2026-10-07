@@ -348,15 +348,6 @@ Screens:
                   Width: =700
                   X: =44
                   Y: =CL_ChkPreexisting.Y + If(CL_ChkPreexisting.Visible, CL_ChkPreexisting.Height, 0)
-            - CL_Divider2:
-                Control: Rectangle@2.3.0
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Fill: =RGBA(230, 232, 238, 1)
-                  Height: =1
-                  Width: =798
-                  X: =24
-                  Y: =CL_VTTUpload.Y + If(CL_VTTUpload.Visible, CL_VTTUpload.Height, 0) + 8
             - CL_ChkSubtitles:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -1090,7 +1081,7 @@ Screens:
           Properties:
             BorderColor: =ColorFade(Self.Fill, -15%)
             BorderThickness: =0
-            Color: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
@@ -1133,7 +1124,7 @@ Screens:
           Properties:
             BorderColor: =ColorFade(Self.Fill, -15%)
             BorderThickness: =0
-            Color: =RGBA(96, 104, 120, 1)
+            Color: =RGBA(56, 96, 178, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'

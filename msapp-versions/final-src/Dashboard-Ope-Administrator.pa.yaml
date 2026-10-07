@@ -24,7 +24,7 @@ Screens:
             CountRows(colOpeAll) >= 2000,
             Notify("Only the first 2000 requests are loaded, so older ones may be missing.", NotificationType.Warning)
         );
-        // media items, for the TODO bell (days left to the shooting / filming / capture date)
+        // media items, for the TODO clock (days left to the publication date)
         ClearCollect(colOpeMedia, 'AV-CD-Mediafiles')
     Children:
       - DOA_HeaderDivider:
@@ -640,27 +640,26 @@ Screens:
                 Control: Classic/Icon@2.5.0
                 Properties:
                   AccessibleLabel: |-
-                    =// days left to the media item's key date; one column (CaptureDate) holds the
-                    // shooting day (Photo), the filming date (Video) and the capture date (Podcast)
+                    =// days left to the publication date of the request's media items (PublicationStartDate)
                     With(
-                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(CaptureDate))), CaptureDate, SortOrder.Ascending)},
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(PublicationStartDate))), PublicationStartDate, SortOrder.Ascending)},
                         With(
                             {
                                 m: If(
-                                    IsEmpty(Filter(dated, CaptureDate >= Today())),
+                                    IsEmpty(Filter(dated, PublicationStartDate >= Today())),
                                     Last(dated),                                 // every date is past: the latest
-                                    First(Filter(dated, CaptureDate >= Today()))  // else the next one
+                                    First(Filter(dated, PublicationStartDate >= Today()))  // else the next one
                                 )
                             },
                             If(
                                 IsBlank(m),
-                                "No shooting / filming / capture date yet",
+                                "No publication date yet",
                                 With(
                                     {
-                                        days: DateDiff(Today(), m.CaptureDate, TimeUnit.Days),
-                                        what: Switch(First(m.MediaType).Value, "Photo", "Shooting day", "Video", "Filming date", "Capture date")
+                                        days: DateDiff(Today(), m.PublicationStartDate, TimeUnit.Days),
+                                        what: "Publication date"
                                     },
-                                    what & ": " & Text(m.CaptureDate, "dd mmm 'yy") 
+                                    what & ": " & Text(m.PublicationStartDate, "dd mmm 'yy") 
                                     & Char(10) & Char(10) 
                                     & If(
                                         days > 1, days & " days left",
@@ -676,20 +675,20 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: |-
                     =// red: fewer than 7 days left (today and past dates included); navy: 7 or more;
-                    // grey: no date. Same date as the tooltip: the next one, else the latest past one.
+                    // grey: no publication date. Same date as the tooltip: the next one, else the latest past one.
                     With(
-                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(CaptureDate))), CaptureDate, SortOrder.Ascending)},
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(PublicationStartDate))), PublicationStartDate, SortOrder.Ascending)},
                         With(
                             {
                                 m: If(
-                                    IsEmpty(Filter(dated, CaptureDate >= Today())),
+                                    IsEmpty(Filter(dated, PublicationStartDate >= Today())),
                                     Last(dated),
-                                    First(Filter(dated, CaptureDate >= Today()))
+                                    First(Filter(dated, PublicationStartDate >= Today()))
                                 )
                             },
                             If(
                                 IsBlank(m), RGBA(166, 166, 166, 1),
-                                DateDiff(Today(), m.CaptureDate, TimeUnit.Days) < 7, Color.Orange,
+                                DateDiff(Today(), m.PublicationStartDate, TimeUnit.Days) < 7, Color.Orange,
                                 RGBA(0, 18, 107, 1)
                             )
                         )
@@ -704,27 +703,26 @@ Screens:
                   PaddingRight: =2
                   PaddingTop: =2
                   Tooltip: |-
-                    =// days left to the media item's key date; one column (CaptureDate) holds the
-                    // shooting day (Photo), the filming date (Video) and the capture date (Podcast)
+                    =// days left to the publication date of the request's media items (PublicationStartDate)
                     With(
-                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(CaptureDate))), CaptureDate, SortOrder.Ascending)},
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(PublicationStartDate))), PublicationStartDate, SortOrder.Ascending)},
                         With(
                             {
                                 m: If(
-                                    IsEmpty(Filter(dated, CaptureDate >= Today())),
+                                    IsEmpty(Filter(dated, PublicationStartDate >= Today())),
                                     Last(dated),                                 // every date is past: the latest
-                                    First(Filter(dated, CaptureDate >= Today()))  // else the next one
+                                    First(Filter(dated, PublicationStartDate >= Today()))  // else the next one
                                 )
                             },
                             If(
                                 IsBlank(m),
-                                "No shooting / filming / capture date yet",
+                                "No publication date yet",
                                 With(
                                     {
-                                        days: DateDiff(Today(), m.CaptureDate, TimeUnit.Days),
-                                        what: Switch(First(m.MediaType).Value, "Photo", "Shooting day", "Video", "Filming date", "Capture date")
+                                        days: DateDiff(Today(), m.PublicationStartDate, TimeUnit.Days),
+                                        what: "Publication date"
                                     },
-                                    what & ": " & Text(m.CaptureDate, "dd mmm 'yy")
+                                    what & ": " & Text(m.PublicationStartDate, "dd mmm 'yy")
                                     & Char(10)
                                     & If(
                                         days > 1, days & " days left!",

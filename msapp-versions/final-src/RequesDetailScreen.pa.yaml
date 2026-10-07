@@ -689,7 +689,8 @@ Screens:
                     Set(varChildAIVoiceover, Coalesce(ThisItem.AIVoiceover, false));
                     Set(varChildContractCase, Coalesce(ThisItem.ContractCase, ""));
                     Set(varChildContractCase1Sub, Coalesce(ThisItem.ContractCase1Sub, ""));
-                    Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false);
+                    // the framework and specific contracts count as confirmed once the request was submitted
+                    Set(varDocFramework, Coalesce(varCurrentRequest.Status.Value, "") in ["Processing", "Pending", "Approved", "Partially approved", "Rejected"]); Set(varDocSpecific, Coalesce(varCurrentRequest.Status.Value, "") in ["Processing", "Pending", "Approved", "Partially approved", "Rejected"]); Set(varDocOffer, false);
                     Set(varChildContractingAuthority, Coalesce(ThisItem.ContractingAuthority, ""));
                     Set(varChildExecProducer, Coalesce(ThisItem.ExecProducer, ""));
                     Set(varChildProducerSel, ThisItem.Producer);
@@ -2716,7 +2717,8 @@ Screens:
               Set(varChildContractCase1Sub, "");
               Set(varChildModelRelease, false);
               Set(varChildNoThirdParty, false);
-              Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, "");
+              // the framework and specific contracts count as confirmed once the request was submitted
+              Set(varDocFramework, Coalesce(varCurrentRequest.Status.Value, "") in ["Processing", "Pending", "Approved", "Partially approved", "Rejected"]); Set(varDocSpecific, Coalesce(varCurrentRequest.Status.Value, "") in ["Processing", "Pending", "Approved", "Partially approved", "Rejected"]); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, "");
               Set(varChildModelReleaseProvided, false);
               Set(varChildMusicUsed, false);
               Set(varChildMusicLicenceProvided, false);
