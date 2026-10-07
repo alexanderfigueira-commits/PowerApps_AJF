@@ -12,7 +12,8 @@ Screens:
       Fill: =RGBA(247, 248, 250, 1)
       LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
       OnVisible: |-
-        =// varUserRole gates the gallery's role clause, so it is always set.
+        =Set(varViewOnly, false);
+        // varUserRole gates the gallery's role clause, so it is always set.
         Set(
             varUserRole,
             Coalesce(
@@ -20,7 +21,7 @@ Screens:
                 "REQUESTOR"
             )
         );
-
+        
         // Data loads once per session, or whenever the cache is empty (self-heal),
         // instead of on every visit. Use HomeBtnRefresh to reload on demand.
         If(
@@ -55,7 +56,7 @@ Screens:
             );
             Set(varReqDataLoaded, true)
         );
-
+        
         // Filters initialise once, so the selection survives navigating away and back.
         If(
             Not(varReqFiltersInit),
@@ -68,7 +69,7 @@ Screens:
             UpdateContext({locProdTypeFilter: Blank(), locShowFilters: true});
             Set(varReqFiltersInit, true)
         );
-
+        
         // The list opens on the first status that has requests (per role) when the
         // screen is entered with "All Status" and "All Media":
         //   REQUESTOR:     Pending -> Draft -> Processing -> All
@@ -121,7 +122,7 @@ Screens:
                 )
             )
         );
-
+        
         // A status handed over from the dashboard still wins on every visit.
         If(
             Not(IsBlank(varNavFilter)),

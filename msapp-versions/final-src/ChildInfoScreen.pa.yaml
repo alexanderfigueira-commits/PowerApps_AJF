@@ -14,8 +14,12 @@ Screens:
       OnVisible: |-
         =Set(
             varRequestorLocked,
-            varUserRole <> "ADMINISTRATOR"
-            And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+            // view-only (a request opened from a dashboard ID) locks everything, whatever the role
+            varViewOnly
+            Or (
+                varUserRole <> "ADMINISTRATOR"
+                And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+            )
         );
         Set(varNavArm, "");
         ClearCollect(colTplMedia, 'AV-CD-Mediafiles');
@@ -284,6 +288,7 @@ Screens:
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Default: =varChildNotes
+                  DisplayMode: =If(varViewOnly, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
                   Height: =60
                   HintText: ="Relevant Details about this Media File"
@@ -847,13 +852,13 @@ Screens:
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Default: =varChildBelugaRef
-            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+            DisplayMode: =If(varViewOnly Or varUserRole <> "ADMINISTRATOR", DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             HintText: ="Assigned by Central Deposit"
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             OnChange: =Set(varChildBelugaRef, Self.Text)
-            Visible: =varUserRole = "ADMINISTRATOR"
+            Visible: =true
             Width: =400
             X: =56
             Y: =If(varChildMediaType = "Photo", 418, 497)
@@ -1239,7 +1244,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Beluga reference"
-            Visible: =varUserRole = "ADMINISTRATOR"
+            Visible: =true
             Width: =400
             X: =56
             Y: =If(varChildMediaType = "Photo", 392, 471)

@@ -14,8 +14,12 @@ Screens:
       OnVisible: |-
         =Set(
             varRequestorLocked,
-            varUserRole <> "ADMINISTRATOR"
-            And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+            // view-only (a request opened from a dashboard ID) locks everything, whatever the role
+            varViewOnly
+            Or (
+                varUserRole <> "ADMINISTRATOR"
+                And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+            )
         );
         Set(varNavArm, "");
         // the attachments panel (CL_FormAttach) edits a snapshot of the open media item;

@@ -12,7 +12,8 @@ Screens:
       Fill: =RGBA(247, 248, 250, 1)
       LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
       OnVisible: |-
-        =Refresh('AV-CD-Requests');
+        =Set(varViewOnly, false);
+        Refresh('AV-CD-Requests');
         Set(varReviewQueueMine, Coalesce(varReviewMineOnly, false));
         Set(varReviewMineOnly, false);
         ClearCollect(colRevReqs, 'AV-CD-Requests');

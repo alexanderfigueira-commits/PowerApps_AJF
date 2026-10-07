@@ -10,7 +10,8 @@ App:
   Properties:
     BackEnabled: =false
     OnStart: |-
-      =Set(varReqDataLoaded, false);
+      =Set(varViewOnly, false);
+      Set(varReqDataLoaded, false);
       Set(varReqFiltersInit, false);
       Set(varReqReady, false);
       Set(varUserRole, Coalesce(LookUp('AV-CD-RolesPermissionsList', UserEmail.Email = User().Email, Role.Value), "REQUESTOR"));

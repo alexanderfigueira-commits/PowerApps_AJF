@@ -538,6 +538,8 @@ Screens:
                     =// open the request, the same way as a HomeGallery row on the Requests screen
                     With(
                         {req: LookUp(colOpeReqs, ID = ThisItem.ID)},
+                        // opened from a dashboard: details are shown in view-only mode
+                        Set(varViewOnly, true);
                         Set(varCurrentRequest, req);
                         Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
                         Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
@@ -921,6 +923,8 @@ Screens:
                     =// open the request, the same way as a HomeGallery row on the Requests screen
                     With(
                         {req: LookUp(colOpeReqs, ID = ThisItem.ID)},
+                        // opened from a dashboard: details are shown in view-only mode
+                        Set(varViewOnly, true);
                         Set(varCurrentRequest, req);
                         Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
                         Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
@@ -1195,6 +1199,8 @@ Screens:
                     =// open the request, the same way as a HomeGallery row on the Requests screen
                     With(
                         {req: LookUp(colOpeReqs, ID = ThisItem.ID)},
+                        // opened from a dashboard: details are shown in view-only mode
+                        Set(varViewOnly, true);
                         Set(varCurrentRequest, req);
                         Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
                         Set(varRequestTitle, Coalesce(req.RequestTitle, ""));

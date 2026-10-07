@@ -14,8 +14,12 @@ Screens:
       OnVisible: |-
         =Set(
             varRequestorLocked,
-            varUserRole <> "ADMINISTRATOR"
-            And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+            // view-only (a request opened from a dashboard ID) locks everything, whatever the role
+            varViewOnly
+            Or (
+                varUserRole <> "ADMINISTRATOR"
+                And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+            )
         );
         Set(
             varUserDept,
@@ -663,13 +667,13 @@ Screens:
                   Color: =RGBA(193, 40, 40, 1)
                   DisabledBorderColor: =RGBA(166, 166, 166, 1)
                   DisplayMode: |-
-                    =If(
+                    =If(varViewOnly, DisplayMode.Disabled, If(
                         IsBlank(varCurrentRequest.Status.Value)
                         Or varCurrentRequest.Status.Value = "Draft"
                         Or varCurrentRequest.Status.Value = "Pending",
                         DisplayMode.Edit,
                         DisplayMode.Disabled
-                    )
+                    ))
                   Fill: =RGBA(255, 255, 255, 1)
                   Font: =Font.'Open Sans'
                   Height: =32
@@ -703,7 +707,7 @@ Screens:
                   Default: =Coalesce(ThisItem.MediaApproved, false)
                   DisplayMode: |-
                     =// administrators approve per media file; everyone else sees the state
-                    If(varUserRole = "ADMINISTRATOR" And Coalesce(ThisItem.SPId, 0) > 0, DisplayMode.Edit, DisplayMode.View)
+                    If(varViewOnly, DisplayMode.View, If(varUserRole = "ADMINISTRATOR" And Coalesce(ThisItem.SPId, 0) > 0, DisplayMode.Edit, DisplayMode.View))
                   Font: =Font.'Open Sans'
                   Height: =32
                   HoverColor: =RGBA(0, 18, 107, 1)
@@ -760,7 +764,7 @@ Screens:
             FontWeight: =FontWeight.Bold
             Height: =34
             Size: =16
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") exactin "Draft", "New Request", "Request Details")
+            Text: =If(varViewOnly, "Request Details  ·  view only", If(Coalesce(varCurrentRequest.Status.Value, "Draft") exactin "Draft", "New Request", "Request Details"))
             Width: =182
             X: =58
             Y: =70
@@ -795,7 +799,7 @@ Screens:
             Size: =14
             Text: ="Draft Save ➤"
             Tooltip: ="Save draft 1st!"
-            Visible: =!locShowTypePicker
+            Visible: =Not(varViewOnly) And (!locShowTypePicker)
             Width: =132
             X: =990
             Y: =720
@@ -1643,9 +1647,9 @@ Screens:
             PressedFill: =Self.Color
             Size: =14
             Text: ="Submit request ➤"
-            Visible: |
-              =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
-              And (IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft")
+            Visible: |-
+              =Not(varViewOnly) And (Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+              And (IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft"))
             Width: =180
             X: =1134
             Y: =719
@@ -1776,8 +1780,8 @@ Screens:
             Size: =14
             Text: ="Resubmit for review ➤"
             Visible: |-
-              =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
-              And (varCurrentRequest.Status.Value = "Rejected" Or varCurrentRequest.Status.Value = "Pending")
+              =Not(varViewOnly) And (Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+              And (varCurrentRequest.Status.Value = "Rejected" Or varCurrentRequest.Status.Value = "Pending"))
             Width: =170
             X: =1137
             Y: =720
@@ -1842,7 +1846,7 @@ Screens:
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisabledColor: =RGBA(150, 158, 170, 1)
             DisabledFill: =RGBA(240, 242, 246, 1)
-            DisplayMode: =If(CountRows(colArchives) > 0, DisplayMode.Disabled, DisplayMode.Edit)
+            DisplayMode: =If(varViewOnly, DisplayMode.Disabled, If(CountRows(colArchives) > 0, DisplayMode.Disabled, DisplayMode.Edit))
             Fill: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", RGBA(255, 255, 255, 1), RGBA(230, 236, 245, 1))
             Font: =Font.'Open Sans'
             Height: =57
@@ -2328,7 +2332,7 @@ Screens:
                   Coalesce(varCurrentRequest.ReviewerComments, ""),
                   "No notes from the administrator"
               )
-            DisplayMode: =If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View)
+            DisplayMode: =If(varViewOnly, DisplayMode.View, If(varUserRole = "ADMINISTRATOR", DisplayMode.Edit, DisplayMode.View))
             Font: =Font.'Open Sans'
             Height: =260
             HintText: ="Comments on this request (the requestor sees them read-only)"
@@ -2411,7 +2415,7 @@ Screens:
             Size: =13
             Text: ="Save"
             Tooltip: ="Save draft"
-            Visible: =locShowAdminNotes And varUserRole = "ADMINISTRATOR"
+            Visible: =Not(varViewOnly) And (locShowAdminNotes And varUserRole = "ADMINISTRATOR")
             Width: =200
             X: =843
             Y: =490
@@ -2478,7 +2482,7 @@ Screens:
               )
             DisplayMode: |-
               =// the request owner can always write here, also while Processing (P1-01)
-              If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), DisplayMode.Edit, DisplayMode.View)
+              If(varViewOnly, DisplayMode.View, If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), DisplayMode.Edit, DisplayMode.View))
             Font: =Font.'Open Sans'
             Height: =260
             HintText: ="Comments for Central Deposit - editable at any time"
@@ -2561,7 +2565,7 @@ Screens:
             Size: =13
             Text: ="Save"
             Tooltip: ="Save draft"
-            Visible: =locShowRequestorNotes And (Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))
+            Visible: =Not(varViewOnly) And (locShowRequestorNotes And (Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)))
             Width: =200
             X: =843
             Y: =490
@@ -2573,7 +2577,7 @@ Screens:
             DisabledColor: =RGBA(166, 172, 184, 1)
             DisplayMode: |-
               =// the media list needs a saved request: enabled once "Draft Save" has been done
-              If(Coalesce(varCurrentRequest.ID, 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+              If(varViewOnly, DisplayMode.Disabled, If(Coalesce(varCurrentRequest.ID, 0) > 0, DisplayMode.Edit, DisplayMode.Disabled))
             Height: =28
             HoverColor: =ColorFade(Color.CadetBlue, 20%)
             HoverFill: =RGBA(0, 0, 0, 0)
@@ -2772,7 +2776,7 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Default: =""
-            DisplayMode: =If((Coalesce(varCurrentRequest.ID, 0) > 0 And (varUserRole = "ADMINISTRATOR" Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))), DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(varViewOnly, DisplayMode.View, If((Coalesce(varCurrentRequest.ID, 0) > 0 And (varUserRole = "ADMINISTRATOR" Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))), DisplayMode.Edit, DisplayMode.Disabled))
             Font: =Font.'Open Sans'
             Height: =92
             HintText: ="Write a note..."
@@ -2840,7 +2844,7 @@ Screens:
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisabledColor: =RGBA(255, 255, 255, 1)
             DisabledFill: =RGBA(160, 172, 200, 1)
-            DisplayMode: =If(IsBlank(Trim(NT_Input.Text)), DisplayMode.Disabled, DisplayMode.Edit)
+            DisplayMode: =If(varViewOnly, DisplayMode.Disabled, If(IsBlank(Trim(NT_Input.Text)), DisplayMode.Disabled, DisplayMode.Edit))
             Fill: =RGBA(56, 96, 178, 1)
             Font: =Font.'Open Sans'
             Height: =44
