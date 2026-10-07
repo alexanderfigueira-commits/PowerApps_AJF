@@ -329,59 +329,6 @@ Screens:
                   Height: =1
                   Width: =1302
                   Y: =55
-            - RS_CRowSelect:
-                Control: Rectangle@2.3.0
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
-                  Height: =55
-                  HoverFill: =RGBA(240, 242, 246, 1)
-                  OnSelect: |-
-                    =Set(varCurrentChildId, ThisItem.ArchiveId);
-                    Set(varCurrentChildSPId, Coalesce(ThisItem.SPId, 0));
-                    Set(varChildTitle1, Coalesce(ThisItem.ProductionTitle, ""));
-                    Set(varChildMediaType, If(IsBlank(ThisItem.MediaType), "Photo", ThisItem.MediaType));
-                    Set(varChildDescription1, If(StartsWith(Trim(Coalesce(ThisItem.Description, "")),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(Coalesce(ThisItem.Description, ""),">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),Coalesce(ThisItem.Description, "")));
-                    Set(varChildCaptureDate, ThisItem.CaptureDate);
-                    Set(varChildProductionPlace1, Coalesce(ThisItem.ProductionPlace, ""));
-                    Set(varChildCredits1, Coalesce(ThisItem.Credits, ""));
-                    Set(varChildLanguageVersions, Coalesce(ThisItem.LanguageVersions, ""));
-                    Set(varChildAIVoiceover, Coalesce(ThisItem.AIVoiceover, false));
-                    Set(varChildContractCase, Coalesce(ThisItem.ContractCase, ""));
-                    Set(varChildContractCase1Sub, Coalesce(ThisItem.ContractCase1Sub, ""));
-                    Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false);
-                    Set(varChildContractingAuthority, Coalesce(ThisItem.ContractingAuthority, ""));
-                    Set(varChildExecProducer, Coalesce(ThisItem.ExecProducer, ""));
-                    Set(varChildProducerSel, ThisItem.Producer);
-                    Set(varChildProducer, Concat(ThisItem.Producer, DisplayName, ", "));
-                    Set(varChildPhotoCaption, Coalesce(ThisItem.PhotoCaption, ""));
-                    Set(varChildModelRelease, Coalesce(ThisItem.ModelReleaseProvided, false));
-                    Set(varChildNoThirdParty, Coalesce(ThisItem.NoThirdPartyRights, false));
-                    Set(varChildModelReleaseProvided, Coalesce(ThisItem.ModelReleaseProvided, false));
-                    Set(varChildMusicUsed, Coalesce(ThisItem.MusicUsed, false));
-                    Set(varChildMusicLicenceProvided, Coalesce(ThisItem.MusicLicenceProvided, false));
-                    Set(varChildPreexisting, Coalesce(ThisItem.PreexistingProvided, false));
-                    Set(varChildPreexistingProvided, Coalesce(ThisItem.PreexistingProvided, false));
-                    Set(varChildEpisodeTitle1, Coalesce(ThisItem.EpisodeTitle, ""));
-                    Set(varChildEpisodeSummary1, Coalesce(ThisItem.EpisodeSummary, ""));
-                    Set(varChildSeasonNumber, Coalesce(ThisItem.SeasonNumber, 0));
-                    Set(varChildEpisodeNumber, Coalesce(ThisItem.EpisodeNumber, 0));
-                    Set(varChildSeriesTitle1, Coalesce(ThisItem.SeriesTitle, ""));
-                    Set(varChildProductType1, Coalesce(ThisItem.ProductType, ""));
-                    Set(varChildProductType, Coalesce(ThisItem.ProductType, ""));
-                    Set(varChildTags, Coalesce(ThisItem.Tags, ""));
-                    Set(varChildProductionEndDate, ThisItem.ProductionEndDate);
-                    Set(varChildPublicationStartDate, ThisItem.PublicationStartDate);
-                    Set(varChildPublicationEndDate, ThisItem.PublicationEndDate);
-                    Set(varChildLinks1, Coalesce(ThisItem.ReferenceLinks, ""));
-                    Set(varChildTags1, Coalesce(ThisItem.Tags, ""));
-                    Set(varChildFTPPath1, Coalesce(ThisItem.FTPPath, ""));
-                    Set(varChildBelugaRef, Coalesce(ThisItem.BelugaReference, ""));
-                    Set(varChildNotes, Coalesce(ThisItem.Notes, ""));
-                    Set(varChildScript, Coalesce(ThisItem.ScriptShotlist, ""));
-                    Navigate(ChildInfoScreen)
-                  Width: =1291
-                  Y: =1
             - RS_CRowTitle:
                 Control: Label@2.5.1
                 Properties:
@@ -389,26 +336,13 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   Color: =RGBA(32, 31, 30, 1)
                   Font: =Font.'Open Sans'
-                  Height: =42
+                  Height: =47
                   OnSelect: =Select(Parent)
                   Size: =10
-                  Text: =If(IsBlank(ThisItem.ProductionTitle) Or ThisItem.ProductionTitle = "", "— untitled media file —", ThisItem.ProductionTitle) & If(Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "", "   ·   " & ThisItem.Title, "")
-                  Width: =403
-                  Y: =1
-            - RS_CRowType:
-                Control: Label@2.5.1
-                Properties:
-                  Align: =Align.Center
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(96, 104, 120, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =55
-                  OnSelect: =Select(Parent)
-                  Size: =10
-                  Text: =If(IsBlank(ThisItem.MediaType), "—", If(ThisItem.MediaType = "Photo", "Photo/Reportage", ThisItem.MediaType))
-                  Width: =126
-                  X: =414
-                  Y: =1
+                  Text: =If(IsBlank(ThisItem.ProductionTitle) Or ThisItem.ProductionTitle = "", "— untitled media file —", ThisItem.ProductionTitle)
+                  Width: =391
+                  X: =151
+                  Y: =9
             - RS_CRowValid:
                 Control: Label@2.5.1
                 Properties:
@@ -437,7 +371,7 @@ Screens:
                         "⚠  Incomplete"
                     )
                   Width: =200
-                  X: =634
+                  X: =529
                   Y: =1
             - RS_CRowBadge:
                 Control: Classic/Button@2.2.0
@@ -657,8 +591,8 @@ Screens:
                         )
                     )
                   Width: =140
-                  X: =887
-                  Y: =9
+                  X: =756
+                  Y: =8
             - RS_CRowDelete:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -696,8 +630,8 @@ Screens:
                   Size: =10
                   Text: ="Remove"
                   Width: =90
-                  X: =1150
-                  Y: =15
+                  X: =1068
+                  Y: =12
             - RS_CRowApproved:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -725,8 +659,83 @@ Screens:
                     )
                   Text: =""
                   Width: =44
-                  X: =1058
+                  X: =968
                   Y: =12
+            - DOA_List1RowBadge_8:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =1
+                  Color: =RGBA(0, 13, 75, 1)
+                  DisabledBorderColor: =Self.BorderColor
+                  DisabledColor: =RGBA(0, 13, 75, 1)
+                  DisabledFill: =RGBA(215, 223, 240, 1)
+                  Fill: =RGBA(215, 223, 240, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =29
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
+                  OnSelect: |-
+                    =Set(varCurrentChildId, ThisItem.ArchiveId);
+                    Set(varCurrentChildSPId, Coalesce(ThisItem.SPId, 0));
+                    Set(varChildTitle1, Coalesce(ThisItem.ProductionTitle, ""));
+                    Set(varChildMediaType, If(IsBlank(ThisItem.MediaType), "Photo", ThisItem.MediaType));
+                    Set(varChildDescription1, If(StartsWith(Trim(Coalesce(ThisItem.Description, "")),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(Coalesce(ThisItem.Description, ""),">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),Coalesce(ThisItem.Description, "")));
+                    Set(varChildCaptureDate, ThisItem.CaptureDate);
+                    Set(varChildProductionPlace1, Coalesce(ThisItem.ProductionPlace, ""));
+                    Set(varChildCredits1, Coalesce(ThisItem.Credits, ""));
+                    Set(varChildLanguageVersions, Coalesce(ThisItem.LanguageVersions, ""));
+                    Set(varChildAIVoiceover, Coalesce(ThisItem.AIVoiceover, false));
+                    Set(varChildContractCase, Coalesce(ThisItem.ContractCase, ""));
+                    Set(varChildContractCase1Sub, Coalesce(ThisItem.ContractCase1Sub, ""));
+                    Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false);
+                    Set(varChildContractingAuthority, Coalesce(ThisItem.ContractingAuthority, ""));
+                    Set(varChildExecProducer, Coalesce(ThisItem.ExecProducer, ""));
+                    Set(varChildProducerSel, ThisItem.Producer);
+                    Set(varChildProducer, Concat(ThisItem.Producer, DisplayName, ", "));
+                    Set(varChildPhotoCaption, Coalesce(ThisItem.PhotoCaption, ""));
+                    Set(varChildModelRelease, Coalesce(ThisItem.ModelReleaseProvided, false));
+                    Set(varChildNoThirdParty, Coalesce(ThisItem.NoThirdPartyRights, false));
+                    Set(varChildModelReleaseProvided, Coalesce(ThisItem.ModelReleaseProvided, false));
+                    Set(varChildMusicUsed, Coalesce(ThisItem.MusicUsed, false));
+                    Set(varChildMusicLicenceProvided, Coalesce(ThisItem.MusicLicenceProvided, false));
+                    Set(varChildPreexisting, Coalesce(ThisItem.PreexistingProvided, false));
+                    Set(varChildPreexistingProvided, Coalesce(ThisItem.PreexistingProvided, false));
+                    Set(varChildEpisodeTitle1, Coalesce(ThisItem.EpisodeTitle, ""));
+                    Set(varChildEpisodeSummary1, Coalesce(ThisItem.EpisodeSummary, ""));
+                    Set(varChildSeasonNumber, Coalesce(ThisItem.SeasonNumber, 0));
+                    Set(varChildEpisodeNumber, Coalesce(ThisItem.EpisodeNumber, 0));
+                    Set(varChildSeriesTitle1, Coalesce(ThisItem.SeriesTitle, ""));
+                    Set(varChildProductType1, Coalesce(ThisItem.ProductType, ""));
+                    Set(varChildProductType, Coalesce(ThisItem.ProductType, ""));
+                    Set(varChildTags, Coalesce(ThisItem.Tags, ""));
+                    Set(varChildProductionEndDate, ThisItem.ProductionEndDate);
+                    Set(varChildPublicationStartDate, ThisItem.PublicationStartDate);
+                    Set(varChildPublicationEndDate, ThisItem.PublicationEndDate);
+                    Set(varChildLinks1, Coalesce(ThisItem.ReferenceLinks, ""));
+                    Set(varChildTags1, Coalesce(ThisItem.Tags, ""));
+                    Set(varChildFTPPath1, Coalesce(ThisItem.FTPPath, ""));
+                    Set(varChildBelugaRef, Coalesce(ThisItem.BelugaReference, ""));
+                    Set(varChildNotes, Coalesce(ThisItem.Notes, ""));
+                    Set(varChildScript, Coalesce(ThisItem.ScriptShotlist, ""));
+                    Set(varMediaFileRef, Coalesce(ThisItem.Title, ""));
+                    Navigate(ChildInfoScreen)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Size: =12
+                  Text: |-
+                    =Switch(varRequestMediaType, "Photo","📷","Video","🎬","Podcast","🎙️","➕") & " " & ThisItem.Title
+                  Tooltip: =
+                  Visible: =Coalesce(varCurrentRequest.ID, 0) > 0
+                  Width: =130
+                  X: =21
+                  Y: =14
       - DOA_List1RowBadge_3:
           Control: Classic/Button@2.2.0
           Properties:
@@ -1475,27 +1484,12 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =46
+            Height: =38
             Size: =11
             Text: ="TITLE"
-            Width: =351
-            X: =36
-            Y: =If(locDetailsCollapsed, 150, 447)
-      - RS_ThType:
-          Control: Label@2.5.1
-          Group: Group1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =46
-            Size: =11
-            Text: ="TYPE"
-            Width: =160
-            X: =437
-            Y: =If(locDetailsCollapsed, 150, 445)
+            Width: =346
+            X: =208
+            Y: =460
       - RS_ThValidation:
           Control: Label@2.5.1
           Group: Group1
@@ -1505,12 +1499,12 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =46
+            Height: =31
             Size: =11
             Text: ="VALIDATION"
             Width: =200
-            X: =665
-            Y: =If(locDetailsCollapsed, 150, 445)
+            X: =552
+            Y: =465
       - RS_ThStatus:
           Control: Label@2.5.1
           Group: Group1
@@ -1520,12 +1514,12 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =46
+            Height: =31
             Size: =11
             Text: ="STATUS"
             Width: =120
-            X: =909
-            Y: =If(locDetailsCollapsed, 150, 445)
+            X: =784
+            Y: =460
       - RS_ChildrenEmpty:
           Control: Label@2.5.1
           Group: Group1
@@ -2144,8 +2138,8 @@ Screens:
             Size: =11
             Text: ="APPROVED"
             Width: =99
-            X: =1049
-            Y: =If(locDetailsCollapsed, 155, 452)
+            X: =957
+            Y: =461
       - RS_ThStatus_1:
           Control: Label@2.5.1
           Properties:
@@ -2154,12 +2148,12 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
-            Height: =46
+            Height: =32
             Size: =11
             Text: ="ACTION"
-            Width: =158
-            X: =1136
-            Y: =If(locDetailsCollapsed, 150, 448)
+            Width: =105
+            X: =1089
+            Y: =458
       - RS_ContactBackdrop:
           Control: Rectangle@2.3.0
           Properties:
@@ -2780,8 +2774,8 @@ Screens:
                   )
               )
             Width: =39
-            X: =44
-            Y: =If(locDetailsCollapsed, 160, 460)
+            X: =1240
+            Y: =460
       - DOA_List1CounterCircle_1:
           Control: Circle@2.3.0
           Group: DOA_List1Counter_1
@@ -2790,8 +2784,8 @@ Screens:
             Fill: =RGBA(136, 160, 209, 1)
             Height: =21
             Width: =26
-            X: =770
-            Y: =412
+            X: =777
+            Y: =419
       - DOA_List1CounterText_1:
           Control: Label@2.5.1
           Group: DOA_List1Counter_1
@@ -2804,8 +2798,8 @@ Screens:
             Size: =9
             Text: '=Text(CountRows(RS_ChildrenGallery.AllItems)) '
             Width: =26
-            X: =770
-            Y: =412
+            X: =777
+            Y: =419
       - BackButton_ReviewScreen:
           Control: Classic/Icon@2.5.0
           Properties:
@@ -2917,7 +2911,7 @@ Screens:
             Font: =Font.'Open Sans'
             Height: =19
             Size: =10
-            Text: ="Add a note as a Requestor:"
+            Text: ="Add a note:"
             Visible: =locShowNotes
             Width: =434
             X: =324
@@ -3695,3 +3689,17 @@ Screens:
             Width: =170
             X: =593
             Y: =350
+      - RS_ThTitle_1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =31
+            Size: =11
+            Text: ="REF"
+            Width: =154
+            X: =40
+            Y: =If(locDetailsCollapsed, 150, 460)

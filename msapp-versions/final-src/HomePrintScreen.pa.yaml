@@ -86,28 +86,6 @@ Screens:
             Width: =700
             X: =148
             Y: =68
-      - HP_BtnDownload:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(56, 96, 178, 1)
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: |
-              =Set(varPDF, PDF(HomePrintScreen));
-              Download(varPDF)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="⬇  Download PDF"
-            Width: =180
-            X: =1154
-            Y: =68
       - HP_FilterContainer:
           Control: Rectangle@2.3.0
           Properties:

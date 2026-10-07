@@ -44,6 +44,15 @@ Screens:
             If(Coalesce(varChildProductType, varChildProductType1, "") = "", Set(varChildProductType, "Clip"))
         )
     Children:
+      - CI_TabsBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =50
+            Width: =1366
+            Y: =52
       - CI_Breadcrumb:
           Control: Label@2.5.1
           Properties:
@@ -54,15 +63,6 @@ Screens:
             Text: =" /  " & Coalesce(varRequestTitle, "Request") & "  /  " & If(IsBlank(varChildTitle) Or varChildTitle = "", "New archive", varChildTitle)
             Width: =700
             X: =200
-      - CI_TabsBg:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =1
-            Fill: =RGBA(255, 255, 255, 1)
-            Height: =50
-            Width: =1366
-            Y: =52
       - CI_Tab1:
           Control: Classic/Button@2.2.0
           Properties:
@@ -72,17 +72,26 @@ Screens:
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
+            Height: =35
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(136, 160, 209, 1)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
             Size: =13
             Text: ="1.  Info"
             Width: =150
-            X: =16
-            Y: =52
+            X: =344
+            Y: =64
+      - CI_Tab1Line:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =3
+            X: =344
+            Y: =98
       - HeaderDivider_ChildInfoScreen:
           Control: Rectangle@2.3.0
           Properties:
@@ -92,14 +101,6 @@ Screens:
             Width: =2
             X: =200
             Y: =13
-      - CI_Tab1Line:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(56, 96, 178, 1)
-            Height: =3
-            X: =16
-            Y: =99
       - CI_Tab2:
           Control: Classic/Button@2.2.0
           Properties:
@@ -109,9 +110,10 @@ Screens:
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
+            Height: =33
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(247, 248, 250, 1)
+            HoverFill: =RGBA(136, 160, 209, 1)
             OnSelect: =Navigate(ChildMetaScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
@@ -119,8 +121,8 @@ Screens:
             Size: =13
             Text: ="2.  Metadata"
             Width: =170
-            X: =176
-            Y: =52
+            X: =496
+            Y: =66
       - CI_Tab3:
           Control: Classic/Button@2.2.0
           Properties:
@@ -130,9 +132,10 @@ Screens:
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
+            Height: =32
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(247, 248, 250, 1)
+            HoverFill: =RGBA(136, 160, 209, 1)
             OnSelect: =Navigate(ChildLegalScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
@@ -140,8 +143,8 @@ Screens:
             Size: =13
             Text: ="3.  Legal & Docs"
             Width: =180
-            X: =356
-            Y: =52
+            X: =668
+            Y: =67
       - CI_Tab4:
           Control: Classic/Button@2.2.0
           Properties:
@@ -151,9 +154,10 @@ Screens:
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Font: =Font.'Open Sans'
+            Height: =33
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(247, 248, 250, 1)
+            HoverFill: =RGBA(136, 160, 209, 1)
             OnSelect: =Navigate(ChildValidScreen)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
@@ -161,8 +165,8 @@ Screens:
             Size: =13
             Text: ="4.  Validations"
             Width: =170
-            X: =546
-            Y: =52
+            X: =852
+            Y: =66
       - CI_Gallery:
           Control: Gallery@2.15.0
           Variant: Vertical
@@ -185,7 +189,7 @@ Screens:
                   BorderColor: =RGBA(220, 224, 230, 1)
                   BorderThickness: =1
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =If(varChildMediaType = "Photo", 520, If(varChildMediaType = "Video", 570, If(varChildMediaType = "Podcast", 640, 896)))
+                  Height: =534
                   Width: =1302
                   X: =32
                   Y: =6
@@ -202,21 +206,6 @@ Screens:
                   Width: =840
                   X: =56
                   Y: =26
-            - CI_ProductTypeDisplay:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(186, 202, 226, 1)
-                  BorderThickness: =1
-                  Color: =RGBA(56, 96, 178, 1)
-                  Fill: =RGBA(230, 236, 245, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  PaddingLeft: =12
-                  Size: =14
-                  Text: =If(varChildMediaType = "Photo", "Photo / Reportage", varChildMediaType)
-                  Width: =262
-                  X: =56
-                  Y: =66
             - CI_LblTitle:
                 Control: Label@2.5.1
                 Properties:
@@ -229,7 +218,7 @@ Screens:
                   Visible: =varChildMediaType <> "Podcast"
                   Width: =800
                   X: =56
-                  Y: =122
+                  Y: =78
             - CI_Title:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -248,7 +237,7 @@ Screens:
                   Visible: =varChildMediaType <> "Podcast"
                   Width: =900
                   X: =56
-                  Y: =148
+                  Y: =104
             - CI_LblDescription:
                 Control: Label@2.5.1
                 Properties:
@@ -261,7 +250,7 @@ Screens:
                   Visible: =varChildMediaType <> "Podcast"
                   Width: =800
                   X: =56
-                  Y: =204
+                  Y: =160
             - CI_Description:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -282,7 +271,7 @@ Screens:
                   Visible: =varChildMediaType <> "Podcast"
                   Width: =900
                   X: =56
-                  Y: =230
+                  Y: =186
             - CI_Notes:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -311,7 +300,7 @@ Screens:
                   Size: =11
                   Width: =900
                   X: =56
-                  Y: =If(varChildMediaType = "Photo", 503, 580)
+                  Y: =458
             - CI_LblCaptureDate:
                 Control: Label@2.5.1
                 Properties:
@@ -383,7 +372,7 @@ Screens:
                   Visible: =varChildMediaType = "Video"
                   Width: =600
                   X: =56
-                  Y: =310
+                  Y: =266
             - CI_ProductType:
                 Control: Classic/DropDown@2.3.1
                 Properties:
@@ -409,10 +398,11 @@ Screens:
                   PressedFill: =Self.Fill
                   SelectionColor: =RGBA(255, 255, 255, 1)
                   SelectionFill: =RGBA(0, 176, 240, 1)
+                  Size: =11
                   Visible: =varChildMediaType = "Video"
                   Width: =400
                   X: =56
-                  Y: =336
+                  Y: =292
             - CI_LblSeriesTitle:
                 Control: Label@2.5.1
                 Properties:
@@ -481,7 +471,7 @@ Screens:
                   Visible: =false
                   Width: =300
                   X: =56
-                  Y: =418 + Switch(varChildMediaType, "Video", 80, "Podcast", 240, 0)
+                  Y: =428
             - CI_LblPubStartDate:
                 Control: Label@2.5.1
                 Properties:
@@ -637,8 +627,8 @@ Screens:
                   Text: ="Language version(s) *"
                   Visible: =varChildMediaType = "Video"
                   Width: =400
-                  X: =56
-                  Y: =392
+                  X: =551
+                  Y: =262
             - CI_LblNotes:
                 Control: Label@2.5.1
                 Properties:
@@ -650,7 +640,7 @@ Screens:
                   Text: ="Notes"
                   Width: =400
                   X: =56
-                  Y: =If(varChildMediaType = "Photo", 471, 548)
+                  Y: =424
             - CI_Language:
                 Control: Classic/DropDown@2.3.1
                 Properties:
@@ -673,10 +663,11 @@ Screens:
                   PressedFill: =RGBA(0, 18, 107, 1)
                   SelectionColor: =RGBA(255, 255, 255, 1)
                   SelectionFill: =RGBA(56, 96, 178, 1)
+                  Size: =11
                   Visible: =varChildMediaType = "Video"
                   Width: =400
-                  X: =56
-                  Y: =418
+                  X: =551
+                  Y: =289
             - CI_PodcastNote:
                 Control: Rectangle@2.3.0
                 Properties:
@@ -847,21 +838,6 @@ Screens:
                   Width: =300
                   X: =976
                   Y: =404
-      - CI_BelugaRef:
-          Control: Classic/TextInput@2.3.2
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Default: =varChildBelugaRef
-            DisplayMode: =If(varViewOnly Or varUserRole <> "ADMINISTRATOR", DisplayMode.View, DisplayMode.Edit)
-            Font: =Font.'Open Sans'
-            HintText: ="Assigned by Central Deposit"
-            HoverBorderColor: =RGBA(0, 18, 107, 1)
-            HoverFill: =RGBA(186, 202, 226, 1)
-            OnChange: =Set(varChildBelugaRef, Self.Text)
-            Visible: =true
-            Width: =400
-            X: =56
-            Y: =If(varChildMediaType = "Photo", 418, 497)
       - CI_BottomBar:
           Control: Rectangle@2.3.0
           Properties:
@@ -1244,10 +1220,9 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =22
             Text: ="Beluga reference"
-            Visible: =true
             Width: =400
-            X: =56
-            Y: =If(varChildMediaType = "Photo", 392, 471)
+            X: =55
+            Y: =450
       - CM_BtnPrev_1:
           Control: Classic/Button@2.2.0
           Properties:
@@ -1934,3 +1909,64 @@ Screens:
             Visible: =locShowPodcastVisual And varChildMediaType = "Podcast"
             X: =1030
             Y: =603
+      - DOA_List1RowBadge_9:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =1
+            Color: =RGBA(0, 13, 75, 1)
+            DisabledBorderColor: =Self.BorderColor
+            DisabledColor: =RGBA(0, 13, 75, 1)
+            DisabledFill: =RGBA(215, 223, 240, 1)
+            Fill: =RGBA(215, 223, 240, 1)
+            Font: =Font.'Open Sans'
+            Height: =29
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
+            OnSelect: |-
+              =Copy(varMediaFileRef);
+              Notify("Media File Reference copied into clipboard", NotificationType.Information);
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Size: =13
+            Text: |-
+              =Switch(varRequestMediaType, "Photo","📷","Video","🎬","Podcast","🎙️","➕") & " " &varMediaFileRef
+            Tooltip: ="Copy to clipboard"
+            Visible: =Coalesce(varCurrentRequest.ID, 0) > 0
+            Width: =138
+            X: =186
+            Y: =67
+      - RS_CardTitle_1:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =38
+            Size: =16
+            Text: ="Media File"
+            Width: =143
+            X: =57
+            Y: =64
+      - CI_BelugaRef:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =varChildBelugaRef
+            DisplayMode: =If(varViewOnly Or varUserRole <> "ADMINISTRATOR", DisplayMode.View, DisplayMode.Edit)
+            Font: =Font.'Open Sans'
+            HintText: ="Assigned by Central Deposit"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =Set(varChildBelugaRef, Self.Text)
+            Size: =11
+            Width: =400
+            X: =57
+            Y: =477

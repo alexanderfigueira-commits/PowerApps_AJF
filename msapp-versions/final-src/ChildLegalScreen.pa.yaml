@@ -61,27 +61,6 @@ Screens:
             Height: =50
             Width: =1366
             Y: =52
-      - CL_Tab1:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(96, 104, 120, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(247, 248, 250, 1)
-            OnSelect: =Navigate(ChildInfoScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="✓  1.  Info"
-            Width: =150
-            X: =16
-            Y: =52
       - HeaderDivider_ChildLegalScreen:
           Control: Rectangle@2.3.0
           Properties:
@@ -91,77 +70,6 @@ Screens:
             Width: =2
             X: =200
             Y: =13
-      - CL_Tab2:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(96, 104, 120, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(247, 248, 250, 1)
-            OnSelect: =Navigate(ChildMetaScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="✓  2.  Metadata"
-            Width: =170
-            X: =176
-            Y: =52
-      - CL_Tab3:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(0, 18, 107, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(255, 255, 255, 1)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="3.  Legal & Docs"
-            Width: =180
-            X: =356
-            Y: =52
-      - CL_Tab3Line:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(56, 96, 178, 1)
-            Height: =3
-            Width: =180
-            X: =356
-            Y: =99
-      - CL_Tab4:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =ColorFade(Self.Fill, -15%)
-            BorderThickness: =0
-            Color: =RGBA(96, 104, 120, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            Fill: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(247, 248, 250, 1)
-            OnSelect: =Navigate(ChildValidScreen)
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="4.  Validations"
-            Width: =170
-            X: =546
-            Y: =52
       - CL_BottomBar:
           Control: Rectangle@2.3.0
           Properties:
@@ -283,6 +191,7 @@ Screens:
                   PressedFill: =RGBA(0, 18, 107, 1)
                   SelectionColor: =RGBA(255, 255, 255, 1)
                   SelectionFill: =RGBA(56, 96, 178, 1)
+                  Size: =11
                   Width: =560
                   X: =24
                   Y: =82
@@ -478,27 +387,6 @@ Screens:
                   Width: =780
                   X: =24
                   Y: =CL_ChkSubtitles.Y + If(CL_ChkSubtitles.Visible, CL_ChkSubtitles.Height, 0)
-            - CL_VTTUpload:
-                Control: Attachments@2.3.0
-                Properties:
-                  BorderColor: =RGBA(220, 224, 230, 1)
-                  DisplayMode: =DisplayMode.View
-                  Font: =Font.'Open Sans'
-                  Height: =96
-                  HoverFill: =RGBA(186, 202, 226, 1)
-                  ItemColor: =RGBA(255, 255, 255, 1)
-                  ItemFill: =RGBA(56, 96, 178, 1)
-                  ItemHoverFill: =RGBA(186, 202, 226, 1)
-                  Items: =Filter(CL_DCAttachValue.Attachments, EndsWith(Lower(Name), ".vtt"))
-                  Items.Name: =Name
-                  Items.Value: =Value
-                  MaxAttachments: =5
-                  PressedColor: =RGBA(255, 255, 255, 1)
-                  PressedFill: =RGBA(0, 18, 107, 1)
-                  Visible: =varChildMediaType = "Video" And varChildSubtitlesProvided
-                  Width: =780
-                  X: =24
-                  Y: =CL_LblVTT.Y + If(CL_LblVTT.Visible, 24, 0)
             - CL_ChkFramework:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -1197,3 +1085,145 @@ Screens:
             Width: =83
             X: =951
             Y: =8
+      - CI_Tab1_2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 18, 107, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =35
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(136, 160, 209, 1)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="1.  Info"
+            Width: =150
+            X: =344
+            Y: =64
+      - CI_Tab2_2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =33
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(136, 160, 209, 1)
+            OnSelect: =Navigate(ChildMetaScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="2.  Metadata"
+            Width: =170
+            X: =496
+            Y: =66
+      - CI_Tab3_2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =32
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(136, 160, 209, 1)
+            OnSelect: =Navigate(ChildLegalScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="3.  Legal & Docs"
+            Width: =180
+            X: =668
+            Y: =67
+      - CI_Tab4_2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =33
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(136, 160, 209, 1)
+            OnSelect: =Navigate(ChildValidScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="4.  Validations"
+            Width: =170
+            X: =852
+            Y: =66
+      - DOA_List1RowBadge_11:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =1
+            Color: =RGBA(0, 13, 75, 1)
+            DisabledBorderColor: =Self.BorderColor
+            DisabledColor: =RGBA(0, 13, 75, 1)
+            DisabledFill: =RGBA(215, 223, 240, 1)
+            Fill: =RGBA(215, 223, 240, 1)
+            Font: =Font.'Open Sans'
+            Height: =29
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
+            OnSelect: |-
+              =Copy(varCurrentRequest.RequestNumber);
+              Notify("Media File Reference copied into clipboard", NotificationType.Information);
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Size: =13
+            Text: |-
+              =Switch(varRequestMediaType, "Photo","📷","Video","🎬","Podcast","🎙️","➕") & " " &varMediaFileRef
+            Tooltip: ="Copy to clipboard"
+            Visible: =Coalesce(varCurrentRequest.ID, 0) > 0
+            Width: =138
+            X: =186
+            Y: =67
+      - RS_CardTitle_3:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =38
+            Size: =16
+            Text: ="Media File"
+            Width: =143
+            X: =57
+            Y: =64
+      - CL_Tab3Line:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =3
+            Width: =170
+            X: =663
+            Y: =101

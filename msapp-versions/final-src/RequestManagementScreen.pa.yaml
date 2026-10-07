@@ -1861,7 +1861,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =46
             Size: =9
-            Text: ="SUBMITED"
+            Text: ="SUBMITTED"
             Width: =169
             X: =553
             Y: =If(locShowFilters,333,200)

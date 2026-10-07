@@ -573,7 +573,7 @@ Screens:
                   DisabledBorderColor: =Self.BorderColor
                   DisplayMode: =DisplayMode.View
                   Fill: |-
-                    =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
+                    =If(
                        "Approved" in ThisItem.Status.Value, Color.DarkGreen,
                        "Pending" in ThisItem.Status.Value, Color.Orange,
                        "Draft" in ThisItem.Status.Value, Color.Gray,
@@ -593,8 +593,20 @@ Screens:
                   RadiusTopLeft: =14
                   RadiusTopRight: =14
                   Size: =8
-                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
-                  Tooltip: ="Status"
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", If(ThisItem.Status.Value = "Partially approved", "Approved", Text(ThisItem.Status.Value)))
+                  Tooltip: |-
+                    =// "Partially approved" is not a status: an Approved request whose media files are only partly ticked (RS_CRowApproved) says so here
+                    With(
+                        {
+                            n: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber)),
+                            ok: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber, MediaApproved = true))
+                        },
+                        If(
+                            ThisItem.Status.Value = "Partially approved" Or (ThisItem.Status.Value = "Approved" And ok > 0 And ok < n),
+                            "Partially Approved Request.",
+                            "Status"
+                        )
+                    )
                   Width: =80
                   X: =311
                   Y: =73
@@ -958,7 +970,7 @@ Screens:
                   DisabledBorderColor: =Self.BorderColor
                   DisplayMode: =DisplayMode.View
                   Fill: |-
-                    =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
+                    =If(
                        "Approved" in ThisItem.Status.Value, Color.DarkGreen,
                        "Pending" in ThisItem.Status.Value, Color.Orange,
                        "Draft" in ThisItem.Status.Value, Color.Gray,
@@ -978,8 +990,20 @@ Screens:
                   RadiusTopLeft: =14
                   RadiusTopRight: =14
                   Size: =8
-                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
-                  Tooltip: ="Status"
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", If(ThisItem.Status.Value = "Partially approved", "Approved", Text(ThisItem.Status.Value)))
+                  Tooltip: |-
+                    =// "Partially approved" is not a status: an Approved request whose media files are only partly ticked (RS_CRowApproved) says so here
+                    With(
+                        {
+                            n: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber)),
+                            ok: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber, MediaApproved = true))
+                        },
+                        If(
+                            ThisItem.Status.Value = "Partially approved" Or (ThisItem.Status.Value = "Approved" And ok > 0 And ok < n),
+                            "Partially Approved Request.",
+                            "Status"
+                        )
+                    )
                   Width: =80
                   X: =312
                   Y: =51
@@ -1234,7 +1258,7 @@ Screens:
                   DisabledBorderColor: =Self.BorderColor
                   DisplayMode: =DisplayMode.View
                   Fill: |-
-                    =If("Partially approved" in ThisItem.Status.Value, Color.DarkGoldenRod,
+                    =If(
                        "Approved" in ThisItem.Status.Value, Color.DarkGreen,
                        "Pending" in ThisItem.Status.Value, Color.Orange,
                        "Draft" in ThisItem.Status.Value, Color.Gray,
@@ -1254,8 +1278,20 @@ Screens:
                   RadiusTopLeft: =14
                   RadiusTopRight: =14
                   Size: =8
-                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", Text(ThisItem.Status.Value))
-                  Tooltip: ="Status"
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", If(ThisItem.Status.Value = "Partially approved", "Approved", Text(ThisItem.Status.Value)))
+                  Tooltip: |-
+                    =// "Partially approved" is not a status: an Approved request whose media files are only partly ticked (RS_CRowApproved) says so here
+                    With(
+                        {
+                            n: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber)),
+                            ok: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber, MediaApproved = true))
+                        },
+                        If(
+                            ThisItem.Status.Value = "Partially approved" Or (ThisItem.Status.Value = "Approved" And ok > 0 And ok < n),
+                            "Partially Approved Request.",
+                            "Status"
+                        )
+                    )
                   Width: =80
                   X: =312
                   Y: =51

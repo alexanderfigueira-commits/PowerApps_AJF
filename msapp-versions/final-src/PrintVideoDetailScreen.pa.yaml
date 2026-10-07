@@ -260,11 +260,11 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =22
+            Height: =34
             Size: =10
             Text: =Coalesce(varPrintRequest.'Created By'.DisplayName, "Not provided")
-            Width: =176
-            X: =602
+            Width: =182
+            X: =596
             Y: =166
       - PVD_HdrVal4:
           Control: Label@2.5.1
@@ -272,10 +272,10 @@ Screens:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(30, 34, 44, 1)
             Font: =Font.'Open Sans'
-            Height: =22
+            Height: =34
             Size: =10
             Text: =Coalesce(varPrintRequest.DG.Value, "Not provided")
-            Width: =176
+            Width: =182
             X: =784
             Y: =166
       - PVD_HdrVal5:

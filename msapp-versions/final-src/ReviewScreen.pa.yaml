@@ -621,15 +621,8 @@ Screens:
                   Patch('AV-CD-Requests',
                       LookUp('AV-CD-Requests', ID = varReviewProject.ID),
                       {
-                          // some but not all media files ticked "Approved" on the request screen -> Partially approved
-                          Status: {Value: If(
-                          With(
-                              {n: CountRows(RV_ChildrenGallery.AllItems), ok: CountRows(Filter(RV_ChildrenGallery.AllItems, MediaApproved = true))},
-                              ok > 0 And ok < n
-                          ),
-                          "Partially approved",
-                          "Approved"
-                      )},
+                          // always "Approved": a request with only some media files ticked is shown as "Partially Approved Request." on the dashboards (tooltip)
+                          Status: {Value: "Approved"},
                           ReviewedByContact: Table({
                               Claims: "i:0#.f|membership|" & Lower(User().Email),
                               DisplayName: User().FullName,
@@ -672,7 +665,7 @@ Screens:
                           If(With(
                               {n: CountRows(RV_ChildrenGallery.AllItems), ok: CountRows(Filter(RV_ChildrenGallery.AllItems, MediaApproved = true))},
                               ok > 0 And ok < n
-                          ), "Request partially approved: only the ticked media files are approved.", "Request approved.")
+                          ), "Partially Approved Request: only the ticked media files are approved.", "Request approved.")
                       ),
                       NotificationType.Success
                   );
