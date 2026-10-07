@@ -666,7 +666,14 @@ Screens:
                           )
                       )
                   ),
-                  Created,
+                  If(
+                      Coalesce(varFilter, If(varUserRole = "ADMINISTRATOR", "Processing", "Pending")) = "All",
+                      // All Status: drafts first, by creation date; every other status by modification date (newest first in both)
+                      If(Status.Value = "Draft", 10000000000, 0)
+                          + DateDiff(DateTime(2000, 1, 1, 0, 0, 0), If(Status.Value = "Draft", Created, Modified), TimeUnit.Seconds),
+                      // one status: by creation date
+                      DateDiff(DateTime(2000, 1, 1, 0, 0, 0), Created, TimeUnit.Seconds)
+                  ),
                   // one status: oldest first (waiting longest on top); All Status: newest first
                   If(Coalesce(varFilter, If(varUserRole = "ADMINISTRATOR", "Processing", "Pending")) = "All", SortOrder.Descending, SortOrder.Ascending)
               )
