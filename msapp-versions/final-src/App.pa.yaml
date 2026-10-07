@@ -10,7 +10,8 @@ App:
   Properties:
     BackEnabled: =false
     OnStart: |-
-      =Set(varViewOnly, false);
+      =Set(varFilterDay, Today());
+      Set(varViewOnly, false);
       Set(varReqDataLoaded, false);
       Set(varReqFiltersInit, false);
       Set(varReqReady, false);

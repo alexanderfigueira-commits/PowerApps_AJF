@@ -64,10 +64,21 @@ Screens:
             Set(varFilter,"All");
             Set(varFilterDG, "");
             Set(varFilterRequestName, "");
+            // To = the END of today: Today() is 00:00 and Created has a time, so "Created <= To" hid today's requests
             Set(varFilterStartDate, Today()-31);
-            Set(varFilterEndDate, Today());
+            Set(varFilterEndDate, Today() + Time(23, 59, 59));
+            Set(varFilterDay, Today());
             UpdateContext({locProdTypeFilter: Blank(), locShowFilters: true});
             Set(varReqFiltersInit, true)
+        );
+        // a new day since the range was set (app kept open past midnight): the default range moves to today
+        If(
+            varReqFiltersInit And varFilterDay <> Today(),
+            Set(varFilterDay, Today());
+            Set(varFilterStartDate, Today()-31);
+            Set(varFilterEndDate, Today() + Time(23, 59, 59));
+            Reset(HomeFilterStart);
+            Reset(HomeFilterEnd)
         );
         
         // The list opens on the first status that has requests (per role) when the
