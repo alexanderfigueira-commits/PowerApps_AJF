@@ -1373,6 +1373,7 @@ Screens:
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
             SearchFields: =["Value"]
+            SelectMultiple: =false
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(56, 96, 178, 1)
             Visible: =locShowFilters
