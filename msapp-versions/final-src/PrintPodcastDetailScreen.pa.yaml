@@ -1561,6 +1561,7 @@ Screens:
             Size: =10
             TabIndex: =-1
             Text: =""
+            Visible: =Not(locPrinting)
             Width: =If(varUserRole = "ADMINISTRATOR", 489, 397)
             X: =If(varUserRole = "ADMINISTRATOR", 621, 713)
             Y: =5
@@ -1589,6 +1590,7 @@ Screens:
             Text: |-
               ="📋 Requests"
             Tooltip: ="Requests"
+            Visible: =Not(locPrinting)
             Width: =83
             X: =If(varUserRole = "ADMINISTRATOR", 732, 824)
             Y: =8
@@ -1624,6 +1626,7 @@ Screens:
             Text: |-
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
+            Visible: =Not(locPrinting)
             Width: =83
             X: =If(varUserRole = "ADMINISTRATOR", 640, 732)
             Y: =10
@@ -1652,6 +1655,7 @@ Screens:
             Text: |-
               ="🔎" & Char(10) & "Help"
             Tooltip: ="Help"
+            Visible: =Not(locPrinting)
             Width: =83
             X: =1008
             Y: =10
@@ -1680,7 +1684,7 @@ Screens:
             Text: |-
               ="👁" & Char(10) & "Review"
             Tooltip: ="Review"
-            Visible: =varUserRole = "ADMINISTRATOR"
+            Visible: =varUserRole = "ADMINISTRATOR" And Not(locPrinting)
             Width: =83
             X: =824
             Y: =8
@@ -1712,6 +1716,7 @@ Screens:
               ="📂
               Export"
             Tooltip: ="Dashboard"
+            Visible: =Not(locPrinting)
             Width: =83
             X: =916
             Y: =8

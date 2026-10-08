@@ -12,7 +12,13 @@ Screens:
       Fill: =RGBA(247, 248, 250, 1)
       LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
       OnVisible: |-
-        =Set(
+        =// a Video's Language and Type of product dropdowns show EN / Clip while nothing is stored: store what is shown
+        If(
+            varChildMediaType = "Video" And Not(varRequestorLocked),
+            If(Coalesce(varChildLanguageVersions, "") = "", Set(varChildLanguageVersions, Coalesce(CI_Language.Selected.Value, "EN")));
+            If(Coalesce(varChildProductType, varChildProductType1, "") = "", Set(varChildProductType, Coalesce(CI_ProductType.Selected.Value, "Clip")))
+        );
+        Set(
             varRequestorLocked,
             // view-only (a request opened from a dashboard ID) locks everything, whatever the role
             varViewOnly
@@ -240,7 +246,13 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(230, 236, 245, 1)
             OnSelect: |-
-              =ClearCollect(colValidations,
+              =// a Video's Language and Type of product dropdowns show EN / Clip while nothing is stored: store what is shown
+              If(
+                  varChildMediaType = "Video" And Not(varRequestorLocked),
+                  If(Coalesce(varChildLanguageVersions, "") = "", Set(varChildLanguageVersions, Coalesce(CI_Language.Selected.Value, "EN")));
+                  If(Coalesce(varChildProductType, varChildProductType1, "") = "", Set(varChildProductType, Coalesce(CI_ProductType.Selected.Value, "Clip")))
+              );
+              ClearCollect(colValidations,
                   {Check: "Media type is set", Pass: Not(IsBlank(varChildMediaType)) And varChildMediaType <> "", Note: "Select a production type on the Info tab."},
                   {Check: "Media file title is provided", Pass: Not(IsBlank(varChildTitle1)) And varChildTitle1 <> "" And varChildTitle1 <> "New archive", Note: "Enter a descriptive title on the Info tab."},
                   {Check: "Capture / production date is set", Pass: Not(IsBlank(varChildCaptureDate)), Note: "Set the date on the Info tab (Metadata tab for Photo/Reportage)."},
@@ -429,7 +441,13 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
-              =If(
+              =// a Video's Language and Type of product dropdowns show EN / Clip while nothing is stored: store what is shown
+              If(
+                  varChildMediaType = "Video" And Not(varRequestorLocked),
+                  If(Coalesce(varChildLanguageVersions, "") = "", Set(varChildLanguageVersions, Coalesce(CI_Language.Selected.Value, "EN")));
+                  If(Coalesce(varChildProductType, varChildProductType1, "") = "", Set(varChildProductType, Coalesce(CI_ProductType.Selected.Value, "Clip")))
+              );
+              If(
                   // the parent request must exist and have an id: media items are written under its request number
                   Coalesce(varCurrentRequest.ID, 0) = 0,
                   Notify("Save the request first (Draft Save): it has no id yet, so the media file cannot be saved.", NotificationType.Warning),

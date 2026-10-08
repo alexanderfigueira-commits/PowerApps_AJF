@@ -398,7 +398,7 @@ Screens:
                   ChevronFill: =RGBA(255, 255, 255, 1)
                   ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
                   ChevronHoverFill: =Self.ChevronFill
-                  Default: =varChildProductType1
+                  Default: =Coalesce(varChildProductType, varChildProductType1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
