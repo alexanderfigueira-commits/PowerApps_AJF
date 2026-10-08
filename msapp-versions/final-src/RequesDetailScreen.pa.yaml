@@ -49,6 +49,7 @@ Screens:
         // pass false and keep the selection.
         If(
             locResetContacts,
+            UpdateContext({locOwnerForce: false, locContractorForce: false});
             Reset(RS_Owner);
             Reset(RS_Contractor);
             Reset(RS_AdminNotes);
@@ -1205,7 +1206,10 @@ Screens:
             ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
             ChevronHoverFill: =Self.ChevronFill
             DefaultSelectedItems: |-
-              =With(
+              =If(
+                  locOwnerForce,
+                  colOwnerForce,
+                  With(
                   {locManual: Coalesce(
               Last(
                           Filter(
@@ -1225,6 +1229,7 @@ Screens:
                       ),
                       rows
                   )
+              )
               )
             DisplayFields: =["DisplayName","Mail"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
@@ -1305,7 +1310,10 @@ Screens:
             ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
             ChevronHoverFill: =Self.ChevronFill
             DefaultSelectedItems: |-
-              =With(
+              =If(
+                  locContractorForce,
+                  colContractorForce,
+                  With(
                   {locManual: Coalesce(
               Last(
                           Filter(
@@ -1325,6 +1333,7 @@ Screens:
                       ),
                       rows
                   )
+              )
               )
             DisplayFields: =["DisplayName","Mail"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
@@ -3401,7 +3410,18 @@ Screens:
                           }
                       );
                       // the e-mail now shows in the matching field (DefaultSelectedItems reads the manual contact)
-                      If(locType = "DG/Agency", Reset(RS_Owner), Reset(RS_Contractor));
+                      // the new e-mail joins what is already picked in the matching field (nothing picked is dropped)
+                      If(
+                          locType = "DG/Agency",
+                          ClearCollect(colOwnerForce, RS_Owner.SelectedItems);
+                          If(IsEmpty(Filter(colOwnerForce, Lower(Mail) = Lower(locEmail))), Collect(colOwnerForce, {DisplayName: locEmail, Mail: locEmail, GivenName: "", Surname: "", MailNickname: ""}));
+                          UpdateContext({locOwnerForce: true});
+                          Reset(RS_Owner),
+                          ClearCollect(colContractorForce, RS_Contractor.SelectedItems);
+                          If(IsEmpty(Filter(colContractorForce, Lower(Mail) = Lower(locEmail))), Collect(colContractorForce, {DisplayName: locEmail, Mail: locEmail, GivenName: "", Surname: "", MailNickname: ""}));
+                          UpdateContext({locContractorForce: true});
+                          Reset(RS_Contractor)
+                      );
                       Notify(
                           "Contact saved: " & locEmail,
                           NotificationType.Success
