@@ -972,7 +972,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="Name of the photographer"
+                  Text: ="Name of the photographer *"
                   Visible: =varChildMediaType = "Photo"
                   Width: =295
                   X: =700
@@ -981,8 +981,10 @@ Screens:
             - CM_Photographer:
                 Control: Classic/ComboBox@2.4.0
                 Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  BorderThickness: =2
+                  BorderColor: |-
+                    =// yellow while this mandatory field is empty
+                    If(CM_LblPhotographer.Visible And (IsBlank(varChildPhotographer) Or IsEmpty(Filter(CM_Photographer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+                  BorderThickness: =If(CM_LblPhotographer.Visible And (IsBlank(varChildPhotographer) Or IsEmpty(Filter(CM_Photographer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), 3, 2)
                   ChevronBackground: =RGBA(56, 96, 178, 1)
                   ChevronFill: =RGBA(255, 255, 255, 1)
                   ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
