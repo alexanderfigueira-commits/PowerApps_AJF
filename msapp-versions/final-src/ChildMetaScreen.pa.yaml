@@ -116,7 +116,7 @@ Screens:
                   BorderColor: =RGBA(220, 224, 230, 1)
                   BorderThickness: =1
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =553
+                  Height: =If(varChildMediaType = "Podcast", 830, 553)
                   Width: =1302
                   X: =32
                   Y: =16
@@ -144,8 +144,8 @@ Screens:
                   Text: ="Language version(s) *"
                   Visible: =varChildMediaType = "Podcast"
                   Width: =295
-                  X: =56
-                  Y: =366
+                  X: =367
+                  Y: =372
             - CM_Language:
                 Control: Classic/ComboBox@2.4.0
                 Properties:
@@ -174,8 +174,8 @@ Screens:
                   Size: =11
                   Visible: =varChildMediaType = "Podcast"
                   Width: =295
-                  X: =56
-                  Y: =392
+                  X: =367
+                  Y: =398
             - CM_LblCredits:
                 Control: Label@2.5.1
                 Properties:
@@ -188,9 +188,9 @@ Screens:
                     =If(varChildMediaType = "Photo", "Contractor / Agency *",
                        If(varChildMediaType = "Podcast", "Director, Motion Designer, Photographer",
                           If(varChildMediaType = "Video", "Director, Motion Designer, Photographer", "Director / producer *")))
-                  Width: =Switch(varChildMediaType, "Photo", 295, "Video", 606, "Podcast", 606, 500)
-                  X: =368
-                  Y: =295
+                  Width: =Switch(varChildMediaType, "Photo", 917, "Video", 1228, "Podcast", 1228, 917)
+                  X: =Switch(varChildMediaType, "Photo", 367, "Video", 56, "Podcast", 56, 367)
+                  Y: =Switch(varChildMediaType, "Photo", 308, "Video", 372, "Podcast", 462, 308)
             - CM_Credits:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -202,7 +202,7 @@ Screens:
                   Default: =varChildCredits1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
-                  Height: =48
+                  Height: =40
                   HintText: |-
                     =If(varChildMediaType = "Photo", "Contractor or agency name",
                        If(varChildMediaType = "Podcast", "Names + function",
@@ -212,9 +212,9 @@ Screens:
                   Mode: =TextMode.MultiLine
                   OnChange: =Set(varChildCredits1, Self.Text)
                   Size: =11
-                  Width: =912
-                  X: =371
-                  Y: =322
+                  Width: =Switch(varChildMediaType, "Photo", 917, "Video", 1228, "Podcast", 1228, 917)
+                  X: =Switch(varChildMediaType, "Photo", 367, "Video", 56, "Podcast", 56, 367)
+                  Y: =Switch(varChildMediaType, "Photo", 334, "Video", 398, "Podcast", 488, 334)
             - CM_LblDesc:
                 Control: Label@2.5.1
                 Properties:
@@ -256,7 +256,7 @@ Screens:
                   Visible: =varChildAIVoiceover
                   Width: =900
                   X: =56
-                  Y: =600
+                  Y: =Switch(varChildMediaType, "Photo", 480, "Video", 545, "Podcast", 790, 480)
             - CM_AIWarningText:
                 Control: Label@2.5.1
                 Properties:
@@ -269,7 +269,7 @@ Screens:
                   Visible: =varChildAIVoiceover
                   Width: =880
                   X: =66
-                  Y: =600
+                  Y: =Switch(varChildMediaType, "Photo", 480, "Video", 545, "Podcast", 790, 480)
             - CM_PodcastDivider:
                 Control: Rectangle@2.3.0
                 Properties:
@@ -279,7 +279,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =1228
                   X: =56
-                  Y: =600
+                  Y: =640
             - CM_LblPodcastSection:
                 Control: Label@2.5.1
                 Properties:
@@ -293,7 +293,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =600
                   X: =56
-                  Y: =600
+                  Y: =645
             - CM_LblEpisodeSummary:
                 Control: Label@2.5.1
                 Properties:
@@ -304,7 +304,7 @@ Screens:
                   Height: =22
                   Text: ="Summary of the episode *"
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =900
+                  Width: =1228
                   X: =56
                   Y: =258
             - CM_EpisodeSummary:
@@ -326,7 +326,7 @@ Screens:
                   OnChange: =Set(varChildEpisodeSummary1, Self.Text)
                   Size: =11
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =1230
+                  Width: =1228
                   X: =56
                   Y: =284
             - CM_LblSeasonNumber:
@@ -341,7 +341,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =139
                   X: =56
-                  Y: =178
+                  Y: =168
             - CM_SeasonNumber:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -363,7 +363,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =139
                   X: =56
-                  Y: =204
+                  Y: =194
             - CM_LblEpisodeNumber:
                 Control: Label@2.5.1
                 Properties:
@@ -376,7 +376,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =139
                   X: =212
-                  Y: =178
+                  Y: =168
             - CM_EpisodeNumber:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -398,7 +398,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =139
                   X: =212
-                  Y: =204
+                  Y: =194
             - CM_PodcastNote:
                 Control: Rectangle@2.3.0
                 Properties:
@@ -460,8 +460,8 @@ Screens:
                   Text: =If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", "Filming date *", "Shooting date *")
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =If(varChildMediaType = "Podcast", 367, 56)
-                  Y: =80
+                  X: =56
+                  Y: =78
             - CM_ShootDate:
                 Control: Classic/DatePicker@2.6.0
                 Properties:
@@ -479,8 +479,8 @@ Screens:
                   Size: =11
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =If(varChildMediaType = "Podcast", 367, 56)
-                  Y: =106
+                  X: =56
+                  Y: =104
             - CM_LblPlacePhoto:
                 Control: Label@2.5.1
                 Properties:
@@ -492,8 +492,8 @@ Screens:
                   Text: =If(varChildMediaType = "Video" Or varChildMediaType = "Podcast", "Production place *", "Place *")
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =53
-                  Y: =298
+                  X: =56
+                  Y: =Switch(varChildMediaType, "Photo", 308, "Video", 282, "Podcast", 372, 308)
             - CM_PlacePhoto:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -512,8 +512,8 @@ Screens:
                   Size: =11
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =55
-                  Y: =326
+                  X: =56
+                  Y: =Switch(varChildMediaType, "Photo", 334, "Video", 308, "Podcast", 398, 334)
             - CM_LblCaptions:
                 Control: Label@2.5.1
                 Properties:
@@ -524,9 +524,9 @@ Screens:
                   Height: =22
                   Text: ="Photo caption/Short Description *"
                   Visible: =varChildMediaType = "Photo"
-                  Width: =800
-                  X: =55
-                  Y: =169
+                  Width: =1228
+                  X: =56
+                  Y: =168
             - CM_LblAuthority:
                 Control: Label@2.5.1
                 Properties:
@@ -538,7 +538,7 @@ Screens:
                   Text: ="Contracting authority *"
                   Visible: =varChildMediaType = "Photo"
                   Width: =295
-                  X: =384
+                  X: =367
                   Y: =78
             - CM_Authority:
                 Control: Classic/TextInput@2.3.2
@@ -558,7 +558,7 @@ Screens:
                   Size: =11
                   Visible: =varChildMediaType = "Photo"
                   Width: =295
-                  X: =384
+                  X: =367
                   Y: =104
             - CM_LblLinksPhoto:
                 Control: Label@2.5.1
@@ -570,9 +570,9 @@ Screens:
                   Height: =22
                   Text: ="Links"
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =Switch(varChildMediaType, "Photo", 606, 295)
-                  X: =677
-                  Y: =393
+                  Width: =606
+                  X: =678
+                  Y: =Switch(varChildMediaType, "Photo", 398, "Video", 462, "Podcast", 552, 398)
             - CM_LinksPhoto:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -587,9 +587,9 @@ Screens:
                   OnChange: =Set(varChildLinks1, Self.Text)
                   Size: =11
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =Switch(varChildMediaType, "Photo", 606, 295)
-                  X: =677
-                  Y: =419
+                  Width: =606
+                  X: =678
+                  Y: =Switch(varChildMediaType, "Photo", 424, "Video", 488, "Podcast", 578, 424)
             - CM_LblTagsPhoto:
                 Control: Label@2.5.1
                 Properties:
@@ -600,9 +600,9 @@ Screens:
                   Height: =22
                   Text: ="Pertinent tags"
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =Switch(varChildMediaType, "Podcast", 295, 606)
+                  Width: =606
                   X: =56
-                  Y: =394
+                  Y: =Switch(varChildMediaType, "Photo", 398, "Video", 462, "Podcast", 552, 398)
             - CM_TagsPhoto:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -617,9 +617,9 @@ Screens:
                   OnChange: =Set(varChildTags, Self.Text)
                   Size: =11
                   Visible: =varChildMediaType = "Photo" Or varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =Switch(varChildMediaType, "Podcast", 295, 606)
-                  X: =53
-                  Y: =417
+                  Width: =606
+                  X: =56
+                  Y: =Switch(varChildMediaType, "Photo", 424, "Video", 488, "Podcast", 578, 424)
             - CM_LblProdEnd:
                 Control: Label@2.5.1
                 Properties:
@@ -631,7 +631,7 @@ Screens:
                   Text: ="Production end date *"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =58
+                  X: =367
                   Y: =78
             - CM_ProdEnd:
                 Control: Classic/DatePicker@2.6.0
@@ -650,7 +650,7 @@ Screens:
                   Size: =11
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =58
+                  X: =367
                   Y: =104
             - CM_LblPubStartV:
                 Control: Label@2.5.1
@@ -663,7 +663,7 @@ Screens:
                   Text: ="Publication start date *"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =677
+                  X: =678
                   Y: =78
             - CM_PubStartV:
                 Control: Classic/DatePicker@2.6.0
@@ -682,8 +682,8 @@ Screens:
                   Size: =11
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =682
-                  Y: =105
+                  X: =678
+                  Y: =104
             - CM_LblPubEndV:
                 Control: Label@2.5.1
                 Properties:
@@ -694,9 +694,9 @@ Screens:
                   Height: =22
                   Text: ="Publication end date *"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 295, 295)
-                  X: =993
-                  Y: =79
+                  Width: =295
+                  X: =989
+                  Y: =78
             - CM_PubEndV:
                 Control: Classic/DatePicker@2.6.0
                 Properties:
@@ -713,9 +713,9 @@ Screens:
                   OnChange: =Set(varChildPublicationEndDate, Self.SelectedDate)
                   Size: =11
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
-                  Width: =If(varChildMediaType = "Podcast", 295, 295)
-                  X: =993
-                  Y: =105
+                  Width: =295
+                  X: =989
+                  Y: =104
             - CM_LblScript:
                 Control: Label@2.5.1
                 Properties:
@@ -726,9 +726,9 @@ Screens:
                   Height: =22
                   Text: ="Script / Shotlist"
                   Visible: =varChildMediaType = "Video"
-                  Width: =800
-                  X: =58
-                  Y: =169
+                  Width: =1228
+                  X: =56
+                  Y: =168
             - CM_Script:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -745,9 +745,9 @@ Screens:
                   OnChange: =Set(varChildScript, Self.Text)
                   Size: =11
                   Visible: =varChildMediaType = "Video"
-                  Width: =1230
-                  X: =58
-                  Y: =195
+                  Width: =1228
+                  X: =56
+                  Y: =194
             - CM_LblProducer:
                 Control: Label@2.5.1
                 Properties:
@@ -759,8 +759,8 @@ Screens:
                   Text: ="Producer *"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =682
-                  Y: =367
+                  X: =Switch(varChildMediaType, "Photo", 367, "Video", 367, "Podcast", 678, 367)
+                  Y: =Switch(varChildMediaType, "Photo", 282, "Video", 282, "Podcast", 372, 282)
             - CM_Producer:
                 Control: Classic/ComboBox@2.4.0
                 Properties:
@@ -790,8 +790,8 @@ Screens:
                   Size: =11
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =682
-                  Y: =393
+                  X: =Switch(varChildMediaType, "Photo", 367, "Video", 367, "Podcast", 678, 367)
+                  Y: =Switch(varChildMediaType, "Photo", 308, "Video", 308, "Podcast", 398, 308)
             - CM_Caption:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -814,9 +814,9 @@ Screens:
                   OnChange: =Set(varChildPhotoCaption, Self.Text)
                   Size: =11
                   Visible: =varChildMediaType = "Photo"
-                  Width: =1230
-                  X: =55
-                  Y: =195
+                  Width: =1228
+                  X: =56
+                  Y: =194
             - CM_LblExecProducer:
                 Control: Label@2.5.1
                 Properties:
@@ -828,8 +828,8 @@ Screens:
                   Text: ="Executive producer"
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =366
-                  Y: =370
+                  X: =Switch(varChildMediaType, "Photo", 678, "Video", 678, "Podcast", 989, 678)
+                  Y: =Switch(varChildMediaType, "Photo", 282, "Video", 282, "Podcast", 372, 282)
             - CM_ExecProducer:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -845,8 +845,8 @@ Screens:
                   Size: =11
                   Visible: =varChildMediaType = "Video" Or varChildMediaType = "Podcast"
                   Width: =295
-                  X: =367
-                  Y: =394
+                  X: =Switch(varChildMediaType, "Photo", 678, "Video", 678, "Podcast", 989, 678)
+                  Y: =Switch(varChildMediaType, "Photo", 308, "Video", 308, "Podcast", 398, 308)
             - CM_LblEpisodeTitleP:
                 Control: Label@2.5.1
                 Properties:
@@ -854,12 +854,12 @@ Screens:
                   Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
-                  Height: =30
+                  Height: =22
                   Text: ="Title of the episode *"
                   Visible: =varChildMediaType = "Podcast"
-                  Width: =311
+                  Width: =917
                   X: =367
-                  Y: =170
+                  Y: =168
             - CM_EpisodeTitleP:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -879,7 +879,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =917
                   X: =367
-                  Y: =204
+                  Y: =194
             - CM_LblEpisodeVisual:
                 Control: Label@2.5.1
                 Properties:
@@ -892,7 +892,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =917
                   X: =56
-                  Y: =650
+                  Y: =700
             - CM_HintEpisodeVisual:
                 Control: Label@2.5.1
                 Properties:
@@ -905,7 +905,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =917
                   X: =56
-                  Y: =625
+                  Y: =676
             - CM_BtnOpenEpisodeVisual:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -936,7 +936,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =917
                   X: =56
-                  Y: =675
+                  Y: =726
             - CM_BtnViewEpisodeVisual:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -963,7 +963,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =295
                   X: =989
-                  Y: =675
+                  Y: =726
             - CM_LblPhotographer:
                 Control: Label@2.5.1
                 Properties:
@@ -975,7 +975,7 @@ Screens:
                   Text: ="Name of the photographer *"
                   Visible: =varChildMediaType = "Photo"
                   Width: =295
-                  X: =700
+                  X: =678
                   Y: =78
                 Children: []
             - CM_Photographer:
@@ -1007,7 +1007,7 @@ Screens:
                   Size: =11
                   Visible: =varChildMediaType = "Photo"
                   Width: =295
-                  X: =700
+                  X: =678
                   Y: =104
                 Children: []
       - CM_TopBar:
