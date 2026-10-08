@@ -1211,22 +1211,22 @@ Screens:
               )},
                   Ungroup(
                       Table(
-                          {rows: ForAll(Filter(varCurrentRequest.DG_Agency_Contact, Not(IsBlank(Email))) As p, {DisplayName: p.DisplayName, Mail: p.Email})},
+                          {rows: ForAll(Filter(varCurrentRequest.DG_Agency_Contact, Not(IsBlank(Email))) As p, {DisplayName: p.DisplayName, Mail: p.Email, GivenName: "", Surname: "", MailNickname: ""})},
                           {rows: Filter(
-                              Table({DisplayName: locManual, Mail: locManual}),
+                              Table({DisplayName: locManual, Mail: locManual, GivenName: "", Surname: "", MailNickname: ""}),
                               Not(IsBlank(DisplayName))
                           )}
                       ),
                       rows
                   )
               )
-            DisplayFields: =["DisplayName"]
+            DisplayFields: =["DisplayName","Mail"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =37
             HoverBorderColor: =Self.BorderColor
             HoverFill: =RGBA(186, 202, 226, 1)
-            InputTextPlaceholder: ="Search the DG official responsible"
+            InputTextPlaceholder: ="Search by user ID or email or last and first name"
             Items: |-
               =With(
                   {locManual: Coalesce(
@@ -1246,11 +1246,11 @@ Screens:
                                       Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value,
                                       Not(IsBlank(DisplayName)) And Not(StartsWith(DisplayName, "'"))
                                   ) As o,
-                                  {DisplayName: o.DisplayName, Mail: o.Mail}
+                                  {DisplayName: o.DisplayName, Mail: o.Mail, GivenName: o.GivenName, Surname: o.Surname, MailNickname: o.MailNickname}
                               )
                           },
                           {rows: Filter(
-                              Table({DisplayName: locManual, Mail: locManual}),
+                              Table({DisplayName: locManual, Mail: locManual, GivenName: "", Surname: "", MailNickname: ""}),
                               Not(IsBlank(DisplayName))
                           )}
                       ),
@@ -1260,7 +1260,9 @@ Screens:
             OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
             PressedColor: =Self.Color
             PressedFill: =Self.Fill
-            SearchFields: =["DisplayName"]
+            SearchFields: =["DisplayName","GivenName","Surname","MailNickname","Mail"]
+            SearchItems: |-
+              =Filter(Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value, Not(IsBlank(DisplayName)) And Not(StartsWith(DisplayName, "'")))
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
             Size: =12
@@ -1309,22 +1311,22 @@ Screens:
               )},
                   Ungroup(
                       Table(
-                          {rows: ForAll(Filter(varCurrentRequest.Contractor_Contact, Not(IsBlank(Email))) As p, {DisplayName: p.DisplayName, Mail: p.Email})},
+                          {rows: ForAll(Filter(varCurrentRequest.Contractor_Contact, Not(IsBlank(Email))) As p, {DisplayName: p.DisplayName, Mail: p.Email, GivenName: "", Surname: "", MailNickname: ""})},
                           {rows: Filter(
-                              Table({DisplayName: locManual, Mail: locManual}),
+                              Table({DisplayName: locManual, Mail: locManual, GivenName: "", Surname: "", MailNickname: ""}),
                               Not(IsBlank(DisplayName))
                           )}
                       ),
                       rows
                   )
               )
-            DisplayFields: =["DisplayName"]
+            DisplayFields: =["DisplayName","Mail"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
             Height: =37
             HoverBorderColor: =Self.BorderColor
             HoverFill: =RGBA(186, 202, 226, 1)
-            InputTextPlaceholder: ="Search the contractor / production company"
+            InputTextPlaceholder: ="Search by user ID or email or last and first name"
             Items: |-
               =With(
                   {locManual: Coalesce(
@@ -1344,11 +1346,11 @@ Screens:
                                       Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value,
                                       Not(StartsWith(DisplayName, "'"))
                                   ) As o,
-                                  {DisplayName: o.DisplayName, Mail: o.Mail}
+                                  {DisplayName: o.DisplayName, Mail: o.Mail, GivenName: o.GivenName, Surname: o.Surname, MailNickname: o.MailNickname}
                               )
                           },
                           {rows: Filter(
-                              Table({DisplayName: locManual, Mail: locManual}),
+                              Table({DisplayName: locManual, Mail: locManual, GivenName: "", Surname: "", MailNickname: ""}),
                               Not(IsBlank(DisplayName))
                           )}
                       ),
@@ -1358,7 +1360,9 @@ Screens:
             OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
             PressedColor: =Self.Color
             PressedFill: =Self.Fill
-            SearchFields: =["DisplayName"]
+            SearchFields: =["DisplayName","GivenName","Surname","MailNickname","Mail"]
+            SearchItems: |-
+              =Filter(Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value, Not(StartsWith(DisplayName, "'")))
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
             Size: =12
