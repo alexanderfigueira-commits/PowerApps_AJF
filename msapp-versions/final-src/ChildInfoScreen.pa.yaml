@@ -197,7 +197,7 @@ Screens:
                   BorderColor: =RGBA(220, 224, 230, 1)
                   BorderThickness: =1
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =576
+                  Height: =588
                   Width: =1302
                   X: =32
                   Y: =6
@@ -311,7 +311,7 @@ Screens:
                   Size: =11
                   Width: =900
                   X: =56
-                  Y: =488
+                  Y: =438
             - CI_LblCaptureDate:
                 Control: Label@2.5.1
                 Properties:
@@ -467,8 +467,8 @@ Screens:
                   Height: =22
                   Text: ="Beluga reference"
                   Width: =400
-                  X: =57
-                  Y: =365
+                  X: =56
+                  Y: =514
             - CI_LblProductionEndDate:
                 Control: Label@2.5.1
                 Properties:
@@ -668,7 +668,7 @@ Screens:
                   Text: ="Notes"
                   Width: =400
                   X: =56
-                  Y: =463
+                  Y: =413
             - CI_Language:
                 Control: Classic/DropDown@2.3.1
                 Properties:
@@ -794,11 +794,11 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="Podcast visual *"
+                  Text: ="Podcast visual" & If(Coalesce(varChildSeasonNumber, 0) = 1, " *", " (optional)")
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =56
-                  Y: =360
+                  Y: =296
             - CI_HintPodcastVisual:
                 Control: Label@2.5.1
                 Properties:
@@ -811,14 +811,14 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
                   X: =56
-                  Y: =382
+                  Y: =317
             - CI_BtnOpenAttach:
                 Control: Classic/Button@2.2.0
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
-                    If(CI_LblPodcastVisual.Visible And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, RGBA(255, 204, 0, 1), RGBA(56, 96, 178, 1))
-                  BorderThickness: =If(CI_LblPodcastVisual.Visible And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, 3, 1)
+                    =// yellow while the podcast visual is mandatory (Season nr. = 1) and empty
+                    If(CI_LblPodcastVisual.Visible And Coalesce(varChildSeasonNumber, 0) = 1 And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, RGBA(255, 204, 0, 1), RGBA(56, 96, 178, 1))
+                  BorderThickness: =If(CI_LblPodcastVisual.Visible And Coalesce(varChildSeasonNumber, 0) = 1 And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, 3, 1)
                   Color: =RGBA(56, 96, 178, 1)
                   DisabledBorderColor: =RGBA(166, 166, 166, 1)
                   Fill: =RGBA(255, 255, 255, 1)
@@ -837,10 +837,12 @@ Screens:
                     =With({files: Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))},
                         "📎 Podcast visual: " & If(IsEmpty(files), "no file yet", Concat(files, Name, ", "))
                         & "   ·   click to upload or remove")
+                  Tooltip: |-
+                    =If(Coalesce(varChildSeasonNumber, 0) = 1, "Mandatory: a podcast visual is required when Season nr. is 1.", "Optional: a podcast visual is only required when Season nr. is 1.")
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
                   X: =56
-                  Y: =404
+                  Y: =339
             - CI_BelugaRef:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -855,8 +857,8 @@ Screens:
                   OnChange: =Set(varChildBelugaRef, Self.Text)
                   Size: =11
                   Width: =400
-                  X: =55
-                  Y: =391
+                  X: =56
+                  Y: =540
             - CI_BtnViewVisual:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -883,7 +885,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =300
                   X: =976
-                  Y: =404
+                  Y: =339
       - CI_BottomBar:
           Control: Rectangle@2.3.0
           Properties:
