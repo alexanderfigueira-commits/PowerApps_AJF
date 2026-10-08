@@ -32,8 +32,6 @@ Screens:
                 locDetailsCollapsed: false,
                 locShowMedia: true,
                 locShowAdminNotes: false,
-                locOwnerNoMatch: false,
-                locContractorNoMatch: false,
                 locShowDelConfirm: false,
                 locShowRequestorNotes: false,
                 locShowNotes: false
@@ -927,10 +925,11 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisplayMode: |-
-              =// enabled only after a typed search found nobody (latched in locOwnerNoMatch, since the combobox clears its
-              // SearchText when the click on this button takes the focus away); never in view mode
+              =// enabled while nothing is picked in RS_Owner and its search result is empty (typed but not found, or blank);
+              // disabled while the list shows matches; never in view mode, where the popup cannot save
               If(
-                  IsEmpty(RS_Owner.SelectedItems) And Not(varRequestorLocked) And (locOwnerNoMatch Or (Not(IsBlank(RS_Owner.SearchText)) And IsEmpty(Filter(Office365Users.SearchUserV2({searchTerm: RS_Owner.SearchText, top: 20}).value, Not(StartsWith(DisplayName, "'")))))),
+                  IsEmpty(RS_Owner.SelectedItems) And Not(varRequestorLocked)
+                      And (IsBlank(RS_Owner.SearchText) Or IsEmpty(Filter(Office365Users.SearchUserV2({searchTerm: RS_Owner.SearchText, top: 20}).value, Not(StartsWith(DisplayName, "'"))))),
                   DisplayMode.Edit,
                   DisplayMode.Disabled
               )
@@ -941,8 +940,7 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
-              =UpdateContext({locOwnerNoMatch: false});
-              Set(locContactPopupType, "DG/Agency");
+              =Set(locContactPopupType, "DG/Agency");
               Set(locShowContactPopup, true)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
@@ -952,7 +950,7 @@ Screens:
             RadiusTopLeft: =18
             RadiusTopRight: =18
             Text: ="+"
-            Tooltip: ="Add Official Contact (type a name first; enabled when the search finds nobody)"
+            Tooltip: ="Add Official Contact"
             Visible: =Not(locDetailsCollapsed) And Not(varRequestorLocked)
             Width: =25
             X: =836
@@ -965,10 +963,11 @@ Screens:
             Color: =RGBA(96, 104, 120, 1)
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisplayMode: |-
-              =// enabled only after a typed search found nobody (latched in locContractorNoMatch, since the combobox clears its
-              // SearchText when the click on this button takes the focus away); never in view mode
+              =// enabled while nothing is picked in RS_Contractor and its search result is empty (typed but not found, or blank);
+              // disabled while the list shows matches; never in view mode, where the popup cannot save
               If(
-                  IsEmpty(RS_Contractor.SelectedItems) And Not(varRequestorLocked) And (locContractorNoMatch Or (Not(IsBlank(RS_Contractor.SearchText)) And IsEmpty(Filter(Office365Users.SearchUserV2({searchTerm: RS_Contractor.SearchText, top: 20}).value, Not(StartsWith(DisplayName, "'")))))),
+                  IsEmpty(RS_Contractor.SelectedItems) And Not(varRequestorLocked)
+                      And (IsBlank(RS_Contractor.SearchText) Or IsEmpty(Filter(Office365Users.SearchUserV2({searchTerm: RS_Contractor.SearchText, top: 20}).value, Not(StartsWith(DisplayName, "'"))))),
                   DisplayMode.Edit,
                   DisplayMode.Disabled
               )
@@ -979,8 +978,7 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
-              =UpdateContext({locContractorNoMatch: false});
-              Set(locContactPopupType, "Contractor");
+              =Set(locContactPopupType, "Contractor");
               Set(locShowContactPopup, true)
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
@@ -990,7 +988,7 @@ Screens:
             RadiusTopLeft: =18
             RadiusTopRight: =18
             Text: ="+"
-            Tooltip: ="Add Contractor Contact (type a name first; enabled when the search finds nobody)"
+            Tooltip: ="Add Contractor Contact"
             Visible: =Not(locDetailsCollapsed) And Not(varRequestorLocked)
             Width: =25
             X: =834
@@ -1261,9 +1259,7 @@ Screens:
                       rows
                   )
               )
-            OnChange: |-
-              =UpdateContext({locOwnerNoMatch: false});
-              Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
+            OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
             PressedColor: =Self.Color
             PressedFill: =Self.Fill
             SearchFields: =["DisplayName","GivenName","Surname","MailNickname","Mail"]
@@ -1363,9 +1359,7 @@ Screens:
                       rows
                   )
               )
-            OnChange: |-
-              =UpdateContext({locContractorNoMatch: false});
-              Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
+            OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
             PressedColor: =Self.Color
             PressedFill: =Self.Fill
             SearchFields: =["DisplayName","GivenName","Surname","MailNickname","Mail"]
