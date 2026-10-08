@@ -14,11 +14,11 @@ Screens:
       OnVisible: |-
         =Set(
             varRequestorLocked,
-            // view-only (a request opened from a dashboard ID) locks everything, whatever the role
+            // view-only (a request opened from a dashboard ID) locks everything, whatever the role; a requestor edits only in Draft / Pending
             varViewOnly
             Or (
                 varUserRole <> "ADMINISTRATOR"
-                And Coalesce(varCurrentRequest.Status.Value, "") = "Processing"
+                And Not(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Draft", "Pending"])
             )
         );
         Set(varNavArm, "");
