@@ -950,7 +950,7 @@ Screens:
             RadiusTopRight: =18
             Text: ="+"
             Tooltip: ="Add Official Contact"
-            Visible: =Not(locDetailsCollapsed)
+            Visible: =Not(locDetailsCollapsed) And Not(varRequestorLocked)
             Width: =25
             X: =836
             Y: =301
@@ -987,7 +987,7 @@ Screens:
             RadiusTopRight: =18
             Text: ="+"
             Tooltip: ="Add Contractor Contact"
-            Visible: =Not(locDetailsCollapsed)
+            Visible: =Not(locDetailsCollapsed) And Not(varRequestorLocked)
             Width: =25
             X: =834
             Y: =355
