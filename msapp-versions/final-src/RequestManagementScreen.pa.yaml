@@ -505,7 +505,7 @@ Screens:
             HintText: ="Search by Beluga Reference..."
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
-            Visible: =locShowFilters And varUserRole = "ADMINISTRATOR"
+            Visible: =locShowFilters
             Width: =279
             X: =336
             Y: =274
@@ -1803,7 +1803,7 @@ Screens:
             Height: =16
             Size: =10
             Text: ="BELUGA REFERENCE"
-            Visible: =locShowFilters And varUserRole = "ADMINISTRATOR"
+            Visible: =locShowFilters
             Width: =279
             X: =336
             Y: =254
