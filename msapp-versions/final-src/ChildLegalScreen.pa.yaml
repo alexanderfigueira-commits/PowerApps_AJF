@@ -679,7 +679,7 @@ Screens:
                         Font: =Font.'Open Sans'
                         Height: =34
                         Size: =12
-                        Text: =Parent.DisplayName
+                        Text: =Parent.DisplayName & " *"
                         Width: =Parent.Width - 32
                         Wrap: =false
                         X: =16
