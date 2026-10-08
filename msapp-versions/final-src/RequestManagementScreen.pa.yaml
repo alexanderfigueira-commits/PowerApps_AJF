@@ -1830,21 +1830,17 @@ Screens:
             ChevronFill: =RGBA(255, 255, 255, 1)
             ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             ChevronHoverFill: =RGBA(255, 255, 255, 1)
-            DefaultSelectedItems: |-
-              =If(
-                  varUserRole = "ADMINISTRATOR",
-                  Table({Value: "All"}),
-                  Table({Value: "All"})
-              )
+            DefaultSelectedItems: =Filter(colAssignees, false)
             DisplayFields: =["Value"]
             Font: =Font.'Open Sans'
             Height: =35
             HoverFill: =RGBA(186, 202, 226, 1)
             InputTextPlaceholder: ="Filter by assignee"
-            Items: =colAssignees
+            Items: =Filter(colAssignees, Value <> "All")
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(0, 18, 107, 1)
             SearchFields: =["Value"]
+            SelectMultiple: =false
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(56, 96, 178, 1)
             Visible: =locShowFilters
