@@ -1269,8 +1269,6 @@ Screens:
             PressedColor: =Self.Color
             PressedFill: =Self.Fill
             SearchFields: =["DisplayName","GivenName","Surname","MailNickname","Mail"]
-            SearchItems: |-
-              =Filter(Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value, Not(IsBlank(DisplayName)) And Not(StartsWith(DisplayName, "'")))
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
             Size: =12
@@ -1371,8 +1369,6 @@ Screens:
             PressedColor: =Self.Color
             PressedFill: =Self.Fill
             SearchFields: =["DisplayName","GivenName","Surname","MailNickname","Mail"]
-            SearchItems: |-
-              =Filter(Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value, Not(StartsWith(DisplayName, "'")))
             SelectionColor: =RGBA(255, 255, 255, 1)
             SelectionFill: =RGBA(0, 176, 240, 1)
             Size: =12
@@ -1502,6 +1498,33 @@ Screens:
             Width: =346
             X: =208
             Y: =460
+      - RS_TrkLine1:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Fill: =If(1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), RGBA(215, 223, 240, 1))
+            Height: =3
+            Width: =63
+            X: =543
+            Y: =73
+      - RS_TrkLine2:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Fill: =If(2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), RGBA(215, 223, 240, 1))
+            Height: =3
+            Width: =63
+            X: =638
+            Y: =73
+      - RS_TrkLine3:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Fill: =If(3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), RGBA(215, 223, 240, 1))
+            Height: =3
+            Width: =63
+            X: =733
+            Y: =73
       - RS_ThValidation:
           Control: Label@2.5.1
           Group: Group1
@@ -1841,6 +1864,146 @@ Screens:
             Width: =380
             X: =914
             Y: =144
+      - RS_Trk1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderThickness: =0
+            Color: =If(1 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
+            DisabledBorderColor: =Self.BorderColor
+            DisabledColor: =RGBA(0, 0, 0, 1)
+            DisabledFill: =RGBA(237, 237, 237, 1)
+            DisplayMode: =DisplayMode.View
+            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 1 = 3, RGBA(192, 57, 43, 1), 1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =24
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =12
+            RadiusBottomRight: =12
+            RadiusTopLeft: =12
+            RadiusTopRight: =12
+            Size: =11
+            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 1 = 3, "✕", 1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "1")
+            Tooltip: |-
+              =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", "Information needed: the request was sent back to the requestor.", "Draft: the requestor prepares the request and adds the media files.")
+            Width: =24
+            X: =515
+            Y: =62
+      - RS_Trk2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderThickness: =0
+            Color: =If(2 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
+            DisabledBorderColor: =Self.BorderColor
+            DisabledColor: =RGBA(0, 0, 0, 1)
+            DisabledFill: =RGBA(237, 237, 237, 1)
+            DisplayMode: =DisplayMode.View
+            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 2 = 3, RGBA(192, 57, 43, 1), 2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =24
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =12
+            RadiusBottomRight: =12
+            RadiusTopLeft: =12
+            RadiusTopRight: =12
+            Size: =11
+            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 2 = 3, "✕", 2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "2")
+            Tooltip: |-
+              ="Processing: submitted and under review by Central Deposit."
+            Width: =24
+            X: =610
+            Y: =62
+      - RS_Trk3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderThickness: =0
+            Color: =If(3 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
+            DisabledBorderColor: =Self.BorderColor
+            DisabledColor: =RGBA(0, 0, 0, 1)
+            DisabledFill: =RGBA(237, 237, 237, 1)
+            DisplayMode: =DisplayMode.View
+            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 3 = 3, RGBA(192, 57, 43, 1), 3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =24
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =12
+            RadiusBottomRight: =12
+            RadiusTopLeft: =12
+            RadiusTopRight: =12
+            Size: =11
+            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 3 = 3, "✕", 3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "3")
+            Tooltip: |-
+              =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected", "Rejected: see the reviewer comment.", "Decision: Central Deposit approves or rejects the request.")
+            Width: =24
+            X: =705
+            Y: =62
+      - RS_Trk4:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderThickness: =0
+            Color: =If(4 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
+            DisabledBorderColor: =Self.BorderColor
+            DisabledColor: =RGBA(0, 0, 0, 1)
+            DisabledFill: =RGBA(237, 237, 237, 1)
+            DisplayMode: =DisplayMode.View
+            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 4 = 3, RGBA(192, 57, 43, 1), 4 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 4 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =24
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =12
+            RadiusBottomRight: =12
+            RadiusTopLeft: =12
+            RadiusTopRight: =12
+            Size: =11
+            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 4 = 3, "✕", 4 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (4 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "4")
+            Tooltip: |-
+              ="Approved: the request was approved by Central Deposit."
+            Width: =24
+            X: =800
+            Y: =62
       - RS_TypeIconBtn:
           Control: Classic/Button@2.2.0
           Properties:
@@ -1936,6 +2099,62 @@ Screens:
             Width: =691
             X: =265
             Y: =717
+      - RS_TrkLbl1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(1 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =If(1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
+            Height: =17
+            Size: =11
+            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", "Info needed", "Draft")
+            Width: =95
+            X: =480
+            Y: =87
+      - RS_TrkLbl2:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(2 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =If(2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
+            Height: =17
+            Size: =11
+            Text: ="Processing"
+            Width: =95
+            X: =575
+            Y: =87
+      - RS_TrkLbl3:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(3 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =If(3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
+            Height: =17
+            Size: =11
+            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected", "Rejected", "Decision")
+            Width: =95
+            X: =670
+            Y: =87
+      - RS_TrkLbl4:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(4 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
+            Font: =Font.'Open Sans'
+            FontWeight: =If(4 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
+            Height: =17
+            Size: =11
+            Text: ="Approved"
+            Width: =95
+            X: =765
+            Y: =87
       - RS_Header_Title:
           Control: Label@2.5.1
           Group: RS_Header
@@ -2588,178 +2807,7 @@ Screens:
             HoverColor: =ColorFade(Color.CadetBlue, 20%)
             HoverFill: =RGBA(0, 0, 0, 0)
             Icon: =Icon.AddLibrary
-            OnSelect: |-
-              =If(
-                  IsBlank(Coalesce(varRequestTitle)) Or Coalesce(varRequestTitle) = ""
-                  Or IsBlank(varRequestDG) Or varRequestDG = "",
-                  Notify("Enter the request title and select a DG/Agency before adding media.", NotificationType.Warning),
-              If(
-                  IsBlank(varRequestMediaType) Or varRequestMediaType = "",
-                  Notify("Please select the production type first.", NotificationType.Warning),
-              IfError(
-                  If(
-                      IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0,
-                      Set(varNextReqSeq, With(
-                          {yr4: Text(Year(Today())), yr2: Right(Text(Year(Today())), 2), lastNum: Coalesce(First(Sort('AV-CD-Requests', ID, SortOrder.Descending)).RequestNumber, "")},
-                          If(
-                              Left(lastNum, 3) = yr2 & "-",
-                              Value(Mid(lastNum, 4, 10)),
-                              If(Left(lastNum, 5) = yr4 & "-", Value(Right(lastNum, 4)), 0)
-                          ) + 1
-                      ));
-                      Set(varCurrentRequest, IfError(
-                                  Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
-                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq, "0000"),
-                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
-                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
-                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
-                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
-                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
-                                  DG: {Value: varRequestDG},
-                                  MediaType_Request: If(
-                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
-                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
-                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
-                                      {Value: varRequestMediaType}
-                                  ),
-                                  ArchivedOnly: varRequestArchivedOnly,
-                                  Description: varRequestDescription, 
-                                  Status: {Value: "Draft"}
-                              
-                      }),
-                                  IfError(
-                                      Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
-                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq + 1, "0000"),
-                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
-                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
-                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
-                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
-                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
-                                  DG: {Value: varRequestDG},
-                                  MediaType_Request: If(
-                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
-                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
-                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
-                                      {Value: varRequestMediaType}
-                                  ),
-                                  ArchivedOnly: varRequestArchivedOnly,
-                                  Description: varRequestDescription, 
-                                  Status: {Value: "Draft"}
-                              
-                      }),
-                                      Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {
-                          RequestNumber: Right(Text(Year(Today())), 2) & "-" & Text(varNextReqSeq + 2, "0000"),
-                                  ReviewerComments: If(varUserRole = "ADMINISTRATOR", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),
-                                  AdminNotesUpdatedOn: If(varUserRole = "ADMINISTRATOR" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, ""), Now(), varCurrentRequest.AdminNotesUpdatedOn),
-                                  Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),
-                                  RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, "")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),
-                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
-                                  DG: {Value: varRequestDG},
-                                  MediaType_Request: If(
-                                      // never left to the column default: always the user's choice; an existing request keeps its value if none is picked
-                                      IsBlank(varRequestMediaType) Or varRequestMediaType = "",
-                                      If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),
-                                      {Value: varRequestMediaType}
-                                  ),
-                                  ArchivedOnly: varRequestArchivedOnly,
-                                  Description: varRequestDescription, 
-                                  Status: {Value: "Draft"}
-                              
-                      })
-                                  )
-                              ))
-                  );
-              // Manual contacts typed before the first save are keyed to a blank request
-              // number; move them onto the number this save assigned.
-              UpdateIf(
-                  colManualContacts,
-                  IsBlank(ParentRequest) Or ParentRequest = "",
-                  {ParentRequest: varCurrentRequest.RequestNumber}
-              );
-              Set(varCurrentChildId, Text(GUID()));
-              Set(varCurrentChildSPId,
-                  IfError(
-                      With(
-                          {rn: varCurrentRequest.RequestNumber},
-                          With(
-                              {
-                                  n0: With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, "")}, If(Left(lastMed, Len(rn) + 1) = rn & "-", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1
-                              },
-                              IfError(
-                                  Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {
-                                          CD_MediaNumber: rn & "-" & Text(n0, "00"),
-                                          MediaType: Table({Value: varRequestMediaType}),
-                                          ParentRequest: varCurrentRequest.RequestNumber,
-                                          DepositStatus: Table({Value: "Draft"})
-                                      }),
-                                  IfError(
-                                      Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {
-                                          CD_MediaNumber: rn & "-" & Text(n0 + 1, "00"),
-                                          MediaType: Table({Value: varRequestMediaType}),
-                                          ParentRequest: varCurrentRequest.RequestNumber,
-                                          DepositStatus: Table({Value: "Draft"})
-                                      }),
-                                      Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {
-                                          CD_MediaNumber: rn & "-" & Text(n0 + 2, "00"),
-                                          MediaType: Table({Value: varRequestMediaType}),
-                                          ParentRequest: varCurrentRequest.RequestNumber,
-                                          DepositStatus: Table({Value: "Draft"})
-                                      })
-                                  )
-                              )
-                          ).ID
-                      ),
-                      0
-                  )
-              );
-              Set(varChildTitle, Blank());
-              Set(varChildTitle1, "");
-              Set(varChildProductType, "");
-              Set(varChildTags, "");
-              Set(varChildEpisodeTitle, "");
-              Set(varChildMediaType, varRequestMediaType);
-              Set(varChildDescription1, "");
-              Set(varChildCaptureDate, Blank());
-              Set(varChildProductionPlace1, "");
-              Set(varChildCredits1, "");
-              Set(varChildLanguageVersions, "");
-              Set(varChildAIVoiceover, false);
-              Set(varChildContractCase, "");
-              Set(varChildContractCase1Sub, "");
-              Set(varChildModelRelease, false);
-              Set(varChildNoThirdParty, false);
-              // the framework and specific contracts count as confirmed once the request was submitted
-              Set(varDocFramework, Coalesce(varCurrentRequest.Status.Value, "") in ["Processing", "Pending", "Approved", "Partially approved", "Rejected"]); Set(varDocSpecific, Coalesce(varCurrentRequest.Status.Value, "") in ["Processing", "Pending", "Approved", "Partially approved", "Rejected"]); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, "");
-              Set(varChildModelReleaseProvided, false);
-              Set(varChildMusicUsed, false);
-              Set(varChildMusicLicenceProvided, false);
-              Set(varChildPreexisting, false);
-              Set(varChildSubtitlesProvided, false);
-              Set(varChildPreexistingProvided, false);
-              Set(varChildEpisodeTitle1, "");
-              Set(varChildEpisodeSummary1, "");
-              Set(varChildSeasonNumber, 0);
-              Set(varChildEpisodeNumber, 0);
-              Set(varChildSeriesTitle1, "");
-              Set(varChildProductType1, "");
-              Set(varChildProductionEndDate, Blank());
-              Set(varChildPublicationStartDate, Blank());
-              Set(varChildPublicationEndDate, Blank());
-              Set(varChildLinks1, "");
-              Set(varChildTags1, "");
-              Set(varChildFTPPath1, "");
-              Set(varChildBelugaRef, "");
-              Set(varChildNotes, "");
-              Set(varChildScript, "");
-              // the request may have just been created: the Requests list reloads on its next visit
-              Set(varReqDataLoaded, false);
-              // the attachments card starts on THIS media item
-              Set(varAttachRecord, If(Coalesce(varCurrentChildSPId, 0) > 0, LookUp('AV-CD-Mediafiles', ID = varCurrentChildSPId), Blank()));
-              Navigate(ChildInfoScreen),
-                  Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
-              )
-              )
-              )
+            OnSelect: "=If(\r\n    IsBlank(Coalesce(varRequestTitle)) Or Coalesce(varRequestTitle) = \"\"\r\n    Or IsBlank(varRequestDG) Or varRequestDG = \"\",\r\n    Notify(\"Enter the request title and select a DG/Agency before adding media.\", NotificationType.Warning),\r\nIf(\r\n    IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n    Notify(\"Please select the production type first.\", NotificationType.Warning),\r\nIfError(\r\n    If(\r\n        IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0,\r\n        Set(varNextReqSeq, With(\r\n            {yr4: Text(Year(Today())), yr2: Right(Text(Year(Today())), 2), lastNum: Coalesce(First(Sort('AV-CD-Requests', ID, SortOrder.Descending)).RequestNumber, \"\")},\r\n            If(\r\n                Left(lastNum, 3) = yr2 & \"-\",\r\n                Value(Mid(lastNum, 4, 10)),\r\n                If(Left(lastNum, 5) = yr4 & \"-\", Value(Right(lastNum, 4)), 0)\r\n            ) + 1\r\n        ));\r\n        Set(varCurrentRequest, IfError(\r\n                    Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    ArchivedOnly: varRequestArchivedOnly,\r\n                    Description: varRequestDescription, \r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        }),\r\n                    IfError(\r\n                        Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq + 1, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    ArchivedOnly: varRequestArchivedOnly,\r\n                    Description: varRequestDescription, \r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        }),\r\n                        Patch('AV-CD-Requests', Defaults('AV-CD-Requests'), {\r\n            RequestNumber: Right(Text(Year(Today())), 2) & \"-\" & Text(varNextReqSeq + 2, \"0000\"),\r\n                    ReviewerComments: If(varUserRole = \"ADMINISTRATOR\", RS_AdminNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).ReviewerComments),\r\n                    AdminNotesUpdatedOn: If(varUserRole = \"ADMINISTRATOR\" And RS_AdminNotes.Text <> Coalesce(varCurrentRequest.ReviewerComments, \"\"), Now(), varCurrentRequest.AdminNotesUpdatedOn),\r\n                    Notes: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)), RS_RequestorNotes.Text, LookUp('AV-CD-Requests', ID = Coalesce(varCurrentRequest.ID, 0)).Notes),\r\n                    RequestorNotesUpdatedOn: If((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) And RS_RequestorNotes.Text <> PlainText(Coalesce(varCurrentRequest.Notes, \"\")), Now(), varCurrentRequest.RequestorNotesUpdatedOn),\r\n                    RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),\r\n                    DG: {Value: varRequestDG},\r\n                    MediaType_Request: If(\r\n                        // never left to the column default: always the user's choice; an existing request keeps its value if none is picked\r\n                        IsBlank(varRequestMediaType) Or varRequestMediaType = \"\",\r\n                        If(Coalesce(varCurrentRequest.ID, 0) > 0, varCurrentRequest.MediaType_Request, Blank()),\r\n                        {Value: varRequestMediaType}\r\n                    ),\r\n                    ArchivedOnly: varRequestArchivedOnly,\r\n                    Description: varRequestDescription, \r\n                    Status: {Value: \"Draft\"}\r\n                \r\n        })\r\n                    )\r\n                ))\r\n    );\r\n// Manual contacts typed before the first save are keyed to a blank request\r\n// number; move them onto the number this save assigned.\r\nUpdateIf(\r\n    colManualContacts,\r\n    IsBlank(ParentRequest) Or ParentRequest = \"\",\r\n    {ParentRequest: varCurrentRequest.RequestNumber}\r\n);\r\nSet(varCurrentChildId, Text(GUID()));\r\nSet(varCurrentChildSPId,\r\n    IfError(\r\n        With(\r\n            {rn: varCurrentRequest.RequestNumber},\r\n            With(\r\n                {\r\n                    n0: With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, \"\")}, If(Left(lastMed, Len(rn) + 1) = rn & \"-\", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1\r\n                },\r\n                IfError(\r\n                    Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {\r\n                            CD_MediaNumber: rn & \"-\" & Text(n0, \"00\"),\r\n                            MediaType: Table({Value: varRequestMediaType}),\r\n                            ParentRequest: varCurrentRequest.RequestNumber,\r\n                            DepositStatus: Table({Value: \"Draft\"})\r\n                        }),\r\n                    IfError(\r\n                        Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {\r\n                            CD_MediaNumber: rn & \"-\" & Text(n0 + 1, \"00\"),\r\n                            MediaType: Table({Value: varRequestMediaType}),\r\n                            ParentRequest: varCurrentRequest.RequestNumber,\r\n                            DepositStatus: Table({Value: \"Draft\"})\r\n                        }),\r\n                        Patch('AV-CD-Mediafiles', Defaults('AV-CD-Mediafiles'), {\r\n                            CD_MediaNumber: rn & \"-\" & Text(n0 + 2, \"00\"),\r\n                            MediaType: Table({Value: varRequestMediaType}),\r\n                            ParentRequest: varCurrentRequest.RequestNumber,\r\n                            DepositStatus: Table({Value: \"Draft\"})\r\n                        })\r\n                    )\r\n                )\r\n            ).ID\r\n        ),\r\n        0\r\n    )\r\n);\r\nSet(varChildTitle, Blank());\r\nSet(varChildTitle1, \"\");\r\nSet(varChildProductType, \"\");\r\nSet(varChildTags, \"\");\r\nSet(varChildEpisodeTitle, \"\");\r\nSet(varChildMediaType, varRequestMediaType);\r\nSet(varChildDescription1, \"\");\r\nSet(varChildCaptureDate, Blank());\r\nSet(varChildProductionPlace1, \"\");\r\nSet(varChildCredits1, \"\");\r\nSet(varChildLanguageVersions, \"\");\r\nSet(varChildAIVoiceover, false);\r\nSet(varChildContractCase, \"\");\r\nSet(varChildContractCase1Sub, \"\");\r\nSet(varChildModelRelease, false);\r\nSet(varChildNoThirdParty, false);\r\n// the framework and specific contracts count as confirmed once the request was submitted\r\nSet(varDocFramework, Coalesce(varCurrentRequest.Status.Value, \"\") in [\"Processing\", \"Pending\", \"Approved\", \"Partially approved\", \"Rejected\"]); Set(varDocSpecific, Coalesce(varCurrentRequest.Status.Value, \"\") in [\"Processing\", \"Pending\", \"Approved\", \"Partially approved\", \"Rejected\"]); Set(varDocOffer, false); Set(varChildContractingAuthority, \"\"); Set(varChildExecProducer, \"\"); Set(varChildProducer, \"\"); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, \"\");\r\nSet(varChildModelReleaseProvided, false);\r\nSet(varChildMusicUsed, false);\r\nSet(varChildMusicLicenceProvided, false);\r\nSet(varChildPreexisting, false);\r\nSet(varChildSubtitlesProvided, false);\r\nSet(varChildPreexistingProvided, false);\r\nSet(varChildEpisodeTitle1, \"\");\r\nSet(varChildEpisodeSummary1, \"\");\r\nSet(varChildSeasonNumber, 0);\r\nSet(varChildEpisodeNumber, 0);\r\nSet(varChildSeriesTitle1, \"\");\r\nSet(varChildProductType1, \"\");\r\nSet(varChildProductionEndDate, Blank());\r\nSet(varChildPublicationStartDate, Blank());\r\nSet(varChildPublicationEndDate, Blank());\r\nSet(varChildLinks1, \"\");\r\nSet(varChildTags1, \"\");\r\nSet(varChildFTPPath1, \"\");\r\nSet(varChildBelugaRef, \"\");\r\nSet(varChildNotes, \"\");\r\nSet(varChildScript, \"\");\r\n// the request may have just been created: the Requests list reloads on its next visit\r\nSet(varReqDataLoaded, false);\r\n// the attachments card starts on THIS media item\r\nSet(varAttachRecord, If(Coalesce(varCurrentChildSPId, 0) > 0, LookUp('AV-CD-Mediafiles', ID = varCurrentChildSPId), Blank()));\r\nNavigate(ChildInfoScreen),\r\n    Notify(\"Could not start a new media item: \" & FirstError.Message, NotificationType.Error)\r\n)\r\n)\r\n)"
             Tooltip: |-
               =If(
                   Coalesce(varCurrentRequest.ID, 0) > 0,
@@ -3375,6 +3423,20 @@ Screens:
             Width: =200
             X: =682
             Y: =373
+      - RS_ThTitle_1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =31
+            Size: =11
+            Text: ="REF"
+            Width: =154
+            X: =40
+            Y: =If(locDetailsCollapsed, 150, 460)
       - Rectangle1:
           Control: Rectangle@2.3.0
           Group: Group4
@@ -3721,20 +3783,6 @@ Screens:
             Width: =170
             X: =593
             Y: =350
-      - RS_ThTitle_1:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(96, 104, 120, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =31
-            Size: =11
-            Text: ="REF"
-            Width: =154
-            X: =40
-            Y: =If(locDetailsCollapsed, 150, 460)
       - RS_DelBackdrop:
           Control: Rectangle@2.3.0
           Properties:
@@ -3846,248 +3894,30 @@ Screens:
             Width: =200
             X: =703
             Y: =440
-      - RS_Trk1:
-          Control: Classic/Button@2.2.0
+      - Timer1:
+          Control: Timer@2.1.0
           Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderThickness: =0
-            Color: =If(1 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
-            DisabledBorderColor: =Self.BorderColor
-            DisabledColor: =RGBA(0, 0, 0, 1)
-            DisabledFill: =RGBA(237, 237, 237, 1)
-            DisplayMode: =DisplayMode.View
-            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 1 = 3, RGBA(192, 57, 43, 1), 1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
+            AutoStart: =true
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =ColorFade(Self.BorderColor, 70%)
+            DisabledColor: =ColorFade(Self.Fill, 90%)
+            DisabledFill: =ColorFade(Self.Fill, 70%)
+            Duration: =400
+            Fill: =RGBA(56, 96, 178, 1)
             Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Bold
-            Height: =24
             HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
-            PaddingBottom: =0
-            PaddingLeft: =0
-            PaddingRight: =0
-            PaddingTop: =0
+            OnTimerEnd: |-
+              =If(Not(IsBlank(RS_Owner.SearchText)),
+                 UpdateContext({locOwnerNoMatch: IsEmpty(Filter(Office365Users.SearchUserV2({searchTerm: RS_Owner.SearchText, top: 20}).value, Not(StartsWith(DisplayName, "'"))))}));
+              If(Not(IsBlank(RS_Contractor.SearchText)),
+                 UpdateContext({locContractorNoMatch: IsEmpty(Filter(Office365Users.SearchUserV2({searchTerm: RS_Contractor.SearchText, top: 20}).value, Not(StartsWith(DisplayName, "'"))))}))
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
             PressedFill: =Self.Color
-            RadiusBottomLeft: =12
-            RadiusBottomRight: =12
-            RadiusTopLeft: =12
-            RadiusTopRight: =12
-            Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 1 = 3, "✕", 1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "1")
-            Tooltip: |-
-              =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", "Information needed: the request was sent back to the requestor.", "Draft: the requestor prepares the request and adds the media files.")
-            Visible: =true
-            Width: =24
-            X: =515
-            Y: =62
-          Children: []
-      - RS_TrkLbl1:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(1 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
-            Font: =Font.'Open Sans'
-            FontWeight: =If(1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
-            Height: =17
-            Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", "Info needed", "Draft")
-            Visible: =true
-            Width: =95
-            X: =480
-            Y: =87
-          Children: []
-      - RS_TrkLine1:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            Fill: =If(1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), RGBA(215, 223, 240, 1))
-            Height: =3
-            Visible: =true
-            Width: =63
-            X: =543
-            Y: =73
-          Children: []
-      - RS_Trk2:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderThickness: =0
-            Color: =If(2 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
-            DisabledBorderColor: =Self.BorderColor
-            DisabledColor: =RGBA(0, 0, 0, 1)
-            DisabledFill: =RGBA(237, 237, 237, 1)
-            DisplayMode: =DisplayMode.View
-            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 2 = 3, RGBA(192, 57, 43, 1), 2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Bold
-            Height: =24
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
-            PaddingBottom: =0
-            PaddingLeft: =0
-            PaddingRight: =0
-            PaddingTop: =0
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            RadiusBottomLeft: =12
-            RadiusBottomRight: =12
-            RadiusTopLeft: =12
-            RadiusTopRight: =12
-            Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 2 = 3, "✕", 2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "2")
-            Tooltip: |-
-              ="Processing: submitted and under review by Central Deposit."
-            Visible: =true
-            Width: =24
-            X: =610
-            Y: =62
-          Children: []
-      - RS_TrkLbl2:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(2 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
-            Font: =Font.'Open Sans'
-            FontWeight: =If(2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
-            Height: =17
-            Size: =11
-            Text: ="Processing"
-            Visible: =true
-            Width: =95
-            X: =575
-            Y: =87
-          Children: []
-      - RS_TrkLine2:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            Fill: =If(2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), RGBA(215, 223, 240, 1))
-            Height: =3
-            Visible: =true
-            Width: =63
-            X: =638
-            Y: =73
-          Children: []
-      - RS_Trk3:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderThickness: =0
-            Color: =If(3 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
-            DisabledBorderColor: =Self.BorderColor
-            DisabledColor: =RGBA(0, 0, 0, 1)
-            DisabledFill: =RGBA(237, 237, 237, 1)
-            DisplayMode: =DisplayMode.View
-            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 3 = 3, RGBA(192, 57, 43, 1), 3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Bold
-            Height: =24
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
-            PaddingBottom: =0
-            PaddingLeft: =0
-            PaddingRight: =0
-            PaddingTop: =0
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            RadiusBottomLeft: =12
-            RadiusBottomRight: =12
-            RadiusTopLeft: =12
-            RadiusTopRight: =12
-            Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 3 = 3, "✕", 3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "3")
-            Tooltip: |-
-              =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected", "Rejected: see the reviewer comment.", "Decision: Central Deposit approves or rejects the request.")
-            Visible: =true
-            Width: =24
-            X: =705
-            Y: =62
-          Children: []
-      - RS_TrkLbl3:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(3 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
-            Font: =Font.'Open Sans'
-            FontWeight: =If(3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
-            Height: =17
-            Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected", "Rejected", "Decision")
-            Visible: =true
-            Width: =95
-            X: =670
-            Y: =87
-          Children: []
-      - RS_TrkLine3:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            Fill: =If(3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), RGBA(215, 223, 240, 1))
-            Height: =3
-            Visible: =true
-            Width: =63
-            X: =733
-            Y: =73
-          Children: []
-      - RS_Trk4:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderThickness: =0
-            Color: =If(4 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
-            DisabledBorderColor: =Self.BorderColor
-            DisabledColor: =RGBA(0, 0, 0, 1)
-            DisabledFill: =RGBA(237, 237, 237, 1)
-            DisplayMode: =DisplayMode.View
-            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 4 = 3, RGBA(192, 57, 43, 1), 4 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 4 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Bold
-            Height: =24
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
-            PaddingBottom: =0
-            PaddingLeft: =0
-            PaddingRight: =0
-            PaddingTop: =0
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            RadiusBottomLeft: =12
-            RadiusBottomRight: =12
-            RadiusTopLeft: =12
-            RadiusTopRight: =12
-            Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 4 = 3, "✕", 4 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (4 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "4")
-            Tooltip: |-
-              ="Approved: the request was approved by Central Deposit."
-            Visible: =true
-            Width: =24
-            X: =800
-            Y: =62
-          Children: []
-      - RS_TrkLbl4:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(4 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
-            Font: =Font.'Open Sans'
-            FontWeight: =If(4 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
-            Height: =17
-            Size: =11
-            Text: ="Approved"
-            Visible: =true
-            Width: =95
-            X: =765
-            Y: =87
-          Children: []
+            Repeat: =true
+            Visible: =false
+            X: =60
+            Y: =60
