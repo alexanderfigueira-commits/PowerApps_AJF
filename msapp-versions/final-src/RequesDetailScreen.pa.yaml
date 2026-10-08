@@ -672,6 +672,8 @@ Screens:
                   OnSelect: |-
                     =Set(varCurrentChildId, ThisItem.ArchiveId);
                     Set(varCurrentChildSPId, Coalesce(ThisItem.SPId, 0));
+                    // the attachments card starts on THIS media item
+                    Set(varAttachRecord, If(Coalesce(ThisItem.SPId, 0) > 0, LookUp('AV-CD-Mediafiles', ID = ThisItem.SPId), Blank()));
                     Set(varChildTitle1, Coalesce(ThisItem.ProductionTitle, ""));
                     Set(varChildMediaType, If(IsBlank(ThisItem.MediaType), "Photo", ThisItem.MediaType));
                     Set(varChildDescription1, If(StartsWith(Trim(Coalesce(ThisItem.Description, "")),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(Coalesce(ThisItem.Description, ""),">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),Coalesce(ThisItem.Description, "")));
@@ -2045,8 +2047,8 @@ Screens:
             Size: =10
             TabIndex: =-1
             Text: =""
-            Width: =424
-            X: =686
+            Width: =If(varUserRole = "ADMINISTRATOR", 424, 348)
+            X: =If(varUserRole = "ADMINISTRATOR", 686, 762)
             Y: =5
       - RS_Menu_Requests:
           Control: Classic/Button@2.2.0
@@ -2079,7 +2081,7 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =797
+            X: =If(varUserRole = "ADMINISTRATOR", 797, 873)
             Y: =8
       - RS_Menu_Dashboard:
           Control: Classic/Button@2.2.0
@@ -2118,7 +2120,7 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =705
+            X: =If(varUserRole = "ADMINISTRATOR", 705, 781)
             Y: =10
       - RS_ThApproved:
           Control: Label@2.5.1
@@ -2735,6 +2737,8 @@ Screens:
               Set(varChildScript, "");
               // the request may have just been created: the Requests list reloads on its next visit
               Set(varReqDataLoaded, false);
+              // the attachments card starts on THIS media item
+              Set(varAttachRecord, If(Coalesce(varCurrentChildSPId, 0) > 0, LookUp('AV-CD-Mediafiles', ID = varCurrentChildSPId), Blank()));
               Navigate(ChildInfoScreen),
                   Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
               )
@@ -3707,7 +3711,6 @@ Screens:
             OnSelect: =
             Visible: =locShowDelConfirm
             Width: =1366
-          Children: []
       - RS_DelPanel:
           Control: Rectangle@2.3.0
           Properties:
@@ -3720,7 +3723,6 @@ Screens:
             Width: =500
             X: =433
             Y: =270
-          Children: []
       - RS_DelTitle:
           Control: Label@2.5.1
           Properties:
@@ -3735,14 +3737,12 @@ Screens:
             Width: =440
             X: =463
             Y: =292
-          Children: []
       - RS_DelText:
           Control: Label@2.5.1
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
             Color: =RGBA(0, 18, 107, 1)
             Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Normal
             Height: =84
             Size: =18
             Text: ="Are you sure you want to delete the media file " & Char(34) & Coalesce(locDelItem.ProductionTitle, "") & Char(34) & "? This cannot be undone."
@@ -3750,7 +3750,6 @@ Screens:
             Width: =440
             X: =463
             Y: =338
-          Children: []
       - RS_DelNo:
           Control: Classic/Button@2.2.0
           Properties:
@@ -3778,7 +3777,6 @@ Screens:
             Width: =200
             X: =463
             Y: =440
-          Children: []
       - RS_DelYes:
           Control: Classic/Button@2.2.0
           Properties:
@@ -3788,7 +3786,6 @@ Screens:
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisabledColor: =RGBA(186, 196, 214, 1)
             DisabledFill: =RGBA(240, 242, 246, 1)
-            DisplayMode: =DisplayMode.Edit
             Fill: =RGBA(192, 57, 43, 1)
             Font: =Font.'Open Sans'
             Height: =44
@@ -3816,4 +3813,3 @@ Screens:
             Width: =200
             X: =703
             Y: =440
-          Children: []

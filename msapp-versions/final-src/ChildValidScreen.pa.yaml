@@ -25,14 +25,22 @@ Screens:
         // The attachments form edits a snapshot of the open media item. It is
         // re-read only when a different item is open, so the Patch on Save
         // cannot reload the form and drop files staged but not yet saved.
-        // the item's SharePoint ID: if the variable lost it, take it back from the media list
+        // the item's SharePoint ID: if the variable lost it, take it back from the media list, else from the record already loaded for this item
         If(
-            Coalesce(varCurrentChildSPId, 0) = 0 And Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
-            Set(varCurrentChildSPId, LookUp(colArchives, ArchiveId = varCurrentChildId).SPId)
+            Coalesce(varCurrentChildSPId, 0) = 0,
+            Set(
+                varCurrentChildSPId,
+                If(
+                    Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
+                    LookUp(colArchives, ArchiveId = varCurrentChildId).SPId,
+                    Coalesce(varAttachRecord.ID, 0)
+                )
+            )
         );
+        // the attachments record is only reloaded when the id is known and different: it is never blanked while an id exists
         If(
-            Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
-            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
+            Coalesce(varCurrentChildSPId, 0) > 0 And Coalesce(varAttachRecord.ID, 0) <> varCurrentChildSPId,
+            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = varCurrentChildSPId))
         );
         ClearCollect(colValidations,
             {Check: "Media type is set",
@@ -420,146 +428,154 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
-              =With(
-                  {existingRec: LookUp(colArchives, ArchiveId = varCurrentChildId)},
-                  RemoveIf(colArchives, ArchiveId = varCurrentChildId);
-                  Collect(colArchives, {
-                      ArchiveId: varCurrentChildId,
-                      SPId: If(Coalesce(existingRec.SPId, 0) > 0, existingRec.SPId, Coalesce(varCurrentChildSPId, 0)),
-                      Title: If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1),
-                      MediaType: varChildMediaType,
-                      Description: varChildDescription1,
-                      CaptureDate: varChildCaptureDate,
-                      ProductionPlace: varChildProductionPlace1,
-                      ProductType: varChildProductType,
-                      SeriesTitle: varChildSeriesTitle1,
-                      EpisodeTitle: varChildEpisodeTitle,
-                      EpisodeSummary: varChildEpisodeSummary1,
-                      SeasonNumber: varChildSeasonNumber,
-                      EpisodeNumber: varChildEpisodeNumber,
-                      ProductionEndDate: varChildProductionEndDate,
-                      PublicationStartDate: varChildPublicationStartDate,
-                      PublicationEndDate: varChildPublicationEndDate,
-                      ReferenceLinks: varChildLinks1,
-                      Tags: varChildTags,
-                                  PhotoCaption: varChildPhotoCaption, ProductionTitle: varChildTitle1,
-                                  Credits: varChildCredits1,
-                                  ContractingAuthority: varChildContractingAuthority,
-                                  ExecProducer: varChildExecProducer,
-                                  Producer: varChildProducerSel,
-                      FTPPath: varChildFTPPath1,
-                      BelugaReference: varChildBelugaRef,
-                      Notes: varChildNotes,
-                      ScriptShotlist: varChildScript,
-                      LanguageVersions: varChildLanguageVersions,
-                      AIVoiceover: varChildAIVoiceover,
-                      ContractCase: varChildContractCase,
-                      ContractCase1Sub: varChildContractCase1Sub,
-                      NoThirdPartyRights: varChildNoThirdParty,
-                      ModelReleaseProvided: varChildModelReleaseProvided,
-                      MusicUsed: varChildMusicUsed,
-                      MusicLicenceProvided: varChildMusicLicenceProvided,
-                      PreexistingProvided: varChildPreexistingProvided
-                  })
-              );
-              If(
-                  Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
-                  IfError(
-                      With(
-                          {
-                                            // the item's SharePoint ID: from the media list, else from varCurrentChildSPId (a 0 never hides a real id)
-                                            spId: If(
-                                                Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
-                                                LookUp(colArchives, ArchiveId = varCurrentChildId).SPId,
-                                                Coalesce(varCurrentChildSPId, 0)
-                                            )
-                                        },
+              =If(
+                  // the parent request must exist and have an id: media items are written under its request number
+                  Coalesce(varCurrentRequest.ID, 0) = 0,
+                  Notify("Save the request first (Draft Save): it has no id yet, so the media file cannot be saved.", NotificationType.Warning),
+                  // a missing mandatory item (including required attachments) is named, not silently skipped
+                  CountIf(colValidations, Not(Pass)) > 0,
+                  Notify("The media file cannot be saved yet: " & First(Filter(colValidations, Not(Pass))).Check & ". " & First(Filter(colValidations, Not(Pass))).Note, NotificationType.Warning),
+                  With(
+                      {existingRec: LookUp(colArchives, ArchiveId = varCurrentChildId)},
+                      RemoveIf(colArchives, ArchiveId = varCurrentChildId);
+                      Collect(colArchives, {
+                          ArchiveId: varCurrentChildId,
+                          SPId: If(Coalesce(existingRec.SPId, 0) > 0, existingRec.SPId, Coalesce(varCurrentChildSPId, 0)),
+                          Title: If(IsBlank(varChildTitle1) Or varChildTitle1 = "", "New archive", varChildTitle1),
+                          MediaType: varChildMediaType,
+                          Description: varChildDescription1,
+                          CaptureDate: varChildCaptureDate,
+                          ProductionPlace: varChildProductionPlace1,
+                          ProductType: varChildProductType,
+                          SeriesTitle: varChildSeriesTitle1,
+                          EpisodeTitle: varChildEpisodeTitle,
+                          EpisodeSummary: varChildEpisodeSummary1,
+                          SeasonNumber: varChildSeasonNumber,
+                          EpisodeNumber: varChildEpisodeNumber,
+                          ProductionEndDate: varChildProductionEndDate,
+                          PublicationStartDate: varChildPublicationStartDate,
+                          PublicationEndDate: varChildPublicationEndDate,
+                          ReferenceLinks: varChildLinks1,
+                          Tags: varChildTags,
+                                      PhotoCaption: varChildPhotoCaption, ProductionTitle: varChildTitle1,
+                                      Credits: varChildCredits1,
+                                      ContractingAuthority: varChildContractingAuthority,
+                                      ExecProducer: varChildExecProducer,
+                                      Producer: varChildProducerSel,
+                          FTPPath: varChildFTPPath1,
+                          BelugaReference: varChildBelugaRef,
+                          Notes: varChildNotes,
+                          ScriptShotlist: varChildScript,
+                          LanguageVersions: varChildLanguageVersions,
+                          AIVoiceover: varChildAIVoiceover,
+                          ContractCase: varChildContractCase,
+                          ContractCase1Sub: varChildContractCase1Sub,
+                          NoThirdPartyRights: varChildNoThirdParty,
+                          ModelReleaseProvided: varChildModelReleaseProvided,
+                          MusicUsed: varChildMusicUsed,
+                          MusicLicenceProvided: varChildMusicLicenceProvided,
+                          PreexistingProvided: varChildPreexistingProvided
+                      })
+                  );
+                  If(
+                      Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
+                      IfError(
                           With(
                               {
-                                  savedMedia: Patch(
-                                      'AV-CD-Mediafiles',
-                                      If(
-                                          spId = 0,
-                                          Defaults('AV-CD-Mediafiles'),
-                                          LookUp('AV-CD-Mediafiles', ID = spId)
-                                      ),
-                                      {
-                                          CD_MediaNumber: If(spId = 0, With({rn: varCurrentRequest.RequestNumber}, rn & "-" & Text(With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, "")}, If(Left(lastMed, Len(rn) + 1) = rn & "-", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1, "00")), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
-                                          Description: varChildDescription1,
-                                          BelugaReference: varChildBelugaRef,
-                                          Notes: varChildNotes,
-                                          ScriptShotlist: varChildScript,
-                                          // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
-                                          MediaType: Table({Value: varChildMediaType}),
-                                                              CaptureDate: varChildCaptureDate,
-                                          ProductionPlace: varChildProductionPlace1,
-                                          ProductType: If(
-                                              IsBlank(varChildProductType) Or varChildProductType = "",
-                                              Blank(),
-                                              Table({Value: varChildProductType})
+                                                // the item's SharePoint ID: from the media list, else from varCurrentChildSPId (a 0 never hides a real id)
+                                                spId: If(
+                                                    Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
+                                                    LookUp(colArchives, ArchiveId = varCurrentChildId).SPId,
+                                                    Coalesce(varCurrentChildSPId, 0)
+                                                )
+                                            },
+                              With(
+                                  {
+                                      savedMedia: Patch(
+                                          'AV-CD-Mediafiles',
+                                          If(
+                                              spId = 0,
+                                              Defaults('AV-CD-Mediafiles'),
+                                              LookUp('AV-CD-Mediafiles', ID = spId)
                                           ),
-                                          SeriesTitle: varChildSeriesTitle1,
-                                          EpisodeTitle: varChildEpisodeTitle,
-                                          EpisodeSummary: varChildEpisodeSummary1,
-                                          SeasonNumber: varChildSeasonNumber,
-                                          EpisodeNumber: varChildEpisodeNumber,
-                                          ProductionEndDate: varChildProductionEndDate,
-                                          PublicationStartDate: varChildPublicationStartDate,
-                                          PublicationEndDate: varChildPublicationEndDate,
-                                          ReferenceLinks: varChildLinks1,
-                                          Tags: varChildTags,
-                                          FTPPath: varChildFTPPath1,
-                                          LanguageVersions: Table({Value: varChildLanguageVersions}),
-                                          // AIVoiceover column is TEXT; var is Boolean by convention, converted here only.
-                                          AIVoiceover: If(varChildAIVoiceover, "Yes", "No"),
-                                          ContractCase: Table({Value: varChildContractCase}),
-                                          ContractCase1Sub: If(
-                                              IsBlank(varChildContractCase1Sub) Or varChildContractCase1Sub = "",
-                                              Blank(),
-                                              Table({Value: varChildContractCase1Sub})
-                                          ),
-                                          MusicUsed: varChildMusicUsed,
-                                          MusicLicenseProvided: varChildMusicLicenceProvided,
-                                          PreexistingRightsProvided: varChildPreexistingProvided,
-                                          ModelReleaseProvided: varChildModelReleaseProvided,
-                                          NoThirdPartyRights: varChildNoThirdParty,
-                                          CreditContact: varChildCredits1,
-                                                      ContractingAuthority: varChildContractingAuthority,
-                                                      ExecProducerName: varChildExecProducer,
-                                                      Producer: If(IsBlank(varChildProducerSel), Blank(), ForAll(varChildProducerSel As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
-                                                      PhotoCaption: varChildPhotoCaption, ProductionTitle: varChildTitle1,
-                                                      DepositStatus: Table({Value: "Pending Approval"}),
-                                          ParentRequest: varCurrentRequest.RequestNumber
-                                      }
-                                  )
-                              },
-                              UpdateIf(colArchives, ArchiveId = varCurrentChildId, {SPId: savedMedia.ID});
-                              Set(varCurrentChildSPId, savedMedia.ID);
-                              If(
-                                  // The item already had an ID, so the attachments form was enabled and
-                                  // may hold files for it: send them now, after the Patch above.
-                                  // CL_FormAttach.OnSuccess finishes the save; OnFailure stops here.
-                                  spId > 0 And Coalesce(varAttachRecord.ID, 0) = spId,
-                                  SubmitForm(CL_FormAttach),
-                                  // Otherwise the item was only just created (the form was disabled, nothing to send), or its attachments
-                                  // panel is not loaded for this item: say so, so a file is never dropped silently.
+                                          {
+                                              CD_MediaNumber: If(spId = 0, With({rn: varCurrentRequest.RequestNumber}, rn & "-" & Text(With({lastMed: Coalesce(First(Sort(Filter('AV-CD-Mediafiles', ParentRequest = rn), ID, SortOrder.Descending)).CD_MediaNumber, "")}, If(Left(lastMed, Len(rn) + 1) = rn & "-", Value(Mid(lastMed, Len(rn) + 2)), 0)) + 1, "00")), LookUp('AV-CD-Mediafiles', ID = spId).CD_MediaNumber),
+                                              Description: varChildDescription1,
+                                              BelugaReference: varChildBelugaRef,
+                                              Notes: varChildNotes,
+                                              ScriptShotlist: varChildScript,
+                                              // Multi-select Choice columns (per connector schema): patch as Table({Value:"..."}).
+                                              MediaType: Table({Value: varChildMediaType}),
+                                                                  CaptureDate: varChildCaptureDate,
+                                              ProductionPlace: varChildProductionPlace1,
+                                              ProductType: If(
+                                                  IsBlank(varChildProductType) Or varChildProductType = "",
+                                                  Blank(),
+                                                  Table({Value: varChildProductType})
+                                              ),
+                                              SeriesTitle: varChildSeriesTitle1,
+                                              EpisodeTitle: varChildEpisodeTitle,
+                                              EpisodeSummary: varChildEpisodeSummary1,
+                                              SeasonNumber: varChildSeasonNumber,
+                                              EpisodeNumber: varChildEpisodeNumber,
+                                              ProductionEndDate: varChildProductionEndDate,
+                                              PublicationStartDate: varChildPublicationStartDate,
+                                              PublicationEndDate: varChildPublicationEndDate,
+                                              ReferenceLinks: varChildLinks1,
+                                              Tags: varChildTags,
+                                              FTPPath: varChildFTPPath1,
+                                              LanguageVersions: Table({Value: varChildLanguageVersions}),
+                                              // AIVoiceover column is TEXT; var is Boolean by convention, converted here only.
+                                              AIVoiceover: If(varChildAIVoiceover, "Yes", "No"),
+                                              ContractCase: Table({Value: varChildContractCase}),
+                                              ContractCase1Sub: If(
+                                                  IsBlank(varChildContractCase1Sub) Or varChildContractCase1Sub = "",
+                                                  Blank(),
+                                                  Table({Value: varChildContractCase1Sub})
+                                              ),
+                                              MusicUsed: varChildMusicUsed,
+                                              MusicLicenseProvided: varChildMusicLicenceProvided,
+                                              PreexistingRightsProvided: varChildPreexistingProvided,
+                                              ModelReleaseProvided: varChildModelReleaseProvided,
+                                              NoThirdPartyRights: varChildNoThirdParty,
+                                              CreditContact: varChildCredits1,
+                                                          ContractingAuthority: varChildContractingAuthority,
+                                                          ExecProducerName: varChildExecProducer,
+                                                          Producer: If(IsBlank(varChildProducerSel), Blank(), ForAll(varChildProducerSel As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
+                                                          PhotoCaption: varChildPhotoCaption, ProductionTitle: varChildTitle1,
+                                                          DepositStatus: Table({Value: "Pending Approval"}),
+                                              ParentRequest: varCurrentRequest.RequestNumber
+                                          }
+                                      )
+                                  },
+                                  UpdateIf(colArchives, ArchiveId = varCurrentChildId, {SPId: savedMedia.ID});
+                                  Set(varCurrentChildSPId, savedMedia.ID);
                                   If(
-                                      spId > 0,
-                                      Notify("Media saved, but its attachments panel was not loaded, so no file was sent. Open the media item again and attach the file.", NotificationType.Warning),
-                                      Notify("Media saved to SharePoint.", NotificationType.Success)
-                                  );
-                                  Set(varRequestMediaType, "");
-                                  Set(varConfirmed, false);
-                                  Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
+                                      // The item already had an ID, so the attachments form was enabled and
+                                      // may hold files for it: send them now, after the Patch above.
+                                      // CL_FormAttach.OnSuccess finishes the save; OnFailure stops here.
+                                      spId > 0 And Coalesce(varAttachRecord.ID, 0) = spId,
+                                      SubmitForm(CL_FormAttach),
+                                      // Otherwise the item was only just created (the form was disabled, nothing to send), or its attachments
+                                      // panel is not loaded for this item: say so, so a file is never dropped silently.
+                                      If(
+                                          spId > 0,
+                                          Notify("Media saved, but its attachments panel was not loaded, so no file was sent. Open the media item again and attach the file.", NotificationType.Warning),
+                                          Notify("Media saved to SharePoint.", NotificationType.Success)
+                                      );
+                                      Set(varRequestMediaType, "");
+                                      Set(varConfirmed, false);
+                                      Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
+                                  )
                               )
-                          )
+                          ),
+                          Notify("Save failed: " & FirstError.Message, NotificationType.Error)
                       ),
-                      Notify("Save failed: " & FirstError.Message, NotificationType.Error)
-                  ),
-                  Notify("Media added to request. Save or submit the request to persist media to SharePoint.", NotificationType.Success);
-                  Set(varRequestMediaType, "");
-                  Set(varConfirmed, false);
-                  Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
+                      Notify("Media added to request. Save or submit the request to persist media to SharePoint.", NotificationType.Success);
+                      Set(varRequestMediaType, "");
+                      Set(varConfirmed, false);
+                      Navigate(RequesDetailScreen, ScreenTransition.None, {locShowTypePicker: false, locResetContacts: false})
+                  )
               )
             PressedBorderColor: =Self.Fill
             PressedColor: =Self.Fill
@@ -696,8 +712,8 @@ Screens:
             Size: =10
             TabIndex: =-1
             Text: =""
-            Width: =424
-            X: =686
+            Width: =If(varUserRole = "ADMINISTRATOR", 424, 348)
+            X: =If(varUserRole = "ADMINISTRATOR", 686, 762)
             Y: =5
       - CV_Menu_Requests:
           Control: Classic/Button@2.2.0
@@ -725,7 +741,7 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =797
+            X: =If(varUserRole = "ADMINISTRATOR", 797, 873)
             Y: =8
       - CV_Menu_Dashboard:
           Control: Classic/Button@2.2.0
@@ -760,7 +776,7 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =705
+            X: =If(varUserRole = "ADMINISTRATOR", 705, 781)
             Y: =10
       - CV_Menu_Help:
           Control: Classic/Button@2.2.0

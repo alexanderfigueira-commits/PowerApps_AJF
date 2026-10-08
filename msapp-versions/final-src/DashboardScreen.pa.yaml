@@ -783,8 +783,8 @@ Screens:
             Size: =10
             TabIndex: =-1
             Text: =""
-            Width: =424
-            X: =686
+            Width: =If(varUserRole = "ADMINISTRATOR", 424, 348)
+            X: =If(varUserRole = "ADMINISTRATOR", 686, 762)
             Y: =5
       - DB_Menu_Requests:
           Control: Classic/Button@2.2.0
@@ -812,7 +812,7 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =797
+            X: =If(varUserRole = "ADMINISTRATOR", 797, 873)
             Y: =8
       - DB_Menu_Dashboard:
           Control: Classic/Button@2.2.0
@@ -847,7 +847,7 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =705
+            X: =If(varUserRole = "ADMINISTRATOR", 705, 781)
             Y: =10
       - DB_Menu_Help:
           Control: Classic/Button@2.2.0

@@ -25,14 +25,22 @@ Screens:
         // The attachments form edits a snapshot of the open media item. It is
         // re-read only when a different item is open, so the Patch on Save
         // cannot reload the form and drop files staged but not yet saved.
-        // the item's SharePoint ID: if the variable lost it, take it back from the media list
+        // the item's SharePoint ID: if the variable lost it, take it back from the media list, else from the record already loaded for this item
         If(
-            Coalesce(varCurrentChildSPId, 0) = 0 And Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
-            Set(varCurrentChildSPId, LookUp(colArchives, ArchiveId = varCurrentChildId).SPId)
+            Coalesce(varCurrentChildSPId, 0) = 0,
+            Set(
+                varCurrentChildSPId,
+                If(
+                    Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
+                    LookUp(colArchives, ArchiveId = varCurrentChildId).SPId,
+                    Coalesce(varAttachRecord.ID, 0)
+                )
+            )
         );
+        // the attachments record is only reloaded when the id is known and different: it is never blanked while an id exists
         If(
-            Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
-            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
+            Coalesce(varCurrentChildSPId, 0) > 0 And Coalesce(varAttachRecord.ID, 0) <> varCurrentChildSPId,
+            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = varCurrentChildSPId))
         );
         // CL_Case cannot be empty: with no case stored it shows its first item.
         // OnChange does not run when that item is simply accepted, so store it
@@ -591,7 +599,7 @@ Screens:
                         Font: =Font.'Open Sans'
                         Height: =32
                         Size: =12
-                        Text: =If(IsBlank(ThisItem.ID), "—", Text(ThisItem.ID))
+                        Text: =If(IsBlank(ThisItem.ID), If(Coalesce(varCurrentChildSPId, 0) > 0, Text(varCurrentChildSPId), "—"), Text(ThisItem.ID))
                         Width: =Parent.Width - 96
                         Wrap: =false
                         X: =80
@@ -922,8 +930,8 @@ Screens:
             Size: =10
             TabIndex: =-1
             Text: =""
-            Width: =424
-            X: =686
+            Width: =If(varUserRole = "ADMINISTRATOR", 424, 348)
+            X: =If(varUserRole = "ADMINISTRATOR", 686, 762)
             Y: =5
       - CL_Menu_Requests:
           Control: Classic/Button@2.2.0
@@ -951,7 +959,7 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =797
+            X: =If(varUserRole = "ADMINISTRATOR", 797, 873)
             Y: =8
       - CL_Menu_Dashboard:
           Control: Classic/Button@2.2.0
@@ -986,7 +994,7 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =705
+            X: =If(varUserRole = "ADMINISTRATOR", 705, 781)
             Y: =10
       - CL_Menu_Help:
           Control: Classic/Button@2.2.0

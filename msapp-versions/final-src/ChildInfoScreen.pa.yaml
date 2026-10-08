@@ -25,14 +25,22 @@ Screens:
         ClearCollect(colTplMedia, 'AV-CD-Mediafiles');
         // the attachments panel (CL_FormAttach) edits a snapshot of the open media item;
         // taken here too so the file lists on this tab show the right item
-        // the item's SharePoint ID: if the variable lost it, take it back from the media list
+        // the item's SharePoint ID: if the variable lost it, take it back from the media list, else from the record already loaded for this item
         If(
-            Coalesce(varCurrentChildSPId, 0) = 0 And Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
-            Set(varCurrentChildSPId, LookUp(colArchives, ArchiveId = varCurrentChildId).SPId)
+            Coalesce(varCurrentChildSPId, 0) = 0,
+            Set(
+                varCurrentChildSPId,
+                If(
+                    Coalesce(LookUp(colArchives, ArchiveId = varCurrentChildId).SPId, 0) > 0,
+                    LookUp(colArchives, ArchiveId = varCurrentChildId).SPId,
+                    Coalesce(varAttachRecord.ID, 0)
+                )
+            )
         );
+        // the attachments record is only reloaded when the id is known and different: it is never blanked while an id exists
         If(
-            Coalesce(varAttachRecord.ID, 0) <> Coalesce(varCurrentChildSPId, 0),
-            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)))
+            Coalesce(varCurrentChildSPId, 0) > 0 And Coalesce(varAttachRecord.ID, 0) <> varCurrentChildSPId,
+            Set(varAttachRecord, LookUp('AV-CD-Mediafiles', ID = varCurrentChildSPId))
         );
         // the podcast visual preview starts closed
         UpdateContext({locShowVisualPreview: false});
@@ -189,7 +197,7 @@ Screens:
                   BorderColor: =RGBA(220, 224, 230, 1)
                   BorderThickness: =1
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =534
+                  Height: =576
                   Width: =1302
                   X: =32
                   Y: =6
@@ -300,7 +308,7 @@ Screens:
                   Size: =11
                   Width: =900
                   X: =56
-                  Y: =458
+                  Y: =488
             - CI_LblCaptureDate:
                 Control: Label@2.5.1
                 Properties:
@@ -596,7 +604,7 @@ Screens:
                   Visible: =varChildMediaType = "Photo"
                   Width: =800
                   X: =56
-                  Y: =310
+                  Y: =265
             - CI_FTPPath:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -615,7 +623,7 @@ Screens:
                   Visible: =varChildMediaType = "Photo"
                   Width: =900
                   X: =56
-                  Y: =336
+                  Y: =290
             - CI_LblLanguage:
                 Control: Label@2.5.1
                 Properties:
@@ -640,7 +648,7 @@ Screens:
                   Text: ="Notes"
                   Width: =400
                   X: =56
-                  Y: =424
+                  Y: =463
             - CI_Language:
                 Control: Classic/DropDown@2.3.1
                 Properties:
@@ -678,7 +686,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =1220
                   X: =56
-                  Y: =116
+                  Y: =59
             - CI_PodcastNoteText:
                 Control: Label@2.5.1
                 Properties:
@@ -691,7 +699,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =1196
                   X: =68
-                  Y: =116
+                  Y: =60
             - CI_LblPodcastTitle:
                 Control: Label@2.5.1
                 Properties:
@@ -704,7 +712,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =56
-                  Y: =172
+                  Y: =104
             - CI_PodcastTitle:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -722,7 +730,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
                   X: =56
-                  Y: =198
+                  Y: =132
             - CI_LblPodcastDesc:
                 Control: Label@2.5.1
                 Properties:
@@ -735,7 +743,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =56
-                  Y: =254
+                  Y: =188
             - CI_PodcastDesc:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -755,7 +763,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
                   X: =56
-                  Y: =280
+                  Y: =214
             - CI_LblPodcastVisual:
                 Control: Label@2.5.1
                 Properties:
@@ -895,7 +903,7 @@ Screens:
             Text: ="Copy from previous media item"
             Width: =300
             X: =1011
-            Y: =125
+            Y: =120
       - CI_TplOverlay:
           Control: Rectangle@2.3.0
           Properties:
@@ -1221,8 +1229,8 @@ Screens:
             Height: =22
             Text: ="Beluga reference"
             Width: =400
-            X: =55
-            Y: =450
+            X: =57
+            Y: =467
       - CM_BtnPrev_1:
           Control: Classic/Button@2.2.0
           Properties:
@@ -1372,8 +1380,8 @@ Screens:
             Size: =10
             TabIndex: =-1
             Text: =""
-            Width: =424
-            X: =686
+            Width: =If(varUserRole = "ADMINISTRATOR", 424, 348)
+            X: =If(varUserRole = "ADMINISTRATOR", 686, 762)
             Y: =5
       - CI_Menu_Requests:
           Control: Classic/Button@2.2.0
@@ -1401,7 +1409,7 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =797
+            X: =If(varUserRole = "ADMINISTRATOR", 797, 873)
             Y: =8
       - CI_Menu_Dashboard:
           Control: Classic/Button@2.2.0
@@ -1436,7 +1444,7 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =705
+            X: =If(varUserRole = "ADMINISTRATOR", 705, 781)
             Y: =10
       - CI_Menu_Help:
           Control: Classic/Button@2.2.0
@@ -1968,5 +1976,5 @@ Screens:
             OnChange: =Set(varChildBelugaRef, Self.Text)
             Size: =11
             Width: =400
-            X: =57
-            Y: =477
+            X: =55
+            Y: =493
