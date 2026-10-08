@@ -3331,23 +3331,39 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
             OnSelect: |-
-              =Clear(colManualContacts);
-              Collect(
-                  colManualContacts,
+              =With(
                   {
-                      ContactType: RS_drpContactType.Selected.Value,
-                      EmailContact: RS_txtEmailContact.Text,
-                      ParentRequest: varCurrentRequest.RequestNumber
-                  }
-              );
-              Notify(
-                  "Contact saved: " & RS_txtEmailContact.Text,
-                  NotificationType.Success
-              );
-              Reset(RS_txtEmailContact);
-              Set(
-                  locShowContactPopup,
-                  false
+                      locType: RS_drpContactType.Selected.Value,
+                      locEmail: Trim(RS_txtEmailContact.Text)
+                  },
+                  If(
+                      IsBlank(locEmail),
+                      Notify("Enter the contact email before saving.", NotificationType.Warning),
+                      // one e-mail per type and request; the other type is left alone
+                      RemoveIf(
+                          colManualContacts,
+                          ContactType = locType And Coalesce(ParentRequest, "") = Coalesce(varCurrentRequest.RequestNumber, "")
+                      );
+                      Collect(
+                          colManualContacts,
+                          {
+                              ContactType: locType,
+                              EmailContact: locEmail,
+                              ParentRequest: varCurrentRequest.RequestNumber
+                          }
+                      );
+                      // the e-mail now shows in the matching field (DefaultSelectedItems reads the manual contact)
+                      If(locType = "DG/Agency", Reset(RS_Owner), Reset(RS_Contractor));
+                      Notify(
+                          "Contact saved: " & locEmail,
+                          NotificationType.Success
+                      );
+                      Reset(RS_txtEmailContact);
+                      Set(
+                          locShowContactPopup,
+                          false
+                      )
+                  )
               )
             PressedBorderColor: =RGBA(0, 0, 0, 1)
             PressedColor: =Self.Fill
