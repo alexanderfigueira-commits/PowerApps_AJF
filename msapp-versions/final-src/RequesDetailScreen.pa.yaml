@@ -1520,28 +1520,19 @@ Screens:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
-            Fill: =If(1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), RGBA(215, 223, 240, 1))
+            Fill: =If(1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(150, 155, 165, 1), RGBA(215, 223, 240, 1))
             Height: =3
             Width: =63
-            X: =543
+            X: =591
             Y: =73
       - RS_TrkLine2:
           Control: Rectangle@2.3.0
           Properties:
             BorderColor: =RGBA(220, 224, 230, 1)
-            Fill: =If(2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), RGBA(215, 223, 240, 1))
+            Fill: =If(2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(150, 155, 165, 1), RGBA(215, 223, 240, 1))
             Height: =3
             Width: =63
-            X: =638
-            Y: =73
-      - RS_TrkLine3:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            Fill: =If(3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), RGBA(215, 223, 240, 1))
-            Height: =3
-            Width: =63
-            X: =733
+            X: =686
             Y: =73
       - RS_ThValidation:
           Control: Label@2.5.1
@@ -1887,12 +1878,12 @@ Screens:
           Properties:
             BorderColor: =RGBA(0, 0, 0, 0)
             BorderThickness: =0
-            Color: =If(1 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
+            Color: =If(1 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
             DisabledBorderColor: =Self.BorderColor
             DisabledColor: =RGBA(0, 0, 0, 1)
             DisabledFill: =RGBA(237, 237, 237, 1)
             DisplayMode: =DisplayMode.View
-            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 1 = 3, RGBA(192, 57, 43, 1), 1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
+            Fill: =If(1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(150, 155, 165, 1), 1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", RGBA(106, 90, 205, 1), "Pending", RGBA(189, 183, 107, 1), "Approved", RGBA(0, 100, 0, 1), "Partially approved", RGBA(0, 100, 0, 1), "Published", RGBA(0, 100, 0, 1), "Rejected", RGBA(240, 128, 128, 1), RGBA(150, 155, 165, 1)), RGBA(215, 223, 240, 1))
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Bold
             Height: =24
@@ -1911,23 +1902,23 @@ Screens:
             RadiusTopLeft: =12
             RadiusTopRight: =12
             Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 1 = 3, "✕", 1 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "1")
+            Text: ="1"
             Tooltip: |-
-              =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", "Information needed: the request was sent back to the requestor.", "Draft: the requestor prepares the request and adds the media files.")
+              ="Draft: the requestor prepares the request and adds the media files."
             Width: =24
-            X: =515
+            X: =563
             Y: =62
       - RS_Trk2:
           Control: Classic/Button@2.2.0
           Properties:
             BorderColor: =RGBA(0, 0, 0, 0)
             BorderThickness: =0
-            Color: =If(2 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
+            Color: =If(2 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
             DisabledBorderColor: =Self.BorderColor
             DisabledColor: =RGBA(0, 0, 0, 1)
             DisabledFill: =RGBA(237, 237, 237, 1)
             DisplayMode: =DisplayMode.View
-            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 2 = 3, RGBA(192, 57, 43, 1), 2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
+            Fill: =If(2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(150, 155, 165, 1), 2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", RGBA(106, 90, 205, 1), "Pending", RGBA(189, 183, 107, 1), "Approved", RGBA(0, 100, 0, 1), "Partially approved", RGBA(0, 100, 0, 1), "Published", RGBA(0, 100, 0, 1), "Rejected", RGBA(240, 128, 128, 1), RGBA(150, 155, 165, 1)), RGBA(215, 223, 240, 1))
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Bold
             Height: =24
@@ -1946,23 +1937,23 @@ Screens:
             RadiusTopLeft: =12
             RadiusTopRight: =12
             Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 2 = 3, "✕", 2 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "2")
+            Text: ="2"
             Tooltip: |-
               ="Processing: submitted and under review by Central Deposit."
             Width: =24
-            X: =610
+            X: =658
             Y: =62
       - RS_Trk3:
           Control: Classic/Button@2.2.0
           Properties:
             BorderColor: =RGBA(0, 0, 0, 0)
             BorderThickness: =0
-            Color: =If(3 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
+            Color: =If(3 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
             DisabledBorderColor: =Self.BorderColor
             DisabledColor: =RGBA(0, 0, 0, 1)
             DisabledFill: =RGBA(237, 237, 237, 1)
             DisplayMode: =DisplayMode.View
-            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 3 = 3, RGBA(192, 57, 43, 1), 3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
+            Fill: =If(3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(150, 155, 165, 1), 3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", RGBA(106, 90, 205, 1), "Pending", RGBA(189, 183, 107, 1), "Approved", RGBA(0, 100, 0, 1), "Partially approved", RGBA(0, 100, 0, 1), "Published", RGBA(0, 100, 0, 1), "Rejected", RGBA(240, 128, 128, 1), RGBA(150, 155, 165, 1)), RGBA(215, 223, 240, 1))
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Bold
             Height: =24
@@ -1981,46 +1972,11 @@ Screens:
             RadiusTopLeft: =12
             RadiusTopRight: =12
             Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 3 = 3, "✕", 3 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "3")
+            Text: =If(Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1) = 3, If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], "✓", Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected", "✕", "3"), "3")
             Tooltip: |-
-              =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected", "Rejected: see the reviewer comment.", "Decision: Central Deposit approves or rejects the request.")
+              =Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Approved", "Approved: the request was approved by Central Deposit.", "Partially approved", "Approved: the request was approved by Central Deposit.", "Published", "Approved: the request was approved by Central Deposit.", "Rejected", "Rejected: the request was rejected, see the reviewer comment.", "Pending", "Pending: information needed, the request was sent back to the requestor.", "Approval: Central Deposit decides on the request.")
             Width: =24
-            X: =705
-            Y: =62
-      - RS_Trk4:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderThickness: =0
-            Color: =If(4 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(255, 255, 255, 1))
-            DisabledBorderColor: =Self.BorderColor
-            DisabledColor: =RGBA(0, 0, 0, 1)
-            DisabledFill: =RGBA(237, 237, 237, 1)
-            DisplayMode: =DisplayMode.View
-            Fill: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 4 = 3, RGBA(192, 57, 43, 1), 4 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(22, 128, 80, 1), 4 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], RGBA(22, 128, 80, 1), If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", RGBA(200, 140, 0, 1), RGBA(56, 96, 178, 1))), RGBA(215, 223, 240, 1))
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Bold
-            Height: =24
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
-            PaddingBottom: =0
-            PaddingLeft: =0
-            PaddingRight: =0
-            PaddingTop: =0
-            PressedBorderColor: =Self.Fill
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            RadiusBottomLeft: =12
-            RadiusBottomRight: =12
-            RadiusTopLeft: =12
-            RadiusTopRight: =12
-            Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected" And 4 = 3, "✕", 4 < Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) Or (4 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1) And Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"]), "✓", "4")
-            Tooltip: |-
-              ="Approved: the request was approved by Central Deposit."
-            Width: =24
-            X: =800
+            X: =753
             Y: =62
       - RS_TypeIconBtn:
           Control: Classic/Button@2.2.0
@@ -2122,56 +2078,42 @@ Screens:
           Properties:
             Align: =Align.Center
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(1 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
+            Color: =If(1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(0, 18, 107, 1), RGBA(96, 104, 120, 1))
             Font: =Font.'Open Sans'
-            FontWeight: =If(1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
+            FontWeight: =If(1 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), FontWeight.Bold, FontWeight.Semibold)
             Height: =17
             Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Pending", "Info needed", "Draft")
+            Text: ="Draft"
             Width: =95
-            X: =480
+            X: =528
             Y: =87
       - RS_TrkLbl2:
           Control: Label@2.5.1
           Properties:
             Align: =Align.Center
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(2 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
+            Color: =If(2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(0, 18, 107, 1), RGBA(96, 104, 120, 1))
             Font: =Font.'Open Sans'
-            FontWeight: =If(2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
+            FontWeight: =If(2 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), FontWeight.Bold, FontWeight.Semibold)
             Height: =17
             Size: =11
             Text: ="Processing"
             Width: =95
-            X: =575
+            X: =623
             Y: =87
       - RS_TrkLbl3:
           Control: Label@2.5.1
           Properties:
             Align: =Align.Center
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(3 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
+            Color: =If(3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), RGBA(0, 18, 107, 1), RGBA(96, 104, 120, 1))
             Font: =Font.'Open Sans'
-            FontWeight: =If(3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
+            FontWeight: =If(3 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1), FontWeight.Bold, FontWeight.Semibold)
             Height: =17
             Size: =11
-            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected", "Rejected", "Decision")
+            Text: =Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Approved", "Approved", "Partially approved", "Approved", "Published", "Approved", "Rejected", "Rejected", "Pending", "Pending", "Approval")
             Width: =95
-            X: =670
-            Y: =87
-      - RS_TrkLbl4:
-          Control: Label@2.5.1
-          Properties:
-            Align: =Align.Center
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(4 > Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
-            Font: =Font.'Open Sans'
-            FontWeight: =If(4 = Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Pending", 1, "Processing", 2, "Rejected", 3, "Approved", 4, "Partially approved", 4, "Published", 4, 1), FontWeight.Bold, FontWeight.Semibold)
-            Height: =17
-            Size: =11
-            Text: ="Approved"
-            Width: =95
-            X: =765
+            X: =718
             Y: =87
       - RS_Header_Title:
           Control: Label@2.5.1
