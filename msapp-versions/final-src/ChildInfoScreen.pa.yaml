@@ -218,7 +218,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -251,7 +251,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -316,7 +316,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -347,7 +347,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -376,7 +376,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -419,7 +419,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -448,7 +448,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -461,7 +461,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -489,7 +489,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -517,7 +517,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -545,7 +545,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -574,7 +574,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -603,7 +603,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -636,7 +636,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -649,7 +649,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -712,7 +712,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -744,7 +744,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -778,7 +778,7 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(60, 66, 80, 1)
+                  Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
@@ -1234,7 +1234,7 @@ Screens:
           Control: Label@2.5.1
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(60, 66, 80, 1)
+            Color: =If(varRequestorLocked, RGBA(0, 0, 0, 1), RGBA(60, 66, 80, 1))
             Font: =Font.'Open Sans'
             FontWeight: =FontWeight.Semibold
             Height: =22
