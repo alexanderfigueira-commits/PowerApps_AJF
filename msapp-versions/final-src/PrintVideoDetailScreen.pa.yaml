@@ -310,12 +310,12 @@ Screens:
             DelayItemLoading: =false
             Height: |-
               =// whole media rows only: a row is never cut by the page edge
-              175 * Min(CountRows(colPrintReqMedia), RoundDown((740 - Self.Y) / 175, 0))
+              202 * Min(CountRows(colPrintReqMedia), RoundDown((740 - Self.Y) / 202, 0))
             Items: =colPrintReqMedia
             LoadingSpinner: =LoadingSpinner.None
             ShowScrollbar: =false
             TemplatePadding: =0
-            TemplateSize: =175
+            TemplateSize: =202
             Width: =1302
             X: =32
             Y: =208
@@ -327,7 +327,7 @@ Screens:
                   Fill: =RGBA(220, 224, 230, 1)
                   Height: =1
                   Width: =1302
-                  Y: =174
+                  Y: =201
             - PVD_Val8:
                 Control: Label@2.5.1
                 Properties:
@@ -1042,7 +1042,7 @@ Screens:
                   Visible: =PVD_Val7.Visible Or PVD_Val8.Visible Or PVD_Val9.Visible Or PVD_Val10.Visible Or PVD_Val11.Visible Or PVD_Val12.Visible Or PVD_Val13.Visible Or PVD_Val14.Visible Or PVD_Val15.Visible Or PVD_Val16.Visible Or PVD_Val17.Visible Or PVD_Val18.Visible
                   Width: =420
                   X: =12
-                  Y: =PVD_Val5.Y + If(PVD_Val5.Visible, PVD_Val5.Height, 0)
+                  Y: =PVD_Val27.Y + If(PVD_Val27.Visible, PVD_Val27.Height, 0)
             - PVD_Lbl22:
                 Control: Label@2.5.1
                 Properties:
@@ -1139,6 +1139,105 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PVD_Val26.Y
+            - PVD_Lbl27:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Beluga reference"
+                  Visible: =PVD_Val27.Visible
+                  Width: =180
+                  X: =12
+                  Y: =PVD_Val27.Y
+                Children: []
+            - PVD_Val27:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.BelugaReference), "Not provided", ThisItem.BelugaReference)
+                  Visible: =Not(IsBlank(ThisItem.BelugaReference))
+                  Width: =240
+                  X: =194
+                  Y: =PVD_Val5.Y + If(PVD_Val5.Visible, PVD_Val5.Height, 0)
+                Children: []
+            - PVD_Lbl28:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="AI voice-over"
+                  Visible: =PVD_Val28.Visible
+                  Width: =180
+                  X: =442
+                  Y: =PVD_Val28.Y
+                Children: []
+            - PVD_Val28:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.AIVoiceover = "Yes", "⚠  Yes", "No")
+                  Visible: =true
+                  Width: =240
+                  X: =624
+                  Y: =PVD_Val16.Y + If(PVD_Val16.Visible, PVD_Val16.Height, 0)
+                Children: []
+            - PVD_Lbl29:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Attached documents"
+                  Visible: =PVD_Val29.Visible
+                  Width: =180
+                  X: =872
+                  Y: =PVD_Val29.Y
+                Children: []
+            - PVD_Val29:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =28
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =Concat(ThisItem.Attachments, DisplayName, ", ")
+                  Visible: =Not(IsEmpty(ThisItem.Attachments))
+                  Width: =240
+                  X: =1054
+                  Y: =PVD_Val26.Y + If(PVD_Val26.Visible, PVD_Val26.Height, 0)
+                Children: []
       - PVD_Empty:
           Control: Label@2.5.1
           Properties:
@@ -1164,10 +1263,10 @@ Screens:
             Height: =18
             Size: =9
             Text: |-
-              =With({hidden: CountRows(colPrintReqMedia) - 3},
+              =With({hidden: CountRows(colPrintReqMedia) - 2},
                   "+ " & hidden & If(hidden = 1, " more media file", " more media files")
-                  & " on this request: one printed page holds 3.")
-            Visible: =CountRows(colPrintReqMedia) > 3
+                  & " on this request: one printed page holds 2.")
+            Visible: =CountRows(colPrintReqMedia) > 2
             Width: =1302
             X: =32
             Y: =PVD_Gallery.Y + PVD_Gallery.Height + 2
