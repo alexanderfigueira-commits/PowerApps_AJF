@@ -1143,6 +1143,7 @@ Screens:
               =// yellow while this mandatory field is empty
               If(RS_LblTitle.Visible And IsBlank(Trim(RS_Title.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
             BorderThickness: =If(RS_LblTitle.Visible And IsBlank(Trim(RS_Title.Text)), 3, 2)
+            Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
             Default: =varRequestTitle
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
@@ -1393,6 +1394,7 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
             Default: =varRequestDescription
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
@@ -2315,7 +2317,7 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(Not(varUserRole = "ADMINISTRATOR") And IsBlank(Coalesce(varCurrentRequest.ReviewerComments, "")), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), If(Not(varUserRole = "ADMINISTRATOR") And IsBlank(Coalesce(varCurrentRequest.ReviewerComments, "")), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1)))
             Default: |-
               =If(
                   varUserRole = "ADMINISTRATOR" Or Not(IsBlank(Coalesce(varCurrentRequest.ReviewerComments, ""))),
@@ -2463,7 +2465,7 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =If(Not((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))) And IsBlank(PlainText(Coalesce(varCurrentRequest.Notes, ""))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+            Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), If(Not((Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))) And IsBlank(PlainText(Coalesce(varCurrentRequest.Notes, ""))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1)))
             Default: |-
               =If(
                   (Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email)) Or Not(IsBlank(PlainText(Coalesce(varCurrentRequest.Notes, "")))),
@@ -2935,7 +2937,7 @@ Screens:
           Group: Group3
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(30, 34, 44, 1)
+            Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(30, 34, 44, 1))
             Default: =""
             DisplayMode: =If(varViewOnly, DisplayMode.View, If((Coalesce(varCurrentRequest.ID, 0) > 0 And (varUserRole = "ADMINISTRATOR" Or Lower(varCurrentRequest.'Created By'.Email) = Lower(User().Email))), DisplayMode.Edit, DisplayMode.Disabled))
             Font: =Font.'Open Sans'
@@ -3245,6 +3247,7 @@ Screens:
           Group: Pop-up Contact Extra
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
             Default: =""
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'

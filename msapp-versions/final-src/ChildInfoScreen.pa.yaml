@@ -234,6 +234,7 @@ Screens:
                     =// yellow while this mandatory field is empty
                     If(CI_LblTitle.Visible And IsBlank(Trim(CI_Title.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
                   BorderThickness: =If(CI_LblTitle.Visible And IsBlank(Trim(CI_Title.Text)), 3, 2)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildTitle1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -266,6 +267,7 @@ Screens:
                     =// yellow while this mandatory (starred) field is empty
                     If(CI_LblDescription.Visible And Right(Trim(CI_LblDescription.Text), 1) = "*" And (IsBlank(Trim(CI_Description.Text))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
                   BorderThickness: =If(CI_LblDescription.Visible And Right(Trim(CI_LblDescription.Text), 1) = "*" And (IsBlank(Trim(CI_Description.Text))), 3, 2)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =If(StartsWith(Trim(varChildDescription1),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(varChildDescription1,">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),varChildDescription1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -284,6 +286,7 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildNotes
                   DisplayMode: =If(varViewOnly, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -357,6 +360,7 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildProductionPlace1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -428,6 +432,7 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildSeriesTitle1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -553,6 +558,7 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildLinks1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -581,6 +587,7 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildTags1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -612,6 +619,7 @@ Screens:
                     =// yellow while this mandatory field is empty
                     If(CI_LblFTPPath.Visible And IsBlank(Trim(CI_FTPPath.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
                   BorderThickness: =If(CI_LblFTPPath.Visible And IsBlank(Trim(CI_FTPPath.Text)), 3, 2)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildFTPPath1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -720,6 +728,7 @@ Screens:
                     =// yellow while this mandatory field is empty
                     If(CI_LblPodcastTitle.Visible And IsBlank(Trim(CI_PodcastTitle.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
                   BorderThickness: =If(CI_LblPodcastTitle.Visible And IsBlank(Trim(CI_PodcastTitle.Text)), 3, 2)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =Coalesce(varRequestTitle, varRequestTitle1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -751,6 +760,7 @@ Screens:
                     =// yellow while this mandatory field is empty
                     If(CI_LblPodcastDesc.Visible And IsBlank(Trim(CI_PodcastDesc.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
                   BorderThickness: =If(CI_LblPodcastDesc.Visible And IsBlank(Trim(CI_PodcastDesc.Text)), 3, 2)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =Coalesce(varRequestDescription, varRequestDescription1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
@@ -976,6 +986,7 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
             Default: =varTplSearch1
             Font: =Font.'Open Sans'
             Height: =36
@@ -1967,6 +1978,7 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
             Default: =varChildBelugaRef
             DisplayMode: =If(varViewOnly Or varUserRole <> "ADMINISTRATOR", DisplayMode.View, DisplayMode.Edit)
             Font: =Font.'Open Sans'
