@@ -212,8 +212,8 @@ Screens:
             Size: =10
             TabIndex: =-1
             Text: =""
-            Width: =If(varUserRole = "ADMINISTRATOR",341,300)
-            X: =If(varUserRole = "ADMINISTRATOR",769,820)
+            Width: =If(varUserRole = "ADMINISTRATOR", 424, 348)
+            X: =If(varUserRole = "ADMINISTRATOR", 686, 762)
             Y: =5
       - DOA_Menu_Requests:
           Control: Classic/Button@2.2.0
@@ -241,7 +241,7 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =868
+            X: =If(varUserRole = "ADMINISTRATOR", 797, 873)
             Y: =10
       - DOA_Menu_Dashboard:
           Control: Classic/Button@2.2.0
@@ -276,7 +276,7 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =579
+            X: =If(varUserRole = "ADMINISTRATOR", 705, 781)
             Y: =10
       - DOA_Menu_Help:
           Control: Classic/Button@2.2.0
@@ -332,8 +332,8 @@ Screens:
               ="👁" & Char(10) & "Review"
             Tooltip: ="Review"
             Visible: =varUserRole = "ADMINISTRATOR"
-            Width: =70
-            X: =798
+            Width: =83
+            X: =875
             Y: =8
       - DOA_Menu_Export:
           Control: Classic/Button@2.2.0
