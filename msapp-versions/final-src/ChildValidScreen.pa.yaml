@@ -461,7 +461,7 @@ Screens:
                                       Credits: varChildCredits1,
                                       ContractingAuthority: varChildContractingAuthority,
                                       ExecProducer: varChildExecProducer,
-                                      Producer: varChildProducerSel,
+                                      Producer: varChildProducerSel, Photographer: varChildPhotographerSel,
                           FTPPath: varChildFTPPath1,
                           BelugaReference: varChildBelugaRef,
                           Notes: varChildNotes,
@@ -541,7 +541,7 @@ Screens:
                                               CreditContact: varChildCredits1,
                                                           ContractingAuthority: varChildContractingAuthority,
                                                           ExecProducerName: varChildExecProducer,
-                                                          Producer: If(IsBlank(varChildProducerSel), Blank(), ForAll(varChildProducerSel As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
+                                                          Producer: If(IsBlank(varChildProducerSel), Blank(), ForAll(varChildProducerSel As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})), Photographer: If(IsBlank(varChildPhotographerSel), Blank(), ForAll(varChildPhotographerSel As u, {Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""})),
                                                           PhotoCaption: varChildPhotoCaption, ProductionTitle: varChildTitle1,
                                                           DepositStatus: Table({Value: "Pending Approval"}),
                                               ParentRequest: varCurrentRequest.RequestNumber

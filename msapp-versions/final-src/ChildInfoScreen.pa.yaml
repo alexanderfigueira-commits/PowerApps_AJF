@@ -310,8 +310,8 @@ Screens:
                     )
                   Size: =11
                   Width: =900
-                  X: =56
-                  Y: =438
+                  X: =51
+                  Y: =381
             - CI_LblCaptureDate:
                 Control: Label@2.5.1
                 Properties:
@@ -468,7 +468,7 @@ Screens:
                   Text: ="Beluga reference"
                   Width: =400
                   X: =56
-                  Y: =514
+                  Y: =458
             - CI_LblProductionEndDate:
                 Control: Label@2.5.1
                 Properties:
@@ -667,8 +667,8 @@ Screens:
                   Height: =22
                   Text: ="Notes"
                   Width: =400
-                  X: =56
-                  Y: =413
+                  X: =51
+                  Y: =356
             - CI_Language:
                 Control: Classic/DropDown@2.3.1
                 Properties:
@@ -843,22 +843,6 @@ Screens:
                   Width: =900
                   X: =56
                   Y: =339
-            - CI_BelugaRef:
-                Control: Classic/TextInput@2.3.2
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
-                  Default: =varChildBelugaRef
-                  DisplayMode: =If(varViewOnly Or varUserRole <> "ADMINISTRATOR", DisplayMode.View, DisplayMode.Edit)
-                  Font: =Font.'Open Sans'
-                  HintText: ="Assigned by Central Deposit"
-                  HoverBorderColor: =RGBA(0, 18, 107, 1)
-                  HoverFill: =RGBA(186, 202, 226, 1)
-                  OnChange: =Set(varChildBelugaRef, Self.Text)
-                  Size: =11
-                  Width: =400
-                  X: =56
-                  Y: =540
             - CI_BtnViewVisual:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -886,6 +870,22 @@ Screens:
                   Width: =300
                   X: =976
                   Y: =339
+            - CI_BelugaRef:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
+                  Default: =varChildBelugaRef
+                  DisplayMode: =If(varViewOnly Or varUserRole <> "ADMINISTRATOR", DisplayMode.View, DisplayMode.Edit)
+                  Font: =Font.'Open Sans'
+                  HintText: ="Assigned by Central Deposit"
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  OnChange: =Set(varChildBelugaRef, Self.Text)
+                  Size: =11
+                  Width: =400
+                  X: =56
+                  Y: =480
       - CI_BottomBar:
           Control: Rectangle@2.3.0
           Properties:

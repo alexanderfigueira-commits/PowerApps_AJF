@@ -56,7 +56,7 @@ App:
       Set(varChildContractCase1Sub, "");
       Set(varChildModelRelease, false);
       Set(varChildNoThirdParty, false);
-      Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, ""); Set(varCurrentChildSPId, 0);
+      Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotographerSel, Blank()); Set(varChildPhotographer, ""); Set(varChildPhotoCaption, ""); Set(varCurrentChildSPId, 0);
       Set(varChildModelReleaseProvided, false);
       Set(varChildMusicUsed, false);
       Set(varChildMusicLicenceProvided, false);
