@@ -1974,7 +1974,7 @@ Screens:
             Size: =11
             Text: =If(Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Processing", 2, "Pending", 3, "Rejected", 3, "Approved", 3, "Partially approved", 3, "Published", 3, 1) = 3, If(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Approved", "Partially approved", "Published"], "✓", Coalesce(varCurrentRequest.Status.Value, "Draft") = "Rejected", "✕", "3"), "3")
             Tooltip: |-
-              =Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Approved", "Approved: the request was approved by Central Deposit.", "Partially approved", "Approved: the request was approved by Central Deposit.", "Published", "Approved: the request was approved by Central Deposit.", "Rejected", "Rejected: the request was rejected, see the reviewer comment.", "Pending", "Pending: information needed, the request was sent back to the requestor.", "Approval: Central Deposit decides on the request.")
+              =Switch(Coalesce(varCurrentRequest.Status.Value, "Draft"), "Approved", "Approved: the request was approved by Central Deposit.", "Partially approved", "Partially approved: only part of the request was approved by Central Deposit.", "Published", "Approved: the request was approved by Central Deposit.", "Rejected", "Rejected: the request was rejected, see the reviewer comment.", "Pending", "Pending: information needed, the request was sent back to the requestor.", "Approval: Central Deposit decides on the request.")
             Width: =24
             X: =753
             Y: =62
