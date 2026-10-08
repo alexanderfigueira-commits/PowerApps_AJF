@@ -16,9 +16,18 @@ Screens:
             varRequestorLocked,
             // view-only (a request opened from a dashboard ID) locks everything, whatever the role; a requestor edits only in Draft / Pending
             varViewOnly
-            Or (
-                varUserRole <> "ADMINISTRATOR"
-                And Not(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Draft", "Pending"])
+            Or With(
+                {
+                    st: Coalesce(varCurrentRequest.Status.Value, "Draft"),
+                    mine: Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(Coalesce(varCurrentRequest.'Created By'.Email, "")) = Lower(User().Email)
+                },
+                If(
+                    varUserRole = "ADMINISTRATOR",
+                    // an administrator edits Processing and Rejected requests and their own drafts
+                    Not(st in ["Processing", "Rejected"] Or (st = "Draft" And mine)),
+                    // a requestor edits Draft and Pending requests
+                    Not(st in ["Draft", "Pending"])
+                )
             )
         );
         Set(
@@ -611,14 +620,7 @@ Screens:
                   BorderThickness: =1
                   Color: =RGBA(193, 40, 40, 1)
                   DisabledBorderColor: =RGBA(166, 166, 166, 1)
-                  DisplayMode: |-
-                    =If(varViewOnly, DisplayMode.Disabled, If(
-                        IsBlank(varCurrentRequest.Status.Value)
-                        Or varCurrentRequest.Status.Value = "Draft"
-                        Or varCurrentRequest.Status.Value = "Pending",
-                        DisplayMode.Edit,
-                        DisplayMode.Disabled
-                    ))
+                  DisplayMode: =If(varRequestorLocked, DisplayMode.Disabled, DisplayMode.Edit)
                   Fill: =RGBA(255, 255, 255, 1)
                   Font: =Font.'Open Sans'
                   Height: =32
@@ -816,7 +818,7 @@ Screens:
             Size: =14
             Text: ="Draft Save ➤"
             Tooltip: ="Save draft 1st!"
-            Visible: =Not(varViewOnly) And (!locShowTypePicker)
+            Visible: =Not(varViewOnly) And Not(varRequestorLocked) And (!locShowTypePicker) And (IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0 Or Coalesce(varCurrentRequest.Status.Value, "Draft") = "Draft")
             Width: =132
             X: =990
             Y: =720
@@ -1686,7 +1688,7 @@ Screens:
             Size: =14
             Text: ="Submit request ➤"
             Visible: |-
-              =Not(varViewOnly) And (Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+              =Not(varViewOnly) And Not(varRequestorLocked) And (Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
               And (IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft"))
             Width: =180
             X: =1134
@@ -1818,7 +1820,7 @@ Screens:
             Size: =14
             Text: ="Resubmit for review ➤"
             Visible: |-
-              =Not(varViewOnly) And (Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+              =Not(varViewOnly) And Not(varRequestorLocked) And (Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
               And (varCurrentRequest.Status.Value = "Rejected" Or varCurrentRequest.Status.Value = "Pending"))
             Width: =170
             X: =1137
@@ -2008,7 +2010,7 @@ Screens:
             DisabledBorderColor: =RGBA(166, 166, 166, 1)
             DisabledColor: =RGBA(150, 158, 170, 1)
             DisabledFill: =RGBA(240, 242, 246, 1)
-            DisplayMode: =If(varViewOnly, DisplayMode.Disabled, If(CountRows(colArchives) > 0, DisplayMode.Disabled, DisplayMode.Edit))
+            DisplayMode: =If(varViewOnly Or varRequestorLocked, DisplayMode.Disabled, If(CountRows(colArchives) > 0, DisplayMode.Disabled, DisplayMode.Edit))
             Fill: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", RGBA(255, 255, 255, 1), RGBA(230, 236, 245, 1))
             Font: =Font.'Open Sans'
             Height: =57
@@ -2781,7 +2783,7 @@ Screens:
             DisabledColor: =RGBA(166, 172, 184, 1)
             DisplayMode: |-
               =// the media list needs a saved request: enabled once "Draft Save" has been done
-              If(varViewOnly, DisplayMode.Disabled, If(Coalesce(varCurrentRequest.ID, 0) > 0, DisplayMode.Edit, DisplayMode.Disabled))
+              If(varViewOnly Or varRequestorLocked, DisplayMode.Disabled, If(Coalesce(varCurrentRequest.ID, 0) > 0, DisplayMode.Edit, DisplayMode.Disabled))
             Height: =28
             HoverColor: =ColorFade(Color.CadetBlue, 20%)
             HoverFill: =RGBA(0, 0, 0, 0)

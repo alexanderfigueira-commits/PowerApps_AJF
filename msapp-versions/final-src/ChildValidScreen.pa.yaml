@@ -22,9 +22,18 @@ Screens:
             varRequestorLocked,
             // view-only (a request opened from a dashboard ID) locks everything, whatever the role; a requestor edits only in Draft / Pending
             varViewOnly
-            Or (
-                varUserRole <> "ADMINISTRATOR"
-                And Not(Coalesce(varCurrentRequest.Status.Value, "Draft") in ["Draft", "Pending"])
+            Or With(
+                {
+                    st: Coalesce(varCurrentRequest.Status.Value, "Draft"),
+                    mine: Coalesce(varCurrentRequest.ID, 0) <= 0 Or Lower(Coalesce(varCurrentRequest.'Created By'.Email, "")) = Lower(User().Email)
+                },
+                If(
+                    varUserRole = "ADMINISTRATOR",
+                    // an administrator edits Processing and Rejected requests and their own drafts
+                    Not(st in ["Processing", "Rejected"] Or (st = "Draft" And mine)),
+                    // a requestor edits Draft and Pending requests
+                    Not(st in ["Draft", "Pending"])
+                )
             )
         );
         Set(varNavArm, "");
