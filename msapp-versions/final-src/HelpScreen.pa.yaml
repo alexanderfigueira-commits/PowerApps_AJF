@@ -648,8 +648,8 @@ Screens:
             Size: =10
             TabIndex: =-1
             Text: =""
-            Width: =If(varUserRole = "ADMINISTRATOR", 424, 348)
-            X: =If(varUserRole = "ADMINISTRATOR", 686, 762)
+            Width: =If(varUserRole = "ADMINISTRATOR", 489, 397)
+            X: =If(varUserRole = "ADMINISTRATOR", 621, 713)
             Y: =5
       - HL_Menu_Requests:
           Control: Classic/Button@2.2.0
@@ -677,7 +677,7 @@ Screens:
               ="📋 Requests"
             Tooltip: ="Requests"
             Width: =83
-            X: =If(varUserRole = "ADMINISTRATOR", 797, 873)
+            X: =If(varUserRole = "ADMINISTRATOR", 732, 824)
             Y: =8
       - HL_Menu_Dashboard:
           Control: Classic/Button@2.2.0
@@ -712,7 +712,7 @@ Screens:
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =If(varUserRole = "ADMINISTRATOR", 705, 781)
+            X: =If(varUserRole = "ADMINISTRATOR", 640, 732)
             Y: =10
       - HL_Menu_Help:
           Control: Classic/Button@2.2.0
@@ -740,7 +740,7 @@ Screens:
               ="🔎" & Char(10) & "Help"
             Tooltip: ="Help"
             Width: =83
-            X: =1030
+            X: =1008
             Y: =10
       - HL_Menu_Review:
           Control: Classic/Button@2.2.0
@@ -769,7 +769,7 @@ Screens:
             Tooltip: ="Review"
             Visible: =varUserRole = "ADMINISTRATOR"
             Width: =83
-            X: =875
+            X: =824
             Y: =8
       - HL_Menu_Export:
           Control: Classic/Button@2.2.0
@@ -800,5 +800,5 @@ Screens:
               Export"
             Tooltip: ="Dashboard"
             Width: =83
-            X: =951
+            X: =916
             Y: =8
