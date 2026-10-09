@@ -436,7 +436,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsEmpty(ThisItem.Producer), "Not provided", Concat(ThisItem.Producer, DisplayName, ", "))
-                  Visible: =Not(IsEmpty(ThisItem.Producer))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PPoD_Val7.Y + If(PPoD_Val7.Visible, PPoD_Val7.Height, 0)
@@ -451,7 +451,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.PublicationEndDate), "Not provided", Text(ThisItem.PublicationEndDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.PublicationEndDate))
+                  Visible: =true
                   Width: =240
                   X: =1054
                   Y: =20
@@ -466,7 +466,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ProductionPlace), "Not provided", ThisItem.ProductionPlace)
-                  Visible: =Not(IsBlank(ThisItem.ProductionPlace))
+                  Visible: =true
                   Width: =240
                   X: =1054
                   Y: =PPoD_Val12.Y + If(PPoD_Val12.Visible, PPoD_Val12.Height, 0)
@@ -531,7 +531,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.CaptureDate), "Not provided", Text(ThisItem.CaptureDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.CaptureDate))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PPoD_Val8.Y + If(PPoD_Val8.Visible, PPoD_Val8.Height, 0)
@@ -546,7 +546,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ProductionEndDate), "Not provided", Text(ThisItem.ProductionEndDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.ProductionEndDate))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PPoD_Val9.Y + If(PPoD_Val9.Visible, PPoD_Val9.Height, 0)
@@ -561,7 +561,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.PublicationStartDate), "Not provided", Text(ThisItem.PublicationStartDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.PublicationStartDate))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PPoD_Val10.Y + If(PPoD_Val10.Visible, PPoD_Val10.Height, 0)
@@ -576,7 +576,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.EpisodeTitle), "Not provided", ThisItem.EpisodeTitle)
-                  Visible: =Not(IsBlank(ThisItem.EpisodeTitle))
+                  Visible: =true
                   Width: =240
                   X: =194
                   Y: =PPoD_Sec0.Y + If(PPoD_Sec0.Visible, PPoD_Sec0.Height, 0)
@@ -591,7 +591,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.SeasonNumber), "Not provided", Text(ThisItem.SeasonNumber))
-                  Visible: =Not(IsBlank(ThisItem.SeasonNumber))
+                  Visible: =true
                   Width: =240
                   X: =194
                   Y: =PPoD_Val1.Y + If(PPoD_Val1.Visible, PPoD_Val1.Height, 0)
@@ -606,7 +606,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.EpisodeNumber), "Not provided", Text(ThisItem.EpisodeNumber))
-                  Visible: =Not(IsBlank(ThisItem.EpisodeNumber))
+                  Visible: =true
                   Width: =240
                   X: =194
                   Y: =PPoD_Val2.Y + If(PPoD_Val2.Visible, PPoD_Val2.Height, 0)
@@ -621,7 +621,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.EpisodeSummary), "Not provided", ThisItem.EpisodeSummary)
-                  Visible: =Not(IsBlank(ThisItem.EpisodeSummary))
+                  Visible: =true
                   Width: =240
                   X: =194
                   Y: =PPoD_Val3.Y + If(PPoD_Val3.Visible, PPoD_Val3.Height, 0)
@@ -636,7 +636,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsEmpty(ThisItem.LanguageVersions), "Not provided", Concat(ThisItem.LanguageVersions, Value, ", "))
-                  Visible: =Not(IsEmpty(ThisItem.LanguageVersions))
+                  Visible: =true
                   Width: =240
                   X: =194
                   Y: =PPoD_Val4.Y + If(PPoD_Val4.Visible, PPoD_Val4.Height, 0)
@@ -1010,7 +1010,7 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Recording date"
+                  Text: ="Filming date"
                   Visible: =PPoD_Val9.Visible
                   Width: =180
                   X: =442

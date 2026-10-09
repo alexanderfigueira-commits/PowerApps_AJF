@@ -424,7 +424,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ProductionPlace), "Not provided", ThisItem.ProductionPlace)
-                  Visible: =Not(IsBlank(ThisItem.ProductionPlace))
+                  Visible: =true
                   Width: =240
                   X: =1054
                   Y: =20
@@ -469,7 +469,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsEmpty(ThisItem.Photographer), "Not provided", Concat(ThisItem.Photographer, DisplayName, ", "))
-                  Visible: =Not(IsEmpty(ThisItem.Photographer))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PPD_Val9.Y + If(PPD_Val9.Visible, PPD_Val9.Height, 0)
@@ -484,7 +484,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ContractingAuthority), "Not provided", ThisItem.ContractingAuthority)
-                  Visible: =Not(IsBlank(ThisItem.ContractingAuthority))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PPD_Sec5.Y + If(PPD_Sec5.Visible, PPD_Sec5.Height, 0)
@@ -499,7 +499,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.CreditContact), "Not provided", ThisItem.CreditContact)
-                  Visible: =Not(IsBlank(ThisItem.CreditContact))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PPD_Val6.Y + If(PPD_Val6.Visible, PPD_Val6.Height, 0)
@@ -519,7 +519,7 @@ Screens:
                         {plain: Trim(PlainText(ThisItem.PhotoCaption))},
                         If(IsBlank(plain), "Not provided", plain)
                     )
-                  Visible: =Not(IsBlank(Trim(PlainText(ThisItem.PhotoCaption))))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PPD_Val7.Y + If(PPD_Val7.Visible, PPD_Val7.Height, 0)
@@ -534,7 +534,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.CaptureDate), "Not provided", Text(ThisItem.CaptureDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.CaptureDate))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PPD_Val8.Y + If(PPD_Val8.Visible, PPD_Val8.Height, 0)
@@ -748,7 +748,7 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Production place"
+                  Text: ="Place"
                   Visible: =PPD_Val10.Visible
                   Width: =180
                   X: =872
@@ -811,7 +811,7 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Photographer"
+                  Text: ="Name of the photographer"
                   Visible: =PPD_Val13.Visible
                   Width: =180
                   X: =442
@@ -843,7 +843,7 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Contractor / credits"
+                  Text: ="Contractor / Agency"
                   Visible: =PPD_Val7.Visible
                   Width: =180
                   X: =442
@@ -859,7 +859,7 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Photo caption"
+                  Text: ="Photo caption / Short Description"
                   Visible: =PPD_Val8.Visible
                   Width: =180
                   X: =442
@@ -875,7 +875,7 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Capture / shoot date"
+                  Text: ="Shooting date"
                   Visible: =PPD_Val9.Visible
                   Width: =180
                   X: =442

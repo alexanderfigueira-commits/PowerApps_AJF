@@ -354,7 +354,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsEmpty(ThisItem.Producer), "Not provided", Concat(ThisItem.Producer, DisplayName, ", "))
-                  Visible: =Not(IsEmpty(ThisItem.Producer))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PVD_Val8.Y + If(PVD_Val8.Visible, PVD_Val8.Height, 0)
@@ -479,7 +479,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.CaptureDate), "Not provided", Text(ThisItem.CaptureDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.CaptureDate))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PVD_Val10.Y + If(PVD_Val10.Visible, PVD_Val10.Height, 0)
@@ -494,7 +494,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ProductionEndDate), "Not provided", Text(ThisItem.ProductionEndDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.ProductionEndDate))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PVD_Val11.Y + If(PVD_Val11.Visible, PVD_Val11.Height, 0)
@@ -509,7 +509,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.PublicationStartDate), "Not provided", Text(ThisItem.PublicationStartDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.PublicationStartDate))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PVD_Val12.Y + If(PVD_Val12.Visible, PVD_Val12.Height, 0)
@@ -524,7 +524,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.PublicationEndDate), "Not provided", Text(ThisItem.PublicationEndDate, "dd-mm-yyyy"))
-                  Visible: =Not(IsBlank(ThisItem.PublicationEndDate))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PVD_Val13.Y + If(PVD_Val13.Visible, PVD_Val13.Height, 0)
@@ -539,7 +539,7 @@ Screens:
                   PaddingTop: =0
                   Size: =9
                   Text: =If(IsBlank(ThisItem.ProductionPlace), "Not provided", ThisItem.ProductionPlace)
-                  Visible: =Not(IsBlank(ThisItem.ProductionPlace))
+                  Visible: =true
                   Width: =240
                   X: =624
                   Y: =PVD_Val14.Y + If(PVD_Val14.Visible, PVD_Val14.Height, 0)
@@ -938,7 +938,7 @@ Screens:
                   PaddingBottom: =0
                   PaddingTop: =0
                   Size: =8
-                  Text: ="Shoot date"
+                  Text: ="Filming date"
                   Visible: =PVD_Val11.Visible
                   Width: =180
                   X: =442
