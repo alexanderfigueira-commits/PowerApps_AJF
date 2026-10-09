@@ -640,6 +640,192 @@ Screens:
                   Width: =240
                   X: =194
                   Y: =PPoD_Val4.Y + If(PPoD_Val4.Visible, PPoD_Val4.Height, 0)
+            - PPoD_Val25:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(ThisItem.ContractCase), "Not provided", Concat(ThisItem.ContractCase, Value, ", "))
+                  Visible: =Not(IsEmpty(ThisItem.ContractCase))
+                  Width: =240
+                  X: =1054
+                  Y: =PPoD_Sec24.Y + If(PPoD_Sec24.Visible, PPoD_Sec24.Height, 0)
+            - PPoD_Val17:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.BelugaReference), "Not provided", ThisItem.BelugaReference)
+                  Visible: =Not(IsBlank(ThisItem.BelugaReference))
+                  Width: =240
+                  X: =194
+                  Y: =PPoD_Val5.Y + If(PPoD_Val5.Visible, PPoD_Val5.Height, 0)
+            - PPoD_Val18:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.AIVoiceover = "Yes", "⚠  Yes", "No")
+                  Width: =240
+                  X: =194
+                  Y: =PPoD_Val17.Y + If(PPoD_Val17.Visible, PPoD_Val17.Height, 0)
+            - PPoD_Val20:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsEmpty(Filter(ThisItem.Attachments, Not(StartsWith(DisplayName, "EpisodeVisual_")) And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(Filter(ThisItem.Attachments, Not(StartsWith(DisplayName, "EpisodeVisual_")) And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))), "Not provided", Concat(Filter(ThisItem.Attachments, Not(StartsWith(DisplayName, "EpisodeVisual_")) And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png"))), DisplayName, ", "))
+                  Width: =240
+                  X: =624
+                  Y: =PPoD_Sec19.Y + If(PPoD_Sec19.Visible, PPoD_Sec19.Height, 0)
+            - PPoD_Val26:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(ThisItem.ContractCase1Sub), "Not provided", Concat(ThisItem.ContractCase1Sub, Value, ", "))
+                  Visible: =Not(IsEmpty(ThisItem.ContractCase1Sub))
+                  Width: =240
+                  X: =1054
+                  Y: =PPoD_Val25.Y + If(PPoD_Val25.Visible, PPoD_Val25.Height, 0)
+            - PPoD_Val21:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsEmpty(Filter(ThisItem.Attachments, StartsWith(DisplayName, "EpisodeVisual_") And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(Filter(ThisItem.Attachments, StartsWith(DisplayName, "EpisodeVisual_") And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))), "Not provided", Concat(Filter(ThisItem.Attachments, StartsWith(DisplayName, "EpisodeVisual_") And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png"))), DisplayName, ", "))
+                  Width: =240
+                  X: =624
+                  Y: =PPoD_Val20.Y + If(PPoD_Val20.Visible, PPoD_Val20.Height, 0)
+            - PPoD_Val27:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.NoThirdPartyRights, "✅  Yes", "⛔  No")
+                  Width: =240
+                  X: =1054
+                  Y: =PPoD_Val26.Y + If(PPoD_Val26.Visible, PPoD_Val26.Height, 0)
+            - PPoD_Val22:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =If(IsEmpty(Filter(ThisItem.Attachments, EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac"))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
+                  Font: =Font.'Open Sans'
+                  Height: =28
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(Filter(ThisItem.Attachments, EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac"))), "Not provided", Concat(Filter(ThisItem.Attachments, EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac")), DisplayName, ", "))
+                  Width: =240
+                  X: =624
+                  Y: =PPoD_Val21.Y + If(PPoD_Val21.Visible, PPoD_Val21.Height, 0)
+            - PPoD_Val28:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.ModelReleaseProvided, "✅  Yes", "⛔  No")
+                  Width: =240
+                  X: =1054
+                  Y: =PPoD_Val27.Y + If(PPoD_Val27.Visible, PPoD_Val27.Height, 0)
+            - PPoD_Val29:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.MusicUsed, "✅  Yes", "⛔  No")
+                  Width: =240
+                  X: =1054
+                  Y: =PPoD_Val28.Y + If(PPoD_Val28.Visible, PPoD_Val28.Height, 0)
+            - PPoD_Val23:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =28
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =Concat(Filter(ThisItem.Attachments, Not(EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")) And Not(EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac"))), DisplayName, ", ")
+                  Visible: =Not(IsEmpty(Filter(ThisItem.Attachments, Not(EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")) And Not(EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac")))))
+                  Width: =240
+                  X: =624
+                  Y: =PPoD_Val22.Y + If(PPoD_Val22.Visible, PPoD_Val22.Height, 0)
+            - PPoD_Val30:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.MusicLicenseProvided, "✅  Yes", "⛔  No")
+                  Width: =240
+                  X: =1054
+                  Y: =PPoD_Val29.Y + If(PPoD_Val29.Visible, PPoD_Val29.Height, 0)
+            - PPoD_Val31:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.PreexistingRightsProvided, "✅  Yes", "⛔  No")
+                  Width: =240
+                  X: =1054
+                  Y: =PPoD_Val30.Y + If(PPoD_Val30.Visible, PPoD_Val30.Height, 0)
             - PPoD_RowCaption:
                 Control: Label@2.5.1
                 Properties:
@@ -798,6 +984,21 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPoD_Val16.Y
+            - PPoD_Sec24:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =16
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: ="Legal & Documents"
+                  Width: =420
+                  X: =872
+                  Y: =PPoD_Val16.Y + If(PPoD_Val16.Visible, PPoD_Val16.Height, 0)
             - PPoD_Lbl9:
                 Control: Label@2.5.1
                 Properties:
@@ -846,6 +1047,21 @@ Screens:
                   Width: =180
                   X: =442
                   Y: =PPoD_Val11.Y
+            - PPoD_Sec19:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =16
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: ="Files"
+                  Width: =420
+                  X: =442
+                  Y: =PPoD_Val11.Y + If(PPoD_Val11.Visible, PPoD_Val11.Height, 0)
             - PPoD_Lbl1:
                 Control: Label@2.5.1
                 Properties:
@@ -926,238 +1142,6 @@ Screens:
                   Width: =180
                   X: =12
                   Y: =PPoD_Val5.Y
-            - PPoD_Lbl17:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Beluga reference"
-                  Visible: =PPoD_Val17.Visible
-                  Width: =180
-                  X: =12
-                  Y: =PPoD_Val17.Y
-                Children: []
-            - PPoD_Val17:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsBlank(ThisItem.BelugaReference), "Not provided", ThisItem.BelugaReference)
-                  Visible: =Not(IsBlank(ThisItem.BelugaReference))
-                  Width: =240
-                  X: =194
-                  Y: =PPoD_Val5.Y + If(PPoD_Val5.Visible, PPoD_Val5.Height, 0)
-                Children: []
-            - PPoD_Lbl18:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="AI voice-over"
-                  Visible: =PPoD_Val18.Visible
-                  Width: =180
-                  X: =12
-                  Y: =PPoD_Val18.Y
-                Children: []
-            - PPoD_Val18:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.AIVoiceover = "Yes", "⚠  Yes", "No")
-                  Visible: =true
-                  Width: =240
-                  X: =194
-                  Y: =PPoD_Val17.Y + If(PPoD_Val17.Visible, PPoD_Val17.Height, 0)
-                Children: []
-            - PPoD_Sec19:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(0, 18, 107, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =16
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: ="Files"
-                  Visible: =true
-                  Width: =420
-                  X: =442
-                  Y: =PPoD_Val11.Y + If(PPoD_Val11.Visible, PPoD_Val11.Height, 0)
-                Children: []
-            - PPoD_Lbl20:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Podcast visual"
-                  Visible: =PPoD_Val20.Visible
-                  Width: =180
-                  X: =442
-                  Y: =PPoD_Val20.Y
-                Children: []
-            - PPoD_Val20:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsEmpty(Filter(ThisItem.Attachments, Not(StartsWith(DisplayName, "EpisodeVisual_")) And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsEmpty(Filter(ThisItem.Attachments, Not(StartsWith(DisplayName, "EpisodeVisual_")) And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))), "Not provided", Concat(Filter(ThisItem.Attachments, Not(StartsWith(DisplayName, "EpisodeVisual_")) And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png"))), DisplayName, ", "))
-                  Visible: =true
-                  Width: =240
-                  X: =624
-                  Y: =PPoD_Sec19.Y + If(PPoD_Sec19.Visible, PPoD_Sec19.Height, 0)
-                Children: []
-            - PPoD_Lbl21:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Episode visual"
-                  Visible: =PPoD_Val21.Visible
-                  Width: =180
-                  X: =442
-                  Y: =PPoD_Val21.Y
-                Children: []
-            - PPoD_Val21:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsEmpty(Filter(ThisItem.Attachments, StartsWith(DisplayName, "EpisodeVisual_") And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsEmpty(Filter(ThisItem.Attachments, StartsWith(DisplayName, "EpisodeVisual_") And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")))), "Not provided", Concat(Filter(ThisItem.Attachments, StartsWith(DisplayName, "EpisodeVisual_") And (EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png"))), DisplayName, ", "))
-                  Visible: =true
-                  Width: =240
-                  X: =624
-                  Y: =PPoD_Val20.Y + If(PPoD_Val20.Visible, PPoD_Val20.Height, 0)
-                Children: []
-            - PPoD_Lbl22:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Audio files"
-                  Visible: =PPoD_Val22.Visible
-                  Width: =180
-                  X: =442
-                  Y: =PPoD_Val22.Y
-                Children: []
-            - PPoD_Val22:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =If(IsEmpty(Filter(ThisItem.Attachments, EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac"))), RGBA(150, 155, 165, 1), RGBA(30, 34, 44, 1))
-                  Font: =Font.'Open Sans'
-                  Height: =28
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsEmpty(Filter(ThisItem.Attachments, EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac"))), "Not provided", Concat(Filter(ThisItem.Attachments, EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac")), DisplayName, ", "))
-                  Visible: =true
-                  Width: =240
-                  X: =624
-                  Y: =PPoD_Val21.Y + If(PPoD_Val21.Visible, PPoD_Val21.Height, 0)
-                Children: []
-            - PPoD_Lbl23:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Attached documents"
-                  Visible: =PPoD_Val23.Visible
-                  Width: =180
-                  X: =442
-                  Y: =PPoD_Val23.Y
-                Children: []
-            - PPoD_Val23:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =28
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =Concat(Filter(ThisItem.Attachments, Not(EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")) And Not(EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac"))), DisplayName, ", ")
-                  Visible: =Not(IsEmpty(Filter(ThisItem.Attachments, Not(EndsWith(Lower(DisplayName), ".jpg") Or EndsWith(Lower(DisplayName), ".jpeg") Or EndsWith(Lower(DisplayName), ".png")) And Not(EndsWith(Lower(DisplayName), ".mp3") Or EndsWith(Lower(DisplayName), ".wav") Or EndsWith(Lower(DisplayName), ".m4a") Or EndsWith(Lower(DisplayName), ".aac")))))
-                  Width: =240
-                  X: =624
-                  Y: =PPoD_Val22.Y + If(PPoD_Val22.Visible, PPoD_Val22.Height, 0)
-                Children: []
-            - PPoD_Sec24:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(0, 18, 107, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =16
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: ="Legal & Documents"
-                  Visible: =true
-                  Width: =420
-                  X: =872
-                  Y: =PPoD_Val16.Y + If(PPoD_Val16.Visible, PPoD_Val16.Height, 0)
-                Children: []
             - PPoD_Lbl25:
                 Control: Label@2.5.1
                 Properties:
@@ -1174,23 +1158,54 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPoD_Val25.Y
-                Children: []
-            - PPoD_Val25:
+            - PPoD_Lbl17:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
+                  Color: =RGBA(150, 155, 165, 1)
                   Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
                   Height: =15
                   PaddingBottom: =0
                   PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsEmpty(ThisItem.ContractCase), "Not provided", Concat(ThisItem.ContractCase, Value, ", "))
-                  Visible: =Not(IsEmpty(ThisItem.ContractCase))
-                  Width: =240
-                  X: =1054
-                  Y: =PPoD_Sec24.Y + If(PPoD_Sec24.Visible, PPoD_Sec24.Height, 0)
-                Children: []
+                  Size: =8
+                  Text: ="Beluga reference"
+                  Visible: =PPoD_Val17.Visible
+                  Width: =180
+                  X: =12
+                  Y: =PPoD_Val17.Y
+            - PPoD_Lbl18:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="AI voice-over"
+                  Visible: =PPoD_Val18.Visible
+                  Width: =180
+                  X: =12
+                  Y: =PPoD_Val18.Y
+            - PPoD_Lbl20:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Podcast visual"
+                  Visible: =PPoD_Val20.Visible
+                  Width: =180
+                  X: =442
+                  Y: =PPoD_Val20.Y
             - PPoD_Lbl26:
                 Control: Label@2.5.1
                 Properties:
@@ -1207,23 +1222,22 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPoD_Val26.Y
-                Children: []
-            - PPoD_Val26:
+            - PPoD_Lbl21:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
+                  Color: =RGBA(150, 155, 165, 1)
                   Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
                   Height: =15
                   PaddingBottom: =0
                   PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsEmpty(ThisItem.ContractCase1Sub), "Not provided", Concat(ThisItem.ContractCase1Sub, Value, ", "))
-                  Visible: =Not(IsEmpty(ThisItem.ContractCase1Sub))
-                  Width: =240
-                  X: =1054
-                  Y: =PPoD_Val25.Y + If(PPoD_Val25.Visible, PPoD_Val25.Height, 0)
-                Children: []
+                  Size: =8
+                  Text: ="Episode visual"
+                  Visible: =PPoD_Val21.Visible
+                  Width: =180
+                  X: =442
+                  Y: =PPoD_Val21.Y
             - PPoD_Lbl27:
                 Control: Label@2.5.1
                 Properties:
@@ -1240,23 +1254,22 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPoD_Val27.Y
-                Children: []
-            - PPoD_Val27:
+            - PPoD_Lbl22:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
+                  Color: =RGBA(150, 155, 165, 1)
                   Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
                   Height: =15
                   PaddingBottom: =0
                   PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.NoThirdPartyRights, "✅  Yes", "⛔  No")
-                  Visible: =true
-                  Width: =240
-                  X: =1054
-                  Y: =PPoD_Val26.Y + If(PPoD_Val26.Visible, PPoD_Val26.Height, 0)
-                Children: []
+                  Size: =8
+                  Text: ="Audio files"
+                  Visible: =PPoD_Val22.Visible
+                  Width: =180
+                  X: =442
+                  Y: =PPoD_Val22.Y
             - PPoD_Lbl28:
                 Control: Label@2.5.1
                 Properties:
@@ -1273,23 +1286,6 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPoD_Val28.Y
-                Children: []
-            - PPoD_Val28:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.ModelReleaseProvided, "✅  Yes", "⛔  No")
-                  Visible: =true
-                  Width: =240
-                  X: =1054
-                  Y: =PPoD_Val27.Y + If(PPoD_Val27.Visible, PPoD_Val27.Height, 0)
-                Children: []
             - PPoD_Lbl29:
                 Control: Label@2.5.1
                 Properties:
@@ -1306,23 +1302,22 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPoD_Val29.Y
-                Children: []
-            - PPoD_Val29:
+            - PPoD_Lbl23:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
+                  Color: =RGBA(150, 155, 165, 1)
                   Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
                   Height: =15
                   PaddingBottom: =0
                   PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.MusicUsed, "✅  Yes", "⛔  No")
-                  Visible: =true
-                  Width: =240
-                  X: =1054
-                  Y: =PPoD_Val28.Y + If(PPoD_Val28.Visible, PPoD_Val28.Height, 0)
-                Children: []
+                  Size: =8
+                  Text: ="Attached documents"
+                  Visible: =PPoD_Val23.Visible
+                  Width: =180
+                  X: =442
+                  Y: =PPoD_Val23.Y
             - PPoD_Lbl30:
                 Control: Label@2.5.1
                 Properties:
@@ -1339,23 +1334,6 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPoD_Val30.Y
-                Children: []
-            - PPoD_Val30:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.MusicLicenseProvided, "✅  Yes", "⛔  No")
-                  Visible: =true
-                  Width: =240
-                  X: =1054
-                  Y: =PPoD_Val29.Y + If(PPoD_Val29.Visible, PPoD_Val29.Height, 0)
-                Children: []
             - PPoD_Lbl31:
                 Control: Label@2.5.1
                 Properties:
@@ -1372,23 +1350,6 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPoD_Val31.Y
-                Children: []
-            - PPoD_Val31:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.PreexistingRightsProvided, "✅  Yes", "⛔  No")
-                  Visible: =true
-                  Width: =240
-                  X: =1054
-                  Y: =PPoD_Val30.Y + If(PPoD_Val30.Visible, PPoD_Val30.Height, 0)
-                Children: []
       - PPoD_Empty:
           Control: Label@2.5.1
           Properties:

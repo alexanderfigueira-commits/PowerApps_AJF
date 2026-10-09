@@ -206,7 +206,7 @@ Screens:
                   BorderColor: =RGBA(220, 224, 230, 1)
                   BorderThickness: =1
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =588
+                  Height: =654
                   Width: =1302
                   X: =32
                   Y: =6
@@ -319,7 +319,7 @@ Screens:
                     )
                   Size: =11
                   Width: =900
-                  X: =51
+                  X: =56
                   Y: =381
             - CI_LblCaptureDate:
                 Control: Label@2.5.1
@@ -676,7 +676,7 @@ Screens:
                   Height: =22
                   Text: ="Notes"
                   Width: =400
-                  X: =51
+                  X: =56
                   Y: =356
             - CI_Language:
                 Control: Classic/DropDown@2.3.1
@@ -741,7 +741,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =56
-                  Y: =104
+                  Y: =119
             - CI_PodcastTitle:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -760,7 +760,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
                   X: =56
-                  Y: =132
+                  Y: =147
             - CI_LblPodcastDesc:
                 Control: Label@2.5.1
                 Properties:
@@ -773,7 +773,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =56
-                  Y: =188
+                  Y: =218
             - CI_PodcastDesc:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -785,7 +785,7 @@ Screens:
                   Default: =Coalesce(varRequestDescription, varRequestDescription1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
                   Font: =Font.'Open Sans'
-                  Height: =64
+                  Height: =86
                   HintText: ="General description of the podcast, applies to all episodes"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
@@ -794,7 +794,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
                   X: =56
-                  Y: =214
+                  Y: =244
             - CI_LblPodcastVisual:
                 Control: Label@2.5.1
                 Properties:
@@ -806,8 +806,8 @@ Screens:
                   Text: ="Podcast visual" & If(Coalesce(varChildSeasonNumber, 0) = 1, " *", " (optional)")
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
-                  X: =56
-                  Y: =296
+                  X: =51
+                  Y: =544
             - CI_HintPodcastVisual:
                 Control: Label@2.5.1
                 Properties:
@@ -819,8 +819,8 @@ Screens:
                   Text: ="Square format, 1400x1400 px min to 3000x3000 px max, JPEG or PNG only, RGB colour space."
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
-                  X: =56
-                  Y: =317
+                  X: =51
+                  Y: =565
             - CI_BtnOpenAttach:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -850,8 +850,8 @@ Screens:
                     =If(Coalesce(varChildSeasonNumber, 0) = 1, "Mandatory: a podcast visual is required when Season nr. is 1.", "Optional: a podcast visual is only required when Season nr. is 1.")
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
-                  X: =56
-                  Y: =339
+                  X: =51
+                  Y: =587
             - CI_BtnViewVisual:
                 Control: Classic/Button@2.2.0
                 Properties:
@@ -878,7 +878,7 @@ Screens:
                   Visible: =varChildMediaType = "Podcast"
                   Width: =300
                   X: =976
-                  Y: =339
+                  Y: =588
             - CI_BelugaRef:
                 Control: Classic/TextInput@2.3.2
                 Properties:

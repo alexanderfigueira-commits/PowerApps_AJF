@@ -398,6 +398,21 @@ Screens:
                   Width: =240
                   X: =194
                   Y: =PPD_Val3.Y + If(PPD_Val3.Visible, PPD_Val3.Height, 0)
+            - PPD_Val14:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.BelugaReference), "Not provided", ThisItem.BelugaReference)
+                  Visible: =Not(IsBlank(ThisItem.BelugaReference))
+                  Width: =240
+                  X: =194
+                  Y: =PPD_Val4.Y + If(PPD_Val4.Visible, PPD_Val4.Height, 0)
             - PPD_Val10:
                 Control: Label@2.5.1
                 Properties:
@@ -523,6 +538,79 @@ Screens:
                   Width: =240
                   X: =624
                   Y: =PPD_Val8.Y + If(PPD_Val8.Visible, PPD_Val8.Height, 0)
+            - PPD_Val16:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(ThisItem.ContractCase), "Not provided", Concat(ThisItem.ContractCase, Value, ", "))
+                  Visible: =Not(IsEmpty(ThisItem.ContractCase))
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Sec15.Y + If(PPD_Sec15.Visible, PPD_Sec15.Height, 0)
+            - PPD_Val17:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(IsEmpty(ThisItem.ContractCase1Sub), "Not provided", Concat(ThisItem.ContractCase1Sub, Value, ", "))
+                  Visible: =Not(IsEmpty(ThisItem.ContractCase1Sub))
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val16.Y + If(PPD_Val16.Visible, PPD_Val16.Height, 0)
+            - PPD_Val18:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.NoThirdPartyRights, "✅  Yes", "⛔  No")
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val17.Y + If(PPD_Val17.Visible, PPD_Val17.Height, 0)
+            - PPD_Val19:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =If(ThisItem.ModelReleaseProvided, "✅  Yes", "⛔  No")
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val18.Y + If(PPD_Val18.Visible, PPD_Val18.Height, 0)
+            - PPD_Val20:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(30, 34, 44, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =28
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: =Concat(ThisItem.Attachments, DisplayName, ", ")
+                  Visible: =Not(IsEmpty(ThisItem.Attachments))
+                  Width: =240
+                  X: =1054
+                  Y: =PPD_Val19.Y + If(PPD_Val19.Visible, PPD_Val19.Height, 0)
             - PPD_RowCaption:
                 Control: Label@2.5.1
                 Properties:
@@ -617,6 +705,22 @@ Screens:
                   Width: =180
                   X: =12
                   Y: =PPD_Val4.Y
+            - PPD_Lbl14:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(150, 155, 165, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =15
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =8
+                  Text: ="Beluga reference"
+                  Visible: =PPD_Val14.Visible
+                  Width: =180
+                  X: =12
+                  Y: =PPD_Val14.Y
             - PPD_Sec5:
                 Control: Label@2.5.1
                 Properties:
@@ -681,6 +785,21 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPD_Val12.Y
+            - PPD_Sec15:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =16
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Size: =9
+                  Text: ="Legal & Documents"
+                  Width: =420
+                  X: =872
+                  Y: =PPD_Val12.Y + If(PPD_Val12.Visible, PPD_Val12.Height, 0)
             - PPD_Lbl13:
                 Control: Label@2.5.1
                 Properties:
@@ -761,56 +880,6 @@ Screens:
                   Width: =180
                   X: =442
                   Y: =PPD_Val9.Y
-            - PPD_Lbl14:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(150, 155, 165, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =8
-                  Text: ="Beluga reference"
-                  Visible: =PPD_Val14.Visible
-                  Width: =180
-                  X: =12
-                  Y: =PPD_Val14.Y
-                Children: []
-            - PPD_Val14:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsBlank(ThisItem.BelugaReference), "Not provided", ThisItem.BelugaReference)
-                  Visible: =Not(IsBlank(ThisItem.BelugaReference))
-                  Width: =240
-                  X: =194
-                  Y: =PPD_Val4.Y + If(PPD_Val4.Visible, PPD_Val4.Height, 0)
-                Children: []
-            - PPD_Sec15:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(0, 18, 107, 1)
-                  Font: =Font.'Open Sans'
-                  FontWeight: =FontWeight.Semibold
-                  Height: =16
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: ="Legal & Documents"
-                  Visible: =true
-                  Width: =420
-                  X: =872
-                  Y: =PPD_Val12.Y + If(PPD_Val12.Visible, PPD_Val12.Height, 0)
-                Children: []
             - PPD_Lbl16:
                 Control: Label@2.5.1
                 Properties:
@@ -827,23 +896,6 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPD_Val16.Y
-                Children: []
-            - PPD_Val16:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsEmpty(ThisItem.ContractCase), "Not provided", Concat(ThisItem.ContractCase, Value, ", "))
-                  Visible: =Not(IsEmpty(ThisItem.ContractCase))
-                  Width: =240
-                  X: =1054
-                  Y: =PPD_Sec15.Y + If(PPD_Sec15.Visible, PPD_Sec15.Height, 0)
-                Children: []
             - PPD_Lbl17:
                 Control: Label@2.5.1
                 Properties:
@@ -860,23 +912,6 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPD_Val17.Y
-                Children: []
-            - PPD_Val17:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(IsEmpty(ThisItem.ContractCase1Sub), "Not provided", Concat(ThisItem.ContractCase1Sub, Value, ", "))
-                  Visible: =Not(IsEmpty(ThisItem.ContractCase1Sub))
-                  Width: =240
-                  X: =1054
-                  Y: =PPD_Val16.Y + If(PPD_Val16.Visible, PPD_Val16.Height, 0)
-                Children: []
             - PPD_Lbl18:
                 Control: Label@2.5.1
                 Properties:
@@ -893,23 +928,6 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPD_Val18.Y
-                Children: []
-            - PPD_Val18:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.NoThirdPartyRights, "✅  Yes", "⛔  No")
-                  Visible: =true
-                  Width: =240
-                  X: =1054
-                  Y: =PPD_Val17.Y + If(PPD_Val17.Visible, PPD_Val17.Height, 0)
-                Children: []
             - PPD_Lbl19:
                 Control: Label@2.5.1
                 Properties:
@@ -926,23 +944,6 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPD_Val19.Y
-                Children: []
-            - PPD_Val19:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =15
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =If(ThisItem.ModelReleaseProvided, "✅  Yes", "⛔  No")
-                  Visible: =true
-                  Width: =240
-                  X: =1054
-                  Y: =PPD_Val18.Y + If(PPD_Val18.Visible, PPD_Val18.Height, 0)
-                Children: []
             - PPD_Lbl20:
                 Control: Label@2.5.1
                 Properties:
@@ -959,23 +960,6 @@ Screens:
                   Width: =180
                   X: =872
                   Y: =PPD_Val20.Y
-                Children: []
-            - PPD_Val20:
-                Control: Label@2.5.1
-                Properties:
-                  BorderColor: =RGBA(0, 18, 107, 1)
-                  Color: =RGBA(30, 34, 44, 1)
-                  Font: =Font.'Open Sans'
-                  Height: =28
-                  PaddingBottom: =0
-                  PaddingTop: =0
-                  Size: =9
-                  Text: =Concat(ThisItem.Attachments, DisplayName, ", ")
-                  Visible: =Not(IsEmpty(ThisItem.Attachments))
-                  Width: =240
-                  X: =1054
-                  Y: =PPD_Val19.Y + If(PPD_Val19.Visible, PPD_Val19.Height, 0)
-                Children: []
       - PPD_Empty:
           Control: Label@2.5.1
           Properties:
