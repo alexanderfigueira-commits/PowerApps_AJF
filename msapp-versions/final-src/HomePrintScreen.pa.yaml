@@ -606,7 +606,7 @@ Screens:
             Color: =RGBA(140, 148, 160, 1)
             Font: =Font.'Open Sans'
             Height: =28
-            Size: =10
+            Size: =11
             Text: ="AV Central Deposit Ticket System  ·  Audiovisual Service, DG COMM  ·  " & Text(Today(), "dd-mm-yyyy")
             Width: =1302
             X: =32
@@ -870,7 +870,7 @@ Screens:
             Color: =RGBA(186, 202, 226, 1)
             Font: =Font.'Open Sans'
             Height: =22
-            Size: =10
+            Size: =11
             Text: ="Ticket System"
             VerticalAlign: =VerticalAlign.Top
             X: =266
@@ -950,7 +950,7 @@ Screens:
             RadiusBottomRight: =24
             RadiusTopLeft: =24
             RadiusTopRight: =24
-            Size: =10
+            Size: =11
             TabIndex: =-1
             Text: =""
             Width: =If(varUserRole = "ADMINISTRATOR", 489, 397)
@@ -977,7 +977,7 @@ Screens:
             RadiusBottomRight: =20
             RadiusTopLeft: =20
             RadiusTopRight: =20
-            Size: =10
+            Size: =11
             Text: |-
               ="📋 Requests"
             Tooltip: ="Requests"
@@ -1012,7 +1012,7 @@ Screens:
             RadiusBottomRight: =20
             RadiusTopLeft: =20
             RadiusTopRight: =20
-            Size: =10
+            Size: =11
             Text: |-
               ="📊" & Char(10) & "Dashboard"
             Tooltip: ="Dashboard"
@@ -1040,7 +1040,7 @@ Screens:
             RadiusBottomRight: =20
             RadiusTopLeft: =20
             RadiusTopRight: =20
-            Size: =10
+            Size: =11
             Text: |-
               ="🔎" & Char(10) & "Help"
             Tooltip: ="Help"
@@ -1068,7 +1068,7 @@ Screens:
             RadiusBottomRight: =20
             RadiusTopLeft: =20
             RadiusTopRight: =20
-            Size: =10
+            Size: =11
             Text: |-
               ="👁" & Char(10) & "Review"
             Tooltip: ="Review"
@@ -1099,7 +1099,7 @@ Screens:
             RadiusBottomRight: =20
             RadiusTopLeft: =20
             RadiusTopRight: =20
-            Size: =10
+            Size: =11
             Text: |-
               ="📂
               Export"
