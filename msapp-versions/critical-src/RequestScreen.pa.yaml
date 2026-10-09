@@ -1,0 +1,2028 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  RequestScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
+      OnVisible: |-
+        =Set(
+            varUserDept,
+            Office365Users.MyProfile().Department
+        );
+        Set(
+            varShowTypeConfirm,
+            false
+        );
+        UpdateContext(
+            {
+                locShowDetails: true,
+                locShowMedia: true
+            }
+        );
+        If(
+            (IsBlank(varRequestMediaType) Or varRequestMediaType = "") And (IsBlank(varCurrentRequest) Or Coalesce(
+                varCurrentRequest.ID,
+                0
+            ) <= 0),
+            Set(
+                varShowTypeConfirm,
+                true
+            )
+        );
+        Set(
+            varConfirmed,
+            false
+        );
+        Set(
+            varCurrentChildId,
+            ""
+        );
+        Clear(colArchives);
+        If(
+            Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0,
+            Refresh(AVCentralDepositMediaItems);
+            ForAll(
+                Sort(
+                    Filter(
+                        AVCentralDepositMediaItems,
+                        ParentRequest = varCurrentRequest.RequestNumber
+                    ),
+                    Modified,
+                    SortOrder.Descending
+                ),
+                Collect(
+                    colArchives,
+                    {
+                        ArchiveId: Text(ID),
+                        SPId: ID,
+                        Title: CD_MediaNumber,
+                        ProductionTitle: Coalesce(
+                            ProductionTitle,
+                            ""
+                        ),
+                        MediaType: Coalesce(
+                            First(MediaType).Value,
+                            ""
+                        ),
+                        Description: Coalesce(
+                            Description,
+                            ""
+                        ),
+                        CaptureDate: CaptureDate,
+                        ProductionPlace: Coalesce(
+                            ProductionPlace,
+                            ""
+                        ),
+                        ProductType: Coalesce(
+                            First(ProductType).Value,
+                            ""
+                        ),
+                        SeriesTitle: Coalesce(
+                            SeriesTitle,
+                            ""
+                        ),
+                        EpisodeTitle: Coalesce(
+                            EpisodeTitle,
+                            ""
+                        ),
+                        EpisodeSummary: Coalesce(
+                            EpisodeSummary,
+                            ""
+                        ),
+                        SeasonNumber: Coalesce(
+                            SeasonNumber,
+                            0
+                        ),
+                        EpisodeNumber: Coalesce(
+                            EpisodeNumber,
+                            0
+                        ),
+                        ProductionEndDate: ProductionEndDate,
+                        PublicationStartDate: PublicationStartDate,
+                        PublicationEndDate: PublicationEndDate,
+                        ReferenceLinks: Coalesce(
+                            ReferenceLinks,
+                            ""
+                        ),
+                        Tags: Coalesce(
+                            Tags,
+                            ""
+                        ),
+                        FTPPath: Coalesce(
+                            FTPPath,
+                            ""
+                        ),
+                        LanguageVersions: Coalesce(
+                            First(LanguageVersions).Value,
+                            ""
+                        ),
+                        PhotoCaption: Coalesce(
+                            PhotoCaption,
+                            ""
+                        ),
+                        Credits: Coalesce(
+                            CreditContact,
+                            ""
+                        ),
+                        ContractingAuthority: Coalesce(
+                            ContractingAuthority,
+                            ""
+                        ),
+                        ExecProducer: Coalesce(
+                            ExecProducerName,
+                            ""
+                        ),
+                        Producer: ForAll(
+                            Producer As p,
+                            {
+                                DisplayName: p.DisplayName,
+                                Mail: p.Email
+                            }
+                        ),
+                        AIVoiceover: AIVoiceover = "Yes",
+                        ContractCase: Coalesce(
+                            First(ContractCase).Value,
+                            ""
+                        ),
+                        ContractCase1Sub: Coalesce(
+                            First(ContractCase1Sub).Value,
+                            ""
+                        ),
+                        ModelRelease: false,
+                        ModelReleaseProvided: Coalesce(
+                            ModelReleaseProvided,
+                            false
+                        ),
+                        MusicUsed: Coalesce(
+                            MusicUsed,
+                            false
+                        ),
+                        MusicLicenceProvided: Coalesce(
+                            MusicLicenseProvided,
+                            false
+                        ),
+                        Preexisting: false,
+                        PreexistingProvided: Coalesce(
+                            PreexistingRightsProvided,
+                            false
+                        )
+                    }
+                )
+            )
+        );
+        If(
+            CountRows(colArchives) > 0,
+            Set(
+                varRequestMediaType,
+                First(colArchives).MediaType
+            )
+        );
+        Set(varRequestDG, HomeFilterDG.Selected.Value);
+    Children:
+      - RS_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+      - RS_StatusBadge:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: |-
+              =Switch(varCurrentRequest.Status.Value,
+                  "Approved", RGBA(22, 128, 80, 1),
+                  "Published", RGBA(255, 255, 255, 1),
+                  "Pending", RGBA(180, 95, 6, 1),
+                  "Submitted", RGBA(56, 96, 178, 1),
+                  "Rejected", RGBA(193, 40, 40, 1),
+                  "Draft", RGBA(96, 104, 120, 1),
+                  RGBA(96, 104, 120, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: =DisplayMode.View
+            Fill: |-
+              =Switch(varCurrentRequest.Status.Value,
+                  "Approved", RGBA(223, 245, 233, 1),
+                  "Published", RGBA(122, 48, 160, 1),
+                  "Pending", RGBA(255, 243, 224, 1),
+                  "Submitted", RGBA(230, 236, 245, 1),
+                  "Rejected", RGBA(253, 235, 235, 1),
+                  "Draft", RGBA(240, 242, 246, 1),
+                  RGBA(240, 242, 246, 1))
+            Font: =Font.'Open Sans'
+            Height: =68
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: |-
+              =If(IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0, "New",
+                 If(IsBlank(varCurrentRequest.Status.Value), "Draft", varCurrentRequest.Status.Value))
+              & If(Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0 And Not(IsBlank(varCurrentRequest.Modified)),
+                   Char(10) & Text(varCurrentRequest.Modified, "dd-mm-yyyy"), "")
+            Visible: =locShowDetails
+            Width: =250
+            X: =940
+            Y: =96
+      - RS_RequestCard:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =295
+            Visible: =locShowDetails
+            Width: =1296
+            X: =38
+            Y: =100
+      - RS_DetailsToggle_contrator_1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =1
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =32
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: =
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Text: ="+"
+            Tooltip: ="Add Official Contact"
+            Visible: =locShowDetails
+            Width: =25
+            X: =349
+            Y: =189
+      - RS_CardTitle:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =16
+            Text: =If(Coalesce(varCurrentRequest.Status.Value, "Draft") exactin "Draft", "New request", "Request details")
+            Width: =300
+            X: =562
+            Y: =61
+      - RS_DetailsToggle_contrator:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =1
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =32
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: =
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Text: ="+"
+            Tooltip: ="Add Contrator Contact"
+            Visible: =locShowDetails
+            Width: =25
+            X: =714
+            Y: =189
+      - RS_LblTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Request title *"
+            Visible: =locShowDetails
+            Width: =173
+            X: =112
+            Y: =112
+      - RS_Title:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =varRequestTitle
+            Font: =Font.'Open Sans'
+            Height: =44
+            HintText: ="e.g. EU Climate Action Week 2026 - opening session"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            OnChange: =Set(varRequestTitle, Self.Text)
+            Visible: =locShowDetails
+            Width: =627
+            X: =112
+            Y: =143
+      - RS_LblDG:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="DG / Agency *"
+            Visible: =locShowDetails
+            Width: =300
+            X: =828
+            Y: =113
+      - RS_LblOwner:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: ="Contact (Official DG/Agency) *"
+            Visible: =locShowDetails
+            Width: =279
+            X: =57
+            Y: =193
+      - RS_Owner:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(35, 31, 32, 1)
+            ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
+            ChevronDisabledFill: =RGBA(235, 233, 229, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
+            ChevronHoverFill: =Self.ChevronFill
+            DefaultSelectedItems: |-
+              =ForAll(varCurrentRequest.DG_Agency_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
+            DisplayFields: =["DisplayName"]
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            InputTextPlaceholder: ="Search the DG official responsible"
+            Items: |-
+              =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
+            OnChange: =Set(varRequestOwnerContact, Concat(Self.SelectedItems, DisplayName, ", "))
+            PressedColor: =Self.Color
+            PressedFill: =Self.Fill
+            SearchFields: =["DisplayName"]
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(0, 176, 240, 1)
+            Visible: =locShowDetails
+            Width: =310
+            X: =64
+            Y: =226
+      - RS_LblContractor:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =19
+            Text: ="Contact (Contractor)*"
+            Visible: =locShowDetails
+            Width: =300
+            X: =422
+            Y: =196
+      - RS_Contractor:
+          Control: Classic/ComboBox@2.4.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(35, 31, 32, 1)
+            ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
+            ChevronDisabledFill: =RGBA(235, 233, 229, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
+            ChevronHoverFill: =Self.ChevronFill
+            DefaultSelectedItems: |-
+              =ForAll(varCurrentRequest.Contractor_Contact As p, {DisplayName: p.DisplayName, Mail: p.Email})
+            DisplayFields: =["DisplayName"]
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            InputTextPlaceholder: ="Search the contractor / production company"
+            Items: |-
+              =Office365Users.SearchUserV2({searchTerm: Self.SearchText, top: 20}).value
+            OnChange: =Set(varRequestContractor, Concat(Self.SelectedItems, DisplayName, ", "))
+            PressedColor: =Self.Color
+            PressedFill: =Self.Fill
+            SearchFields: =["DisplayName"]
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(0, 176, 240, 1)
+            Visible: =locShowDetails
+            Width: =310
+            X: =429
+            Y: =226
+      - RS_DetailsDivider:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Fill: =RGBA(241, 244, 249, 1)
+            Height: =220
+            Visible: =locShowDetails
+            Width: =2
+            X: =779
+            Y: =132
+      - RS_LblDescription:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =26
+            Text: ="Request description"
+            Visible: =locShowDetails
+            Width: =634
+            X: =64
+            Y: =276
+      - RS_Description:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =varRequestDescription1
+            Font: =Font.'Open Sans'
+            Height: =75
+            HintText: ="Describe the purpose, context and scope of this request"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varRequestDescription, Self.Text)
+            Visible: =locShowDetails
+            Width: =675
+            X: =64
+            Y: =302
+      - RS_RejectionBanner:
+          Control: Rectangle@2.3.0
+          Group: Group1
+          Properties:
+            BorderColor: =RGBA(254, 202, 202, 1)
+            BorderThickness: =1
+            Fill: =RGBA(254, 242, 242, 1)
+            Height: =248
+            Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
+            Width: =1302
+            X: =24
+            Y: =511
+      - RS_RejectionTitle:
+          Control: Label@2.5.1
+          Group: Group1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(153, 27, 27, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =77
+            Text: ="⛔  Request rejected - please review the comment, fix any issues, and resubmit."
+            Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
+            Width: =250
+            X: =1038
+            Y: =380
+      - RS_RejectionComment:
+          Control: Label@2.5.1
+          Group: Group1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(153, 27, 27, 1)
+            Font: =Font.'Open Sans'
+            Height: =33
+            Size: =12
+            Text: |-
+              ="Reviewer comment: -"
+            Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.Status.Value = "Rejected"
+            Width: =586
+            X: =193
+            Y: =517
+      - RS_ArchivesSection:
+          Control: Label@2.5.1
+          Group: Group1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =22
+            Size: =16
+            Text: ="Media files* (0)"
+            Width: =188
+            X: =637
+            Y: =If(locShowDetails,413,110)
+      - RS_ChildrenCard:
+          Control: Rectangle@2.3.0
+          Group: Group1
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =If(locShowDetails,266,550)
+            Width: =1293
+            X: =38
+            Y: =If(locShowDetails,448,150)
+      - RS_ChildrenHeader:
+          Control: Rectangle@2.3.0
+          Group: Group1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(240, 242, 246, 1)
+            Height: =46
+            Width: =1293
+            X: =38
+            Y: =If(locShowDetails,448,150)
+      - RS_ThTitle:
+          Control: Label@2.5.1
+          Group: Group1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =46
+            Size: =11
+            Text: ="TITLE"
+            Width: =351
+            X: =48
+            Y: =If(locShowDetails,447,150)
+      - RS_ThType:
+          Control: Label@2.5.1
+          Group: Group1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =46
+            Size: =11
+            Text: ="TYPE"
+            Width: =160
+            X: =449
+            Y: =If(locShowDetails,445,150)
+      - RS_ThValidation:
+          Control: Label@2.5.1
+          Group: Group1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =46
+            Size: =11
+            Text: ="VALIDATION"
+            Width: =200
+            X: =677
+            Y: =If(locShowDetails,445,150)
+      - RS_ThStatus:
+          Control: Label@2.5.1
+          Group: Group1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =46
+            Size: =11
+            Text: ="STATUS"
+            Width: =180
+            X: =921
+            Y: =If(locShowDetails,445,150)
+      - RS_ChildrenGallery:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Group: Group1
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =218
+            Items: =colArchives
+            TemplateSize: =56
+            Visible: =locShowMedia
+            Width: =1293
+            X: =38
+            Y: =If(locShowDetails,496,190)
+          Children:
+            - RS_CRowSelect:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =If(ThisItem.IsSelected, RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+                  Height: =55
+                  HoverFill: =RGBA(240, 242, 246, 1)
+                  OnSelect: |-
+                    =Set(varCurrentChildId, ThisItem.ArchiveId);
+                    Set(varCurrentChildSPId, Coalesce(ThisItem.SPId, 0));
+                    Set(varChildTitle1, Coalesce(ThisItem.ProductionTitle, ""));
+                    Set(varChildMediaType, If(IsBlank(ThisItem.MediaType), "Photo", ThisItem.MediaType));
+                    Set(varChildDescription1, If(StartsWith(Trim(Coalesce(ThisItem.Description, "")),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(Coalesce(ThisItem.Description, ""),">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),Coalesce(ThisItem.Description, "")));
+                    Set(varChildCaptureDate, ThisItem.CaptureDate);
+                    Set(varChildProductionPlace1, Coalesce(ThisItem.ProductionPlace, ""));
+                    Set(varChildCredits1, Coalesce(ThisItem.Credits, ""));
+                    Set(varChildLanguageVersions, Coalesce(ThisItem.LanguageVersions, ""));
+                    Set(varChildAIVoiceover, Coalesce(ThisItem.AIVoiceover, false));
+                    Set(varChildContractCase, Coalesce(ThisItem.ContractCase, ""));
+                    Set(varChildContractCase1Sub, Coalesce(ThisItem.ContractCase1Sub, ""));
+                    Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false);
+                    Set(varChildContractingAuthority, Coalesce(ThisItem.ContractingAuthority, ""));
+                    Set(varChildExecProducer, Coalesce(ThisItem.ExecProducer, ""));
+                    Set(varChildProducerSel, ThisItem.Producer);
+                    Set(varChildProducer, Concat(ThisItem.Producer, DisplayName, ", "));
+                    Set(varChildPhotoCaption, Coalesce(ThisItem.PhotoCaption, ""));
+                    Set(varChildModelRelease, Coalesce(ThisItem.ModelRelease, false));
+                    Set(varChildModelReleaseProvided, Coalesce(ThisItem.ModelReleaseProvided, false));
+                    Set(varChildMusicUsed, Coalesce(ThisItem.MusicUsed, false));
+                    Set(varChildMusicLicenceProvided, Coalesce(ThisItem.MusicLicenceProvided, false));
+                    Set(varChildPreexisting, Coalesce(ThisItem.Preexisting, false));
+                    Set(varChildPreexistingProvided, Coalesce(ThisItem.PreexistingProvided, false));
+                    Set(varChildEpisodeTitle1, Coalesce(ThisItem.EpisodeTitle, ""));
+                    Set(varChildEpisodeSummary1, Coalesce(ThisItem.EpisodeSummary, ""));
+                    Set(varChildSeasonNumber, Coalesce(ThisItem.SeasonNumber, 0));
+                    Set(varChildEpisodeNumber, Coalesce(ThisItem.EpisodeNumber, 0));
+                    Set(varChildSeriesTitle1, Coalesce(ThisItem.SeriesTitle, ""));
+                    Set(varChildProductType1, Coalesce(ThisItem.ProductType, ""));
+                    Set(varChildProductType, Coalesce(ThisItem.ProductType, ""));
+                    Set(varChildTags, Coalesce(ThisItem.Tags, ""));
+                    Set(varChildProductionEndDate, ThisItem.ProductionEndDate);
+                    Set(varChildPublicationStartDate, ThisItem.PublicationStartDate);
+                    Set(varChildPublicationEndDate, ThisItem.PublicationEndDate);
+                    Set(varChildLinks1, Coalesce(ThisItem.ReferenceLinks, ""));
+                    Set(varChildTags1, Coalesce(ThisItem.Tags, ""));
+                    Set(varChildFTPPath1, Coalesce(ThisItem.FTPPath, ""));
+                    Navigate(ChildInfoScreen)
+                  Width: =1300
+            - RS_CRowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =1302
+                  Y: =55
+            - RS_CRowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =42
+                  OnSelect: =Select(Parent)
+                  Text: =If(IsBlank(ThisItem.ProductionTitle) Or ThisItem.ProductionTitle = "", "— untitled archive —", ThisItem.ProductionTitle) & If(Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "", "   ·   " & ThisItem.Title, "")
+                  Width: =403
+                  Y: =1
+            - RS_CRowType:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(96, 104, 120, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =55
+                  OnSelect: =Select(Parent)
+                  Text: =If(IsBlank(ThisItem.MediaType), "—", If(ThisItem.MediaType = "Photo", "Photo/Reportage", ThisItem.MediaType))
+                  Width: =126
+                  X: =414
+                  Y: =1
+            - RS_CRowValid:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =If(
+                        Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
+                        And Not(IsBlank(ThisItem.MediaType)) And ThisItem.MediaType <> ""
+                        And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
+                        And Not(Coalesce(ThisItem.AIVoiceover, false)),
+                        RGBA(22, 128, 80, 1),
+                        RGBA(193, 40, 40, 1)
+                    )
+                  Font: =Font.'Open Sans'
+                  Height: =55
+                  OnSelect: =Select(Parent)
+                  Text: |-
+                    =If(
+                        Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
+                        And Not(IsBlank(ThisItem.MediaType)) And ThisItem.MediaType <> ""
+                        And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
+                        And Not(Coalesce(ThisItem.AIVoiceover, false)),
+                        "✓  Ready",
+                        "⚠  Incomplete"
+                    )
+                  Width: =200
+                  X: =634
+                  Y: =1
+            - RS_CRowBadge:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: |-
+                    =If(
+                        Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
+                        And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
+                        And Not(Coalesce(ThisItem.AIVoiceover, false)),
+                        RGBA(22, 128, 80, 1),
+                        RGBA(193, 40, 40, 1)
+                    )
+                  DisabledBorderColor: =Self.BorderColor
+                  DisplayMode: =DisplayMode.View
+                  Fill: |-
+                    =If(
+                        Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
+                        And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
+                        And Not(Coalesce(ThisItem.AIVoiceover, false)),
+                        RGBA(240, 253, 244, 1),
+                        RGBA(254, 242, 242, 1)
+                    )
+                  Font: =Font.'Open Sans'
+                  Height: =34
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =11
+                  Text: |-
+                    =If(
+                        Not(IsBlank(ThisItem.Title)) And ThisItem.Title <> "" And ThisItem.Title <> "New archive"
+                        And Not(IsBlank(ThisItem.ContractCase)) And ThisItem.ContractCase <> ""
+                        And Not(Coalesce(ThisItem.AIVoiceover, false)),
+                        "Ready",
+                        "Incomplete"
+                    )
+                  Width: =140
+                  X: =887
+                  Y: =9
+            - RS_CRowDelete:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =RGBA(220, 224, 230, 1)
+                  BorderThickness: =1
+                  Color: =RGBA(193, 40, 40, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: =If(IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft", DisplayMode.Edit, DisplayMode.Disabled)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =32
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =RGBA(253, 235, 235, 1)
+                  OnSelect: |-
+                    =If(
+                        Coalesce(ThisItem.SPId, 0) > 0,
+                        Remove(AVCentralDepositMediaItems, LookUp(AVCentralDepositMediaItems, CD_MediaNumber = ThisItem.Title))
+                    );
+                    RemoveIf(colArchives, ArchiveId = ThisItem.ArchiveId)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =11
+                  Text: ="Remove"
+                  Width: =90
+                  X: =1127
+                  Y: =11
+      - RS_ChildrenEmpty:
+          Control: Label@2.5.1
+          Group: Group1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Text: ="No media yet. Press + Add new media to add the first one."
+            Visible: =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0 And CountRows(colArchives) = 0
+            Width: =1302
+            X: =24
+            Y: =637
+      - RS_NewRequestHint:
+          Control: Label@2.5.1
+          Group: Group1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(140, 148, 160, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Text: ="Save the request first to start adding archives."
+            Visible: =IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0
+            Width: =1302
+            X: =24
+            Y: =637
+      - RS_BtnSubmitRequest:
+          Control: Classic/Button@2.2.0
+          Group: Group1
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(255, 255, 255, 1)
+            DisabledFill: =RGBA(186, 196, 214, 1)
+            DisplayMode: |-
+              =If(
+                  Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+                  And CountRows(colArchives) > 0
+                  And CountIf(colArchives,
+                      IsBlank(Title) Or Title = "" Or Title = "New archive"
+                      Or IsBlank(MediaType) Or MediaType = ""
+                      Or IsBlank(ContractCase) Or ContractCase = ""
+                      Or Coalesce(AIVoiceover, false)
+                  ) = 0,
+                  DisplayMode.Edit,
+                  DisplayMode.Disabled
+              )
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |-
+              =IfError(
+                  With(
+                      {
+                          savedReq: Patch(
+                              AVCentralDepositRequests,
+                              LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
+                              {
+                                  RequestNumber: varCurrentRequest.RequestNumber,
+                                  RequestTitle: varRequestTitle,
+                                  DG: {Value: varRequestDG},
+                                  Description: varRequestDescription,
+                                  DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  Status: {Value: "Pending"}
+                              }
+                          )
+                      },
+                      Set(varCurrentRequest, savedReq);
+                      ForAll(
+                          Filter(colArchives, SPId > 0),
+                          Patch(
+                              AVCentralDepositMediaItems,
+                              LookUp(AVCentralDepositMediaItems, ID = SPId),
+                              {DepositStatus: Table({Value: "Pending Approval"})}
+                          )
+                      );
+                      Clear(colArchives);
+                      Notify("Request submitted successfully.", NotificationType.Success);
+                      Navigate(MyRequestScreen)
+                  ),
+                  Notify("Error submitting request: " & FirstError.Message, NotificationType.Error)
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="Submit request  ➤"
+            Visible: |-
+              =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+              And (IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft")
+            Width: =200
+            X: =1134
+            Y: =730
+      - RS_BtnPublish:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(255, 255, 255, 1)
+            DisabledFill: =RGBA(186, 196, 214, 1)
+            Fill: =RGBA(122, 48, 160, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(80, 30, 110, 1)
+            OnSelect: |-
+              =IfError(
+                  With(
+                      { savedReq: Patch(AVCentralDepositRequests,
+                          LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
+                          { Status: {Value: "Published"}, PublishedDate: Now() }) },
+                      Set(varCurrentRequest, savedReq);
+                      Notify("Request published on " & Text(Now(), "dd-mm-yyyy") & ".", NotificationType.Success);
+                      Navigate(MyRequestScreen)
+                  ),
+                  Notify("Error publishing: " & FirstError.Message, NotificationType.Error)
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="Publish  ✓"
+            Visible: |-
+              =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0 And varCurrentRequest.Status.Value = "Approved"
+              And varUserRole = "ADMINISTRATOR"
+            Width: =200
+            X: =1134
+            Y: =720
+      - RS_BtnSaveRequest:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: |-
+              =If(
+                  IsBlank(varCurrentRequest) Or IsBlank(varCurrentRequest.Status.Value) Or varCurrentRequest.Status.Value = "Draft",
+                  DisplayMode.Edit,
+                  DisplayMode.Disabled
+              )
+            Fill: =RGBA(0, 0, 0, 0)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =If(
+                  IsBlank(Coalesce(varRequestTitle)) 
+                  Or IsBlank(varCurrentRequest.DG),
+                  Notify("Enter the request title and select a DG/Agency before saving.", NotificationType.Warning),
+              IfError(
+                  Set(varCurrentRequest,
+                      Patch(AVCentralDepositRequests,
+                          If(
+                              IsBlank(varCurrentRequest) Or varCurrentRequest.ID = 0,
+                              Defaults(AVCentralDepositRequests),
+                              LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID)
+                          ),
+                          {
+                              RequestNumber: If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0, With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter(AVCentralDepositRequests, StartsWith(RequestNumber, yr & "-")), RequestNumber, SortOrder.Descending)).RequestNumber, yr & "-0000"), 4)) + 1), 4)), varCurrentRequest.RequestNumber),
+                              RequestTitle: varRequestTitle,
+                              DG: {Value: varRequestDG},
+                              Description: varRequestDescription,
+                              DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                              Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                              Status: {Value: "Draft"}
+                          }
+                      )
+                  );
+                  Notify("Draft saved as Incomplete.", NotificationType.Success),
+                  Notify("Error saving draft: " & FirstError.Message, NotificationType.Error)
+              )
+              )
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: |-
+              ="💾"
+            Tooltip: ="Save draft"
+            Width: =44
+            X: =608
+            Y: =8
+      - RS_BtnResubmitRequest:
+          Control: Classic/Button@2.2.0
+          Group: Group1
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(255, 255, 255, 1)
+            DisabledFill: =RGBA(186, 196, 214, 1)
+            DisplayMode: |-
+              =If(
+                  CountRows(colArchives) > 0
+                  And CountIf(colArchives,
+                      IsBlank(Title) Or Title = "" Or Title = "New archive"
+                      Or IsBlank(MediaType) Or MediaType = ""
+                      Or IsBlank(ContractCase) Or ContractCase = ""
+                      Or Coalesce(AIVoiceover, false)
+                  ) = 0,
+                  DisplayMode.Edit,
+                  DisplayMode.Disabled
+              )
+            Fill: =RGBA(180, 95, 6, 1)
+            Font: =Font.'Open Sans'
+            Height: =27
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(120, 60, 0, 1)
+            OnSelect: |-
+              =IfError(
+                  With(
+                      {
+                          savedReq: Patch(
+                              AVCentralDepositRequests,
+                              LookUp(AVCentralDepositRequests, ID = varCurrentRequest.ID),
+                              {
+                                  RequestNumber: varCurrentRequest.RequestNumber,
+                                  RequestTitle: varRequestTitle,
+                                  DG: {Value: varRequestDG},
+                                  Description: varRequestDescription,
+                                  DG_Agency_Contact: ForAll(RS_Owner.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  Contractor_Contact: ForAll(RS_Contractor.SelectedItems As u, {'@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser", Claims: "i:0#.f|membership|" & Lower(u.Mail), DisplayName: u.DisplayName, Email: u.Mail, Department: "", JobTitle: "", Picture: ""}),
+                                  Status: {Value: "Pending"}
+                              }
+                          )
+                      },
+                      Set(varCurrentRequest, savedReq);
+                      ForAll(
+                          Filter(colArchives, SPId > 0),
+                          Patch(
+                              AVCentralDepositMediaItems,
+                              LookUp(AVCentralDepositMediaItems, ID = SPId),
+                              {DepositStatus: Table({Value: "Pending Approval"})}
+                          )
+                      );
+                      Clear(colArchives);
+                      Notify("Request resubmitted for review.", NotificationType.Success);
+                      Navigate(MyRequestScreen)
+                  ),
+                  Notify("Error resubmitting: " & FirstError.Message, NotificationType.Error)
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =14
+            Text: ="Resubmit for review  →"
+            Visible: |-
+              =Not(IsBlank(varCurrentRequest)) And varCurrentRequest.ID > 0
+              And varCurrentRequest.Status.Value = "Rejected"
+            Width: =220
+            X: =1094
+            Y: =731
+      - HomeFilterDG:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            ChevronBackground: =RGBA(35, 31, 32, 1)
+            ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
+            ChevronDisabledFill: =RGBA(235, 233, 229, 1)
+            ChevronFill: =RGBA(255, 255, 255, 1)
+            ChevronHoverBackground: =ColorFade(Self.ChevronBackground, 20%)
+            ChevronHoverFill: =Self.ChevronFill
+            Default: =
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Items: |-
+              =If(
+                  !IsBlank(varUserDept) && varUserDept <> "",
+                  If(
+                      CountRows(Filter(colDGOptions, Value <> "All", Left(Value, 4) = Left(varUserDept, 4))) > 0,
+                      Filter(colDGOptions, Value <> "All", Left(Value, 4) = Left(varUserDept, 4)),
+                      Filter(colDGOptions, Value <> "All")
+                  ),
+                  Filter(colDGOptions, Value <> "All")
+              )
+            Items.Value: =Value
+            OnChange: =
+            PressedColor: =Self.Color
+            PressedFill: =Self.Fill
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            SelectionFill: =RGBA(0, 176, 240, 1)
+            Visible: =locShowDetails
+            Width: =427
+            X: =828
+            Y: =142
+      - RS_BtnSaveRequest_2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(186, 196, 214, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: |-
+              =If(
+                  IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0
+                  Or (Not(IsBlank(varCurrentRequest.Status.Value)) And varCurrentRequest.Status.Value <> "Draft"),
+                  DisplayMode.Disabled,
+                  DisplayMode.Edit
+              )
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(230, 236, 245, 1)
+            OnSelect: |-
+              =If(
+                  IsBlank(Coalesce(varRequestTitle)) Or Coalesce(varRequestTitle) = ""
+                  Or IsBlank(varRequestDG) Or varRequestDG = "",
+                  Notify("Enter the request title and select a DG/Agency before adding media.", NotificationType.Warning),
+              If(
+                  IsBlank(varRequestMediaType) Or varRequestMediaType = "",
+                  Notify("Please select the production type first.", NotificationType.Warning),
+              IfError(
+                  If(
+                      IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0,
+                      Set(varCurrentRequest,
+                          Patch(AVCentralDepositRequests, Defaults(AVCentralDepositRequests),
+                              {
+                                  RequestNumber: With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter(AVCentralDepositRequests, StartsWith(RequestNumber, yr & "-")), RequestNumber, SortOrder.Descending)).RequestNumber, yr & "-0000"), 4)) + 1), 4)),
+                                  RequestTitle: Coalesce(varRequestTitle, varRequestTitle1),
+                                  DG: {Value: varRequestDG},
+                                  Description: varRequestDescription,
+                                  Status: {Value: "Draft"}
+                              }
+                          )
+                      )
+                  );
+              Set(varCurrentChildId, Text(GUID()));
+              Set(varCurrentChildSPId, IfError(Patch(AVCentralDepositMediaItems, Defaults(AVCentralDepositMediaItems), { CD_MediaNumber: With({yr: Text(Year(Today()))}, yr & "-" & Right("000" & Text(Value(Right(Coalesce(First(Sort(Filter(AVCentralDepositMediaItems, StartsWith(CD_MediaNumber, yr & "-")), CD_MediaNumber, SortOrder.Descending)).CD_MediaNumber, yr & "-0000"), 4)) + 1), 4)), MediaType: Table({Value: varRequestMediaType}), ParentRequest: varCurrentRequest.RequestNumber, DepositStatus: Table({Value: "Draft"}) }).ID, 0));
+              Set(varChildTitle, Blank());
+              Set(varChildTitle1, "");
+              Set(varChildProductType, "");
+              Set(varChildTags, "");
+              Set(varChildEpisodeTitle, "");
+              Set(varChildMediaType, varRequestMediaType);
+              Set(varChildDescription1, "");
+              Set(varChildCaptureDate, Blank());
+              Set(varChildProductionPlace1, "");
+              Set(varChildCredits1, "");
+              Set(varChildLanguageVersions, "");
+              Set(varChildAIVoiceover, false);
+              Set(varChildContractCase, "");
+              Set(varChildContractCase1Sub, "");
+              Set(varChildModelRelease, false);
+              Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, "");
+              Set(varChildModelReleaseProvided, false);
+              Set(varChildMusicUsed, false);
+              Set(varChildMusicLicenceProvided, false);
+              Set(varChildPreexisting, false);
+              Set(varChildPreexistingProvided, false);
+              Set(varChildEpisodeTitle1, "");
+              Set(varChildEpisodeSummary1, "");
+              Set(varChildSeasonNumber, 0);
+              Set(varChildEpisodeNumber, 0);
+              Set(varChildSeriesTitle1, "");
+              Set(varChildProductType1, "");
+              Set(varChildProductionEndDate, Blank());
+              Set(varChildPublicationStartDate, Blank());
+              Set(varChildPublicationEndDate, Blank());
+              Set(varChildLinks1, "");
+              Set(varChildTags1, "");
+              Set(varChildFTPPath1, "");
+              Navigate(ChildInfoScreen),
+                  Notify("Could not start a new media item: " & FirstError.Message, NotificationType.Error)
+              )
+              )
+              )
+            PressedBorderColor: =RGBA(0, 0, 0, 1)
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =11
+            Text: ="➕ Media"
+            Tooltip: ="Add new media"
+            Width: =73
+            X: =828
+            Y: =If(locShowDetails,403,100)
+      - RS_MediaLockHint:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(193, 40, 40, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =11
+            Text: ="Locked - remove all media items to change the type"
+            Visible: =CountRows(colArchives) > 0
+            Width: =400
+            X: =225
+            Y: =If(locShowDetails,417,150)
+      - RS_TypeIconBtn:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", RGBA(210, 216, 224, 1), RGBA(56, 96, 178, 1))
+            BorderThickness: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", 1, 2)
+            Color: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", RGBA(96, 104, 120, 1), RGBA(0, 18, 107, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(150, 158, 170, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: =If(CountRows(colArchives) > 0, DisplayMode.Disabled, DisplayMode.Edit)
+            Fill: =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", RGBA(255, 255, 255, 1), RGBA(230, 236, 245, 1))
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: =Set(varShowTypeConfirm, true)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =20
+            Text: |-
+              =Switch(varRequestMediaType, "Photo","📷","Video","🎬","Podcast","🎙️","➕")
+            Tooltip: |-
+              =If(IsBlank(varRequestMediaType) Or varRequestMediaType = "", "Choose production type", "Production type: " & varRequestMediaType)
+            Visible: =locShowDetails
+            Width: =44
+            X: =61
+            Y: =144
+      - RS_AITitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Text: |-
+              =Switch(varRequestMediaType,
+                  "Photo", "AI-generated images",
+                  "Video", "AI-generated content",
+                  "Podcast", "AI-generated voice-over",
+                  "")
+            Visible: =locShowDetails
+            Width: =390
+            X: =828
+            Y: =207
+      - RS_AICheck:
+          Control: Classic/CheckBox@2.1.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+            CheckmarkFill: =RGBA(0, 0, 0, 1)
+            Default: =varRequestAIDeclared
+            Font: =Font.'Open Sans'
+            Height: =30
+            HoverColor: =RGBA(0, 18, 107, 1)
+            OnCheck: =Set(varRequestAIDeclared, true)
+            OnUncheck: =Set(varRequestAIDeclared, false)
+            Text: |-
+              =Switch(varRequestMediaType,
+                  "Photo", "This production uses AI-generated images",
+                  "Video", "This production uses AI-generated content",
+                  "Podcast", "This production uses an AI-generated voice-over",
+                  "")
+            Visible: =locShowDetails
+            Width: =390
+            X: =834
+            Y: =243
+      - RS_TypePickerOverlay:
+          Control: Rectangle@2.3.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 0.45)
+            Height: =928
+            OnSelect: =Set(varShowTypeConfirm, false)
+            Visible: =varShowTypeConfirm
+            Width: =1366
+      - RS_TypePickerPanel:
+          Control: Rectangle@2.3.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =RGBA(230, 234, 240, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =380
+            Visible: =varShowTypeConfirm
+            Width: =600
+            X: =383
+            Y: =250
+      - RS_TypePickerAccent:
+          Control: Rectangle@2.3.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =6
+            Visible: =varShowTypeConfirm
+            Width: =600
+            X: =383
+            Y: =250
+      - RS_TypePickerTitle:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =17
+            Text: ="Choose production type"
+            Visible: =varShowTypeConfirm
+            Width: =520
+            X: =407
+            Y: =280
+      - RS_TypePickerSubtitle:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =11
+            Text: ="One request = one media type. Pick the format for this request."
+            Visible: =varShowTypeConfirm
+            Width: =520
+            X: =407
+            Y: =310
+      - RS_TypePickerClose:
+          Control: Classic/Button@2.2.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: =Set(varShowTypeConfirm, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Text: ="✕"
+            Tooltip: ="Close pop-up"
+            Visible: =varShowTypeConfirm
+            Width: =36
+            X: =933
+            Y: =264
+      - RS_TypePickerRestart:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =If(CountRows(colArchives) = 0, RGBA(96, 104, 120, 1), RGBA(186, 186, 186, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: =If(CountRows(colArchives) = 0, DisplayMode.Edit, DisplayMode.Disabled)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |
+              =If(
+                  CountRows(RS_ChildrenGallery.AllItems) = 0,
+
+                  // No media files yet, just reset
+                  Set(varRequestMediaType, "");
+                  Set(varConfirmed, false);
+                  Set(varShowTypeConfirm, true);
+                  Notify("Selection cleared - choose a production type.", NotificationType.Information),
+
+                  // Media files already exist, delete them first, then reset
+                  Notify("Existing media files removed. Choose a production type.", NotificationType.Information)
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Text: |-
+              ="🔄"
+            Tooltip: |-
+              =If(CountRows(colArchives) = 0, "Restart: clear the selected type", "Remove all media items before changing the type")
+            Visible: =varShowTypeConfirm
+            Width: =36
+            X: =901
+            Y: =263
+      - RS_DetailsToggle:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(96, 104, 120, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =36
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+              =UpdateContext({locShowDetails: !locShowDetails})
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            RadiusBottomLeft: =18
+            RadiusBottomRight: =18
+            RadiusTopLeft: =18
+            RadiusTopRight: =18
+            Text: =If(locShowDetails, "v", ">")
+            Tooltip: =If(locShowDetails, "Collapse request details", "Expand request details")
+            Width: =27
+            X: =1304
+            Y: =102
+      - RS_CardPhoto:
+          Control: Rectangle@2.3.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =If(varRequestMediaType = "Photo", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(varRequestMediaType = "Photo", 2, 1)
+            Fill: =If(varRequestMediaType = "Photo", RGBA(230, 236, 245, 1), If(varRequestMediaType <> "" And Not(IsBlank(varRequestMediaType)), RGBA(242, 243, 245, 1), RGBA(250, 251, 253, 1)))
+            Height: =210
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =407
+            Y: =350
+      - RS_CardPhotoIcon:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =72
+            Size: =40
+            Text: |-
+              ="📷"
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =407
+            Y: =380
+      - Label12_6:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(149, 149, 149, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: |-
+              ="Audiovisual Service - DG COMM
+              This site is managed by the Directorate-General for Communication"
+            Width: =691
+            X: =265
+            Y: =717
+      - RS_CardPhotoName:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: ="Photo / Reportage"
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =407
+            Y: =462
+      - RS_CardPhotoDesc:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =46
+            Size: =10
+            Text: ="Still images, photo reportage"
+            Visible: =varShowTypeConfirm
+            Width: =154
+            X: =415
+            Y: =492
+      - RS_CardPhotoBtn:
+          Control: Classic/Button@2.2.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: =If(varRequestMediaType <> "" And varRequestMediaType <> "Photo", DisplayMode.Disabled, DisplayMode.Edit)
+            Fill: =RGBA(0, 0, 0, 0)
+            Font: =Font.'Open Sans'
+            Height: =210
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 0.06)
+            OnSelect: |-
+              =Set(varRequestMediaType, "Photo");
+              Set(varConfirmed, true);
+              Set(varShowTypeConfirm, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(0, 18, 107, 0.10)
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Text: =""
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =407
+            Y: =350
+      - RS_CardVideo:
+          Control: Rectangle@2.3.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =If(varRequestMediaType = "Video", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(varRequestMediaType = "Video", 2, 1)
+            Fill: =If(varRequestMediaType = "Video", RGBA(230, 236, 245, 1), If(varRequestMediaType <> "" And Not(IsBlank(varRequestMediaType)), RGBA(242, 243, 245, 1), RGBA(250, 251, 253, 1)))
+            Height: =210
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =593
+            Y: =350
+      - RS_CardVideoIcon:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =72
+            Size: =40
+            Text: |-
+              ="🎬"
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =593
+            Y: =380
+      - RS_CardVideoName:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: ="Video"
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =593
+            Y: =462
+      - RS_CardVideoDesc:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =46
+            Size: =10
+            Text: ="Films, clips and motion content"
+            Visible: =varShowTypeConfirm
+            Width: =154
+            X: =601
+            Y: =492
+      - RS_CardVideoBtn:
+          Control: Classic/Button@2.2.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: =If(varRequestMediaType <> "" And varRequestMediaType <> "Video", DisplayMode.Disabled, DisplayMode.Edit)
+            Fill: =RGBA(0, 0, 0, 0)
+            Font: =Font.'Open Sans'
+            Height: =210
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 0.06)
+            OnSelect: |-
+              =Set(varRequestMediaType, "Video");
+              Set(varConfirmed, true);
+              Set(varShowTypeConfirm, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(0, 18, 107, 0.10)
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Text: =""
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =593
+            Y: =350
+      - RS_CardPodcast:
+          Control: Rectangle@2.3.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =If(varRequestMediaType = "Podcast", RGBA(56, 96, 178, 1), RGBA(226, 230, 236, 1))
+            BorderThickness: =If(varRequestMediaType = "Podcast", 2, 1)
+            Fill: =If(varRequestMediaType = "Podcast", RGBA(230, 236, 245, 1), If(varRequestMediaType <> "" And Not(IsBlank(varRequestMediaType)), RGBA(242, 243, 245, 1), RGBA(250, 251, 253, 1)))
+            Height: =210
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =779
+            Y: =350
+      - RS_CardPodcastIcon:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =72
+            Size: =40
+            Text: |-
+              ="🎙️"
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =779
+            Y: =380
+      - RS_CardPodcastName:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Text: ="Podcast"
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =779
+            Y: =462
+      - RS_CardPodcastDesc:
+          Control: Label@2.5.1
+          Group: grpProductionTypePicker
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =46
+            Size: =10
+            Text: ="Audio episodes/series"
+            Visible: =varShowTypeConfirm
+            Width: =154
+            X: =787
+            Y: =492
+      - RS_CardPodcastBtn:
+          Control: Classic/Button@2.2.0
+          Group: grpProductionTypePicker
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: =If(varRequestMediaType <> "" And varRequestMediaType <> "Podcast", DisplayMode.Disabled, DisplayMode.Edit)
+            Fill: =RGBA(0, 0, 0, 0)
+            Font: =Font.'Open Sans'
+            Height: =210
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 0.06)
+            OnSelect: |-
+              =Set(varRequestMediaType, "Podcast");
+              Set(varConfirmed, true);
+              Set(varShowTypeConfirm, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =RGBA(0, 18, 107, 0.10)
+            RadiusBottomLeft: =14
+            RadiusBottomRight: =14
+            RadiusTopLeft: =14
+            RadiusTopRight: =14
+            Text: =""
+            Visible: =varShowTypeConfirm
+            Width: =170
+            X: =779
+            Y: =350
+      - Image1_11:
+          Control: Image@2.2.3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+      - HomeAppTitle_8:
+          Control: Label@2.5.1
+          Group: Group4_5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Size: =14
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =193
+            X: =244
+            Y: =8
+      - Logo_EC_Form_13:
+          Control: Image@2.2.3
+          Group: Group4_5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =50
+            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
+            PaddingLeft: =15
+            Width: =186
+            X: =2
+            Y: =2
+      - CD_Logo_8:
+          Control: Image@2.2.3
+          Group: Group4_5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =31
+            Image: =cd_badge_play
+            Width: =31
+            X: =208
+            Y: =20
+      - HomeAppSubtitle_8:
+          Control: Label@2.5.1
+          Group: Group4_5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =266
+            Y: =32
+      - NavPanel_MyRequestScreen_8:
+          Control: Classic/Button@2.2.0
+          Group: Group3_8
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =RGBA(255, 255, 255, 0.10)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(255, 255, 255, 0.10)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 0.10)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(255, 255, 255, 0.10)
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            Size: =10
+            TabIndex: =-1
+            Text: =""
+            Width: =424
+            X: =666
+            Y: =4
+      - NavBtnRequests_MyRequestScreen_8:
+          Control: Classic/Button@2.2.0
+          Group: Group3_8
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = MyRequestScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(MyRequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📋 Requests"
+            Tooltip: ="Requests"
+            Width: =83
+            X: =678
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_16:
+          Control: Classic/Button@2.2.0
+          Group: Group3_8
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(DashboardScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📊" & Char(10) & "Dashboard"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =769
+            Y: =9
+      - NavBtnReview_MyRequestScreen_8:
+          Control: Classic/Button@2.2.0
+          Group: Group3_8
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(ReviewScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="👁" & Char(10) & "Review"
+            Tooltip: ="Review"
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =83
+            X: =854
+            Y: =9
+      - NavBtnHelp_MyRequestScreen_8:
+          Control: Classic/Button@2.2.0
+          Group: Group3_8
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Width: =83
+            X: =1010
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_17:
+          Control: Classic/Button@2.2.0
+          Group: Group3_8
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =ClearCollect(colPrintData, HomeGallery.AllItems);
+              Navigate(HomePrintScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📂
+              Export"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =927
+            Y: =9
+      - RS_ThStatus_1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =46
+            Size: =11
+            Text: ="ACTION"
+            Width: =158
+            X: =1136
+            Y: =If(locShowDetails,448,150)
+      - RS_StatusBadge_1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Published", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
+            DisplayMode: =DisplayMode.View
+            Fill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(230, 236, 245, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Published", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
+            Font: =Font.'Open Sans'
+            Height: =32
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Published", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", RGBA(120, 130, 150, 1), "Draft", RGBA(96, 104, 120, 1), "Pending", RGBA(224, 134, 0, 1), "Approved", RGBA(30, 126, 52, 1), "Rejected", RGBA(193, 40, 40, 1), "Published", RGBA(122, 48, 160, 1), RGBA(96, 104, 120, 1))
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            Size: =18
+            Text: |-
+              =Switch(If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")), "New", "🆕", "Draft", "📝", "Pending", "⏳", "Approved", "✅", "Rejected", "⛔", "Published", "🌐", "📝")
+            Tooltip: |-
+              ="Status: " & If(IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) = 0, "New", Coalesce(varCurrentRequest.Status.Value, "Draft")) & If(Not(IsBlank(varCurrentRequest)) And Coalesce(varCurrentRequest.ID, 0) > 0 And Not(IsBlank(varCurrentRequest.Modified)), "  (" & Text(varCurrentRequest.Modified, "dd-mm-yyyy") & ")", "")
+            Width: =41
+            X: =813
+            Y: =60
+      - HomeUserName_6:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =47
+            Size: =11
+            Text: |-
+              =User().FullName & " - " & If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =174
+            X: =1139
+            Y: =7

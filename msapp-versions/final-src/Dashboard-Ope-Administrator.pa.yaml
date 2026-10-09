@@ -1,0 +1,1465 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  Dashboard-Ope-Administrator:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |-
+        =// role and data are set here too: this can be the start screen, so it must not
+        // rely on App.OnStart having finished
+        Set(varUserRole, Coalesce(LookUp('AV-CD-RolesPermissionsList', UserEmail.Email = User().Email, Role.Value), "REQUESTOR"));
+        Refresh('AV-CD-Requests');
+        // every request except drafts (a draft belongs to its requestor until submitted);
+        // "<>" on a Choice column is not delegable, so the list is loaded, then filtered
+        ClearCollect(colOpeAll, 'AV-CD-Requests');
+        ClearCollect(colOpeReqs, Filter(colOpeAll, Status.Value <> "Draft"));
+        If(
+            CountRows(colOpeAll) >= 2000,
+            Notify("Only the first 2000 requests are loaded, so older ones may be missing.", NotificationType.Warning)
+        );
+        // media items, for the TODO clock (days left to the publication date)
+        ClearCollect(colOpeMedia, 'AV-CD-Mediafiles')
+    Children:
+      - DOA_HeaderDivider:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(255, 255, 255, 0.35)
+            Height: =30
+            Width: =2
+            X: =200
+            Y: =13
+      - DOA_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+      - DOA_PageTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Size: =22
+            Text: ="Dashboard"
+            Width: =600
+            X: =48
+            Y: =84
+      - DOA_PageSub:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =18
+            Text: |-
+              ="All users' requests except drafts: what waits for validation, latest progress and final decisions"
+            Width: =795
+            X: =239
+            Y: =99
+      - DOA_Header_Title:
+          Control: Label@2.5.1
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Size: =14
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =193
+            X: =244
+            Y: =4
+      - DOA_Header_LogoEC:
+          Control: Image@2.2.3
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =50
+            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
+            PaddingLeft: =15
+            Width: =186
+            X: =2
+            Y: =2
+      - DOA_Label12_4:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(149, 149, 149, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: |-
+              ="Audiovisual Service - DG COMM
+              This site is managed by the Directorate-General for Communication"
+            Width: =1366
+            Y: =717
+      - DOA_NoInternetIcon_4:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 0, 0, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =44
+            Icon: =Icon.GlobeNotConnected
+            PaddingBottom: =5
+            PaddingLeft: =5
+            PaddingRight: =5
+            PaddingTop: =5
+            Tooltip: ="No internet connection detected. Please verify your connection and try again."
+            Visible: =!Connection.Connected
+            X: =16
+            Y: =719
+      - DOA_Header_LogoCD:
+          Control: Image@2.2.3
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =31
+            Image: =cd_badge_play
+            Width: =31
+            X: =208
+            Y: =16
+      - DOA_Header_Subtitle:
+          Control: Label@2.5.1
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =266
+            Y: =28
+      - DOA_Header_Photo:
+          Control: Image@2.2.3
+          Group: DOA_Header
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+            Y: =1
+      - DOA_Header_UserName:
+          Control: Label@2.5.1
+          Group: DOA_Header
+          Properties:
+            Align: =Align.Right
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =37
+            Size: =11
+            Text: |-
+              =User().FullName 
+              & Char(10) &
+              If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =216
+            X: =1089
+            Y: =16
+      - DOA_Menu_Panel:
+          Control: Classic/Button@2.2.0
+          Group: DOA_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =RGBA(255, 255, 255, 0.10)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(255, 255, 255, 0.10)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 0.10)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(255, 255, 255, 0.10)
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            Size: =10
+            TabIndex: =-1
+            Text: =""
+            Width: =If(varUserRole = "ADMINISTRATOR", 489, 397)
+            X: =If(varUserRole = "ADMINISTRATOR", 621, 713)
+            Y: =5
+      - DOA_Menu_Requests:
+          Control: Classic/Button@2.2.0
+          Group: DOA_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = RequestManagementScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(RequestManagementScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📋 Requests"
+            Tooltip: ="Requests"
+            Width: =83
+            X: =If(varUserRole = "ADMINISTRATOR", 732, 824)
+            Y: =10
+      - DOA_Menu_Dashboard:
+          Control: Classic/Button@2.2.0
+          Group: DOA_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = DashboardScreen Or App.ActiveScreen = 'Dashboard-Ope-Administrator' Or App.ActiveScreen = 'Dashboard-Ope-Requestor', RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =// the operational dashboard of the user's role
+              If(
+                  varUserRole = "ADMINISTRATOR",
+                  Navigate('Dashboard-Ope-Administrator'),
+                  Navigate('Dashboard-Ope-Requestor')
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📊" & Char(10) & "Dashboard"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =If(varUserRole = "ADMINISTRATOR", 640, 732)
+            Y: =10
+      - DOA_Menu_Help:
+          Control: Classic/Button@2.2.0
+          Group: DOA_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Width: =83
+            X: =1008
+            Y: =10
+      - DOA_Menu_Review:
+          Control: Classic/Button@2.2.0
+          Group: DOA_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(ReviewScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="👁" & Char(10) & "Review"
+            Tooltip: ="Review"
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =83
+            X: =824
+            Y: =8
+      - DOA_Menu_Export:
+          Control: Classic/Button@2.2.0
+          Group: DOA_Menu
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HomePrintScreen Or App.ActiveScreen = PrintPhotoDetailScreen Or App.ActiveScreen = PrintVideoDetailScreen Or App.ActiveScreen = PrintPodcastDetailScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =ClearCollect(colPrintData, HomeGallery.AllItems);
+              Navigate(HomePrintScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📂
+              Export"
+            Tooltip: ="Dashboard"
+            Width: =83
+            X: =916
+            Y: =8
+      - DOA_List1Card:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =574
+            Width: =416
+            X: =48
+            Y: =130
+      - DOA_List1Title:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =12
+            Text: ="TODO"
+            Width: =416
+            X: =48
+            Y: =147
+      - DOA_List1Accent:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(214, 140, 0, 1)
+            Height: =6
+            Width: =416
+            X: =48
+            Y: =130
+      - DOA_List1Gallery:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =503
+            Items: |-
+              =// oldest first: every Pending request, then every Processing request.
+              // One Sort with a two-part key (status group, then seconds since 2000), so the
+              // rows stay request records and ThisItem.Status works in the row badge.
+              Sort(
+                  Filter(colOpeReqs, Status.Value = "Processing" Or Status.Value = "Pending"),
+                  If(Status.Value = "Processing", 0, 10000000000)
+                      + DateDiff(DateTime(2000, 1, 1, 0, 0, 0), Modified, TimeUnit.Seconds),
+                  SortOrder.Ascending
+              )
+            ShowNavigation: =true
+            ShowScrollbar: =false
+            TemplateSize: =86
+            Width: =400
+            X: =56
+            Y: =184
+          Children:
+            - DOA_List1RowSelect:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(241, 244, 249, 1)
+                  Height: =75
+                  HoverFill: =RGBA(240, 242, 246, 1)
+                  OnSelect: =
+                  Width: =400
+            - DOA_List1RowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =400
+                  Y: =75
+            - DOA_List1RowMeta:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =22
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =8
+                  Text: =Coalesce(ThisItem.'Created By'.DisplayName, "—")
+                  Tooltip: ="Created by"
+                  Width: =201
+                  X: =123
+                  Y: =51
+            - DOA_List1RowDate:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(77, 77, 77, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  OnSelect: =Select(Parent)
+                  Size: =8
+                  Text: =Text(ThisItem.SubmittedOn, "dd mmm 'yy")
+                  Tooltip: |+
+                    ="Submitted on:  " 
+                    & Char(10) 
+                    & Text(ThisItem.Modified, "dd mmm 'yy  (hh:mm)")
+
+                  Width: =70
+                  Y: =53
+            - DOA_List1RowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DisabledColor: =RGBA(116, 116, 116, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =47
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =10
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled", ThisItem.RequestTitle)
+                  Tooltip: ="Title"
+                  Width: =268
+                  X: =123
+                  Y: =4
+            - DOA_List1RowNumber:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =RGBA(77, 77, 77, 1)
+                  DisabledBorderColor: =Self.BorderColor
+                  DisabledColor: =RGBA(77, 77, 77, 1)
+                  DisabledFill: =RGBA(215, 223, 240, 1)
+                  Fill: =RGBA(215, 223, 240, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =29
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
+                  OnSelect: |-
+                    =// open the request, the same way as a HomeGallery row on the Requests screen
+                    With(
+                        {req: LookUp(colOpeReqs, ID = ThisItem.ID)},
+                        // opened from a dashboard: details are shown in view-only mode
+                        Set(varViewOnly, true);
+                        Set(varCurrentRequest, req);
+                        Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestDG, Coalesce(req.DG.Value, ""));
+                        Set(varRequestDescription1, Coalesce(req.Description, ""));
+                        Set(varRequestDescription, Coalesce(req.Description, ""));
+                        Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
+                        Set(varRequestMediaType, "");
+                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Size: =11
+                  Text: |-
+                    ="📷 " & ThisItem.RequestNumber
+                  Tooltip: ="Open request (v." & ThisItem.'Version number' & ")"
+                  Width: =100
+                  X: =10
+                  Y: =14
+            - DOA_List1RowBadge:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =Color.White
+                  DisabledBorderColor: =Self.BorderColor
+                  DisplayMode: =DisplayMode.View
+                  Fill: |-
+                    =If("Draft" in ThisItem.Status.Value, Color.Gray,
+                       "Pending" in ThisItem.Status.Value, Color.DarkKhaki,
+                       "Processing" in ThisItem.Status.Value, Color.SlateBlue,
+                       "Approved" in ThisItem.Status.Value, Color.DarkGreen,
+                       "Rejected" in ThisItem.Status.Value, ColorValue("#F08080"),
+                       Color.Gray)
+                  Font: =Font.'Open Sans'
+                  Height: =19
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", If(ThisItem.Status.Value = "Partially approved", "Approved", Text(ThisItem.Status.Value)))
+                  Tooltip: |-
+                    =// "Partially approved" is not a status: an Approved request whose media files are only partly ticked (RS_CRowApproved) says so here
+                    With(
+                        {
+                            n: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber)),
+                            ok: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber, MediaApproved = true))
+                        },
+                        If(
+                            ThisItem.Status.Value = "Partially approved" Or (ThisItem.Status.Value = "Approved" And ok > 0 And ok < n),
+                            "Partially Approved Request.",
+                            "Status"
+                        )
+                    )
+                  Width: =80
+                  X: =312
+                  Y: =51
+            - DOA_List1RowNotes:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: =
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// amber = the most recent note on this request is from the requestor (waiting for you)
+                    // gray = the most recent note is yours; light gray = no notes yet
+                    With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            Color.LightGray,
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), RGBA(255, 193, 7, 1), Color.Gray)
+                        )
+                    )
+                  DisplayMode: =DisplayMode.View
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Note
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: |-
+                    =With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            "No notes",
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), "New notes to check", "Notes sent")
+                        )
+                    ) & Char(10) & Char(10) &
+                    ("Notes: " & Char(10) & Char(10) & 
+                    Coalesce(ThisItem.'Created By'.DisplayName, "—") & ", updated on " & Text(ThisItem.RequestorNotesUpdatedOn, "dd mmm 'yy hh:mm" )
+                    & Char(10) & 
+                    PlainText(Coalesce(ThisItem.Notes, ""))
+                    & Char(10) & Char(10) & 
+                    "Central Deposit: " &  ", updated on " & Text(ThisItem.AdminNotesUpdatedOn, "dd mmm 'yy hh:mm" )
+                    & Char(10) & 
+                    Coalesce(ThisItem.ReviewerComments, ""))
+                  Width: =20
+                  X: =72
+                  Y: =53
+            - DOA_List1RowBell:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: |-
+                    =// days left to the publication date of the request's media items (PublicationStartDate)
+                    With(
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(PublicationStartDate))), PublicationStartDate, SortOrder.Ascending)},
+                        With(
+                            {
+                                m: If(
+                                    IsEmpty(Filter(dated, PublicationStartDate >= Today())),
+                                    Last(dated),                                 // every date is past: the latest
+                                    First(Filter(dated, PublicationStartDate >= Today()))  // else the next one
+                                )
+                            },
+                            If(
+                                IsBlank(m),
+                                "No publication date yet",
+                                With(
+                                    {
+                                        days: DateDiff(Today(), m.PublicationStartDate, TimeUnit.Days),
+                                        what: "Publication date"
+                                    },
+                                    what & ": " & Text(m.PublicationStartDate, "dd mmm 'yy") 
+                                    & Char(10) & Char(10) 
+                                    & If(
+                                        days > 1, days & " days left",
+                                        days = 1, "1 day left",
+                                        days = 0, "today",
+                                        days = -1, "1 day ago",
+                                        -days & " days ago"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// red: fewer than 7 days left (today and past dates included); navy: 7 or more;
+                    // grey: no publication date. Same date as the tooltip: the next one, else the latest past one.
+                    With(
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(PublicationStartDate))), PublicationStartDate, SortOrder.Ascending)},
+                        With(
+                            {
+                                m: If(
+                                    IsEmpty(Filter(dated, PublicationStartDate >= Today())),
+                                    Last(dated),
+                                    First(Filter(dated, PublicationStartDate >= Today()))
+                                )
+                            },
+                            If(
+                                IsBlank(m), RGBA(166, 166, 166, 1),
+                                DateDiff(Today(), m.PublicationStartDate, TimeUnit.Days) < 7, Color.Orange,
+                                RGBA(0, 18, 107, 1)
+                            )
+                        )
+                    )
+                  DisplayMode: =DisplayMode.View
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Clock
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: |-
+                    =// days left to the publication date of the request's media items (PublicationStartDate)
+                    With(
+                        {dated: Sort(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber And Not(IsBlank(PublicationStartDate))), PublicationStartDate, SortOrder.Ascending)},
+                        With(
+                            {
+                                m: If(
+                                    IsEmpty(Filter(dated, PublicationStartDate >= Today())),
+                                    Last(dated),                                 // every date is past: the latest
+                                    First(Filter(dated, PublicationStartDate >= Today()))  // else the next one
+                                )
+                            },
+                            If(
+                                IsBlank(m),
+                                "No publication date yet",
+                                With(
+                                    {
+                                        days: DateDiff(Today(), m.PublicationStartDate, TimeUnit.Days),
+                                        what: "Publication date"
+                                    },
+                                    what & ": " & Text(m.PublicationStartDate, "dd mmm 'yy")
+                                    & Char(10)
+                                    & If(
+                                        days > 1, days & " days left!",
+                                        days = 1, "1 day left!",
+                                        days = 0, "today!!",
+                                        days = -1, "1 day ago!!!",
+                                        -days & " days ago!!!"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                  Width: =20
+                  X: =96
+                  Y: =53
+      - DOA_List1Empty:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =11
+            Text: ="Nothing here"
+            Visible: =CountRows(DOA_List1Gallery.AllItems) = 0
+            Width: =416
+            X: =48
+            Y: =270
+      - DOA_List2Card:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =574
+            Width: =416
+            X: =475
+            Y: =130
+      - DOA_List2Accent:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =6
+            Width: =416
+            X: =475
+            Y: =130
+      - DOA_List2Title:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =12
+            Text: ="5 LATEST IN-PROGRESS UPDATES"
+            Width: =416
+            X: =475
+            Y: =146
+      - DOA_List2Sub:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =13
+            Size: =8
+            Text: ="Newest first · Pending and Processing · the 5 latest of " & Text(CountRows(Filter(colOpeReqs, Status.Value in ["Pending", "Processing"])))
+            Visible: =false
+            Width: =416
+            X: =475
+            Y: =171
+      - DOA_List2Gallery:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =503
+            Items: |-
+              =// the 5 latest only (newest first)
+              FirstN(
+                  Sort(
+                      Filter(colOpeReqs, Status.Value in ["Pending", "Processing"]),
+                      Modified,
+                      SortOrder.Descending
+                  ),
+                  5
+              )
+            ShowNavigation: =true
+            ShowScrollbar: =false
+            TemplateSize: =86
+            Width: =400
+            X: =483
+            Y: =184
+          Children:
+            - DOA_List2RowSelect:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(241, 244, 249, 1)
+                  Height: =75
+                  HoverFill: =RGBA(240, 242, 246, 1)
+                  OnSelect: =
+                  Width: =400
+            - DOA_List2RowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =400
+                  Y: =75
+            - DOA_List2RowMeta:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =22
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =7
+                  Text: =Coalesce(ThisItem.'Created By'.DisplayName, "—")
+                  Tooltip: ="Created by"
+                  Width: =190
+                  X: =123
+                  Y: =51
+            - DOA_List2RowDate:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(77, 77, 77, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  OnSelect: =Select(Parent)
+                  Size: =8
+                  Text: =Text(ThisItem.SubmittedOn, "dd mmm 'yy")
+                  Tooltip: |+
+                    ="Submitted on:  " & Text(ThisItem.Modified, "dd mmm 'yy  (hh:mm)")
+
+                  Width: =70
+                  Y: =53
+            - DOA_List2RowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DisabledColor: =RGBA(116, 116, 116, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =47
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled", ThisItem.RequestTitle)
+                  Tooltip: ="Title"
+                  Width: =268
+                  X: =123
+                  Y: =4
+            - DOA_List2RowNumber:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =RGBA(77, 77, 77, 1)
+                  DisabledBorderColor: =Self.BorderColor
+                  DisabledColor: =RGBA(77, 77, 77, 1)
+                  DisabledFill: =RGBA(215, 223, 240, 1)
+                  Fill: =RGBA(215, 223, 240, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =29
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
+                  OnSelect: |-
+                    =// open the request, the same way as a HomeGallery row on the Requests screen
+                    With(
+                        {req: LookUp(colOpeReqs, ID = ThisItem.ID)},
+                        // opened from a dashboard: details are shown in view-only mode
+                        Set(varViewOnly, true);
+                        Set(varCurrentRequest, req);
+                        Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestDG, Coalesce(req.DG.Value, ""));
+                        Set(varRequestDescription1, Coalesce(req.Description, ""));
+                        Set(varRequestDescription, Coalesce(req.Description, ""));
+                        Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
+                        Set(varRequestMediaType, "");
+                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Size: =9
+                  Text: |-
+                    ="📷 " & ThisItem.RequestNumber
+                  Tooltip: ="Open request"
+                  Width: =100
+                  X: =10
+                  Y: =14
+            - DOA_List2RowBadge:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =Color.White
+                  DisabledBorderColor: =Self.BorderColor
+                  DisplayMode: =DisplayMode.View
+                  Fill: |-
+                    =If("Draft" in ThisItem.Status.Value, Color.Gray,
+                       "Pending" in ThisItem.Status.Value, Color.DarkKhaki,
+                       "Processing" in ThisItem.Status.Value, Color.SlateBlue,
+                       "Approved" in ThisItem.Status.Value, Color.DarkGreen,
+                       "Rejected" in ThisItem.Status.Value, ColorValue("#F08080"),
+                       Color.Gray)
+                  Font: =Font.'Open Sans'
+                  Height: =19
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Size: =8
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", If(ThisItem.Status.Value = "Partially approved", "Approved", Text(ThisItem.Status.Value)))
+                  Tooltip: |-
+                    =// "Partially approved" is not a status: an Approved request whose media files are only partly ticked (RS_CRowApproved) says so here
+                    With(
+                        {
+                            n: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber)),
+                            ok: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber, MediaApproved = true))
+                        },
+                        If(
+                            ThisItem.Status.Value = "Partially approved" Or (ThisItem.Status.Value = "Approved" And ok > 0 And ok < n),
+                            "Partially Approved Request.",
+                            "Status"
+                        )
+                    )
+                  Width: =80
+                  X: =312
+                  Y: =51
+            - DOA_List2RowNotes:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: ="Are there any new notes?"
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// amber = the most recent note on this request is from the requestor (waiting for you)
+                    // gray = the most recent note is yours; light gray = no notes yet
+                    With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            Color.LightGray,
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), RGBA(255, 193, 7, 1), Color.Gray)
+                        )
+                    )
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Note
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: |-
+                    =With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            "No notes",
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), "New notes to check", "Notes sent")
+                        )
+                    )
+                  Width: =20
+                  X: =72
+                  Y: =53
+      - DOA_List2Empty:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =11
+            Text: ="Nothing here"
+            Visible: =CountRows(DOA_List2Gallery.AllItems) = 0
+            Width: =416
+            X: =475
+            Y: =270
+      - DOA_List3Card:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =574
+            Width: =416
+            X: =902
+            Y: =130
+      - DOA_List3Accent:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(46, 125, 50, 1)
+            Height: =6
+            Width: =416
+            X: =902
+            Y: =130
+      - DOA_List3Title:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =12
+            Text: ="5 FINAL VALIDATIONS"
+            Width: =416
+            X: =902
+            Y: =146
+      - DOA_List3Sub:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =13
+            Size: =8
+            Text: ="Newest first · Published, Approved, Rejected · the 5 latest of " & Text(CountRows(Filter(colOpeReqs, Status.Value in ["Published", "Approved", "Partially approved", "Rejected"])))
+            Visible: =false
+            Width: =416
+            X: =902
+            Y: =171
+      - DOA_List3Gallery:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =503
+            Items: |-
+              =// the 5 latest only (newest first)
+              FirstN(
+                  Sort(
+                      Filter(colOpeReqs, Status.Value in ["Published", "Approved", "Partially approved", "Rejected"]),
+                      Modified,
+                      SortOrder.Descending
+                  ),
+                  5
+              )
+            ShowNavigation: =true
+            ShowScrollbar: =false
+            TemplateSize: =86
+            Width: =400
+            X: =910
+            Y: =183
+          Children:
+            - DOA_List3RowSelect:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(241, 244, 249, 1)
+                  Height: =75
+                  HoverFill: =RGBA(240, 242, 246, 1)
+                  OnSelect: =
+                  Width: =400
+            - DOA_List3RowDivider:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(230, 232, 238, 1)
+                  Height: =1
+                  Width: =400
+                  Y: =75
+            - DOA_List3RowMeta:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(32, 31, 30, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =22
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =7
+                  Text: =Coalesce(ThisItem.'Created By'.DisplayName, "—")
+                  Tooltip: ="Created by"
+                  Width: =190
+                  X: =123
+                  Y: =51
+            - DOA_List3RowDate:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(77, 77, 77, 1)
+                  DisplayMode: =DisplayMode.View
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =20
+                  OnSelect: =Select(Parent)
+                  Size: =8
+                  Text: =Text(ThisItem.SubmittedOn, "dd mmm 'yy")
+                  Tooltip: |+
+                    ="Submitted on:  " & Text(ThisItem.Modified, "dd mmm 'yy  (hh:mm)")
+
+                  Width: =70
+                  Y: =53
+            - DOA_List3RowTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  DisabledColor: =RGBA(116, 116, 116, 1)
+                  DisplayMode: =DisplayMode.Disabled
+                  Font: =Font.'Open Sans'
+                  Height: =47
+                  OnSelect: =Select(Parent)
+                  Overflow: =Overflow.Scroll
+                  Size: =9
+                  Text: =If(IsBlank(ThisItem.RequestTitle), "Untitled", ThisItem.RequestTitle)
+                  Tooltip: ="Title"
+                  Width: =268
+                  X: =123
+                  Y: =4
+            - DOA_List3RowNumber:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =RGBA(77, 77, 77, 1)
+                  DisabledBorderColor: =Self.BorderColor
+                  DisabledColor: =RGBA(77, 77, 77, 1)
+                  DisabledFill: =RGBA(215, 223, 240, 1)
+                  Fill: =RGBA(215, 223, 240, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =29
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
+                  OnSelect: |-
+                    =// open the request, the same way as a HomeGallery row on the Requests screen
+                    With(
+                        {req: LookUp(colOpeReqs, ID = ThisItem.ID)},
+                        // opened from a dashboard: details are shown in view-only mode
+                        Set(varViewOnly, true);
+                        Set(varCurrentRequest, req);
+                        Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestDG, Coalesce(req.DG.Value, ""));
+                        Set(varRequestDescription1, Coalesce(req.Description, ""));
+                        Set(varRequestDescription, Coalesce(req.Description, ""));
+                        Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
+                        Set(varRequestMediaType, "");
+                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Size: =9
+                  Text: |-
+                    ="📷 " & ThisItem.RequestNumber
+                  Tooltip: ="Open request"
+                  Width: =100
+                  X: =10
+                  Y: =14
+            - DOA_List3RowBadge:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  BorderThickness: =0
+                  Color: =Color.White
+                  DisabledBorderColor: =Self.BorderColor
+                  DisplayMode: =DisplayMode.View
+                  Fill: |-
+                    =If("Draft" in ThisItem.Status.Value, Color.Gray,
+                       "Pending" in ThisItem.Status.Value, Color.DarkKhaki,
+                       "Processing" in ThisItem.Status.Value, Color.SlateBlue,
+                       "Approved" in ThisItem.Status.Value, Color.DarkGreen,
+                       "Rejected" in ThisItem.Status.Value, ColorValue("#F08080"),
+                       Color.Gray)
+                  Font: =Font.'Open Sans'
+                  Height: =19
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Size: =8
+                  Text: =If(IsBlank(ThisItem.Status.Value), "Draft", If(ThisItem.Status.Value = "Partially approved", "Approved", Text(ThisItem.Status.Value)))
+                  Tooltip: |-
+                    =// "Partially approved" is not a status: an Approved request whose media files are only partly ticked (RS_CRowApproved) says so here
+                    With(
+                        {
+                            n: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber)),
+                            ok: CountRows(Filter(colOpeMedia, ParentRequest = ThisItem.RequestNumber, MediaApproved = true))
+                        },
+                        If(
+                            ThisItem.Status.Value = "Partially approved" Or (ThisItem.Status.Value = "Approved" And ok > 0 And ok < n),
+                            "Partially Approved Request.",
+                            "Status"
+                        )
+                    )
+                  Width: =80
+                  X: =312
+                  Y: =51
+            - DOA_List3RowNotes:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  AccessibleLabel: ="Are there any new notes?"
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: |-
+                    =// amber = the most recent note on this request is from the requestor (waiting for you)
+                    // gray = the most recent note is yours; light gray = no notes yet
+                    With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            Color.LightGray,
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), RGBA(255, 193, 7, 1), Color.Gray)
+                        )
+                    )
+                  FocusedBorderThickness: =0
+                  Height: =20
+                  Icon: =Icon.Note
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =2
+                  PaddingLeft: =2
+                  PaddingRight: =2
+                  PaddingTop: =2
+                  Tooltip: |-
+                    =With(
+                        {
+                            reqHas: Not(IsBlank(ThisItem.RequestorNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.Notes, ""))) <> "",
+                            admHas: Not(IsBlank(ThisItem.AdminNotesUpdatedOn)) Or Trim(PlainText(Coalesce(ThisItem.ReviewerComments, ""))) <> "",
+                            reqAt: Coalesce(ThisItem.RequestorNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0)),
+                            admAt: Coalesce(ThisItem.AdminNotesUpdatedOn, DateTime(2000, 1, 1, 0, 0, 0))
+                        },
+                        If(
+                            Not(reqHas) And Not(admHas),
+                            "No notes",
+                            If(reqHas And (Not(admHas) Or reqAt > admAt), "New notes to check", "Notes sent")
+                        )
+                    )
+                  Width: =20
+                  X: =72
+                  Y: =53
+      - DOA_List3Empty:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =11
+            Text: ="Nothing here"
+            Visible: =CountRows(DOA_List3Gallery.AllItems) = 0
+            Width: =416
+            X: =902
+            Y: =270
+      - DOA_RoleTag:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Text: ="| Administrator"
+            VerticalAlign: =VerticalAlign.Bottom
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =193
+            X: =409
+            Y: =14
+      - DOA_List1Info:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            AccessibleLabel: |-
+              ="About this list: Oldest first · first Processing, Pending then"
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(136, 160, 209, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =18
+            Icon: =Icon.Information
+            Tooltip: |+
+              ="Ordered by:"
+              & Char(10) &
+              " - First Processing, then Pending requests"
+              & Char(10) & 
+              " - Oldest first"
+
+            Width: =18
+            X: =60
+            Y: =144
+      - DOA_List2Info:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            AccessibleLabel: |-
+              ="About this list: " & DOA_List2Sub.Text
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(136, 160, 209, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =18
+            Icon: =Icon.Information
+            Tooltip: =DOA_List2Sub.Text
+            Width: =18
+            X: =487
+            Y: =144
+      - DOA_List3Info:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            AccessibleLabel: |-
+              ="About this list: " & DOA_List3Sub.Text
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(136, 160, 209, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =18
+            Icon: =Icon.Information
+            Tooltip: =DOA_List3Sub.Text
+            Width: =18
+            X: =914
+            Y: =144
+      - DOA_List2CounterCircle:
+          Control: Circle@2.3.0
+          Group: DOA_List2Counter
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(136, 160, 209, 1)
+            Height: =19
+            Width: =20
+            X: =858
+            Y: =159
+      - DOA_List2CounterText:
+          Control: Label@2.5.1
+          Group: DOA_List2Counter
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =19
+            Size: =9
+            Text: '=Text(CountRows(DOA_List2Gallery.AllItems)) '
+            Width: =20
+            X: =858
+            Y: =159
+      - DOA_List3CounterCircle:
+          Control: Circle@2.3.0
+          Group: DOA_List3Counter
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(136, 160, 209, 1)
+            Height: =19
+            Width: =20
+            X: =1285
+            Y: =159
+      - DOA_List3CounterText:
+          Control: Label@2.5.1
+          Group: DOA_List3Counter
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =19
+            Size: =9
+            Text: '=Text(CountRows(DOA_List3Gallery.AllItems)) '
+            Width: =20
+            X: =1285
+            Y: =159
+      - DOA_List1CounterCircle:
+          Control: Circle@2.3.0
+          Group: DOA_List1Counter
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(136, 160, 209, 1)
+            Height: =19
+            Width: =20
+            X: =431
+            Y: =159
+      - DOA_List1CounterText:
+          Control: Label@2.5.1
+          Group: DOA_List1Counter
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =19
+            Size: =9
+            Text: '=Text(CountRows(DOA_List1Gallery.AllItems)) '
+            Width: =20
+            X: =431
+            Y: =159
