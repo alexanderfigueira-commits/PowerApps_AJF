@@ -37,6 +37,12 @@ Screens:
             )
         );
         Set(varNavArm, "");
+        // reading mode with contract case 1: the framework and specific contracts count as confirmed
+        If(
+            varRequestorLocked And Left(varChildContractCase, 6) = "Case 1",
+            Set(varDocFramework, true);
+            Set(varDocSpecific, true)
+        );
         // The attachments form edits a snapshot of the open media item. It is
         // re-read only when a different item is open, so the Patch on Save
         // cannot reload the form and drop files staged but not yet saved.
