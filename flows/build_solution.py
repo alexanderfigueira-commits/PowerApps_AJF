@@ -4,11 +4,13 @@ Now: flow 1 'CD - 01 Request submitted'. Run:  python3 flows/build_solution.py  
 import json, os, uuid, zipfile, xml.dom.minidom, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = 'https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm'
-LIST = {'requests': 'b170a694-8b5c-4ac7-a9d5-b9111488b7bd', 'media': '301869de-daa0-4d59-838c-647a5ffd2ea5', 'roles': '58e5019a-29bb-4cca-94dd-733e418619a0'}
+LIST = {'requests': 'b170a694-8b5c-4ac7-a9d5-b9111488b7bd', 'media': '301869de-daa0-4d59-838c-647a5ffd2ea5', 'roles': '58e5019a-29bb-4cca-94dd-733e418619a0', 'notes': 'eeb548b6-2d28-4101-9995-47ce4bd8ddd9', 'suspension': '5995c8f7-f1f9-49b3-a838-6409af0ffc2b'}
 APP = 'https://apps.powerapps.com/play/e/487b2992-105a-eb44-aa4b-296dae01044b/a/ba2698a5-2c73-4939-83cc-dd3c5120277d?tenantId=b24c8b06-522c-46fe-9080-70926f8dddb1'
 PREFIX = 'avcd'
 PUBLISHER = 'Cr99038'          # the environment's publisher (prefix avcd, option value prefix 51206), taken from the sample export
-VERSION = '1.0.0.2'
+ALL = bool(os.environ.get('ALL'))
+VERSION = '1.1.0.0' if ALL else '1.0.0.2'
+CONN_APPR = 'avcd_sharedapprovals_c5d18'
 # stable ids so a re-import updates instead of duplicating
 G = lambda name: str(uuid.uuid5(uuid.NAMESPACE_URL, 'centraldeposit/' + name)).upper()
 WF1 = G('flow01')
@@ -86,6 +88,13 @@ def xml_pretty(s):
     xml.dom.minidom.parseString(s.encode('utf-8'))
     return '<?xml version="1.0" encoding="utf-8"?>' + s
 FLOWS = [('CD - 01 Request submitted', WF1, 'CD-01RequestSubmitted', flow01())]
+if ALL:
+    exec(open(os.path.join(HERE, 'flows_all.py'), encoding='utf-8').read())
+    FLOWS[0][3]['properties']['definition']['actions']['Scope_-_Main']['actions']['Mark_as_notified']['inputs']['parameters']['item/LastNotifiedStatus'] = 'Processing'
+    for n, fn, f in (('CD - 02 Status changed', 'CD-02StatusChanged', flow02), ('CD - 03 Resubmitted', 'CD-03Resubmitted', flow03), ('CD - 04 Assignment', 'CD-04Assignment', flow04),
+                     ('CD - 05 Second approval', 'CD-05SecondApproval', flow05), ('CD - 06 New message', 'CD-06NewMessage', flow06),
+                     ('CD - 07 Unread messages', 'CD-07UnreadMessages', flow07), ('CD - 08 Reminders', 'CD-08Reminders', flow08)):
+        FLOWS.append((n, G('flow' + fn[3:5]), fn, f()))
 def customizations():
     wf = ''.join(f'''<Workflow WorkflowId="{{{gid.lower()}}}" Name="{name}"><JsonFileName>/Workflows/{fn}-{gid}.json</JsonFileName><Type>1</Type><Subprocess>0</Subprocess><Category>5</Category>
 <Mode>0</Mode><Scope>4</Scope><OnDemand>0</OnDemand><TriggerOnCreate>0</TriggerOnCreate><TriggerOnDelete>0</TriggerOnDelete><AsyncAutodelete>0</AsyncAutodelete>
@@ -95,7 +104,7 @@ def customizations():
 <LocalizedNames><LocalizedName languagecode="1033" description="{name}" /></LocalizedNames></Workflow>''' for name, gid, fn, _ in FLOWS)
     conns = ''.join(f'''<connectionreference connectionreferencelogicalname="{n}"><connectionreferencedisplayname>{d}</connectionreferencedisplayname>
 <connectorid>/providers/Microsoft.PowerApps/apis/{c}</connectorid><iscustomizable>1</iscustomizable><promptingbehavior>0</promptingbehavior><statecode>0</statecode><statuscode>1</statuscode></connectionreference>'''
-                    for n, d, c in ((CONN_SP, 'SharePoint', 'shared_sharepointonline'), (CONN_MAIL, 'Mail', 'shared_sendmail')))
+                    for n, d, c in ((CONN_SP, 'SharePoint', 'shared_sharepointonline'), (CONN_MAIL, 'Mail', 'shared_sendmail')) + (((CONN_APPR, 'Approvals', 'shared_approvals'),) if ALL else ()))
     return xml_pretty(f'''<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26092.157" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26092.00157">
 <Entities /><Roles /><Workflows>{wf}</Workflows><FieldSecurityProfiles /><Templates /><EntityMaps /><EntityRelationships /><OrganizationSettings /><optionsets />
 <CustomControls /><EntityDataProviders />

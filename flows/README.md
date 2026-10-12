@@ -1,16 +1,42 @@
-# Central Deposit flows: solution package
+# Central Deposit flows: solution packages
 
-`python3 flows/build_solution.py` builds `CentralDepositFlows_1_0_0_2.zip` (unmanaged solution), modelled on the environment's own export (solution "Teste": publisher `Cr99038`, prefix `avcd`).
-Contents now: **flow 1 "CD - 01 Request submitted"**, 2 connection references (SharePoint, Mail / "Send an email notification (V3)").
+Built by `flows/build_solution.py` on the format of the environment's own export (solution "Teste": publisher `Cr99038`, prefix `avcd`).
 
-## Before importing
-`AV-CD-Requests` needs one new column: **`SubmissionNotifiedOn`** (Date and time). The flow writes it after sending the e-mails so a request is announced once.
+| Package | Command | Flows |
+|---|---|---|
+| `CentralDepositFlows_1_0_0_2.zip` | `python3 flows/build_solution.py` | flow 1 only (test) |
+| `CentralDepositFlows_1_1_0_0.zip` | `ALL=1 python3 flows/build_solution.py` | flows 1 to 8 (flow 1 is the one already tested; it also stamps `LastNotifiedStatus`) |
 
-## Import
-1. make.powerautomate.com → **Solutions → Import solution** → choose the zip.
-2. Connect the two connections (SharePoint, Mail).
-3. Open the flow, check it, **turn it on**.
-4. The only value to adjust is the first action, `Initialize_SupportMailbox` (where failures are reported).
+Import the 1.1.0.0 package **after** flow 1 of 1.0.0.2 works. It updates flow 1 in place (same ids) and adds the others. Every flow is imported **turned off**: review it, then turn it on.
 
-## Test
-Submit a request from the app (Draft → Submit). Within about a minute: an e-mail to the assignee/co-assignee (all administrators if none) and a confirmation to the requestor; `SubmissionNotifiedOn` is filled.
+## Columns to create in AV-CD-Requests (all optional text/date, nothing else changes)
+
+| Column (internal name) | Type | Used by |
+|---|---|---|
+| `SubmissionNotifiedOn` | Date and time | flow 1 |
+| `LastNotifiedStatus` | Single line of text | flows 1, 2, 3 |
+| `LastNotifiedAssignee` | Single line of text | flow 4 |
+| `LastNotifiedCoAssignee` | Single line of text | flow 4 |
+| `LastReminderOn` | Date and time | flow 8 |
+| `SecondApprovalOn` | Date and time | flow 5 (optional) |
+
+These "marker" columns make each flow send its e-mails once, without the "Get changes" action: a flow writes the value it has just announced, and its trigger condition ignores rows whose marker is already up to date.
+
+## Flows
+
+| # | Flow | Trigger | E-mails |
+|---|---|---|---|
+| 1 | Request submitted | `Status = Processing`, first time | administrators, requestor |
+| 2 | Status changed | Approved / Rejected / Pending / Published (archive-only and partially approved are variants of Approved) | requestor, assignee, reviewer, contacts |
+| 3 | Resubmitted | `Processing` again after a review | assignee (administrators if none), requestor |
+| 4 | Assignment | `Assignee` / `CoAssignee` changed | new and previous (co-)assignee, requestor |
+| 5 | Second approval (optional) | Approved + `ArchivedOnly` | Approvals request to the other administrators, then confirmed / challenged e-mail. Needs the **Approvals** connection |
+| 6 | New message | item created in `AV-CD-Notes` | the other party |
+| 7 | Unread messages | weekdays 09:00 | one reminder per message that stayed unread 24 to 48 hours |
+| 8 | Reminders | weekdays 08:30 | Processing for 7+ days, Pending for 7+ days, at most one every 3 days |
+
+Flows 7 and 8 do nothing inside an active `SuspensionDates` period. E-mails go out through the **Mail** connector ("Send an email notification V3", the sender is the connection owner). The first action of each flow, `Initialize_SupportMailbox`, is where failures are reported: set the address.
+Full e-mail texts: `docs/power-automate-flows.md`.
+
+## Test (one request)
+Submit → e-mails 1; set assignee + co-assignee → flow 4; Need info → flow 2 (Pending); resubmit → flow 3; approve with some media ticked → flow 2 (partially approved); write a message as each role → flow 6.
