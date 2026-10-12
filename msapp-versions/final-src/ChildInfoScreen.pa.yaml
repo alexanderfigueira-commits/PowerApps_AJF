@@ -1113,26 +1113,50 @@ Screens:
                         Coalesce(varChildTitle1, "") <> "" Or Coalesce(varChildDescription1, "") <> "",
                         Set(varShowTplConfirm, true),
                         Set(varChildTitle1, Coalesce(varTplCandidate.ProductionTitle, ""));
-                        Set(varChildDescription1, Coalesce(varTplCandidate.Description, ""));
+                        Set(varChildDescription1, If(StartsWith(Trim(Coalesce(varTplCandidate.Description, "")),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(Coalesce(varTplCandidate.Description, ""),">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),Coalesce(varTplCandidate.Description, "")));
+                        Set(varChildCaptureDate, varTplCandidate.CaptureDate);
+                        Set(varChildProductionEndDate, varTplCandidate.ProductionEndDate);
+                        Set(varChildPublicationStartDate, varTplCandidate.PublicationStartDate);
+                        Set(varChildPublicationEndDate, varTplCandidate.PublicationEndDate);
                         Set(varChildCredits1, Coalesce(varTplCandidate.CreditContact, First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
                         Set(varChildProductionPlace1, Coalesce(varTplCandidate.ProductionPlace, ""));
                         Set(varChildLinks1, Coalesce(varTplCandidate.ReferenceLinks, ""));
                         Set(varChildTags, Coalesce(varTplCandidate.Tags, ""));
                         Set(varChildTags1, Coalesce(varTplCandidate.Tags, ""));
                         Set(varChildFTPPath1, Coalesce(varTplCandidate.FTPPath, ""));
+                        Set(varChildNotes, Coalesce(varTplCandidate.Notes, ""));
+                        Set(varChildScript, Coalesce(varTplCandidate.ScriptShotlist, ""));
+                        Set(varChildPhotoCaption, Coalesce(varTplCandidate.PhotoCaption, ""));
+                        Set(varChildContractingAuthority, Coalesce(varTplCandidate.ContractingAuthority, ""));
+                        Set(varChildExecProducer, Coalesce(varTplCandidate.ExecProducerName, ""));
+                        Set(varChildProducerSel, If(IsEmpty(varTplCandidate.Producer), Blank(), ForAll(varTplCandidate.Producer As p, {DisplayName: p.DisplayName, Mail: p.Email})));
+                        Set(varChildProducer, Concat(varTplCandidate.Producer, DisplayName, ", "));
+                        Set(varChildPhotographerSel, If(IsEmpty(varTplCandidate.Photographer), Blank(), ForAll(varTplCandidate.Photographer As p, {DisplayName: p.DisplayName, Mail: p.Email})));
+                        Set(varChildPhotographer, Concat(varTplCandidate.Photographer, DisplayName, ", "));
+                        Set(varChildSeriesTitle1, Coalesce(varTplCandidate.SeriesTitle, ""));
+                        Set(varChildEpisodeTitle1, Coalesce(varTplCandidate.EpisodeTitle, ""));
+                        Set(varChildEpisodeSummary1, Coalesce(varTplCandidate.EpisodeSummary, ""));
+                        Set(varChildSeasonNumber, Coalesce(varTplCandidate.SeasonNumber, 0));
+                        Set(varChildEpisodeNumber, Coalesce(varTplCandidate.EpisodeNumber, 0));
                         Set(varChildProductType, Coalesce(First(varTplCandidate.ProductType).Value, varChildProductType));
                         Set(varChildProductType1, Coalesce(First(varTplCandidate.ProductType).Value, varChildProductType1));
                         Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, varChildLanguageVersions));
                         Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
                         Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
+                        Set(varDocFramework, Coalesce(varTplCandidate.FrameworkContractSigned, false));
+                        Set(varDocSpecific, Coalesce(varTplCandidate.SpecificContractSigned, false));
+                        Set(varDocOffer, Coalesce(varTplCandidate.OfferProvided, false));
                         Set(varChildNoThirdParty, Coalesce(varTplCandidate.NoThirdPartyRights, false));
                         Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
-                        Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
+                        Set(varChildModelRelease, Coalesce(varTplCandidate.ModelRelease, false) Or Coalesce(varTplCandidate.ModelReleaseProvided, false));
                         Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
                         Set(varChildMusicLicenceProvided, Coalesce(varTplCandidate.MusicLicenseProvided, false));
                         Set(varChildPreexistingProvided, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
-                        Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+                        Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRights, false) Or Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+                        Set(varChildSubtitlesProvided, Coalesce(varTplCandidate.SubtitlesProvided, false));
                         Set(varChildAIVoiceover, varTplCandidate.AIVoiceover = "Yes");
+                        Reset(CM_Producer);
+                        Reset(CM_Photographer);
                         Set(varShowTemplatePicker, false)
                     )
                   Width: =712
@@ -1272,26 +1296,50 @@ Screens:
             HoverFill: =RGBA(0, 18, 107, 1)
             OnSelect: |-
               =Set(varChildTitle1, Coalesce(varTplCandidate.ProductionTitle, ""));
-              Set(varChildDescription1, Coalesce(varTplCandidate.Description, ""));
+              Set(varChildDescription1, If(StartsWith(Trim(Coalesce(varTplCandidate.Description, "")),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(Coalesce(varTplCandidate.Description, ""),">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),Coalesce(varTplCandidate.Description, "")));
+              Set(varChildCaptureDate, varTplCandidate.CaptureDate);
+              Set(varChildProductionEndDate, varTplCandidate.ProductionEndDate);
+              Set(varChildPublicationStartDate, varTplCandidate.PublicationStartDate);
+              Set(varChildPublicationEndDate, varTplCandidate.PublicationEndDate);
               Set(varChildCredits1, Coalesce(varTplCandidate.CreditContact, First(varTplCandidate.Photographer).DisplayName, First(varTplCandidate.Director).DisplayName, First(varTplCandidate.Producer).DisplayName, ""));
               Set(varChildProductionPlace1, Coalesce(varTplCandidate.ProductionPlace, ""));
               Set(varChildLinks1, Coalesce(varTplCandidate.ReferenceLinks, ""));
               Set(varChildTags, Coalesce(varTplCandidate.Tags, ""));
               Set(varChildTags1, Coalesce(varTplCandidate.Tags, ""));
               Set(varChildFTPPath1, Coalesce(varTplCandidate.FTPPath, ""));
+              Set(varChildNotes, Coalesce(varTplCandidate.Notes, ""));
+              Set(varChildScript, Coalesce(varTplCandidate.ScriptShotlist, ""));
+              Set(varChildPhotoCaption, Coalesce(varTplCandidate.PhotoCaption, ""));
+              Set(varChildContractingAuthority, Coalesce(varTplCandidate.ContractingAuthority, ""));
+              Set(varChildExecProducer, Coalesce(varTplCandidate.ExecProducerName, ""));
+              Set(varChildProducerSel, If(IsEmpty(varTplCandidate.Producer), Blank(), ForAll(varTplCandidate.Producer As p, {DisplayName: p.DisplayName, Mail: p.Email})));
+              Set(varChildProducer, Concat(varTplCandidate.Producer, DisplayName, ", "));
+              Set(varChildPhotographerSel, If(IsEmpty(varTplCandidate.Photographer), Blank(), ForAll(varTplCandidate.Photographer As p, {DisplayName: p.DisplayName, Mail: p.Email})));
+              Set(varChildPhotographer, Concat(varTplCandidate.Photographer, DisplayName, ", "));
+              Set(varChildSeriesTitle1, Coalesce(varTplCandidate.SeriesTitle, ""));
+              Set(varChildEpisodeTitle1, Coalesce(varTplCandidate.EpisodeTitle, ""));
+              Set(varChildEpisodeSummary1, Coalesce(varTplCandidate.EpisodeSummary, ""));
+              Set(varChildSeasonNumber, Coalesce(varTplCandidate.SeasonNumber, 0));
+              Set(varChildEpisodeNumber, Coalesce(varTplCandidate.EpisodeNumber, 0));
               Set(varChildProductType, Coalesce(First(varTplCandidate.ProductType).Value, varChildProductType));
               Set(varChildProductType1, Coalesce(First(varTplCandidate.ProductType).Value, varChildProductType1));
               Set(varChildLanguageVersions, Coalesce(First(varTplCandidate.LanguageVersions).Value, varChildLanguageVersions));
               Set(varChildContractCase, Coalesce(First(varTplCandidate.ContractCase).Value, ""));
               Set(varChildContractCase1Sub, Coalesce(First(varTplCandidate.ContractCase1Sub).Value, ""));
+              Set(varDocFramework, Coalesce(varTplCandidate.FrameworkContractSigned, false));
+              Set(varDocSpecific, Coalesce(varTplCandidate.SpecificContractSigned, false));
+              Set(varDocOffer, Coalesce(varTplCandidate.OfferProvided, false));
               Set(varChildNoThirdParty, Coalesce(varTplCandidate.NoThirdPartyRights, false));
               Set(varChildModelReleaseProvided, Coalesce(varTplCandidate.ModelReleaseProvided, false));
-              Set(varChildModelRelease, Coalesce(varTplCandidate.ModelReleaseProvided, false));
+              Set(varChildModelRelease, Coalesce(varTplCandidate.ModelRelease, false) Or Coalesce(varTplCandidate.ModelReleaseProvided, false));
               Set(varChildMusicUsed, Coalesce(varTplCandidate.MusicUsed, false));
               Set(varChildMusicLicenceProvided, Coalesce(varTplCandidate.MusicLicenseProvided, false));
               Set(varChildPreexistingProvided, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
-              Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+              Set(varChildPreexisting, Coalesce(varTplCandidate.PreexistingRights, false) Or Coalesce(varTplCandidate.PreexistingRightsProvided, false));
+              Set(varChildSubtitlesProvided, Coalesce(varTplCandidate.SubtitlesProvided, false));
               Set(varChildAIVoiceover, varTplCandidate.AIVoiceover = "Yes");
+              Reset(CM_Producer);
+              Reset(CM_Photographer);
               Set(varShowTplConfirm, false);
               Set(varShowTemplatePicker, false)
             PressedBorderColor: =Self.Fill
