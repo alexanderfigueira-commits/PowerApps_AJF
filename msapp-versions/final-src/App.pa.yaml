@@ -10,7 +10,11 @@ App:
   Properties:
     BackEnabled: =false
     OnStart: |-
-      =Set(varFilterDay, Today());
+      =// address of this app, used to build shareable request links (replace the placeholders)
+      Set(varAppLink, "https://apps.powerapps.com/play/e/ENVIRONMENT-ID/a/APP-ID?tenantId=TENANT-ID");
+      // a shared link carries &RequestID=<id>; the start screen opens that request
+      Set(varDeepLinkId, IfError(Value(Param("RequestID")), 0));
+      Set(varFilterDay, Today());
       Set(varViewOnly, false);
       Set(varReqDataLoaded, false);
       Set(varReqFiltersInit, false);

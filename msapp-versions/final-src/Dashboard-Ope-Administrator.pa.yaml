@@ -25,7 +25,34 @@ Screens:
             Notify("Only the first 2000 requests are loaded, so older ones may be missing.", NotificationType.Warning)
         );
         // media items, for the TODO clock (days left to the publication date)
-        ClearCollect(colOpeMedia, 'AV-CD-Mediafiles')
+        ClearCollect(colOpeMedia, 'AV-CD-Mediafiles');
+        // shared link (&RequestID=): open that request if the roles list allows it
+        If(
+            Coalesce(varDeepLinkId, 0) > 0,
+            With(
+                {
+                    req: LookUp('AV-CD-Requests', ID = varDeepLinkId),
+                    mine: Lower(LookUp('AV-CD-Requests', ID = varDeepLinkId).'Created By'.Email) = Lower(User().Email)
+                },
+                Set(varDeepLinkId, 0);
+                If(
+                    IsBlank(req),
+                    Notify("The shared request was not found.", NotificationType.Warning),
+                    mine Or (varUserRole = "ADMINISTRATOR" And Coalesce(req.Status.Value, "Draft") <> "Draft"),
+                    Set(varViewOnly, false);
+            Set(varCurrentRequest, req);
+                    Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
+                    Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
+                    Set(varRequestDG, Coalesce(req.DG.Value, ""));
+                    Set(varRequestDescription1, Coalesce(req.Description, ""));
+                    Set(varRequestDescription, Coalesce(req.Description, ""));
+                    Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
+                    Set(varRequestMediaType, "");
+                    Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false}),
+                    Notify("You do not have access to this request.", NotificationType.Warning)
+                )
+            )
+        )
     Children:
       - DOA_HeaderDivider:
           Control: Rectangle@2.3.0
