@@ -41,6 +41,7 @@ Screens:
                 locDetailsCollapsed: false,
                 locShowMedia: true,
                 locShowAdminNotes: false,
+                locSaveClicked: false,
                 locOwnerNoMatch: false,
                 locContractorNoMatch: false,
                 locShowDelConfirm: false,
@@ -3914,23 +3915,11 @@ Screens:
             Visible: =false
             X: =60
             Y: =60
-      - Icon2:
-          Control: Classic/Icon@2.5.0
-          Properties:
-            AccessibleLabel: ="Save Draft before Creating Media Items"
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(237, 237, 237, 1)
-            Height: =32
-            Icon: =Icon.ArrowDown
-            Tooltip: ="Save Draft before Creating Media Items"
-            Visible: =SaveButton.Visible
-            Width: =53
-            X: =1231
-            Y: =409
       - SaveButton:
           Control: Classic/Icon@2.5.0
           Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
+            BorderColor: =If(locSaveClicked, RGBA(0, 18, 107, 1), RGBA(255, 204, 0, 1))
+            BorderThickness: =If(locSaveClicked, 2, 3)
             Color: =RGBA(0, 18, 107, 1)
             DisplayMode: |-
               =If(
@@ -3945,7 +3934,8 @@ Screens:
             Height: =28
             Icon: =Icon.Save
             OnSelect: |-
-              =// save exactly what is on screen
+              =UpdateContext({locSaveClicked: true});
+              // save exactly what is on screen
               Set(varRequestTitle, RS_Title.Text);
               Set(varRequestDescription, RS_Description.Text);
               Set(varRequestDG, HomeFilterDG.Selected.Value);
