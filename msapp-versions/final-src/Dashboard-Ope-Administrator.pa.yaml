@@ -25,34 +25,7 @@ Screens:
             Notify("Only the first 2000 requests are loaded, so older ones may be missing.", NotificationType.Warning)
         );
         // media items, for the TODO clock (days left to the publication date)
-        ClearCollect(colOpeMedia, 'AV-CD-Mediafiles');
-        // shared link (&RequestID=): open that request if the roles list allows it
-        If(
-            Coalesce(varDeepLinkId, 0) > 0,
-            With(
-                {
-                    req: LookUp('AV-CD-Requests', ID = varDeepLinkId),
-                    mine: Lower(LookUp('AV-CD-Requests', ID = varDeepLinkId).'Created By'.Email) = Lower(User().Email)
-                },
-                Set(varDeepLinkId, 0);
-                If(
-                    IsBlank(req),
-                    Notify("The shared request was not found.", NotificationType.Warning),
-                    mine Or (varUserRole = "ADMINISTRATOR" And Coalesce(req.Status.Value, "Draft") <> "Draft"),
-                    Set(varViewOnly, false);
-            Set(varCurrentRequest, req);
-                    Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
-                    Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
-                    Set(varRequestDG, Coalesce(req.DG.Value, ""));
-                    Set(varRequestDescription1, Coalesce(req.Description, ""));
-                    Set(varRequestDescription, Coalesce(req.Description, ""));
-                    Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
-                    Set(varRequestMediaType, "");
-                    Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false}),
-                    Notify("You do not have access to this request.", NotificationType.Warning)
-                )
-            )
-        )
+        ClearCollect(colOpeMedia, 'AV-CD-Mediafiles')
     Children:
       - DOA_HeaderDivider:
           Control: Rectangle@2.3.0
@@ -1490,3 +1463,53 @@ Screens:
             Width: =20
             X: =431
             Y: =159
+      - DOA_DeepLinkTimer:
+          Control: Timer@2.1.0
+          Properties:
+            AutoStart: =true
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =ColorFade(Self.BorderColor, 70%)
+            DisabledColor: =ColorFade(Self.Fill, 90%)
+            DisabledFill: =ColorFade(Self.Fill, 70%)
+            Duration: =300
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnTimerEnd: |-
+              =If(
+                  Coalesce(varDeepLinkId, 0) > 0,
+                  With(
+                      {
+                          req: LookUp('AV-CD-Requests', ID = varDeepLinkId),
+                          mine: Lower(LookUp('AV-CD-Requests', ID = varDeepLinkId).'Created By'.Email) = Lower(User().Email)
+                      },
+                      Set(varDeepLinkId, 0);
+                      If(
+                          IsBlank(req),
+                          Notify("The shared request was not found.", NotificationType.Warning),
+                          mine Or (varUserRole = "ADMINISTRATOR" And Coalesce(req.Status.Value, "Draft") <> "Draft"),
+                          Set(varViewOnly, false);
+                          Set(varCurrentRequest, req);
+                          Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
+                          Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
+                          Set(varRequestDG, Coalesce(req.DG.Value, ""));
+                          Set(varRequestDescription1, Coalesce(req.Description, ""));
+                          Set(varRequestDescription, Coalesce(req.Description, ""));
+                          Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
+                          Set(varRequestMediaType, "");
+                          Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false}),
+                          Notify("You do not have access to this request.", NotificationType.Warning)
+                      )
+                  )
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Repeat: =false
+            Visible: =false
+            X: =60
+            Y: =60
+          Children: []
