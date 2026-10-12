@@ -864,6 +864,7 @@ Screens:
             CheckmarkFill: =RGBA(0, 0, 0, 1)
             Default: =varRequestArchivedOnly
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             Height: =44
             HoverColor: =RGBA(0, 18, 107, 1)
@@ -1131,12 +1132,15 @@ Screens:
           Control: Classic/TextInput@2.3.2
           Properties:
             BorderColor: |-
-              =// yellow while this mandatory field is empty
+              =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+              // yellow while this mandatory field is empty
               If(RS_LblTitle.Visible And IsBlank(Trim(RS_Title.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-            BorderThickness: =If(RS_LblTitle.Visible And IsBlank(Trim(RS_Title.Text)), 3, 2)
+              )
+            BorderThickness: =If(varRequestorLocked, 2, If(RS_LblTitle.Visible And IsBlank(Trim(RS_Title.Text)), 3, 2))
             Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
             Default: =varRequestTitle
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
             Font: =Font.'Open Sans'
             Height: =44
             HintText: ="e.g. EU Climate Action Week 2026 - opening session"
@@ -1179,10 +1183,12 @@ Screens:
           Control: Classic/ComboBox@2.4.0
           Properties:
             BorderColor: |-
-              =// yellow only while nothing is picked and there is no manual contact either
+              =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+              // yellow only while nothing is picked and there is no manual contact either
               If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_DG_Agency_Contact)}, RS_LblOwner.Visible And IsEmpty(Filter(RS_Owner.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+              )
             BorderThickness: |-
-              =If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_DG_Agency_Contact)}, RS_LblOwner.Visible And IsEmpty(Filter(RS_Owner.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), 3, 2)
+              =If(varRequestorLocked, 2, If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "DG/Agency" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_DG_Agency_Contact)}, RS_LblOwner.Visible And IsEmpty(Filter(RS_Owner.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), 3, 2))
             ChevronBackground: =RGBA(35, 31, 32, 1)
             ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
             ChevronDisabledFill: =RGBA(235, 233, 229, 1)
@@ -1217,6 +1223,7 @@ Screens:
               )
             DisplayFields: =["DisplayName","Mail"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
             Font: =Font.'Open Sans'
             Height: =37
             HoverBorderColor: =Self.BorderColor
@@ -1283,10 +1290,12 @@ Screens:
           Control: Classic/ComboBox@2.4.0
           Properties:
             BorderColor: |-
-              =// yellow only while nothing is picked and there is no manual contact either
+              =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+              // yellow only while nothing is picked and there is no manual contact either
               If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_Contractor_Contact)}, RS_LblContractor.Visible And IsEmpty(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
+              )
             BorderThickness: |-
-              =If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_Contractor_Contact)}, RS_LblContractor.Visible And IsEmpty(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), 3, 2)
+              =If(varRequestorLocked, 2, If(With({manual: Coalesce(Last(Filter(colManualContacts, ContactType = "Contractor" And ParentRequest = varCurrentRequest.RequestNumber)).EmailContact, varCurrentRequest.Manual_Contractor_Contact)}, RS_LblContractor.Visible And IsEmpty(Filter(RS_Contractor.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, "")))))) And IsBlank(manual)), 3, 2))
             ChevronBackground: =RGBA(35, 31, 32, 1)
             ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
             ChevronDisabledFill: =RGBA(235, 233, 229, 1)
@@ -1321,6 +1330,7 @@ Screens:
               )
             DisplayFields: =["DisplayName","Mail"]
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
             Font: =Font.'Open Sans'
             Height: =37
             HoverBorderColor: =Self.BorderColor
@@ -1400,6 +1410,7 @@ Screens:
             Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
             Default: =varRequestDescription
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
             Font: =Font.'Open Sans'
             Height: =53
             HintText: ="Describe the purpose, context and scope of this request"
@@ -1802,9 +1813,11 @@ Screens:
           Control: Classic/DropDown@2.3.1
           Properties:
             BorderColor: |-
-              =// yellow while this mandatory field is empty
+              =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+              // yellow while this mandatory field is empty
               If(RS_LblDG.Visible And IsBlank(HomeFilterDG.Selected.Value), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-            BorderThickness: =If(RS_LblDG.Visible And IsBlank(HomeFilterDG.Selected.Value), 3, 2)
+              )
+            BorderThickness: =If(varRequestorLocked, 2, If(RS_LblDG.Visible And IsBlank(HomeFilterDG.Selected.Value), 3, 2))
             ChevronBackground: =RGBA(35, 31, 32, 1)
             ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
             ChevronDisabledFill: =RGBA(235, 233, 229, 1)
@@ -1813,6 +1826,7 @@ Screens:
             ChevronHoverFill: =Self.ChevronFill
             Default: =varRequestDG
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
             Font: =Font.'Open Sans'
             Height: =44
             HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -2035,6 +2049,7 @@ Screens:
             DisplayMode: |-
               =// no production type yet: nothing to declare
               If(varRequestorLocked Or (IsBlank(varRequestMediaType) Or varRequestMediaType = ""), DisplayMode.View, DisplayMode.Edit)
+            Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(0, 0, 0, 0))
             Font: =Font.'Open Sans'
             Height: =47
             HoverColor: =RGBA(0, 18, 107, 1)
@@ -3400,6 +3415,7 @@ Screens:
             ChevronHoverFill: =Self.ChevronFill
             Default: =locContactPopupType
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
             Font: =Font.'Open Sans'
             Height: =44
             HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -3438,6 +3454,7 @@ Screens:
             Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
             Default: =""
             DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+            Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
             Font: =Font.'Open Sans'
             Height: =44
             HintText: ="name@domain.com"

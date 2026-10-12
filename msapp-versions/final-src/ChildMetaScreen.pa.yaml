@@ -159,9 +159,11 @@ Screens:
                 Control: Classic/ComboBox@2.4.0
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblLanguage.Visible And IsEmpty(CM_Language.SelectedItems), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblLanguage.Visible And IsEmpty(CM_Language.SelectedItems), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblLanguage.Visible And IsEmpty(CM_Language.SelectedItems), 3, 2))
                   ChevronBackground: =RGBA(56, 96, 178, 1)
                   ChevronFill: =RGBA(255, 255, 255, 1)
                   ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
@@ -170,6 +172,7 @@ Screens:
                     =If(IsBlank(varChildLanguageVersions) Or varChildLanguageVersions = "", Table(), Table({Value: varChildLanguageVersions}))
                   DisplayFields: =["Value"]
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HoverFill: =RGBA(186, 202, 226, 1)
                   Items: =["EN", "FR", "DE", "IT", "ES", "PT", "NL", "PL", "RO", "EL", "CS", "SV", "HU", "BG", "DA", "FI", "SK", "HR", "LT", "SL", "LV", "ET", "MT", "GA", "Other"]
@@ -204,12 +207,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory (starred) field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory (starred) field is empty
                     If(CM_LblCredits.Visible And Right(Trim(CM_LblCredits.Text), 1) = "*" And (IsBlank(Trim(CM_Credits.Text))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblCredits.Visible And Right(Trim(CM_LblCredits.Text), 1) = "*" And (IsBlank(Trim(CM_Credits.Text))), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblCredits.Visible And Right(Trim(CM_LblCredits.Text), 1) = "*" And (IsBlank(Trim(CM_Credits.Text))), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildCredits1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Height: =64
                   HintText: |-
@@ -244,6 +250,7 @@ Screens:
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =If(StartsWith(Trim(varChildDescription1),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(varChildDescription1,">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),varChildDescription1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Height: =88
                   HintText: ="Editorial description, context and keywords"
@@ -320,12 +327,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblEpisodeSummary.Visible And IsBlank(Trim(CM_EpisodeSummary.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblEpisodeSummary.Visible And IsBlank(Trim(CM_EpisodeSummary.Text)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblEpisodeSummary.Visible And IsBlank(Trim(CM_EpisodeSummary.Text)), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildEpisodeSummary1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Height: =64
                   HintText: ="Brief description of this episode (max 300 characters)"
@@ -355,14 +365,17 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblSeasonNumber.Visible And Coalesce(IfError(Value(Trim(CM_SeasonNumber.Text)), 0), 0) <= 0, RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblSeasonNumber.Visible And Coalesce(IfError(Value(Trim(CM_SeasonNumber.Text)), 0), 0) <= 0, 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblSeasonNumber.Visible And Coalesce(IfError(Value(Trim(CM_SeasonNumber.Text)), 0), 0) <= 0, 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: |-
                     =// empty (showing the hint) until a number above 0 is stored
                     If(varChildSeasonNumber > 0, Text(varChildSeasonNumber), "")
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="1"
                   HoverBorderColor: =Self.BorderColor
@@ -390,14 +403,17 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblEpisodeNumber.Visible And Coalesce(IfError(Value(Trim(CM_EpisodeNumber.Text)), 0), 0) <= 0, RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblEpisodeNumber.Visible And Coalesce(IfError(Value(Trim(CM_EpisodeNumber.Text)), 0), 0) <= 0, 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblEpisodeNumber.Visible And Coalesce(IfError(Value(Trim(CM_EpisodeNumber.Text)), 0), 0) <= 0, 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: |-
                     =// empty (showing the hint) until a number above 0 is stored
                     If(varChildEpisodeNumber > 0, Text(varChildEpisodeNumber), "")
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="1"
                   HoverBorderColor: =Self.BorderColor
@@ -475,11 +491,14 @@ Screens:
                 Control: Classic/DatePicker@2.6.0
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory (starred) field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory (starred) field is empty
                     If(CM_LblShootDate.Visible And Right(Trim(CM_LblShootDate.Text), 1) = "*" And (IsBlank(varChildCaptureDate) Or IsBlank(CM_ShootDate.SelectedDate)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblShootDate.Visible And Right(Trim(CM_LblShootDate.Text), 1) = "*" And (IsBlank(varChildCaptureDate) Or IsBlank(CM_ShootDate.SelectedDate)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblShootDate.Visible And Right(Trim(CM_LblShootDate.Text), 1) = "*" And (IsBlank(varChildCaptureDate) Or IsBlank(CM_ShootDate.SelectedDate)), 3, 2))
                   DefaultDate: =varChildCaptureDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Format: ="dd-mm-yyyy"
                   IconBackground: =RGBA(56, 96, 178, 1)
@@ -507,12 +526,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory (starred) field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory (starred) field is empty
                     If(CM_LblPlacePhoto.Visible And Right(Trim(CM_LblPlacePhoto.Text), 1) = "*" And (IsBlank(Trim(CM_PlacePhoto.Text))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblPlacePhoto.Visible And Right(Trim(CM_LblPlacePhoto.Text), 1) = "*" And (IsBlank(Trim(CM_PlacePhoto.Text))), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblPlacePhoto.Visible And Right(Trim(CM_LblPlacePhoto.Text), 1) = "*" And (IsBlank(Trim(CM_PlacePhoto.Text))), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildProductionPlace1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: =If(varChildMediaType = "Photo", "where the photo has been taken", "City, country or venue")
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -553,12 +575,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblAuthority.Visible And IsBlank(Trim(CM_Authority.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblAuthority.Visible And IsBlank(Trim(CM_Authority.Text)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblAuthority.Visible And IsBlank(Trim(CM_Authority.Text)), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildContractingAuthority
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="Contracting authority"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -589,6 +614,7 @@ Screens:
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildLinks1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="Relevant URLs or SharePoint references"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -619,6 +645,7 @@ Screens:
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildTags1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="Comma-separated keywords for discoverability"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -646,11 +673,14 @@ Screens:
                 Control: Classic/DatePicker@2.6.0
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblProdEnd.Visible And (IsBlank(varChildProductionEndDate) Or IsBlank(CM_ProdEnd.SelectedDate)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblProdEnd.Visible And (IsBlank(varChildProductionEndDate) Or IsBlank(CM_ProdEnd.SelectedDate)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblProdEnd.Visible And (IsBlank(varChildProductionEndDate) Or IsBlank(CM_ProdEnd.SelectedDate)), 3, 2))
                   DefaultDate: =varChildProductionEndDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Format: ="dd-mm-yyyy"
                   IconBackground: =RGBA(56, 96, 178, 1)
@@ -678,11 +708,14 @@ Screens:
                 Control: Classic/DatePicker@2.6.0
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblPubStartV.Visible And (IsBlank(varChildPublicationStartDate) Or IsBlank(CM_PubStartV.SelectedDate)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblPubStartV.Visible And (IsBlank(varChildPublicationStartDate) Or IsBlank(CM_PubStartV.SelectedDate)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblPubStartV.Visible And (IsBlank(varChildPublicationStartDate) Or IsBlank(CM_PubStartV.SelectedDate)), 3, 2))
                   DefaultDate: =varChildPublicationStartDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Format: ="dd-mm-yyyy"
                   IconBackground: =RGBA(56, 96, 178, 1)
@@ -710,11 +743,14 @@ Screens:
                 Control: Classic/DatePicker@2.6.0
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblPubEndV.Visible And (IsBlank(varChildPublicationEndDate) Or IsBlank(CM_PubEndV.SelectedDate)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblPubEndV.Visible And (IsBlank(varChildPublicationEndDate) Or IsBlank(CM_PubEndV.SelectedDate)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblPubEndV.Visible And (IsBlank(varChildPublicationEndDate) Or IsBlank(CM_PubEndV.SelectedDate)), 3, 2))
                   DefaultDate: =varChildPublicationEndDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Format: ="dd-mm-yyyy"
                   IconBackground: =RGBA(56, 96, 178, 1)
@@ -745,6 +781,7 @@ Screens:
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildScript
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Height: =64
                   HintText: ="with timing, names and functions of the personalities filmed and clear identification"
@@ -774,9 +811,11 @@ Screens:
                 Control: Classic/ComboBox@2.4.0
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblProducer.Visible And (IsBlank(varChildProducer) Or IsEmpty(Filter(CM_Producer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblProducer.Visible And (IsBlank(varChildProducer) Or IsEmpty(Filter(CM_Producer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblProducer.Visible And (IsBlank(varChildProducer) Or IsEmpty(Filter(CM_Producer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), 3, 2))
                   ChevronBackground: =RGBA(56, 96, 178, 1)
                   ChevronFill: =RGBA(255, 255, 255, 1)
                   ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
@@ -785,6 +824,7 @@ Screens:
                     =If(IsBlank(varChildProducerSel), Blank(), ForAll(varChildProducerSel As p, {DisplayName: p.DisplayName, Mail: p.Mail}))
                   DisplayFields: =["DisplayName"]
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HoverFill: =RGBA(186, 202, 226, 1)
                   InputTextPlaceholder: ="Search producer"
@@ -805,12 +845,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblCaptions.Visible And IsBlank(Trim(CM_Caption.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblCaptions.Visible And IsBlank(Trim(CM_Caption.Text)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblCaptions.Visible And IsBlank(Trim(CM_Caption.Text)), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildPhotoCaption
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Height: =90
                   HintText: |-
@@ -846,6 +889,7 @@ Screens:
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildExecProducer
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="contractor, agency"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -873,12 +917,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblEpisodeTitleP.Visible And IsBlank(Trim(CM_EpisodeTitleP.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblEpisodeTitleP.Visible And IsBlank(Trim(CM_EpisodeTitleP.Text)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblEpisodeTitleP.Visible And IsBlank(Trim(CM_EpisodeTitleP.Text)), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =Coalesce(varChildTitle, varChildTitle1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="Episode or segment title"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -990,9 +1037,11 @@ Screens:
                 Control: Classic/ComboBox@2.4.0
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CM_LblPhotographer.Visible And (IsBlank(varChildPhotographer) Or IsEmpty(Filter(CM_Photographer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CM_LblPhotographer.Visible And (IsBlank(varChildPhotographer) Or IsEmpty(Filter(CM_Photographer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CM_LblPhotographer.Visible And (IsBlank(varChildPhotographer) Or IsEmpty(Filter(CM_Photographer.SelectedItems, Not(IsBlank(Trim(Coalesce(DisplayName, "")))) Or Not(IsBlank(Trim(Coalesce(Mail, ""))))))), 3, 2))
                   ChevronBackground: =RGBA(56, 96, 178, 1)
                   ChevronFill: =RGBA(255, 255, 255, 1)
                   ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
@@ -1001,6 +1050,7 @@ Screens:
                     =If(IsBlank(varChildPhotographerSel), Blank(), ForAll(varChildPhotographerSel As p, {DisplayName: p.DisplayName, Mail: p.Mail}))
                   DisplayFields: =["DisplayName","Mail"]
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HoverFill: =RGBA(186, 202, 226, 1)
                   InputTextPlaceholder: ="Search by user ID or email or last and first name"

@@ -240,12 +240,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CI_LblTitle.Visible And IsBlank(Trim(CI_Title.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CI_LblTitle.Visible And IsBlank(Trim(CI_Title.Text)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CI_LblTitle.Visible And IsBlank(Trim(CI_Title.Text)), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildTitle1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="Media Production Title"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -273,12 +276,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory (starred) field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory (starred) field is empty
                     If(CI_LblDescription.Visible And Right(Trim(CI_LblDescription.Text), 1) = "*" And (IsBlank(Trim(CI_Description.Text))), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CI_LblDescription.Visible And Right(Trim(CI_LblDescription.Text), 1) = "*" And (IsBlank(Trim(CI_Description.Text))), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CI_LblDescription.Visible And Right(Trim(CI_LblDescription.Text), 1) = "*" And (IsBlank(Trim(CI_Description.Text))), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =If(StartsWith(Trim(varChildDescription1),"<"),Trim(Substitute(Substitute(Substitute(Substitute(Substitute(Substitute(Concat(MatchAll(varChildDescription1,">[^<]+"),Mid(FullMatch,2)&" "),"&#160;"," "),"&nbsp;"," "),"&amp;","&"),"&lt;","<"),"&gt;",">"),"&quot;","""")),varChildDescription1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Height: =64
                   HintText: ="Brief description of the content"
@@ -338,11 +344,14 @@ Screens:
                 Control: Classic/DatePicker@2.6.0
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CI_LblCaptureDate.Visible And IsBlank(CI_CaptureDate.SelectedDate), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CI_LblCaptureDate.Visible And IsBlank(CI_CaptureDate.SelectedDate), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CI_LblCaptureDate.Visible And IsBlank(CI_CaptureDate.SelectedDate), 3, 2))
                   DefaultDate: =varChildCaptureDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Format: ="dd-mm-yyyy"
                   IconBackground: =RGBA(56, 96, 178, 1)
@@ -372,6 +381,7 @@ Screens:
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildProductionPlace1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="City, country or venue"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -398,9 +408,11 @@ Screens:
                 Control: Classic/DropDown@2.3.1
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CI_LblProductType.Visible And IsBlank(CI_ProductType.Selected.Value), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CI_LblProductType.Visible And IsBlank(CI_ProductType.Selected.Value), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CI_LblProductType.Visible And IsBlank(CI_ProductType.Selected.Value), 3, 2))
                   ChevronBackground: =RGBA(35, 31, 32, 1)
                   ChevronDisabledBackground: =RGBA(215, 210, 204, 1)
                   ChevronDisabledFill: =RGBA(235, 233, 229, 1)
@@ -409,6 +421,7 @@ Screens:
                   ChevronHoverFill: =Self.ChevronFill
                   Default: =Coalesce(varChildProductType, varChildProductType1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
                   HoverFill: =RGBA(186, 202, 226, 1)
@@ -444,6 +457,7 @@ Screens:
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildSeriesTitle1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="Name of the podcast series"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -497,6 +511,7 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   DefaultDate: =varChildProductionEndDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Format: ="dd-mm-yyyy"
                   IconBackground: =RGBA(56, 96, 178, 1)
@@ -525,6 +540,7 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   DefaultDate: =varChildPublicationStartDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Format: ="dd-mm-yyyy"
                   IconBackground: =RGBA(56, 96, 178, 1)
@@ -553,6 +569,7 @@ Screens:
                   BorderColor: =RGBA(0, 18, 107, 1)
                   DefaultDate: =varChildPublicationEndDate
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Format: ="dd-mm-yyyy"
                   IconBackground: =RGBA(56, 96, 178, 1)
@@ -582,6 +599,7 @@ Screens:
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildLinks1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="Relevant URLs or SharePoint references"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -611,6 +629,7 @@ Screens:
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildTags1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="Comma-separated keywords for discoverability"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -637,12 +656,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CI_LblFTPPath.Visible And IsBlank(Trim(CI_FTPPath.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CI_LblFTPPath.Visible And IsBlank(Trim(CI_FTPPath.Text)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CI_LblFTPPath.Visible And IsBlank(Trim(CI_FTPPath.Text)), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =varChildFTPPath1
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="ftp://avdeposit.ec.europa.eu/incoming/2026/…"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -682,15 +704,18 @@ Screens:
                 Control: Classic/DropDown@2.3.1
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CI_LblLanguage.Visible And IsBlank(CI_Language.Selected.Value), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CI_LblLanguage.Visible And IsBlank(CI_Language.Selected.Value), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CI_LblLanguage.Visible And IsBlank(CI_Language.Selected.Value), 3, 2))
                   ChevronBackground: =RGBA(56, 96, 178, 1)
                   ChevronFill: =RGBA(255, 255, 255, 1)
                   ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
                   ChevronHoverFill: =RGBA(255, 255, 255, 1)
                   Default: =varChildLanguageVersions
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HoverFill: =RGBA(186, 202, 226, 1)
                   Items: =["EN", "FR", "DE", "IT", "ES", "PT", "NL", "PL", "RO", "EL", "CS", "SV", "HU", "BG", "DA", "FI", "SK", "HR", "LT", "SL", "LV", "ET", "MT", "GA", "Other"]
@@ -746,12 +771,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CI_LblPodcastTitle.Visible And IsBlank(Trim(CI_PodcastTitle.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CI_LblPodcastTitle.Visible And IsBlank(Trim(CI_PodcastTitle.Text)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CI_LblPodcastTitle.Visible And IsBlank(Trim(CI_PodcastTitle.Text)), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =Coalesce(varRequestTitle, varRequestTitle1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   HintText: ="Overall title of this podcast"
                   HoverBorderColor: =RGBA(0, 18, 107, 1)
@@ -778,12 +806,15 @@ Screens:
                 Control: Classic/TextInput@2.3.2
                 Properties:
                   BorderColor: |-
-                    =// yellow while this mandatory field is empty
+                    =If(varRequestorLocked, RGBA(0, 18, 107, 1),
+                    // yellow while this mandatory field is empty
                     If(CI_LblPodcastDesc.Visible And IsBlank(Trim(CI_PodcastDesc.Text)), RGBA(255, 204, 0, 1), RGBA(0, 18, 107, 1))
-                  BorderThickness: =If(CI_LblPodcastDesc.Visible And IsBlank(Trim(CI_PodcastDesc.Text)), 3, 2)
+                    )
+                  BorderThickness: =If(varRequestorLocked, 2, If(CI_LblPodcastDesc.Visible And IsBlank(Trim(CI_PodcastDesc.Text)), 3, 2))
                   Color: =If(Self.DisplayMode = DisplayMode.View, RGBA(0, 0, 0, 1), RGBA(0, 0, 0, 1))
                   Default: =Coalesce(varRequestDescription, varRequestDescription1)
                   DisplayMode: =If(varRequestorLocked, DisplayMode.View, DisplayMode.Edit)
+                  Fill: =If(varRequestorLocked, RGBA(244, 245, 248, 1), RGBA(255, 255, 255, 1))
                   Font: =Font.'Open Sans'
                   Height: =86
                   HintText: ="General description of the podcast, applies to all episodes"
