@@ -4346,9 +4346,8 @@ Screens:
                       Notify("Error saving draft: " & FirstError.Message, NotificationType.Error)
                   )
               )
-            Tooltip: |-
-              ="Save the draft: media items can be added once it is saved"
-            Visible: =Not(varViewOnly) And Not(varRequestorLocked) And (IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0)
-            Width: =39
-            X: =1240
+            Tooltip: ="Save draft"
+            Visible: =Not(varViewOnly) And Not(varRequestorLocked) And (IsBlank(varCurrentRequest) Or Coalesce(varCurrentRequest.ID, 0) <= 0 Or Coalesce(varCurrentRequest.Status.Value, "Draft") = "Draft")
+            Width: =40
+            X: =1196
             Y: =460
