@@ -40,3 +40,9 @@ Full e-mail texts: `docs/power-automate-flows.md`.
 
 ## Test (one request)
 Submit → e-mails 1; set assignee + co-assignee → flow 4; Need info → flow 2 (Pending); resubmit → flow 3; approve with some media ticked → flow 2 (partially approved); write a message as each role → flow 6.
+
+
+## Package 1.1.0.1 (flows 2-8, without flow 1)
+
+`CentralDepositFlows_1_1_0_1.zip` contains only CD - 02 to CD - 08. Flow 1 stays as imported from 1.0.0.2. Build: `ALL=1 SKIP1=1 python3 flows/build_solution.py`.
+Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`); flows 2 and 3 do not depend on it.

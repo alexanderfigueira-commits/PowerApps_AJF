@@ -9,7 +9,8 @@ APP = 'https://apps.powerapps.com/play/e/487b2992-105a-eb44-aa4b-296dae01044b/a/
 PREFIX = 'avcd'
 PUBLISHER = 'Cr99038'          # the environment's publisher (prefix avcd, option value prefix 51206), taken from the sample export
 ALL = bool(os.environ.get('ALL'))
-VERSION = '1.1.0.0' if ALL else '1.0.0.2'
+SKIP1 = bool(os.environ.get('SKIP1'))      # flow 1 is already imported and tested: leave it out
+VERSION = ('1.1.0.1' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.2'
 CONN_APPR = 'avcd_sharedapprovals_c5d18'
 # stable ids so a re-import updates instead of duplicating
 G = lambda name: str(uuid.uuid5(uuid.NAMESPACE_URL, 'centraldeposit/' + name)).upper()
@@ -91,6 +92,7 @@ FLOWS = [('CD - 01 Request submitted', WF1, 'CD-01RequestSubmitted', flow01())]
 if ALL:
     exec(open(os.path.join(HERE, 'flows_all.py'), encoding='utf-8').read())
     FLOWS[0][3]['properties']['definition']['actions']['Scope_-_Main']['actions']['Mark_as_notified']['inputs']['parameters']['item/LastNotifiedStatus'] = 'Processing'
+    if SKIP1: FLOWS.pop(0)
     for n, fn, f in (('CD - 02 Status changed', 'CD-02StatusChanged', flow02), ('CD - 03 Resubmitted', 'CD-03Resubmitted', flow03), ('CD - 04 Assignment', 'CD-04Assignment', flow04),
                      ('CD - 05 Second approval', 'CD-05SecondApproval', flow05), ('CD - 06 New message', 'CD-06NewMessage', flow06),
                      ('CD - 07 Unread messages', 'CD-07UnreadMessages', flow07), ('CD - 08 Reminders', 'CD-08Reminders', flow08)):
