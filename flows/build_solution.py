@@ -7,7 +7,7 @@ SITE = 'https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm'
 LIST = {'requests': 'b170a694-8b5c-4ac7-a9d5-b9111488b7bd', 'media': '301869de-daa0-4d59-838c-647a5ffd2ea5', 'roles': '58e5019a-29bb-4cca-94dd-733e418619a0'}
 APP = 'https://apps.powerapps.com/play/e/487b2992-105a-eb44-aa4b-296dae01044b/a/ba2698a5-2c73-4939-83cc-dd3c5120277d?tenantId=b24c8b06-522c-46fe-9080-70926f8dddb1'
 PREFIX = 'avcd'
-VERSION = '1.0.0.0'
+VERSION = '1.0.0.1'
 # stable ids so a re-import updates instead of duplicating
 G = lambda name: str(uuid.uuid5(uuid.NAMESPACE_URL, 'centraldeposit/' + name)).upper()
 WF1 = G('flow01')
@@ -87,7 +87,10 @@ def flow01():
                                           **{f'{v[0]} ({k})': {'defaultValue': v[1], 'type': 'String', 'metadata': {'schemaName': k}} for k, v in ENV.items()}},
                            'triggers': {'When_a_request_is_submitted': trigger}, 'actions': actions},
             'templateName': None}, 'schemaVersion': '1.0.0.0'}
-def xml_pretty(s): return xml.dom.minidom.parseString(s).toprettyxml(indent='  ', encoding='utf-8').decode('utf-8')
+def xml_pretty(s):
+    s = re.sub(r'>\s+<', '><', s.strip())
+    xml.dom.minidom.parseString(s.encode('utf-8'))
+    return '<?xml version="1.0" encoding="utf-8"?>' + s
 FLOWS = [('CD - 01 Request submitted', WF1, 'CD-01RequestSubmitted', flow01())]
 def customizations():
     wf = ''.join(f'''<Workflow WorkflowId="{{{gid.lower()}}}" Name="{name}"><JsonFileName>/Workflows/{fn}-{gid}.json</JsonFileName><Type>1</Type><Subprocess>0</Subprocess><Category>5</Category>
@@ -112,9 +115,8 @@ def solution():
 <LocalizedNames><LocalizedName description="Central Deposit flows" languagecode="1033" /></LocalizedNames><Descriptions />
 <Version>{VERSION}</Version><Managed>0</Managed>
 <Publisher><UniqueName>{PREFIX}</UniqueName><LocalizedNames><LocalizedName description="Audiovisual Service" languagecode="1033" /></LocalizedNames><Descriptions />
-<EMailAddress xsi:nil="true"></EMailAddress><SupportingWebsiteUrl xsi:nil="true"></SupportingWebsiteUrl>
 <CustomizationPrefix>{PREFIX}</CustomizationPrefix><CustomizationOptionValuePrefix>10500</CustomizationOptionValuePrefix>
-<Addresses><Address><AddressNumber>1</AddressNumber><AddressTypeCode>1</AddressTypeCode></Address><Address><AddressNumber>2</AddressNumber><AddressTypeCode>1</AddressTypeCode></Address></Addresses></Publisher>
+</Publisher>
 <RootComponents>{roots}</RootComponents><MissingDependencies /></SolutionManifest></ImportExportXml>''')
 def envdef(k, d, v):
     return xml_pretty(f'''<environmentvariabledefinition schemaname="{k}"><defaultvalue>{v.replace('&', '&amp;')}</defaultvalue>

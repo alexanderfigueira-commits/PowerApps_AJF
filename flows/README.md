@@ -1,6 +1,6 @@
 # Central Deposit flows: solution package
 
-`python3 flows/build_solution.py` builds `CentralDepositFlows_1_0_0_0.zip` (unmanaged solution).
+`python3 flows/build_solution.py` builds `CentralDepositFlows_1_0_0_1.zip` (unmanaged solution).
 Contents now: **flow 1 "CD - 01 Request submitted"**, 4 environment variables, 2 connection references (SharePoint, Office 365 Outlook).
 
 ## Before importing
