@@ -834,7 +834,7 @@ Screens:
                   Font: =Font.'Open Sans'
                   FontWeight: =FontWeight.Semibold
                   Height: =22
-                  Text: ="Podcast visual" & If(Coalesce(varChildSeasonNumber, 0) = 1, " *", " (optional)")
+                  Text: ="Podcast visual" & If((Coalesce(varChildSeasonNumber, 0) = 1 And Coalesce(varChildEpisodeNumber, 0) = 1), " *", " (optional)")
                   Visible: =varChildMediaType = "Podcast"
                   Width: =800
                   X: =51
@@ -857,8 +857,8 @@ Screens:
                 Properties:
                   BorderColor: |-
                     =// yellow while the podcast visual is mandatory (Season nr. = 1) and empty
-                    If(CI_LblPodcastVisual.Visible And Coalesce(varChildSeasonNumber, 0) = 1 And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, RGBA(255, 204, 0, 1), RGBA(56, 96, 178, 1))
-                  BorderThickness: =If(CI_LblPodcastVisual.Visible And Coalesce(varChildSeasonNumber, 0) = 1 And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, 3, 1)
+                    If(CI_LblPodcastVisual.Visible And (Coalesce(varChildSeasonNumber, 0) = 1 And Coalesce(varChildEpisodeNumber, 0) = 1) And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, RGBA(255, 204, 0, 1), RGBA(56, 96, 178, 1))
+                  BorderThickness: =If(CI_LblPodcastVisual.Visible And (Coalesce(varChildSeasonNumber, 0) = 1 And Coalesce(varChildEpisodeNumber, 0) = 1) And CountRows(Filter(CI_PodcastVisual.Attachments, EndsWith(Lower(Name), ".jpg") Or EndsWith(Lower(Name), ".jpeg") Or EndsWith(Lower(Name), ".png"))) = 0, 3, 1)
                   Color: =RGBA(56, 96, 178, 1)
                   DisabledBorderColor: =RGBA(166, 166, 166, 1)
                   Fill: =RGBA(255, 255, 255, 1)
@@ -878,7 +878,7 @@ Screens:
                         "📎 Podcast visual: " & If(IsEmpty(files), "no file yet", Concat(files, Name, ", "))
                         & "   ·   click to upload or remove")
                   Tooltip: |-
-                    =If(Coalesce(varChildSeasonNumber, 0) = 1, "Mandatory: a podcast visual is required when Season nr. is 1.", "Optional: a podcast visual is only required when Season nr. is 1.")
+                    =If((Coalesce(varChildSeasonNumber, 0) = 1 And Coalesce(varChildEpisodeNumber, 0) = 1), "Mandatory: a podcast visual is required when Season nr. and Episode nr. are both 1.", "Optional: a podcast visual is only required when Season nr. and Episode nr. are both 1.")
                   Visible: =varChildMediaType = "Podcast"
                   Width: =900
                   X: =51
