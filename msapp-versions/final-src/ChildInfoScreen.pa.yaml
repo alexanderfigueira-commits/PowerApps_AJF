@@ -1060,7 +1060,7 @@ Screens:
             Default: =varTplSearch1
             Font: =Font.'Open Sans'
             Height: =36
-            HintText: ="Search by title or media ID..."
+            HintText: ="Search by title, media ID or Beluga ID..."
             HoverBorderColor: =RGBA(0, 18, 107, 1)
             HoverFill: =RGBA(186, 202, 226, 1)
             OnChange: =Set(varTplSearch, Self.Text)
@@ -1088,6 +1088,7 @@ Screens:
                           Or varTplSearch in CD_MediaNumber
                           Or varTplSearch in Text(ID)
                           Or varTplSearch in ProductionTitle
+                          Or varTplSearch in BelugaReference
                   ),
                   "ID", SortOrder.Descending
               )
