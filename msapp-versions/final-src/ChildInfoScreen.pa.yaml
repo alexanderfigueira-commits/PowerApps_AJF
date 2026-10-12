@@ -1079,6 +1079,8 @@ Screens:
                   Filter(
                       colTplMedia,
                       varChildMediaType in MediaType.Value,
+                      // a requestor sees only the media files they created; an administrator sees all
+                      varUserRole = "ADMINISTRATOR" Or Lower('Created By'.Email) = Lower(User().Email),
                       // not the item being edited, and not untitled drafts (nothing to copy)
                       ID <> Coalesce(varCurrentChildSPId, 0),
                       Not(IsBlank(ProductionTitle)),
