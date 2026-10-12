@@ -1006,8 +1006,25 @@ Screens:
                   HoverColor: =RGBA(255, 255, 255, 1)
                   HoverFill: =ColorFade(RGBA(99, 96, 178, 1), -20%)
                   OnSelect: |-
-                    =UpdateContext({locShareReq: ThisItem, locShowShare: true});
-                    Reset(RM_ShareLink)
+                    =// copy the shareable link of this request, then open it (the row opens it the same way)
+                    If(
+                        StartsWith(varAppLink, "https://apps.powerapps.com/play/e/ENVIRONMENT-ID"),
+                        Notify("Set the app address in App.OnStart (varAppLink) to build real links.", NotificationType.Warning),
+                        Copy(varAppLink & If("?" in varAppLink, "&", "?") & "RequestID=" & ThisItem.ID);
+                        Notify("Link of request " & ThisItem.RequestNumber & " copied.", NotificationType.Success)
+                    );
+                    With(
+                        {req: Coalesce(LookUp('AV-CD-Requests', ID = ThisItem.ID), ThisItem)},
+                        Set(varCurrentRequest, req);
+                        Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
+                        Set(varRequestDG, Coalesce(req.DG.Value, ""));
+                        Set(varRequestDescription1, Coalesce(req.Description, ""));
+                        Set(varRequestDescription, Coalesce(req.Description, ""));
+                        Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
+                        Set(varRequestMediaType, "");
+                        Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
+                    )
                   PressedBorderColor: =Self.Fill
                   PressedColor: =Self.Fill
                   PressedFill: =Self.Color
@@ -1022,7 +1039,7 @@ Screens:
                       "Photo","📷 ","Video","🎬 ","Podcast","🎙️ ") 
                     & ThisItem.RequestNumber
 
-                  Tooltip: ="Share a link to request " & ThisItem.RequestNumber & " (the row opens it)"
+                  Tooltip: ="Open request " & ThisItem.RequestNumber & " and copy its link"
                   Width: =110
                   X: =10
                   Y: =14
@@ -2204,168 +2221,3 @@ Screens:
             Width: =132
             X: =875
             Y: =If(locShowFilters,333,200)
-      - RM_ShareBackdrop:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Fill: =RGBA(0, 18, 107, 0.45)
-            Height: =768
-            OnSelect: |-
-              =UpdateContext({locShowShare: false})
-            Visible: =locShowShare
-            Width: =1366
-          Children: []
-      - RM_SharePanel:
-          Control: Rectangle@2.3.0
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            BorderThickness: =2
-            Fill: =RGBA(255, 255, 255, 1)
-            Height: =270
-            OnSelect: =
-            Visible: =locShowShare
-            Width: =700
-            X: =333
-            Y: =230
-          Children: []
-      - RM_ShareTitle:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            FontWeight: =FontWeight.Semibold
-            Height: =34
-            Size: =18
-            Text: ="Share request " & locShareReq.RequestNumber
-            Visible: =locShowShare
-            Width: =640
-            X: =363
-            Y: =248
-          Children: []
-      - RM_ShareHint:
-          Control: Label@2.5.1
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Color: =RGBA(0, 18, 107, 1)
-            Font: =Font.'Open Sans'
-            Height: =50
-            Size: =18
-            Text: |-
-              =If(StartsWith(varAppLink, "https://apps.powerapps.com/play/e/ENVIRONMENT-ID"), "⚠ Set the app address in App.OnStart (varAppLink) first.  ", "") & "Copy this link: whoever opens it goes straight to this request, with the permissions of their role."
-            Visible: =locShowShare
-            Width: =640
-            X: =363
-            Y: =290
-          Children: []
-      - RM_ShareLink:
-          Control: Classic/TextInput@2.3.2
-          Properties:
-            BorderColor: =RGBA(0, 18, 107, 1)
-            Default: =varAppLink & If("?" in varAppLink, "&", "?") & "RequestID=" & locShareReq.ID
-            Font: =Font.'Open Sans'
-            Height: =40
-            HintText: =""
-            HoverBorderColor: =RGBA(0, 18, 107, 1)
-            HoverFill: =RGBA(186, 202, 226, 1)
-            OnChange: =Set(varFilterRequestName, Self.Text)
-            Visible: =locShowShare
-            Width: =640
-            X: =363
-            Y: =350
-          Children: []
-      - RM_ShareOpen:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(56, 96, 178, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledColor: =RGBA(186, 196, 214, 1)
-            DisabledFill: =RGBA(240, 242, 246, 1)
-            Fill: =RGBA(56, 96, 178, 1)
-            Font: =Font.'Open Sans'
-            Height: =44
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: |-
-              =With(
-                  {req: locShareReq},
-                  UpdateContext({locShowShare: false});
-                  Set(varCurrentRequest, req);
-                  Set(varRequestTitle1, Coalesce(req.RequestTitle, ""));
-                  Set(varRequestTitle, Coalesce(req.RequestTitle, ""));
-                  Set(varRequestDG, Coalesce(req.DG.Value, ""));
-                  Set(varRequestDescription1, Coalesce(req.Description, ""));
-                  Set(varRequestDescription, Coalesce(req.Description, ""));
-                  Set(varRequestOwnerContact, Coalesce(First(req.DG_Agency_Contact).DisplayName, ""));
-                  Set(varRequestMediaType, "");
-                  Navigate(RequesDetailScreen, ScreenTransition.Cover, {locShowTypePicker: false, locResetContacts: true, locFromReview: false})
-              )
-            PressedBorderColor: =RGBA(0, 0, 0, 1)
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="Open request"
-            Tooltip: ="Save draft"
-            Visible: =locShowShare
-            Width: =200
-            X: =363
-            Y: =430
-          Children: []
-      - RM_ShareMail:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(56, 96, 178, 1)
-            BorderThickness: =0
-            Color: =RGBA(255, 255, 255, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledColor: =RGBA(186, 196, 214, 1)
-            DisabledFill: =RGBA(240, 242, 246, 1)
-            Fill: =RGBA(56, 96, 178, 1)
-            Font: =Font.'Open Sans'
-            Height: =44
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(255, 255, 255, 1)
-            HoverFill: =RGBA(0, 18, 107, 1)
-            OnSelect: =Launch("mailto:?subject=" & EncodeUrl("Central Deposit request " & locShareReq.RequestNumber) & "&body=" & EncodeUrl(varAppLink & If("?" in varAppLink, "&", "?") & "RequestID=" & locShareReq.ID))
-            PressedBorderColor: =RGBA(0, 0, 0, 1)
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="Send by e-mail"
-            Tooltip: ="Save draft"
-            Visible: =locShowShare
-            Width: =200
-            X: =583
-            Y: =430
-          Children: []
-      - RM_ShareClose:
-          Control: Classic/Button@2.2.0
-          Properties:
-            BorderColor: =RGBA(220, 224, 230, 1)
-            BorderThickness: =1
-            Color: =RGBA(60, 66, 80, 1)
-            DisabledBorderColor: =RGBA(166, 166, 166, 1)
-            DisabledColor: =RGBA(186, 196, 214, 1)
-            DisabledFill: =RGBA(240, 242, 246, 1)
-            Fill: =RGBA(255, 255, 255, 1)
-            Font: =Font.'Open Sans'
-            Height: =44
-            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
-            HoverColor: =RGBA(60, 66, 80, 1)
-            HoverFill: =RGBA(240, 242, 246, 1)
-            OnSelect: |-
-              =UpdateContext({locShowShare: false})
-            PressedBorderColor: =RGBA(0, 0, 0, 1)
-            PressedColor: =Self.Fill
-            PressedFill: =Self.Color
-            Size: =13
-            Text: ="Close"
-            Tooltip: ="Save draft"
-            Visible: =locShowShare
-            Width: =200
-            X: =803
-            Y: =430
-          Children: []
