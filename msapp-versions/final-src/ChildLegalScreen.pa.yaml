@@ -656,19 +656,16 @@ Screens:
                         varChildMediaType <> "Podcast",
                         CL_DCAttachValue.Attachments,
                         With(
-                            // the media item as it is in SharePoint now (the form's copy, varAttachRecord, may be stale)
-                            {rec: Coalesce(LookUp('AV-CD-Mediafiles', ID = Coalesce(varCurrentChildSPId, 0)), varAttachRecord)},
-                        With(
                             {
                                 podcast: varChildMediaType = "Podcast",
-                                saved: rec.Attachments.DisplayName,
+                                saved: varAttachRecord.Attachments.DisplayName,
                                 here: CL_DCAttachValue.Attachments.Name
                             },
                             // shaped as SharePoint attachment records: each needs its Id (the saved
                             // attachment's Id, or the file name for a new file), else Save fails with
                             // "Field 'Id' is required"
                             ForAll(
-                                Filter(Ungroup(
+                                Ungroup(
                                     Table(
                                         // this panel's files, minus the podcast files removed on Info / Metadata
                                         {pre: "", files: Filter(
@@ -688,14 +685,13 @@ Screens:
                                         )}
                                     ),
                                     files
-                                ), Not(IsBlank(Name))) As f,
+                                ) As f,
                                 {
                                     DisplayName: f.pre & f.Name,
-                                    Id: Coalesce(LookUp(rec.Attachments, DisplayName = f.pre & f.Name).Id, f.pre & f.Name),
+                                    Id: Coalesce(LookUp(varAttachRecord.Attachments, DisplayName = f.pre & f.Name).Id, f.pre & f.Name),
                                     Value: f.Value
                                 }
                             )
-                        )
                         )
                     )
                   Width: =484
