@@ -64,7 +64,7 @@ HEAD = f"@{{{RN_}}} &middot; @{{{TI_}}}"
 # FLOW 2: status changed (the request status only: media files are not looked at)
 def flow02():
     st = T('field_5/Value')
-    cond_t = (f"and(or(equals({st},'Approved'), equals({st},'Rejected'), equals({st},'Pending'), equals({st},'Published')), "
+    cond_t = (f"and(or(equals({st},'Approved'), equals({st},'Rejected'), equals({st},'Pending')), "
               f"not(equals(coalesce({T('LastNotifiedStatus')},''), {st})))")
     to = "@{join(body('Filter_recipients'),';')}"   # requestor + assignee + the support mailbox, always
     def body(msg): return (f"<p>Hello @{{{EM('Author/DisplayName')}}},</p>{msg}<p>Decided by @{{outputs('Compose_reviewer')}} on @{{outputs('Compose_decision_date')}}.</p>"
@@ -82,9 +82,7 @@ def flow02():
             'Case_rejected': {'case': 'Rejected', 'actions': seq([('Send_2B_rejected', mail(to, f"[Central Deposit] Request @{{{RN_}}} rejected",
                 body(f"<p>Your request <b>{HEAD}</b> has been <b>rejected</b>.</p><p>Reason:</p>" + comment + "<p>The request is now read-only. If you think this is a mistake, answer in the Message Center of the request.</p>")))])},
             'Case_pending': {'case': 'Pending', 'actions': seq([('Send_2C_need_info', mail(to, f"[Central Deposit] Action needed on request @{{{RN_}}}",
-                body(f"<p>The Audiovisual Service needs <b>more information</b> before it can decide on your request <b>{HEAD}</b>.</p><p>What we need:</p>" + comment + "<p>Please open the request, update it and press <b>Resubmit for review</b>.</p>")))])},
-            'Case_published': {'case': 'Published', 'actions': seq([('Send_2D_published', mail(to, f"[Central Deposit] Request @{{{RN_}}} published",
-                body(f"<p>Your request <b>{HEAD}</b> has been <b>published</b> on the Audiovisual Service portal.</p>")))])}},
+                body(f"<p>The Audiovisual Service needs <b>more information</b> before it can decide on your request <b>{HEAD}</b>.</p><p>What we need:</p>" + comment + "<p>Please open the request, update it and press <b>Resubmit for review</b>.</p>")))])}},
             'default': {'actions': {}}}),
         ('Mark_status_notified', patch_req(f"@{T('ID')}", f"@{RN_}", f"@{st}", {'LastNotifiedStatus': f"@{st}"})),
     ]

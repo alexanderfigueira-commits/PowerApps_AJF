@@ -144,9 +144,9 @@ If we need more information we will send it back to you.</p>
 
 **Simplified:** only the **request status** matters. Media files (approved / not approved, tables of media) are **not** looked at.
 
-**Trigger:** *When an item is created or modified*, `AV-CD-Requests`. **Trigger condition:** `Status` is Approved, Rejected, Pending or Published **and** `LastNotifiedStatus` is not that status (this also stops loops).
+**Trigger:** *When an item is created or modified*, `AV-CD-Requests`. **Trigger condition:** `Status` is Approved, Rejected or Pending **and** `LastNotifiedStatus` is not that status (this also stops loops).
 
-**Steps:** build the recipient list, read the reviewer name, the decision date and the comment, **Switch** on `Status` (one e-mail per status), then write `LastNotifiedStatus = Status`.
+**Steps:** build the recipient list, read the reviewer name, the decision date and the comment, **Switch** on `Status` (one e-mail per status), then write `LastNotifiedStatus = Status` (the column exists on `AV-CD-Requests`).
 
 **Recipients (always the same):** the requestor, the assignee and `SupportMailbox`. The support mailbox is **always** on the list (the Mail connector has no Cc, so it is one of the addresses in To). The DG / contractor contacts are not notified by this flow.
 
@@ -155,7 +155,6 @@ If we need more information we will send it back to you.</p>
 | Approved | `[Central Deposit] Request <no> approved` | approved; "will now be published" (or "kept in the archive, not published" when `ArchivedOnly`) + comment |
 | Rejected | `[Central Deposit] Request <no> rejected` | rejected + reason; the request is read-only |
 | Pending | `[Central Deposit] Action needed on request <no>` | more information needed + what; press *Resubmit for review* |
-| Published | `[Central Deposit] Request <no> published` | published on the portal |
 
 Every e-mail ends with "Decided by <reviewer> on <date>", the link to the request and the signature.
 

@@ -72,3 +72,7 @@ Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`
 ## Package 1.1.0.7 (flows 6, 7 and 8 only)
 
 `CentralDepositFlows_1_1_0_7.zip` has only CD - 06, CD - 07 and CD - 08 (same content as in 1.1.0.6, which is the full set 2, 3, 4, 6, 7, 8). Build: `ALL=1 SKIP1=1 ONLY=678 python3 flows/build_solution.py`.
+
+## Package 1.1.0.8 (flow 2 only)
+
+`CentralDepositFlows_1_1_0_8.zip` has only CD - 02 Status changed: the **Published** case is gone (Approved, Rejected, Pending only) and it marks the status as notified in `LastNotifiedStatus`. Build: `ALL=1 SKIP1=1 ONLY=2 python3 flows/build_solution.py`. (The full set `CentralDepositFlows_1_1_0_6.zip` still has the previous flow 2; rebuild it with `ALL=1 SKIP1=1` if you need it.)
