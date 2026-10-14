@@ -68,3 +68,7 @@ Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`
 ## Package 1.1.0.6
 
 `CentralDepositFlows_1_1_0_6.zip` replaces 1.1.0.5. Flows 6, 7 and 8: the administrator e-mails go to the assignee **and the co-assignee (when they exist)** plus the support mailbox, always. Flows 2, 3, 4: unchanged. Same flows: 2, 3, 4, 6, 7, 8.
+
+## Package 1.1.0.7 (flows 6, 7 and 8 only)
+
+`CentralDepositFlows_1_1_0_7.zip` has only CD - 06, CD - 07 and CD - 08 (same content as in 1.1.0.6, which is the full set 2, 3, 4, 6, 7, 8). Build: `ALL=1 SKIP1=1 ONLY=678 python3 flows/build_solution.py`.

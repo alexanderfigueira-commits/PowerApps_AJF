@@ -10,7 +10,8 @@ PREFIX = 'avcd'
 PUBLISHER = 'Cr99038'          # the environment's publisher (prefix avcd, option value prefix 51206), taken from the sample export
 ALL = bool(os.environ.get('ALL'))
 SKIP1 = bool(os.environ.get('SKIP1'))      # flow 1 is already imported and tested: leave it out
-VERSION = ('1.1.0.6' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.3'
+ONLY = os.environ.get('ONLY', '')            # e.g. ONLY=678 builds a package with just those flows
+VERSION = ('1.1.0.7' if ONLY else '1.1.0.6' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.3'
 CONN_APPR = 'avcd_sharedapprovals_c5d18'
 # stable ids so a re-import updates instead of duplicating
 G = lambda name: str(uuid.uuid5(uuid.NAMESPACE_URL, 'centraldeposit/' + name)).upper()
@@ -95,6 +96,7 @@ if ALL:
                      ('CD - 06 New message', 'CD-06NewMessage', flow06),
                      ('CD - 07 Unread messages', 'CD-07UnreadMessages', flow07), ('CD - 08 Reminders', 'CD-08Reminders', flow08)):
         FLOWS.append((n, G('flow' + fn[3:5]), fn, f()))
+    if ONLY: FLOWS[:] = [x for x in FLOWS if x[2][4] in ONLY]
 def customizations():
     wf = ''.join(f'''<Workflow WorkflowId="{{{gid.lower()}}}" Name="{name}"><JsonFileName>/Workflows/{fn}-{gid}.json</JsonFileName><Type>1</Type><Subprocess>0</Subprocess><Category>5</Category>
 <Mode>0</Mode><Scope>4</Scope><OnDemand>0</OnDemand><TriggerOnCreate>0</TriggerOnCreate><TriggerOnDelete>0</TriggerOnDelete><AsyncAutodelete>0</AsyncAutodelete>
