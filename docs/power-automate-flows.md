@@ -389,7 +389,7 @@ The app lets the assignee or co-assignee press **Approve / Reject / Need info** 
 **Trigger:** Recurrence, every weekday at 08:30.
 
 1. **Processing too long**: `Get items` on `AV-CD-Requests`, Filter `Status eq 'Processing' and StartRequestDate lt '@{addDays(utcNow(), -7)}'` (7 calendar days ≈ 5 working days; compute exact working days in a `Do until` / `Select` if you need it).
-   - For each: **E-mail 8A** to the assignee and the support mailbox (never all administrators), Cc the other administrators every 3rd reminder.
+   - For each: **E-mail 8A** to the assignee and the support mailbox (never all administrators).
 2. **Pending without answer**: Filter `Status eq 'Pending' and ReviewedDate lt '@{addDays(utcNow(), -@{ReminderDaysPending})}'`.
    - For each: **E-mail 8B** to the requestor, Cc assignee.
 3. Store the date of the last reminder in a column `LastReminderOn` to send at most one reminder every 3 days (the trigger of Flows 1 to 4 ignores changes to that column through the "Get changes" check).
