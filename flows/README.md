@@ -46,3 +46,7 @@ Submit → e-mails 1; set assignee + co-assignee → flow 4; Need info → flow 
 
 `CentralDepositFlows_1_1_0_1.zip` contains only CD - 02 to CD - 08. Flow 1 stays as imported from 1.0.0.2. Build: `ALL=1 SKIP1=1 python3 flows/build_solution.py`.
 Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`); flows 2 and 3 do not depend on it.
+
+## Package 1.1.0.2 (flows 2-8, without flow 1)
+
+`CentralDepositFlows_1_1_0_2.zip` replaces 1.1.0.1. Change in **CD - 03 Resubmitted**: the e-mail goes to the **assignee only** (no administrators, no co-assignee) **plus the support mailbox, always**; with no assignee it goes to the support mailbox alone. Build: `ALL=1 SKIP1=1 python3 flows/build_solution.py`.

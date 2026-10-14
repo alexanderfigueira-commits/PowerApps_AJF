@@ -257,12 +257,14 @@ on the Audiovisual Service portal on @{formatDateTime(PublishedDate,'dd-MM-yyyy'
 
 Same trigger as Flow 1 but the *Get changes* branch is `Status` changed **and** `ReviewedDate` is **not** empty (the request was already reviewed once). (You can build Flow 1 and Flow 3 as one flow with a Condition on `ReviewedDate`.)
 
-### E-mail 3A: to the assignee / co-assignee (administrators if none)
+### E-mail 3A: to the assignee and the support mailbox (always both)
 
+- **To:** the **assignee** (the administrator in charge) **and** `SupportMailbox`, always. Administrators and the co-assignee are **not** considered. If the request has no assignee yet, it goes to `SupportMailbox` alone.
 - **Subject:** `[Central Deposit] Request @{RequestNumber} resubmitted for review`
 ```html
 <p>Hello,</p>
 <p><b>@{Created By DisplayName}</b> has updated and resubmitted the request <b>@{RequestNumber} · @{RequestTitle}</b>.</p>
+<p>Assignee: @{Assignee DisplayName, or "not assigned yet"}</p>
 <p>Your previous question: @{ReviewerComments}</p>
 <p><a href="@{link}">Open the request</a></p>
 <p>Audiovisual Service, DG COMM</p>
