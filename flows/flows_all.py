@@ -66,13 +66,13 @@ def flow02():
     st = T('field_5/Value')
     cond_t = (f"and(or(equals({st},'Approved'), equals({st},'Rejected'), equals({st},'Pending')), "
               f"not(equals(coalesce({T('LastNotifiedStatus')},''), {st})))")
-    to = "@{join(body('Filter_recipients'),';')}"   # requestor + assignee + the support mailbox, always
+    to = "@{join(body('Filter_recipients'),';')}"   # requestor + assignee + co-assignee (if any) + the support mailbox, always
     def body(msg): return (f"<p>Hello @{{{EM('Author/DisplayName')}}},</p>{msg}<p>Decided by @{{outputs('Compose_reviewer')}} on @{{outputs('Compose_decision_date')}}.</p>"
                            f"<p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}")
     comment = "<p><b>@{outputs('Compose_comment')}</b></p>"
     archived = f"equals(coalesce({T('ArchivedOnly')},false),true)"
     items = [
-        ('Filter_recipients', query(f"@union(createArray({EM('Author/Email')}), createArray({EM('Assignee/Email')}), createArray(variables('SupportMailbox')))", "@not(empty(item()))")),
+        ('Filter_recipients', query(f"@union(createArray({EM('Author/Email')}), createArray({EM('Assignee/Email')}), createArray({EM('CoAssignee/Email')}), createArray(variables('SupportMailbox')))", "@not(empty(item()))")),
         ('Compose_reviewer', compose(f"@coalesce(first(coalesce({T('field_8')}, createArray()))?['DisplayName'], 'the Audiovisual Service')")),
         ('Compose_decision_date', compose(f"@if(empty(coalesce({T('field_11')},'')), '', convertTimeZone({T('field_11')},'UTC','Romance Standard Time','dd-MM-yyyy HH:mm'))")),
         ('Compose_comment', compose(f"@coalesce({T('field_10')}, 'No comment')")),

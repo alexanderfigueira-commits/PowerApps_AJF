@@ -148,7 +148,7 @@ If we need more information we will send it back to you.</p>
 
 **Steps:** build the recipient list, read the reviewer name, the decision date and the comment, **Switch** on `Status` (one e-mail per status), then write `LastNotifiedStatus = Status` (the column exists on `AV-CD-Requests`).
 
-**Recipients (always the same):** the requestor, the assignee and `SupportMailbox`. The support mailbox is **always** on the list (the Mail connector has no Cc, so it is one of the addresses in To). The DG / contractor contacts are not notified by this flow.
+**Recipients (always the same):** the requestor, the assignee, the co-assignee (if there is one) and `SupportMailbox`. The support mailbox is **always** on the list (the Mail connector has no Cc, so it is one of the addresses in To). The DG / contractor contacts are not notified by this flow.
 
 | Status | Subject | Message |
 |---|---|---|
