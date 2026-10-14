@@ -143,11 +143,9 @@ def flow06():
                     f"<p>Hello @{{outputs('Compose_request')?['Author']?['DisplayName']}},</p><p><b>@{{{T('AuthorName')}}}</b> (Audiovisual Service) wrote in the Message Center of your request <b>@{{{T('ParentRequest')}}} &middot; @{{outputs('Compose_request')?['RequestTitle']}}</b>:</p>"
                     f"<blockquote style=\"border-left:3px solid #3860b2;margin:8px 0;padding:4px 12px;color:#333\">@{{{T('NoteText')}}}</blockquote><p><a href=\"{P('AppBaseUrl')}&RequestID=@{{outputs('Compose_request')?['ID']}}\">Open your request and answer</a></p>"))]))]))]
     return wrap(definition(trig_new('notes', 'flow06'), scope_wrap('CD - 06 New message', items, f"@{{{T('ParentRequest')}}}")))
-SUSPENDED = [('Get_active_suspension', getitems('suspension', "Active eq 1 and StartBlockedDate le '@{utcNow('yyyy-MM-dd')}' and EndBlockedDate ge '@{utcNow('yyyy-MM-dd')}'", 1)),
-             ('If_suspended', cond("greater(length(body('Get_active_suspension')?['value']),0)", [('Stop_suspended_period', terminate())]))]
 # FLOW 7: unread messages (one reminder per note: notes 24 to 48 hours old that nobody read)
 def flow07():
-    items = SUSPENDED + [
+    items = [
         ('Get_unread_notes', getitems('notes', "ReadOn eq null and Created le '@{addHours(utcNow(),-24)}' and Created ge '@{addHours(utcNow(),-48)}'", 200)),
         ('Select_request_numbers', select("@body('Get_unread_notes')?['value']", "@item()?['ParentRequest']")),
         ('Compose_distinct_requests', compose("@union(body('Select_request_numbers'), body('Select_request_numbers'))")),
@@ -177,7 +175,7 @@ def flow08():
     it = lambda n, f: f"items('For_each_{n}')" + ''.join(f"?['{x}']" for x in f.split('/'))
     link = lambda n: f"{P('AppBaseUrl')}&RequestID=@{{{it(n, 'ID')}}}"
     proc_to = TO_ASSIGNEE("coalesce(items('For_each_processing')?['Assignee']?['Email'],'')")
-    items = SUSPENDED + block('Processing', "field_6 lt '@{addDays(utcNow(),-7)}'",
+    items = block('Processing', "field_6 lt '@{addDays(utcNow(),-7)}'",
         f"[Central Deposit] Reminder: request @{{{it('processing','Title')}}} is waiting for review",
         f"<p>Hello,</p><p>The request <b>@{{{it('processing','Title')}}} &middot; @{{{it('processing','RequestTitle')}}}</b> from @{{{it('processing','Author/DisplayName')}}} has been in <b>Processing</b> since @{{formatDateTime({it('processing','field_6')},'dd-MM-yyyy')}} and is not reviewed yet.</p><p><a href=\"{link('processing')}\">Open the request</a></p>",
         proc_to) + block('Pending', "field_11 lt '@{addDays(utcNow(),-7)}'",

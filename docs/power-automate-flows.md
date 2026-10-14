@@ -57,7 +57,7 @@ Build these flows in the same environment as the app. They read and write the sa
 
 **AV-CD-RolesPermissionsList**: `UserEmail` (person), `Role` (`ADMINISTRATOR` / `REQUESTOR`). The list of administrators is every row with `Role = ADMINISTRATOR`.
 
-**SuspensionDates**: `Active`, `StartBlockedDate`, `EndBlockedDate` (periods with no review activity; reminders skip them).
+**SuspensionDates**: **not used** by any flow (reminders do not check it).
 
 ### 0.3 Shared building blocks (child flows or repeated actions)
 
@@ -367,10 +367,9 @@ The app lets the assignee or co-assignee press **Approve / Reject / Need info** 
 **Trigger:** Recurrence, every weekday at 09:00 (Europe/Brussels).
 
 **Steps**
-1. `Get items` on `SuspensionDates`: if today is inside an `Active` period → *Terminate (Cancelled)*.
-2. `Get items` on `AV-CD-Notes`, Filter `ReadOn eq null and Created lt '@{addHours(utcNow(),-24)}'`.
-3. `Select` + `Group by` (use `union(...)` on `ParentRequest` + `AuthorRole`) so there is one e-mail per request and per recipient.
-4. For each group, **Send E-mail 7A** to the other party (as in Flow 6, step 2).
+1. `Get items` on `AV-CD-Notes`, Filter `ReadOn eq null and Created lt '@{addHours(utcNow(),-24)}'`.
+2. `Select` + `Group by` (use `union(...)` on `ParentRequest` + `AuthorRole`) so there is one e-mail per request and per recipient.
+3. For each group, **Send E-mail 7A** to the other party (as in Flow 6, step 2).
 
 ### E-mail 7A: unread messages
 - **Subject:** `[Central Deposit] @{count} unread message(s) on request @{RequestNumber}`
@@ -389,12 +388,11 @@ The app lets the assignee or co-assignee press **Approve / Reject / Need info** 
 
 **Trigger:** Recurrence, every weekday at 08:30.
 
-1. Skip if today is inside an active `SuspensionDates` period.
-2. **Processing too long**: `Get items` on `AV-CD-Requests`, Filter `Status eq 'Processing' and StartRequestDate lt '@{addDays(utcNow(), -7)}'` (7 calendar days ≈ 5 working days; compute exact working days in a `Do until` / `Select` if you need it).
-   - For each: **E-mail 8A** to assignee + co-assignee (administrators if none), Cc the other administrators every 3rd reminder.
-3. **Pending without answer**: Filter `Status eq 'Pending' and ReviewedDate lt '@{addDays(utcNow(), -@{ReminderDaysPending})}'`.
+1. **Processing too long**: `Get items` on `AV-CD-Requests`, Filter `Status eq 'Processing' and StartRequestDate lt '@{addDays(utcNow(), -7)}'` (7 calendar days ≈ 5 working days; compute exact working days in a `Do until` / `Select` if you need it).
+   - For each: **E-mail 8A** to the assignee and the support mailbox (never all administrators), Cc the other administrators every 3rd reminder.
+2. **Pending without answer**: Filter `Status eq 'Pending' and ReviewedDate lt '@{addDays(utcNow(), -@{ReminderDaysPending})}'`.
    - For each: **E-mail 8B** to the requestor, Cc assignee.
-4. Store the date of the last reminder in a column `LastReminderOn` to send at most one reminder every 3 days (the trigger of Flows 1 to 4 ignores changes to that column through the "Get changes" check).
+3. Store the date of the last reminder in a column `LastReminderOn` to send at most one reminder every 3 days (the trigger of Flows 1 to 4 ignores changes to that column through the "Get changes" check).
 
 ### E-mail 8A: review overdue
 - **Subject:** `[Central Deposit] Reminder: request @{RequestNumber} is waiting for review since @{date}`

@@ -35,7 +35,7 @@ These "marker" columns make each flow send its e-mails once, without the "Get ch
 | 7 | Unread messages | weekdays 09:00 | one reminder per message that stayed unread 24 to 48 hours |
 | 8 | Reminders | weekdays 08:30 | Processing for 7+ days, Pending for 7+ days, at most one every 3 days |
 
-Flows 7 and 8 do nothing inside an active `SuspensionDates` period. E-mails go out through the **Mail** connector ("Send an email notification V3", the sender is the connection owner). The first action of each flow, `Initialize_SupportMailbox`, is where failures are reported: set the address.
+The `SuspensionDates` list is **not used** by any flow. E-mails go out through the **Mail** connector ("Send an email notification V3", the sender is the connection owner). The first action of each flow, `Initialize_SupportMailbox`, is where failures are reported: set the address.
 Full e-mail texts: `docs/power-automate-flows.md`.
 
 ## Test (one request)
@@ -60,3 +60,7 @@ Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`
 - `CentralDepositFlows_1_1_0_4.zip`: flows 2, 3, 4, 6, 7 and 8. **Flow 1 and flow 5 are not in it**, and no Approvals connection is needed any more. Build: `ALL=1 SKIP1=1 python3 flows/build_solution.py`.
 - `CentralDepositFlows_1_0_0_3.zip`: flow 1 only (replaces 1.0.0.2). Optional update for the flow already imported: its e-mail now goes to the assignee (if any) and the support mailbox instead of all administrators. Build: `python3 flows/build_solution.py`.
 - **Recipient rule:** the "administrator" e-mails (flows 1, 3, 6, 7, 8) go to the **assignee and the support mailbox**, never to all administrators and never to the co-assignee; flow 2 goes to the requestor, the assignee and the support mailbox.
+
+## Package 1.1.0.5
+
+`CentralDepositFlows_1_1_0_5.zip` replaces 1.1.0.4: flows 7 and 8 no longer look at the `SuspensionDates` list (the check was removed). Same flows as 1.1.0.4: 2, 3, 4, 6, 7, 8.
