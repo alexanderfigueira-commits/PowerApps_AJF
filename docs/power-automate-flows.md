@@ -6,7 +6,7 @@ Build these flows in the same environment as the app. They read and write the sa
 
 ## 0. Conventions used by every flow
 
-> **Recipient rule:** an e-mail "to the administrators" never goes to the list of all administrators. Flows 1 and 3: the **assignee** (when there is one) and the **support mailbox**, always. Flows 6, 7 and 8: the **assignee and the co-assignee, when they exist, and the support mailbox**, always. With nobody assigned yet it goes to the support mailbox alone. Personal notices (new assignee, removed assignee, new or removed co-assignee, requestor) still go to that person.
+> **Recipient rule:** an e-mail "to the administrators" never goes to the list of all administrators. Flow 1: the **assignee** (when there is one) and the **support mailbox**, always. Flows 3, 6, 7 and 8: the **assignee and the co-assignee, when they exist, and the support mailbox**, always. With nobody assigned yet it goes to the support mailbox alone. Personal notices (new assignee, removed assignee, new or removed co-assignee, requestor) still go to that person.
 > **Flow 5 (second approval) is not part of the package.**
 
 
@@ -170,7 +170,7 @@ Same trigger as Flow 1 but the *Get changes* branch is `Status` changed **and** 
 
 ### E-mail 3A: to the assignee and the support mailbox (always both)
 
-- **To:** the **assignee** (the administrator in charge) **and** `SupportMailbox`, always. Administrators and the co-assignee are **not** considered. If the request has no assignee yet, it goes to `SupportMailbox` alone.
+- **To:** the **assignee** (the administrator in charge), the **co-assignee if there is one**, **and** `SupportMailbox`, always. The list of all administrators is **not** considered. If the request has no assignee yet, it goes to `SupportMailbox` alone.
 - **Subject:** `[Central Deposit] Request @{RequestNumber} resubmitted for review`
 ```html
 <p>Hello,</p>

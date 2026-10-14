@@ -90,11 +90,11 @@ def flow02():
 # FLOW 3: resubmitted
 def flow03():
     cond_t = f"and(equals({T('field_5/Value')},'Processing'), not(empty(coalesce({T('field_11')},''))), not(equals(coalesce({T('LastNotifiedStatus')},''),'Processing')))"
-    # only the assignee (the administrator in charge) and the support mailbox, always: no administrators, no co-assignee
-    to_3a = f"@{{if(empty({EM('Assignee/Email')}), variables('SupportMailbox'), concat({EM('Assignee/Email')}, ';', variables('SupportMailbox')))}}"
+    # the assignee, the co-assignee (if there is one) and the support mailbox, always: never the list of all administrators
+    to_3a = TO_TEAM(EM('Assignee/Email'), EM('CoAssignee/Email'))
     items = [
         ('Send_3A_to_assignee_and_support', mail(to_3a, f"[Central Deposit] Request @{{{RN_}}} resubmitted for review",
-            f"<p>Hello,</p><p><b>@{{{EM('Author/DisplayName')}}}</b> has updated and resubmitted the request <b>{HEAD}</b>.</p><p>Assignee: @{{coalesce({T('Assignee/DisplayName')},'not assigned yet')}}</p><p>Your previous question: @{{{EM('field_10')}}}</p><p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}")),
+            f"<p>Hello,</p><p><b>@{{{EM('Author/DisplayName')}}}</b> has updated and resubmitted the request <b>{HEAD}</b>.</p><p>Assignee: @{{coalesce({T('Assignee/DisplayName')},'not assigned yet')}}@{{if(empty({EM('CoAssignee/Email')}),'',concat(' &middot; Co-assignee: ', {EM('CoAssignee/DisplayName')}))}}</p><p>Your previous question: @{{{EM('field_10')}}}</p><p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}")),
         ('Send_3B_to_requestor', mail(REQUESTOR, f"[Central Deposit] Request @{{{RN_}}} resubmitted",
             f"<p>Hello @{{{EM('Author/DisplayName')}}},</p><p>Thank you: your request <b>@{{{RN_}}}</b> is back in <b>Processing</b>.</p><p><a href=\"{LINKC}\">Open your request</a></p>")),
         ('Mark_processing_notified', patch_req(f"@{T('ID')}", f"@{RN_}", f"@{T('field_5/Value')}", {'LastNotifiedStatus': 'Processing'}))]

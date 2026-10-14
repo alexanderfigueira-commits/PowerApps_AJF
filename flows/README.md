@@ -80,3 +80,7 @@ Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`
 ## Package 1.1.0.9 (flow 2 only)
 
 `CentralDepositFlows_1_1_0_9.zip` replaces 1.1.0.8: CD - 02 also e-mails the **co-assignee when there is one** (recipients: requestor, assignee, co-assignee, support mailbox). Build: `ALL=1 SKIP1=1 ONLY=2 python3 flows/build_solution.py`.
+
+## Package 1.1.0.10 (flow 3 only)
+
+`CentralDepositFlows_1_1_0_10.zip`: CD - 03 Resubmitted e-mails the assignee, the **co-assignee when there is one** and the support mailbox (the requestor still gets 3B). Build: `ALL=1 SKIP1=1 ONLY=3 python3 flows/build_solution.py`.
