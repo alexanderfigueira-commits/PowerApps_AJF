@@ -68,54 +68,32 @@ LINKC = f"{P('AppBaseUrl')}&RequestID=@{{{T('ID')}}}"
 RN_, TI_ = T('Title'), T('RequestTitle')
 HEAD = f"@{{{RN_}}} &middot; @{{{TI_}}}"
 # =========================================================================================================
-# FLOW 2: status changed
+# FLOW 2: status changed (the request status only: media files are not looked at)
 def flow02():
-    marker = f"concat({T('field_5/Value')}, if(equals(coalesce({T('ArchivedOnly')},false),true),'|archive',''))"
-    cond_t = (f"and(or(equals({T('field_5/Value')},'Approved'), equals({T('field_5/Value')},'Rejected'), equals({T('field_5/Value')},'Pending'), equals({T('field_5/Value')},'Published')), "
-              f"not(equals(coalesce({T('LastNotifiedStatus')},''), {marker})))")
-    reviewer = "first(coalesce(" + T('field_8') + ", createArray(json('{}'))))?['DisplayName']"
-    parts = f"createArray({EM('Author/Email')})"
-    to_all = (f"@{{join(body('Filter_all_recipients'),';')}}")
-    to_req = f"@{{join(body('Filter_requestor_side'),';')}}"
+    st = T('field_5/Value')
+    cond_t = (f"and(or(equals({st},'Approved'), equals({st},'Rejected'), equals({st},'Pending'), equals({st},'Published')), "
+              f"not(equals(coalesce({T('LastNotifiedStatus')},''), {st})))")
+    to = "@{join(body('Filter_recipients'),';')}"   # requestor + assignee + the support mailbox, always
+    def body(msg): return (f"<p>Hello @{{{EM('Author/DisplayName')}}},</p>{msg}<p>Decided by @{{outputs('Compose_reviewer')}} on @{{outputs('Compose_decision_date')}}.</p>"
+                           f"<p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}")
+    comment = "<p><b>@{outputs('Compose_comment')}</b></p>"
+    archived = f"equals(coalesce({T('ArchivedOnly')},false),true)"
     items = [
-        ('Get_media_files', getitems('media', f"field_30 eq '@{{{RN_}}}'")),
-        ('Filter_approved_media', query("@body('Get_media_files')?['value']", "@equals(item()?['MediaApproved'], true)")),
-        ('Compose_partly', compose(f"@and(equals({T('field_5/Value')},'Approved'), greater(length(body('Filter_approved_media')),0), less(length(body('Filter_approved_media')),length(body('Get_media_files')?['value'])))")),
-        ('Compose_variant', compose(f"@if(and(equals({T('field_5/Value')},'Approved'), equals(coalesce({T('ArchivedOnly')},false),true)),'archive', if(outputs('Compose_partly'),'partly', {T('field_5/Value')}))")),
-        ('Select_approved_media', select("@body('Filter_approved_media')", {'Media': "@item()?['Title']", 'Title': "@item()?['ProductionTitle']", 'Beluga': "@item()?['BelugaReference']"})),
-        ('Table_approved_media', table("@body('Select_approved_media')")),
-        ('Filter_not_approved_media', query("@body('Get_media_files')?['value']", "@not(equals(item()?['MediaApproved'], true))")),
-        ('Select_not_approved_media', select("@body('Filter_not_approved_media')", {'Media': "@item()?['Title']", 'Title': "@item()?['ProductionTitle']"})),
-        ('Table_not_approved_media', table("@body('Select_not_approved_media')")),
-        ('Select_reviewer_emails', select(f"@coalesce({T('field_8')}, createArray())", "@item()?['Email']")),
-        ('Select_DG_contact_emails', select(f"@coalesce({T('field_3')}, createArray())", "@item()?['Email']")),
-        ('Select_contractor_contact_emails', select(f"@coalesce({T('Contractor_Contact')}, createArray())", "@item()?['Email']")),
-        ('Filter_requestor_side', query(f"@union(createArray({EM('Author/Email')}), createArray({EM('Assignee/Email')}), createArray({EM('CoAssignee/Email')}), body('Select_reviewer_emails'))", "@not(empty(item()))")),
-        ('Filter_all_recipients', query("@union(body('Filter_requestor_side'), body('Select_DG_contact_emails'), body('Select_contractor_contact_emails'), split(coalesce(" + T('Manual_DG_Agency_Contact') + ",''),';'), split(coalesce(" + T('Manual_Contractor_Contact') + ",''),';'))", "@not(empty(trim(item())))")),
+        ('Filter_recipients', query(f"@union(createArray({EM('Author/Email')}), createArray({EM('Assignee/Email')}), createArray(variables('SupportMailbox')))", "@not(empty(item()))")),
         ('Compose_reviewer', compose(f"@coalesce(first(coalesce({T('field_8')}, createArray()))?['DisplayName'], 'the Audiovisual Service')")),
         ('Compose_decision_date', compose(f"@if(empty(coalesce({T('field_11')},'')), '', convertTimeZone({T('field_11')},'UTC','Romance Standard Time','dd-MM-yyyy HH:mm'))")),
         ('Compose_comment', compose(f"@coalesce({T('field_10')}, 'No comment')")),
-        ('Switch_variant', {'type': 'Switch', 'expression': "@outputs('Compose_variant')", 'cases': {
-            'Case_archive': {'case': 'archive', 'actions': seq([('Send_2A_archive_only', mail(to_all, f"[Central Deposit] Request @{{{RN_}}} approved (archive only)",
-                f"<p>Hello @{{{EM('Author/DisplayName')}}},</p><p>Your request <b>{HEAD}</b> has been <b>approved as archive only</b>: the media files are kept in the Central Deposit archive but will <b>not be published</b> on the Audiovisual Service portal.</p>"
-                f"<p><b>Reason:</b> @{{outputs('Compose_comment')}}</p><p>Decided by @{{outputs('Compose_reviewer')}} on @{{outputs('Compose_decision_date')}}.</p><p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}"))])},
-            'Case_partly': {'case': 'partly', 'actions': seq([('Send_2B_partially_approved', mail(to_all, f"[Central Deposit] Request @{{{RN_}}} partially approved",
-                f"<p>Hello @{{{EM('Author/DisplayName')}}},</p><p>Your request <b>{HEAD}</b> has been <b>partially approved</b>: @{{length(body('Filter_approved_media'))}} of @{{length(body('Get_media_files')?['value'])}} media files were approved.</p>"
-                f"<p><b>Approved media files</b></p>@{{body('Table_approved_media')}}<p><b>Not approved</b></p>@{{body('Table_not_approved_media')}}"
-                f"<p><b>Comment:</b> @{{outputs('Compose_comment')}}</p><p>Decided by @{{outputs('Compose_reviewer')}} on @{{outputs('Compose_decision_date')}}.</p><p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}"))])},
-            'Case_approved': {'case': 'Approved', 'actions': seq([('Send_2C_approved', mail(to_all, f"[Central Deposit] Request @{{{RN_}}} approved",
-                f"<p>Hello @{{{EM('Author/DisplayName')}}},</p><p>Good news: your request <b>{HEAD}</b> has been <b>approved</b>. The media files will now be published on the Audiovisual Service portal.</p>"
-                f"<p><b>Comment:</b> @{{outputs('Compose_comment')}}</p><p>Decided by @{{outputs('Compose_reviewer')}} on @{{outputs('Compose_decision_date')}}.</p>@{{body('Table_approved_media')}}<p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}"))])},
-            'Case_rejected': {'case': 'Rejected', 'actions': seq([('Send_2D_rejected', mail(to_req, f"[Central Deposit] Request @{{{RN_}}} rejected",
-                f"<p>Hello @{{{EM('Author/DisplayName')}}},</p><p>Your request <b>{HEAD}</b> has been <b>rejected</b>.</p><p><b>Reason:</b> @{{outputs('Compose_comment')}}</p>"
-                f"<p>Decided by @{{outputs('Compose_reviewer')}} on @{{outputs('Compose_decision_date')}}.</p><p>The request is now read-only. If you think this is a mistake, answer in the Message Center of the request.</p><p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}"))])},
-            'Case_pending': {'case': 'Pending', 'actions': seq([('Send_2E_need_info', mail(to_req, f"[Central Deposit] Action needed on request @{{{RN_}}}",
-                f"<p>Hello @{{{EM('Author/DisplayName')}}},</p><p>The Audiovisual Service needs <b>more information</b> before it can decide on your request <b>{HEAD}</b>.</p><p><b>What we need:</b> @{{outputs('Compose_comment')}}</p>"
-                f"<p>Please open the request, update it and press <b>Resubmit for review</b>.</p><p>Asked by @{{outputs('Compose_reviewer')}} on @{{outputs('Compose_decision_date')}}.</p><p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}"))])},
-            'Case_published': {'case': 'Published', 'actions': seq([('Send_2F_published', mail(to_all, f"[Central Deposit] Request @{{{RN_}}} published",
-                f"<p>Hello @{{{EM('Author/DisplayName')}}},</p><p>The media files of your request <b>{HEAD}</b> have been <b>published</b> on the Audiovisual Service portal.</p>@{{body('Table_approved_media')}}<p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}"))])}},
+        ('Switch_status', {'type': 'Switch', 'expression': f"@{st}", 'cases': {
+            'Case_approved': {'case': 'Approved', 'actions': seq([('Send_2A_approved', mail(to, f"[Central Deposit] Request @{{{RN_}}} approved",
+                body(f"<p>Your request <b>{HEAD}</b> has been <b>approved</b>.</p><p>@{{if({archived}, 'It is kept in the Central Deposit archive and will not be published on the Audiovisual Service portal.', 'It will now be published on the Audiovisual Service portal.')}}</p><p>Comment:</p>" + comment)))])},
+            'Case_rejected': {'case': 'Rejected', 'actions': seq([('Send_2B_rejected', mail(to, f"[Central Deposit] Request @{{{RN_}}} rejected",
+                body(f"<p>Your request <b>{HEAD}</b> has been <b>rejected</b>.</p><p>Reason:</p>" + comment + "<p>The request is now read-only. If you think this is a mistake, answer in the Message Center of the request.</p>")))])},
+            'Case_pending': {'case': 'Pending', 'actions': seq([('Send_2C_need_info', mail(to, f"[Central Deposit] Action needed on request @{{{RN_}}}",
+                body(f"<p>The Audiovisual Service needs <b>more information</b> before it can decide on your request <b>{HEAD}</b>.</p><p>What we need:</p>" + comment + "<p>Please open the request, update it and press <b>Resubmit for review</b>.</p>")))])},
+            'Case_published': {'case': 'Published', 'actions': seq([('Send_2D_published', mail(to, f"[Central Deposit] Request @{{{RN_}}} published",
+                body(f"<p>Your request <b>{HEAD}</b> has been <b>published</b> on the Audiovisual Service portal.</p>")))])}},
             'default': {'actions': {}}}),
-        ('Mark_status_notified', patch_req(f"@{T('ID')}", f"@{RN_}", f"@{T('field_5/Value')}", {'LastNotifiedStatus': "@outputs('Compose_variant')"})),
+        ('Mark_status_notified', patch_req(f"@{T('ID')}", f"@{RN_}", f"@{st}", {'LastNotifiedStatus': f"@{st}"})),
     ]
     return wrap(definition(trig_changed('requests', cond_t, 'flow02'), scope_wrap('CD - 02 Status changed', items, f"@{{{RN_}}}")))
 # FLOW 3: resubmitted

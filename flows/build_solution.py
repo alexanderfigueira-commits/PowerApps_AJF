@@ -10,7 +10,7 @@ PREFIX = 'avcd'
 PUBLISHER = 'Cr99038'          # the environment's publisher (prefix avcd, option value prefix 51206), taken from the sample export
 ALL = bool(os.environ.get('ALL'))
 SKIP1 = bool(os.environ.get('SKIP1'))      # flow 1 is already imported and tested: leave it out
-VERSION = ('1.1.0.2' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.2'
+VERSION = ('1.1.0.3' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.2'
 CONN_APPR = 'avcd_sharedapprovals_c5d18'
 # stable ids so a re-import updates instead of duplicating
 G = lambda name: str(uuid.uuid5(uuid.NAMESPACE_URL, 'centraldeposit/' + name)).upper()

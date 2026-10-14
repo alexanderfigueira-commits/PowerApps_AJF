@@ -138,114 +138,22 @@ If we need more information we will send it back to you.</p>
 
 **Name:** `CD - 02 Status changed`
 
-**Trigger:** SharePoint · *When an item is created or modified*, list `AV-CD-Requests`.
-**Trigger condition:**
-```
-@and(
-  not(equals(triggerOutputs()?['body/Status/Value'], 'Draft')),
-  not(equals(triggerOutputs()?['body/Status/Value'], 'Processing'))
-)
-```
-(Processing is Flow 1.)
+**Simplified:** only the **request status** matters. Media files (approved / not approved, tables of media) are **not** looked at.
 
-**Steps**
-1. `Get changes for an item` (0.4). **Condition**: `Status` changed = true, otherwise end.
-2. `Get items` on `AV-CD-Mediafiles` (`ParentRequest eq '@{RequestNumber}'`) → `n` = all rows, `ok` = rows with `MediaApproved eq 1`.
-3. `Compose` `partly` = `and(equals(Status,'Approved'), greater(ok,0), less(ok,n))` (the app's own "Partially approved" rule: *an Approved request whose media files are only partly ticked*).
-4. `Switch` on `Status`:
-   - **Approved** and `ArchivedOnly = true` → E-mail 2A (archive only)
-   - **Approved**, `partly` → E-mail 2B (partially approved)
-   - **Approved** → E-mail 2C
-   - **Rejected** → E-mail 2D
-   - **Pending** → E-mail 2E (need info)
-   - **Published** → E-mail 2F
-5. Recipients for all of them: **To** requestor; **Cc** assignee, co-assignee, reviewer (`ReviewedByContact` e-mails), and (Approved / Published only) the contacts (`contactsEmails`).
-6. Optional audit: `Create item` in a list `AV-CD-FlowLog` (RequestNumber, Status, Sent to, Run id).
+**Trigger:** *When an item is created or modified*, `AV-CD-Requests`. **Trigger condition:** `Status` is Approved, Rejected, Pending or Published **and** `LastNotifiedStatus` is not that status (this also stops loops).
 
-Common elements in the bodies below:
-`@{reviewer}` = `first(ReviewedByContact)?['DisplayName']`, `@{decisionDate}` = `formatDateTime(ReviewedDate,'dd-MM-yyyy HH:mm')`, `@{comment}` = `ReviewerComments` (when empty write "No comment"). `@{link}` = `@{AppBaseUrl}&RequestID=@{ID}`.
+**Steps:** build the recipient list, read the reviewer name, the decision date and the comment, **Switch** on `Status` (one e-mail per status), then write `LastNotifiedStatus = Status`.
 
-### E-mail 2A: Approved, archive only
+**Recipients (always the same):** the requestor, the assignee and `SupportMailbox`. The support mailbox is **always** on the list (the Mail connector has no Cc, so it is one of the addresses in To). The DG / contractor contacts are not notified by this flow.
 
-- **Subject:** `[Central Deposit] Request @{RequestNumber} approved (archive only)`
-```html
-<p>Hello @{Created By DisplayName},</p>
-<p>Your request <b>@{RequestNumber} · @{RequestTitle}</b> has been <b>approved as archive only</b>:
-the media files are kept in the Central Deposit archive but will <b>not be published</b> on the Audiovisual Service portal.</p>
-<p><b>Reason:</b> @{comment}</p>
-<p>Decided by @{reviewer} on @{decisionDate}.</p>
-<p><a href="@{link}">Open the request</a></p>
-<p>Audiovisual Service, DG COMM</p>
-```
+| Status | Subject | Message |
+|---|---|---|
+| Approved | `[Central Deposit] Request <no> approved` | approved; "will now be published" (or "kept in the archive, not published" when `ArchivedOnly`) + comment |
+| Rejected | `[Central Deposit] Request <no> rejected` | rejected + reason; the request is read-only |
+| Pending | `[Central Deposit] Action needed on request <no>` | more information needed + what; press *Resubmit for review* |
+| Published | `[Central Deposit] Request <no> published` | published on the portal |
 
-### E-mail 2B: Partially approved
-
-- **Subject:** `[Central Deposit] Request @{RequestNumber} partially approved`
-```html
-<p>Hello @{Created By DisplayName},</p>
-<p>Your request <b>@{RequestNumber} · @{RequestTitle}</b> has been <b>partially approved</b>:
-@{ok} of @{n} media files were approved.</p>
-<p><b>Approved media files</b></p>@{HTML table of the ticked media files}
-<p><b>Not approved</b></p>@{HTML table of the other media files}
-<p><b>Comment:</b> @{comment}</p>
-<p>Decided by @{reviewer} on @{decisionDate}.</p>
-<p><a href="@{link}">Open the request</a></p>
-<p>Audiovisual Service, DG COMM</p>
-```
-
-### E-mail 2C: Approved
-
-- **Subject:** `[Central Deposit] Request @{RequestNumber} approved`
-```html
-<p>Hello @{Created By DisplayName},</p>
-<p>Good news: your request <b>@{RequestNumber} · @{RequestTitle}</b> has been <b>approved</b>.
-The media files will now be published on the Audiovisual Service portal.</p>
-<p><b>Comment:</b> @{comment}</p>
-<p>Decided by @{reviewer} on @{decisionDate}.</p>
-<p>@{HTML table: media number, title, Beluga reference}</p>
-<p><a href="@{link}">Open the request</a></p>
-<p>Audiovisual Service, DG COMM</p>
-```
-
-### E-mail 2D: Rejected
-
-- **Subject:** `[Central Deposit] Request @{RequestNumber} rejected`
-```html
-<p>Hello @{Created By DisplayName},</p>
-<p>Your request <b>@{RequestNumber} · @{RequestTitle}</b> has been <b>rejected</b>.</p>
-<p><b>Reason:</b> @{comment}</p>
-<p>Decided by @{reviewer} on @{decisionDate}.</p>
-<p>The request is now read-only. If you think this is a mistake, answer in the Message Center of the request
-or write to <a href="mailto:@{SupportMailbox}">@{SupportMailbox}</a>.</p>
-<p><a href="@{link}">Open the request</a></p>
-<p>Audiovisual Service, DG COMM</p>
-```
-
-### E-mail 2E: Pending ("Need info")
-
-- **Subject:** `[Central Deposit] Action needed on request @{RequestNumber}`
-```html
-<p>Hello @{Created By DisplayName},</p>
-<p>The Audiovisual Service needs <b>more information</b> before it can decide on your request
-<b>@{RequestNumber} · @{RequestTitle}</b>.</p>
-<p><b>What we need:</b> @{comment}</p>
-<p>Please open the request, update it and press <b>Resubmit for review</b>. You have @{ReminderDaysPending} days before we remind you.</p>
-<p>Asked by @{reviewer} on @{decisionDate}.</p>
-<p><a href="@{link}">Open the request</a></p>
-<p>Audiovisual Service, DG COMM</p>
-```
-
-### E-mail 2F: Published
-
-- **Subject:** `[Central Deposit] Request @{RequestNumber} published`
-```html
-<p>Hello @{Created By DisplayName},</p>
-<p>The media files of your request <b>@{RequestNumber} · @{RequestTitle}</b> have been <b>published</b>
-on the Audiovisual Service portal on @{formatDateTime(PublishedDate,'dd-MM-yyyy')}.</p>
-<p>@{HTML table: media number, title, Beluga reference}</p>
-<p><a href="@{link}">Open the request</a></p>
-<p>Audiovisual Service, DG COMM</p>
-```
+Every e-mail ends with "Decided by <reviewer> on <date>", the link to the request and the signature.
 
 ---------------------------------------------------------------------------------------------------
 

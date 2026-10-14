@@ -50,3 +50,7 @@ Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`
 ## Package 1.1.0.2 (flows 2-8, without flow 1)
 
 `CentralDepositFlows_1_1_0_2.zip` replaces 1.1.0.1. Change in **CD - 03 Resubmitted**: the e-mail goes to the **assignee only** (no administrators, no co-assignee) **plus the support mailbox, always**; with no assignee it goes to the support mailbox alone. Build: `ALL=1 SKIP1=1 python3 flows/build_solution.py`.
+
+## Package 1.1.0.3 (flows 2-8, without flow 1)
+
+`CentralDepositFlows_1_1_0_3.zip` replaces 1.1.0.2. **CD - 02 Status changed** is simplified: only the request status (no media files, no partly-approved variant); one e-mail per status (Approved, Rejected, Pending, Published) to the requestor, the assignee and the support mailbox, always. Build: `ALL=1 SKIP1=1 python3 flows/build_solution.py`.
