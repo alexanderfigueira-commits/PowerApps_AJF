@@ -107,10 +107,12 @@ def flow04():
     def who(f): return f"@{{coalesce({T(f)}, '')}}"
     info = (f"<table cellpadding=\"3\"><tr><td><b>Requestor</b></td><td>@{{{EM('Author/DisplayName')}}}</td></tr><tr><td><b>Department</b></td><td>@{{{EM('field_1/Value')}}}</td></tr>"
             f"<tr><td><b>Production type</b></td><td>@{{{EM('production_type_request/Value')}}}</td></tr><tr><td><b>Status</b></td><td>@{{{EM('field_5/Value')}}}</td></tr></table>")
+    # the new assignee and, when there is one, the co-assignee (unless the co-assignee was just added: that person gets 4C instead, so no duplicate)
+    to_4a = f"@{{concat({EM('Assignee/Email')}, if(and(not(empty({c})), not(outputs('Compose_co_changed'))), concat(';', {EM('CoAssignee/Email')}), ''))}}"
     items = [
         ('Compose_assignee_changed', compose(f"@not(equals({a},{la}))")), ('Compose_co_changed', compose(f"@not(equals({c},{lc}))")),
         ('If_assignee_changed', cond("outputs('Compose_assignee_changed')", [
-            ('If_new_assignee', cond(f"not(empty({a}))", [('Send_4A_new_assignee', mail(f"@{{{EM('Assignee/Email')}}}", f"[Central Deposit] You are the assignee of request @{{{RN_}}}",
+            ('If_new_assignee', cond(f"not(empty({a}))", [('Send_4A_new_assignee', mail(to_4a, f"[Central Deposit] You are the assignee of request @{{{RN_}}}",
                 f"<p>Hello @{{{EM('Assignee/DisplayName')}}},</p><p>You have been assigned as <b>assignee</b> of the request <b>{HEAD}</b>@{{if(empty({c}),'',concat(' together with ', {EM('CoAssignee/DisplayName')}))}}.</p>{info}<p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}"))])),
             ('If_previous_assignee', cond(f"not(empty({la}))", [('Send_4B_previous_assignee', mail(f"@{{{EM('LastNotifiedAssignee')}}}", f"[Central Deposit] You are no longer the assignee of request @{{{RN_}}}",
                 f"<p>Hello,</p><p>The request <b>{HEAD}</b> has been reassigned to <b>@{{coalesce({T('Assignee/DisplayName')},'someone else')}}</b>. No further action is needed from you.</p><p><a href=\"{LINKC}\">Open the request</a></p>"))])),

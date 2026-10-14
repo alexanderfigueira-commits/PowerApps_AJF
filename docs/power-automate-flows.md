@@ -218,7 +218,7 @@ The administrator sets `Assignee` and `CoAssignee` on the Review screen. The app
 
 ### E-mail 4A: new assignee
 
-- **To:** `@{assigneeEmail}`  **Cc:** `@{coAssigneeEmail}`
+- **To:** `@{assigneeEmail}` **and** the co-assignee, if there is one (unless the co-assignee was added in the same change: then he/she gets E-mail 4C instead, so no duplicate).
 - **Subject:** `[Central Deposit] You are the assignee of request @{RequestNumber}`
 ```html
 <p>Hello @{Assignee DisplayName},</p>
