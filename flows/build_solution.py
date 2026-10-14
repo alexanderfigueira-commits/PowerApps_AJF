@@ -10,7 +10,7 @@ PREFIX = 'avcd'
 PUBLISHER = 'Cr99038'          # the environment's publisher (prefix avcd, option value prefix 51206), taken from the sample export
 ALL = bool(os.environ.get('ALL'))
 SKIP1 = bool(os.environ.get('SKIP1'))      # flow 1 is already imported and tested: leave it out
-VERSION = ('1.1.0.3' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.2'
+VERSION = ('1.1.0.4' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.3'
 CONN_APPR = 'avcd_sharedapprovals_c5d18'
 # stable ids so a re-import updates instead of duplicating
 G = lambda name: str(uuid.uuid5(uuid.NAMESPACE_URL, 'centraldeposit/' + name)).upper()
@@ -28,8 +28,9 @@ T = lambda f: f"triggerOutputs()?['body/{f}']"
 RN, TITLE, STATUS, SUBMITTED = T('Title'), T('RequestTitle'), T('field_5/Value'), T('field_6')
 LINK = f"{P('AppBaseUrl')}&RequestID=@{{{T('ID')}}}"
 DATE = f"@{{convertTimeZone({SUBMITTED},'UTC','Romance Standard Time','dd-MM-yyyy HH:mm')}}"
-ASSIGNEE_TO = (f"@{{if(empty(coalesce({T('Assignee/Email')},'')), join(body('Select_administrator_emails'),';'), "
-               f"concat({T('Assignee/Email')}, if(empty(coalesce({T('CoAssignee/Email')},'')), '', concat(';', {T('CoAssignee/Email')}))))}}")
+# only the assignee (when there is one) and the support mailbox: never the list of administrators
+ASSIGNEE_TO = (f"@{{if(empty(coalesce({T('Assignee/Email')},'')), variables('SupportMailbox'), "
+               f"concat({T('Assignee/Email')}, ';', variables('SupportMailbox')))}}")
 BODY_ADMIN = f'''<p>Hello,</p>
 <p>A new request has been submitted and is waiting for review.</p>
 <table style="border-collapse:collapse" cellpadding="3">
@@ -53,15 +54,12 @@ BODY_ERROR = f'''<p>Flow <b>CD - 01 Request submitted</b> failed for request @{{
 <p>Run: @{{workflow()?['run']?['name']}}</p><p>@{{string(result('Scope_-_Main'))}}</p>'''
 def flow01():
     main = {
-        'Get_administrators': sp('GetItems', {'dataset': P('SiteUrl'), 'table': LIST['roles'], '$filter': "Role eq 'ADMINISTRATOR'", '$top': 100}),
-        'Select_administrator_emails': {'type': 'Select', 'runAfter': {'Get_administrators': ['Succeeded']},
-            'inputs': {'from': "@body('Get_administrators')?['value']", 'select': "@item()?['UserEmail']?['Email']"}},
-        'Get_media_files': {**sp('GetItems', {'dataset': P('SiteUrl'), 'table': LIST['media'], '$filter': f"field_30 eq '@{{{RN}}}'", '$top': 100}), 'runAfter': {'Select_administrator_emails': ['Succeeded']}},
+        'Get_media_files': {**sp('GetItems', {'dataset': P('SiteUrl'), 'table': LIST['media'], '$filter': f"field_30 eq '@{{{RN}}}'", '$top': 100}), 'runAfter': {}},
         'Select_media': {'type': 'Select', 'runAfter': {'Get_media_files': ['Succeeded']},
             'inputs': {'from': "@body('Get_media_files')?['value']", 'select': {'Media': "@item()?['Title']", 'Title': "@item()?['ProductionTitle']", 'Type': "@item()?['field_25']?['Value']"}}},
         'Create_HTML_table': {'type': 'Table', 'runAfter': {'Select_media': ['Succeeded']}, 'inputs': {'from': "@body('Select_media')", 'format': 'HTML'}},
-        'Send_e-mail_to_administrators': {**mail(ASSIGNEE_TO, f"[Central Deposit] New request to review: @{{{RN}}} · @{{{TITLE}}}", BODY_ADMIN), 'runAfter': {'Create_HTML_table': ['Succeeded']}},
-        'Send_e-mail_to_requestor': {**mail(f"@{{{T('Author/Email')}}}", f"[Central Deposit] Request @{{{RN}}} submitted", BODY_REQUESTOR), 'runAfter': {'Send_e-mail_to_administrators': ['Succeeded']}},
+        'Send_e-mail_to_assignee_and_support': {**mail(ASSIGNEE_TO, f"[Central Deposit] New request to review: @{{{RN}}} · @{{{TITLE}}}", BODY_ADMIN), 'runAfter': {'Create_HTML_table': ['Succeeded']}},
+        'Send_e-mail_to_requestor': {**mail(f"@{{{T('Author/Email')}}}", f"[Central Deposit] Request @{{{RN}}} submitted", BODY_REQUESTOR), 'runAfter': {'Send_e-mail_to_assignee_and_support': ['Succeeded']}},
         'Mark_as_notified': {**sp('PatchItem', {'dataset': P('SiteUrl'), 'table': LIST['requests'], 'id': f"@{T('ID')}", 'item/Title': f"@{RN}", 'item/field_5/Value': f"@{STATUS}",
                                                'item/SubmissionNotifiedOn': "@utcNow()"}), 'runAfter': {'Send_e-mail_to_requestor': ['Succeeded']}},
     }
@@ -94,7 +92,7 @@ if ALL:
     FLOWS[0][3]['properties']['definition']['actions']['Scope_-_Main']['actions']['Mark_as_notified']['inputs']['parameters']['item/LastNotifiedStatus'] = 'Processing'
     if SKIP1: FLOWS.pop(0)
     for n, fn, f in (('CD - 02 Status changed', 'CD-02StatusChanged', flow02), ('CD - 03 Resubmitted', 'CD-03Resubmitted', flow03), ('CD - 04 Assignment', 'CD-04Assignment', flow04),
-                     ('CD - 05 Second approval', 'CD-05SecondApproval', flow05), ('CD - 06 New message', 'CD-06NewMessage', flow06),
+                     ('CD - 06 New message', 'CD-06NewMessage', flow06),
                      ('CD - 07 Unread messages', 'CD-07UnreadMessages', flow07), ('CD - 08 Reminders', 'CD-08Reminders', flow08)):
         FLOWS.append((n, G('flow' + fn[3:5]), fn, f()))
 def customizations():
@@ -106,7 +104,7 @@ def customizations():
 <LocalizedNames><LocalizedName languagecode="1033" description="{name}" /></LocalizedNames></Workflow>''' for name, gid, fn, _ in FLOWS)
     conns = ''.join(f'''<connectionreference connectionreferencelogicalname="{n}"><connectionreferencedisplayname>{d}</connectionreferencedisplayname>
 <connectorid>/providers/Microsoft.PowerApps/apis/{c}</connectorid><iscustomizable>1</iscustomizable><promptingbehavior>0</promptingbehavior><statecode>0</statecode><statuscode>1</statuscode></connectionreference>'''
-                    for n, d, c in ((CONN_SP, 'SharePoint', 'shared_sharepointonline'), (CONN_MAIL, 'Mail', 'shared_sendmail')) + (((CONN_APPR, 'Approvals', 'shared_approvals'),) if ALL else ()))
+                    for n, d, c in ((CONN_SP, 'SharePoint', 'shared_sharepointonline'), (CONN_MAIL, 'Mail', 'shared_sendmail')))
     return xml_pretty(f'''<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26092.157" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26092.00157">
 <Entities /><Roles /><Workflows>{wf}</Workflows><FieldSecurityProfiles /><Templates /><EntityMaps /><EntityRelationships /><OrganizationSettings /><optionsets />
 <CustomControls /><EntityDataProviders />

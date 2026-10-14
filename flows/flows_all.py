@@ -56,13 +56,6 @@ SIGN = '<p>Audiovisual Service, DG COMM</p>'
 def mail_to(parts):   # distinct, non-empty addresses joined by ';' (parts = expressions that return an array or a string)
     return parts
 # ---- shared steps ----
-ADMINS = [('Get_administrators', getitems('roles', "Role eq 'ADMINISTRATOR'")),
-          ('Select_administrator_emails', select("@body('Get_administrators')?['value']", "@item()?['UserEmail']?['Email']"))]
-HANDLERS = (f"@join(union(createArray({EM('Assignee/Email')}), createArray({EM('CoAssignee/Email')})), ';')")   # assignee + co-assignee
-def handlers_or_admins():
-    return (f"@{{if(and(empty({EM('Assignee/Email')}), empty({EM('CoAssignee/Email')})), join(body('Select_administrator_emails'),';'), "
-            f"join(body('Filter_handlers'),';'))}}")
-FILTER_HANDLERS = ('Filter_handlers', query(f"@union(createArray({EM('Assignee/Email')}), createArray({EM('CoAssignee/Email')}))", "@not(empty(item()))"))
 REQUESTOR = f"@{{{EM('Author/Email')}}}"
 LINKC = f"{P('AppBaseUrl')}&RequestID=@{{{T('ID')}}}"
 RN_, TI_ = T('Title'), T('RequestTitle')
@@ -132,41 +125,17 @@ def flow04():
                 f"<p>Hello,</p><p>You have been removed as co-assignee of <b>{HEAD}</b>.</p>"))]))])),
         ('Mark_assignment_notified', patch_req(f"@{T('ID')}", f"@{RN_}", f"@{T('field_5/Value')}", {'LastNotifiedAssignee': f"@{a}", 'LastNotifiedCoAssignee': f"@{c}"}))]
     return wrap(definition(trig_changed('requests', cond_t, 'flow04'), scope_wrap('CD - 04 Assignment', items, f"@{{{RN_}}}")))
-# FLOW 5: second approval (optional, off by default): archive-only approvals must be confirmed by another administrator
-def flow05():
-    cond_t = (f"and(equals({T('field_5/Value')},'Approved'), equals(coalesce({T('ArchivedOnly')},false), true), empty(coalesce({T('SecondApprovalOn')},'')))")
-    comment = "coalesce(first(body('Start_and_wait_for_an_approval')?['responses'])?['comments'],'-')"
-    details = (f"**Request:** @{{{RN_}}} · @{{{TI_}}}\n\n**Requestor:** @{{{EM('Author/DisplayName')}}}\n\n**Decision taken:** Approved (archive only)\n\n"
-               f"**By:** @{{coalesce(first(coalesce({T('field_8')}, createArray()))?['DisplayName'],'')}}\n\n**Reason:** @{{{EM('field_10')}}}")
-    approval = {'type': 'OpenApiConnection', 'inputs': {'host': {'apiId': '/providers/Microsoft.PowerApps/apis/shared_approvals', 'connectionName': 'shared_approvals', 'operationId': 'StartAndWaitForAnApproval'},
-                'parameters': {'approvalType': 'Basic', 'ApprovalCreationInput/title': f"Confirm decision on request @{{{RN_}}}",
-                               'ApprovalCreationInput/assignedTo': "@{join(body('Filter_other_administrators'),';')}", 'ApprovalCreationInput/details': details,
-                               'ApprovalCreationInput/itemLink': LINKC, 'ApprovalCreationInput/itemLinkDescription': 'Open the request',
-                               'ApprovalCreationInput/enableNotifications': True, 'ApprovalCreationInput/enableReassignment': True}, 'authentication': "@parameters('$authentication')"}}
-    confirmed = mail(f"@{{join(union(body('Select_reviewer_emails'), createArray({EM('Assignee/Email')})),';')}}", f"[Central Deposit] Decision on @{{{RN_}}} confirmed",
-                     f"<p>Hello,</p><p>Your decision on request <b>{HEAD}</b> was <b>confirmed</b>.</p><p>Comment: @{{{comment}}}</p><p><a href=\"{LINKC}\">Open the request</a></p>")
-    challenged = mail("@{join(union(body('Select_reviewer_emails'), body('Select_administrator_emails')),';')}", f"[Central Deposit] Decision on @{{{RN_}}} challenged",
-                      f"<p>Hello,</p><p>The decision on request <b>{HEAD}</b> was <b>not confirmed</b>.</p><p>Comment: @{{{comment}}}</p><p>Please review the request again.</p><p><a href=\"{LINKC}\">Open the request</a></p>")
-    inner = [('Start_and_wait_for_an_approval', approval),
-             ('If_confirmed', cond("equals(body('Start_and_wait_for_an_approval')?['outcome'],'Approve')", [('Send_5A_confirmed', confirmed)], [('Send_5B_challenged', challenged)]))]
-    items = ADMINS + [
-        ('Select_reviewer_emails', select(f"@coalesce({T('field_8')}, createArray())", "@toLower(item()?['Email'])")),
-        ('Filter_other_administrators', query("@body('Select_administrator_emails')", "@not(contains(body('Select_reviewer_emails'), toLower(item())))")),
-        ('If_there_are_other_administrators', cond("greater(length(body('Filter_other_administrators')),0)", inner)),
-        ('Mark_second_approval_done', patch_req(f"@{T('ID')}", f"@{RN_}", f"@{T('field_5/Value')}", {'SecondApprovalOn': "@utcNow()"}))]
-    return wrap(definition(trig_changed('requests', cond_t, 'flow05'), scope_wrap('CD - 05 Second approval', items, f"@{{{RN_}}}")), approvals=True)
+# the administrator side of every e-mail: the assignee (when there is one) and the support mailbox, always. Never the list of administrators, never the co-assignee.
+def TO_ASSIGNEE(a): return f"@{{if(empty({a}), variables('SupportMailbox'), concat({a}, ';', variables('SupportMailbox')))}}"
 # FLOW 6: new message
 def flow06():
     role = T('AuthorRole/Value')
     items = [
         ('Get_request', getitems('requests', f"Title eq '@{{{T('ParentRequest')}}}'", 1)),
         ('Compose_request', compose("@first(body('Get_request')?['value'])")),
-        ('Get_administrators', getitems('roles', "Role eq 'ADMINISTRATOR'")),
-        ('Select_administrator_emails', select("@body('Get_administrators')?['value']", "@item()?['UserEmail']?['Email']")),
-        ('Filter_handlers', query("@union(createArray(coalesce(outputs('Compose_request')?['Assignee']?['Email'],'')), createArray(coalesce(outputs('Compose_request')?['CoAssignee']?['Email'],'')))", "@not(empty(item()))")),
         ('If_request_found', cond("not(empty(outputs('Compose_request')))", [
             ('If_from_requestor', cond(f"equals({role},'Requestor')", [
-                ('Send_6A_to_administrators', mail("@{if(empty(body('Filter_handlers')), join(body('Select_administrator_emails'),';'), join(body('Filter_handlers'),';'))}",
+                ('Send_6A_to_assignee_and_support', mail(TO_ASSIGNEE("coalesce(outputs('Compose_request')?['Assignee']?['Email'],'')"),
                     f"[Central Deposit] New message on request @{{{T('ParentRequest')}}} from @{{{T('AuthorName')}}}",
                     f"<p>Hello,</p><p><b>@{{{T('AuthorName')}}}</b> wrote in the Message Center of <b>@{{{T('ParentRequest')}}} &middot; @{{outputs('Compose_request')?['RequestTitle']}}</b>:</p>"
                     f"<blockquote style=\"border-left:3px solid #3860b2;margin:8px 0;padding:4px 12px;color:#333\">@{{{T('NoteText')}}}</blockquote><p><a href=\"{P('AppBaseUrl')}&RequestID=@{{outputs('Compose_request')?['ID']}}\">Open the request and answer</a></p>"))],
@@ -182,16 +151,13 @@ def flow07():
         ('Get_unread_notes', getitems('notes', "ReadOn eq null and Created le '@{addHours(utcNow(),-24)}' and Created ge '@{addHours(utcNow(),-48)}'", 200)),
         ('Select_request_numbers', select("@body('Get_unread_notes')?['value']", "@item()?['ParentRequest']")),
         ('Compose_distinct_requests', compose("@union(body('Select_request_numbers'), body('Select_request_numbers'))")),
-        ('Get_administrators', getitems('roles', "Role eq 'ADMINISTRATOR'")),
-        ('Select_administrator_emails', select("@body('Get_administrators')?['value']", "@item()?['UserEmail']?['Email']")),
         ('For_each_request', foreach("@outputs('Compose_distinct_requests')", [
             ('Get_request', getitems('requests', "Title eq '@{items('For_each_request')}'", 1)),
             ('Compose_req', compose("@first(body('Get_request')?['value'])")),
             ('Filter_notes_of_request', query("@body('Get_unread_notes')?['value']", "@equals(item()?['ParentRequest'], items('For_each_request'))")),
             ('Filter_from_requestor', query("@body('Filter_notes_of_request')", "@equals(item()?['AuthorRole']?['Value'],'Requestor')")),
             ('Filter_from_admin', query("@body('Filter_notes_of_request')", "@equals(item()?['AuthorRole']?['Value'],'Administrator')")),
-            ('Filter_handlers', query("@union(createArray(coalesce(outputs('Compose_req')?['Assignee']?['Email'],'')), createArray(coalesce(outputs('Compose_req')?['CoAssignee']?['Email'],'')))", "@not(empty(item()))")),
-            ('If_requestor_notes', cond("greater(length(body('Filter_from_requestor')),0)", [('Send_7A_to_administrators', mail("@{if(empty(body('Filter_handlers')), join(body('Select_administrator_emails'),';'), join(body('Filter_handlers'),';'))}",
+            ('If_requestor_notes', cond("greater(length(body('Filter_from_requestor')),0)", [('Send_7A_to_assignee_and_support', mail(TO_ASSIGNEE("coalesce(outputs('Compose_req')?['Assignee']?['Email'],'')"),
                 "[Central Deposit] @{length(body('Filter_from_requestor'))} unread message(s) on request @{items('For_each_request')}",
                 f"<p>Hello,</p><p>You have <b>@{{length(body('Filter_from_requestor'))}}</b> message(s) from the requestor on <b>@{{items('For_each_request')}} &middot; @{{outputs('Compose_req')?['RequestTitle']}}</b> that nobody has read for more than 24 hours.</p><p><a href=\"{P('AppBaseUrl')}&RequestID=@{{outputs('Compose_req')?['ID']}}\">Open the request</a></p>"))])),
             ('If_admin_notes', cond("greater(length(body('Filter_from_admin')),0)", [('Send_7B_to_requestor', mail("@{outputs('Compose_req')?['Author']?['Email']}",
@@ -210,9 +176,8 @@ def flow08():
                                                          'item/field_5/Value': "@items('For_each_" + n + "')?['field_5']?['Value']", 'item/LastReminderOn': '@utcNow()'}))]))]
     it = lambda n, f: f"items('For_each_{n}')" + ''.join(f"?['{x}']" for x in f.split('/'))
     link = lambda n: f"{P('AppBaseUrl')}&RequestID=@{{{it(n, 'ID')}}}"
-    proc_to = ("@{if(and(empty(coalesce(items('For_each_processing')?['Assignee']?['Email'],'')), empty(coalesce(items('For_each_processing')?['CoAssignee']?['Email'],''))), join(body('Select_administrator_emails'),';'), "
-               "join(union(createArray(coalesce(items('For_each_processing')?['Assignee']?['Email'],'')), createArray(coalesce(items('For_each_processing')?['CoAssignee']?['Email'],''))),';'))}")
-    items = SUSPENDED + ADMINS[:] + block('Processing', "field_6 lt '@{addDays(utcNow(),-7)}'",
+    proc_to = TO_ASSIGNEE("coalesce(items('For_each_processing')?['Assignee']?['Email'],'')")
+    items = SUSPENDED + block('Processing', "field_6 lt '@{addDays(utcNow(),-7)}'",
         f"[Central Deposit] Reminder: request @{{{it('processing','Title')}}} is waiting for review",
         f"<p>Hello,</p><p>The request <b>@{{{it('processing','Title')}}} &middot; @{{{it('processing','RequestTitle')}}}</b> from @{{{it('processing','Author/DisplayName')}}} has been in <b>Processing</b> since @{{formatDateTime({it('processing','field_6')},'dd-MM-yyyy')}} and is not reviewed yet.</p><p><a href=\"{link('processing')}\">Open the request</a></p>",
         proc_to) + block('Pending', "field_11 lt '@{addDays(utcNow(),-7)}'",

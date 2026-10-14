@@ -6,6 +6,10 @@ Build these flows in the same environment as the app. They read and write the sa
 
 ## 0. Conventions used by every flow
 
+> **Recipient rule (all flows):** an e-mail "to the administrators" goes to the **assignee** of the request (the administrator in charge) and to the **support mailbox**, always. It never goes to the list of all administrators, and the co-assignee is not copied. With no assignee yet, it goes to the support mailbox alone. Personal notices (new assignee, removed assignee, new or removed co-assignee, requestor) still go to that person.
+> **Flow 5 (second approval) is not part of the package.**
+
+
 ### 0.1 Environment variables (Solution → Environment variables)
 
 | Name | Value |
