@@ -64,3 +64,7 @@ Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`
 ## Package 1.1.0.5
 
 `CentralDepositFlows_1_1_0_5.zip` replaces 1.1.0.4: flows 7 and 8 no longer look at the `SuspensionDates` list (the check was removed). Same flows as 1.1.0.4: 2, 3, 4, 6, 7, 8.
+
+## Package 1.1.0.6
+
+`CentralDepositFlows_1_1_0_6.zip` replaces 1.1.0.5. Flows 6, 7 and 8: the administrator e-mails go to the assignee **and the co-assignee (when they exist)** plus the support mailbox, always. Flows 2, 3, 4: unchanged. Same flows: 2, 3, 4, 6, 7, 8.

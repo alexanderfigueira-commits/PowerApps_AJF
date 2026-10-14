@@ -6,7 +6,7 @@ Build these flows in the same environment as the app. They read and write the sa
 
 ## 0. Conventions used by every flow
 
-> **Recipient rule (all flows):** an e-mail "to the administrators" goes to the **assignee** of the request (the administrator in charge) and to the **support mailbox**, always. It never goes to the list of all administrators, and the co-assignee is not copied. With no assignee yet, it goes to the support mailbox alone. Personal notices (new assignee, removed assignee, new or removed co-assignee, requestor) still go to that person.
+> **Recipient rule:** an e-mail "to the administrators" never goes to the list of all administrators. Flows 1 and 3: the **assignee** (when there is one) and the **support mailbox**, always. Flows 6, 7 and 8: the **assignee and the co-assignee, when they exist, and the support mailbox**, always. With nobody assigned yet it goes to the support mailbox alone. Personal notices (new assignee, removed assignee, new or removed co-assignee, requestor) still go to that person.
 > **Flow 5 (second approval) is not part of the package.**
 
 
@@ -389,7 +389,7 @@ The app lets the assignee or co-assignee press **Approve / Reject / Need info** 
 **Trigger:** Recurrence, every weekday at 08:30.
 
 1. **Processing too long**: `Get items` on `AV-CD-Requests`, Filter `Status eq 'Processing' and StartRequestDate lt '@{addDays(utcNow(), -7)}'` (7 calendar days ≈ 5 working days; compute exact working days in a `Do until` / `Select` if you need it).
-   - For each: **E-mail 8A** to the assignee and the support mailbox (never all administrators).
+   - For each: **E-mail 8A** to the assignee, the co-assignee (if any) and the support mailbox (never all administrators).
 2. **Pending without answer**: Filter `Status eq 'Pending' and ReviewedDate lt '@{addDays(utcNow(), -@{ReminderDaysPending})}'`.
    - For each: **E-mail 8B** to the requestor, Cc assignee.
 3. Store the date of the last reminder in a column `LastReminderOn` to send at most one reminder every 3 days (the trigger of Flows 1 to 4 ignores changes to that column through the "Get changes" check).
