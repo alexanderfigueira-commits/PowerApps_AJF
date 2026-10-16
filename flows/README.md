@@ -92,3 +92,7 @@ Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`
 ## Package 1.1.0.12 (flow 4 only)
 
 `CentralDepositFlows_1_1_0_12.zip`: CD - 04 Assignment: the new-assignee e-mail (4A) also goes to the **co-assignee when there is one** (not when the co-assignee was added in the same change: that person gets 4C). Build: `ALL=1 SKIP1=1 ONLY=4 python3 flows/build_solution.py`.
+
+## Package 1.1.0.13 (flow 9 only)
+
+`CentralDepositFlows_1_1_0_13.zip`: **CD - 09 Import form** (reads the Word metadata form, writes the preview, then creates the Draft request). Needs a OneDrive for Business connection besides SharePoint and Mail. See `docs/import-form-spec.md` section 7. Build: `ALL=1 SKIP1=1 ONLY=9 python3 flows/build_solution.py`.

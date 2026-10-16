@@ -11,8 +11,9 @@ PUBLISHER = 'Cr99038'          # the environment's publisher (prefix avcd, optio
 ALL = bool(os.environ.get('ALL'))
 SKIP1 = bool(os.environ.get('SKIP1'))      # flow 1 is already imported and tested: leave it out
 ONLY = os.environ.get('ONLY', '')            # e.g. ONLY=678 builds a package with just those flows
-VERSION = ('1.1.0.12' if ONLY else '1.1.0.6' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.3'
+VERSION = ('1.1.0.13' if ONLY else '1.1.0.6' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.3'
 CONN_APPR = 'avcd_sharedapprovals_c5d18'
+CONN_OD = 'avcd_sharedonedriveforbusiness_d41f6'
 # stable ids so a re-import updates instead of duplicating
 G = lambda name: str(uuid.uuid5(uuid.NAMESPACE_URL, 'centraldeposit/' + name)).upper()
 WF1 = G('flow01')
@@ -90,11 +91,13 @@ def xml_pretty(s):
 FLOWS = [('CD - 01 Request submitted', WF1, 'CD-01RequestSubmitted', flow01())]
 if ALL:
     exec(open(os.path.join(HERE, 'flows_all.py'), encoding='utf-8').read())
+    exec(open(os.path.join(HERE, 'flow09.py'), encoding='utf-8').read())
     FLOWS[0][3]['properties']['definition']['actions']['Scope_-_Main']['actions']['Mark_as_notified']['inputs']['parameters']['item/LastNotifiedStatus'] = 'Processing'
     if SKIP1: FLOWS.pop(0)
     for n, fn, f in (('CD - 02 Status changed', 'CD-02StatusChanged', flow02), ('CD - 03 Resubmitted', 'CD-03Resubmitted', flow03), ('CD - 04 Assignment', 'CD-04Assignment', flow04),
                      ('CD - 06 New message', 'CD-06NewMessage', flow06),
-                     ('CD - 07 Unread messages', 'CD-07UnreadMessages', flow07), ('CD - 08 Reminders', 'CD-08Reminders', flow08)):
+                     ('CD - 07 Unread messages', 'CD-07UnreadMessages', flow07), ('CD - 08 Reminders', 'CD-08Reminders', flow08),
+                     ('CD - 09 Import form', 'CD-09ImportForm', flow09)):
         FLOWS.append((n, G('flow' + fn[3:5]), fn, f()))
     if ONLY: FLOWS[:] = [x for x in FLOWS if x[2][4] in ONLY]
 def customizations():
@@ -106,7 +109,7 @@ def customizations():
 <LocalizedNames><LocalizedName languagecode="1033" description="{name}" /></LocalizedNames></Workflow>''' for name, gid, fn, _ in FLOWS)
     conns = ''.join(f'''<connectionreference connectionreferencelogicalname="{n}"><connectionreferencedisplayname>{d}</connectionreferencedisplayname>
 <connectorid>/providers/Microsoft.PowerApps/apis/{c}</connectorid><iscustomizable>1</iscustomizable><promptingbehavior>0</promptingbehavior><statecode>0</statecode><statuscode>1</statuscode></connectionreference>'''
-                    for n, d, c in ((CONN_SP, 'SharePoint', 'shared_sharepointonline'), (CONN_MAIL, 'Mail', 'shared_sendmail')))
+                    for n, d, c in ((CONN_SP, 'SharePoint', 'shared_sharepointonline'), (CONN_MAIL, 'Mail', 'shared_sendmail')) + (((CONN_OD, 'OneDrive for Business', 'shared_onedriveforbusiness'),) if any(f[2] == 'CD-09ImportForm' for f in FLOWS) else ()))
     return xml_pretty(f'''<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26092.157" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26092.00157">
 <Entities /><Roles /><Workflows>{wf}</Workflows><FieldSecurityProfiles /><Templates /><EntityMaps /><EntityRelationships /><OrganizationSettings /><optionsets />
 <CustomControls /><EntityDataProviders />

@@ -45,9 +45,10 @@ def trig_schedule(hour, minute, name):
 def definition(triggers, actions):
     return {'$schema': 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#', 'contentVersion': '1.0.0.0',
             'parameters': {'$connections': {'defaultValue': {}, 'type': 'Object'}, '$authentication': {'defaultValue': {}, 'type': 'SecureObject'}}, 'triggers': triggers, 'actions': actions}
-def wrap(defn, approvals=False):
+def wrap(defn, approvals=False, onedrive=False):
     refs = {'shared_sharepointonline': {'runtimeSource': 'embedded', 'connection': {'connectionReferenceLogicalName': CONN_SP}, 'api': {'name': 'shared_sharepointonline'}},
             'shared_sendmail': {'runtimeSource': 'embedded', 'connection': {'connectionReferenceLogicalName': CONN_MAIL}, 'api': {'name': 'shared_sendmail'}}}
+    if onedrive: refs['shared_onedriveforbusiness'] = {'runtimeSource': 'embedded', 'connection': {'connectionReferenceLogicalName': CONN_OD}, 'api': {'name': 'shared_onedriveforbusiness'}}
     if approvals: refs['shared_approvals'] = {'runtimeSource': 'embedded', 'connection': {'connectionReferenceLogicalName': CONN_APPR}, 'api': {'name': 'shared_approvals'}}
     return {'properties': {'connectionReferences': refs, 'definition': defn, 'templateName': None}, 'schemaVersion': '1.0.0.0'}
 LOW = lambda e: f"toLower(coalesce({e},''))"
