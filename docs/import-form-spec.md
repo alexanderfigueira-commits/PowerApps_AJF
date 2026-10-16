@@ -69,3 +69,48 @@ The form type is detected from its heading ("... for Photos" / "... for Podcast"
 3. Keep the original .docx? On the request (if attachments are enabled on `AV-CD-Requests`) or drop it after reading. On the media item it would count as a "legal annex" in the validations, so it is not recommended there.
 4. One form = one request with one media file (assumed).
 5. OneDrive service account for the *Extract archive* step.
+
+---
+
+## 6. Business analysis
+
+**Objective.** Stop re-typing the Word metadata form into the app: one upload creates a **Draft** request already filled, and the requestor gets the link to review and submit it.
+
+**Current process (as understood).** The requestor fills the Word form and e-mails it, with the material, to COMM-DEPOT-CENTRAL (or uses the FTP). Someone from the AV Library keys the same data into the app. *To confirm with the AV Library.*
+
+**Stakeholders.** AV Library administrators (upload), requestors (review and submit), the support mailbox owner (errors), the SharePoint / Power Platform owner (columns, OneDrive service account).
+
+**To-be process.** Form received -> administrator uploads it and gives the requestor e-mail -> flow reads it, creates the draft, assigns the creator -> requestor receives the link -> requestor completes the missing items (DG, attachments, legal) and submits.
+
+### User stories and acceptance criteria
+| # | Story | Acceptance criteria |
+|---|---|---|
+| 1 | As an administrator I upload a filled form and enter the requestor e-mail | Only administrators open the screen; only `.docx` is accepted; the e-mail is required and valid; the button stays disabled until both are given |
+| 2 | I see whether the e-mail is a known person | Found: name shown; not found: warning "will be saved as e-mail only" |
+| 3 | The system creates the draft | Status Draft; request title, description, media type and the media metadata filled from the form; request number follows the app rule; one media file per form |
+| 4 | The requestor gets the link | E-mail with `<app>&RequestID=<ID>`; the support mailbox always in copy |
+| 5 | The requestor owns the draft | Known person: `Created By` = that person and the draft is in their list; otherwise `RequestorEmail` is filled |
+| 6 | Errors are visible | `ImportStatus = Error` + `ImportMessage`; e-mail to the support mailbox and to the uploader; nothing half-created is left behind |
+| 7 | Traceability | Who uploaded, when and the original form are kept (see open point 3) |
+
+### Data rules
+- Dates are typed as free text in the form: accept `dd/mm/yyyy`, `dd-mm-yyyy`, `yyyy-mm-dd`; anything else stays empty and is listed in `ImportMessage`.
+- A tick box is "ticked" only when the Word control state is 1. The video "Subtitles" symbols are not read (fix the template).
+- The form version is checked (heading and labels); an unknown layout stops with a clear error instead of importing wrong data.
+- Same requestor + same title within 7 days = probable duplicate: warn, do not block.
+
+### Risks
+| Risk | Mitigation |
+|---|---|
+| The template changes (labels) | labels live in one table of the flow; the layout check fails loudly |
+| Wrong or empty data in the form | the draft is only a draft: the requestor reviews it; empty required items stay highlighted in the app |
+| Personal data in the .docx | keep it only as long as needed; decide retention (open point 3) |
+| Creator cannot be set | fallback `RequestorEmail`; the draft still exists |
+| Flow account permissions / OneDrive | dedicated service account |
+| Requestor outside the tenant | link cannot be opened: the administrator is told "not found" before sending |
+
+### Success measures (to baseline first, no figures assumed)
+Time to create a request from a form (before / after), % of imports with no manual correction, fields corrected per draft, imports with errors, drafts submitted by the requestor within 2 working days.
+
+### Decisions needed
+The five open points of section 5.
