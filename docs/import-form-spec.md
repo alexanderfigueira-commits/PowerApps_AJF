@@ -1,6 +1,6 @@
 # Import of the Central Deposit metadata form (Word) -> draft request
 
-Status: **ON STANDBY** (paused by decision; FINAL113 and package 1.1.0.13 are kept on the branch but are not part of the later app versions). First version built (app FINAL113 + flow `CD - 09 Import form`, package 1.1.0.13). Not yet run end to end: see section 7. Decisions taken: DOCX; upload by administrators and by internal requestors; preview and confirmation before the draft is created; the original .docx is kept in the SharePoint folder `UploadAVRequests`. Based on the three templates `202601_Central_deposit_metadata_form_{photo,podcast,video}_2.docx`.
+Status: **built, second version** (app FINAL115 on top of FINAL114 + flow `CD - 09 Import form`, package 1.1.0.15). FINAL113 / package 1.1.0.13 (staging on AV-CD-Mediafiles) are superseded. Not yet run end to end: see section 7. Decisions taken: DOCX; upload by administrators and by internal requestors; preview and confirmation before the draft is created; the original .docx is kept in the SharePoint folder `UploadAVRequests`. Based on the three templates `202601_Central_deposit_metadata_form_{photo,podcast,video}_2.docx`.
 
 ## 1. Decision: DOCX, not PDF
 
@@ -118,19 +118,20 @@ The five open points of section 5.
 
 ---
 
-## 7. Built version (what to create and how to test)
+## 7. Built version (FINAL115 + flow 09): what to create and how to test
 
-**Process.** `<app address>&Page=import` (no menu) -> *1 requestor and DG* -> *2 attach the .docx* -> *3 the flow reads it* -> *4 preview: what was read (empty items marked) -> Confirm* -> *5 the flow creates the Draft and e-mails the link* -> *6 Open the draft*.
+**Process.** `<app address>&Page=import` (no menu) -> *1 requestor and DG* -> *2 attach the .docx* -> *3 the flow reads it* -> *4 preview: what was read (important empty items marked) -> Confirm* -> *5 the flow fills the draft, creates its media file and e-mails the link* -> *6 Open the draft*.
 - An **administrator** types the requestor e-mail (checked against the directory: it must be a person). A **requestor** can only import for himself/herself.
-- The requestor is **creator** of the draft (`Created By` set by the flow through SharePoint *validateUpdateListItem*). If SharePoint refuses it, the flow goes on and says so in `ImportMessage` (there is no external-requestor field: unknown e-mails are not accepted).
-- The uploaded original is copied to the library folder and the temporary copy is removed.
+- **The staging item is the request itself.** Step 1 creates the Draft request (it reserves its real request number with the app's own rule); the 8 import columns are on **AV-CD-Requests**. Until `ImportStatus = Done` the request is **hidden from every list of the app** (the loads of `colMyReqs`, `colRevReqs`, `colOpeAll`, `colOpeReqs`, `colDashReqs`, `colPrintData` drop it), so an unfinished import never shows. "Start again" removes an unfinished one.
+- When confirmed, the flow fills the request (title, description, DG, type), creates its **media file** on AV-CD-Mediafiles and sets the requestor as creator (`Created By`, through SharePoint *validateUpdateListItem*; if refused, the creator stays the person who uploaded and `ImportMessage` says so). The original .docx is copied to `UploadAVRequests` as `<request number>_<file name>` and stays attached to the request.
 
 **To create in SharePoint before testing**
-1. Library folder **`Shared Documents/UploadAVRequests`** on `GRP-EBSProductionForm` (if the library has another name, tell me; it is the constant `UPLOAD_FOLDER` in `flows/flow09.py`).
-2. Columns on **AV-CD-Mediafiles**, created with exactly these names (no spaces), type *single line of text* except the three marked: `ImportRequestorEmail`, `ImportStatus`, `ImportDG`, `ImportedBy`, `ImportRequestID`, `ImportData` (multiple lines, plain text), `ImportPreview` (multiple lines, plain text), `ImportMessage` (multiple lines, plain text).
-3. A OneDrive for Business of the account that owns the flow (use a service account): the flow works in `/AVImportTemp` (created by the flow).
+1. Library folder **`Shared Documents/UploadAVRequests`** on `GRP-EBSProductionForm` (other library name: tell me; constant `UPLOAD_FOLDER` in `flows/flow09.py`).
+2. Columns on **AV-CD-Requests**, created with exactly these names (no spaces), type *single line of text* except the three marked: `ImportRequestorEmail`, `ImportStatus`, `ImportDG`, `ImportedBy`, `ImportRequestID`, `ImportData` (multiple lines, plain text), `ImportPreview` (multiple lines, plain text), `ImportMessage` (multiple lines, plain text). Attachments must be enabled on the list (they are).
+3. A OneDrive for Business of the account that owns the flow (use a service account): the flow works in `/AVImportTemp`.
+4. Import the package 1.1.0.15 (connections: SharePoint, Mail, OneDrive for Business) and turn the flow on.
 
-**How the import item lives.** The screen creates a *staging* media item (`ParentRequest = IMPORT`, `ImportStatus = New`) and attaches the .docx to it; status `Uploaded` -> the flow reads it -> `Parsed` -> the user confirms -> `Confirmed` -> the flow creates the request and turns the staging item into the request's media file (`Done`). Any failure: `Error` + message. Staging items left by people who give up stay as `Parsed` (they can be deleted: they have `ParentRequest = IMPORT`).
+**Statuses of `ImportStatus`:** `New` (created) -> `Uploaded` (file attached) -> `Reading` -> `Parsed` (preview ready) -> `Confirmed` -> `Creating` -> `Done`; `Error` + `ImportMessage` on any failure.
 
 **What is checked in this repository** (not in a live tenant): the reading expressions run against filled copies of the three forms; the app package passes the integrity checks.
 **First-run points to confirm in the tenant**

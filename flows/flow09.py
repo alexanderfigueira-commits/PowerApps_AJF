@@ -1,6 +1,7 @@
 # FLOW 9: import of the Central Deposit Word form (docx) -> draft request. Executed inside build_solution.py after flows_all.py (uses its helpers).
-# Phase "Uploaded":  read the docx, keep a copy in the SharePoint folder, write the preview (ImportPreview) and the data (ImportData) on the staging media item.
-# Phase "Confirmed": create the Draft request, set the creator, turn the staging item into the request's media file, e-mail the requestor.
+# The staging item is the REQUEST itself (Draft, hidden from the app's lists until ImportStatus = Done); the 8 Import* columns are on AV-CD-Requests.
+# Phase "Uploaded":  read the docx (attached to the request), keep a copy in the SharePoint folder, write the preview (ImportPreview) and the data (ImportData).
+# Phase "Confirmed": fill the request, create its media file, set the creator, mark it Done and e-mail the requestor the link.
 UPLOAD_FOLDER = '/Shared Documents/UploadAVRequests'      # SharePoint library folder that keeps the uploaded originals
 TEMP_FOLDER = '/AVImportTemp'                              # OneDrive (flow owner) scratch folder, emptied at the end
 NL = "decodeUriComponent('%0A')"
@@ -93,20 +94,20 @@ def field_actions():
     return a
 # ---------------------------------------------------------------- the flow
 def flow09():
-    st = T('ImportStatus'); ID_ = T('ID')
-    def patch_media(extra, title=None):
-        p = {'dataset': P('SiteUrl'), 'table': LIST['media'], 'id': f"@{ID_}", 'item/Title': title or f"@coalesce({T('Title')}, 'IMPORT')"}
-        p.update({f'item/{k}': v for k, v in extra.items()})
-        return sp('PatchItem', p)
+    st = T('ImportStatus'); ID_ = T('ID'); RN_T = T('Title')
+    def patch_req_x(extra):
+        return patch_req(f"@{ID_}", f"@{RN_T}", 'Draft', extra)
     uploader = f"coalesce({T('ImportedBy')},'')"
+    req = f"coalesce({T('ImportRequestorEmail')},'')"
     # ---- phase 1: read
     read = [
-        ('Get_attachment_list', http('GET', f"_api/web/lists(guid'{MEDIA_LIST_GUID}')/items(@{{{ID_}}})/AttachmentFiles?$select=FileName")),
+        ('Mark_reading', patch_req_x({'ImportStatus': 'Reading'})),
+        ('Get_attachment_list', http('GET', f"_api/web/lists(guid'{LIST['requests']}')/items(@{{{ID_}}})/AttachmentFiles?$select=FileName")),
         ('Filter_docx', query("@coalesce(body('Get_attachment_list')?['value'], createArray())", "@endsWith(toLower(coalesce(item()?['FileName'],'')), '.docx')")),
         ('If_docx_found', cond("greater(length(body('Filter_docx')),0)", [
             ('Compose_file_name', compose("@first(body('Filter_docx'))?['FileName']")),
-            ('Get_attachment_content', sp('GetAttachmentContent', {'dataset': P('SiteUrl'), 'table': LIST['media'], 'itemId': f"@{ID_}", 'attachmentId': "@outputs('Compose_file_name')"})),
-            ('Save_original_in_folder', sp('CreateFile', {'dataset': P('SiteUrl'), 'folderPath': UPLOAD_FOLDER, 'name': f"@concat({ID_}, '_', outputs('Compose_file_name'))", 'body': "@body('Get_attachment_content')"})),
+            ('Get_attachment_content', sp('GetAttachmentContent', {'dataset': P('SiteUrl'), 'table': LIST['requests'], 'itemId': f"@{ID_}", 'attachmentId': "@outputs('Compose_file_name')"})),
+            ('Save_original_in_folder', sp('CreateFile', {'dataset': P('SiteUrl'), 'folderPath': UPLOAD_FOLDER, 'name': f"@concat({RN_T}, '_', outputs('Compose_file_name'))", 'body': "@body('Get_attachment_content')"})),
             ('Compose_work_name', compose("@guid()")),
             ('Create_zip_in_OneDrive', OD('CreateFile', {'folderPath': TEMP_FOLDER, 'name': "@concat(outputs('Compose_work_name'), '.zip')", 'body': "@body('Get_attachment_content')"})),
             ('Extract_docx', OD('ExtractFolderV2', {'source': "@body('Create_zip_in_OneDrive')?['Path']", 'destination': f"@concat('{TEMP_FOLDER}/', outputs('Compose_work_name'))", 'overwrite': True})),
@@ -114,54 +115,49 @@ def flow09():
             ('Compose_document', compose("@xml(if(empty(coalesce(body('Get_document_xml')?['$content'],'')), string(body('Get_document_xml')), base64ToString(body('Get_document_xml')?['$content'])))"))]
             + read_actions() + [
             ('If_layout_ok', cond("outputs('Compose_layout_ok')", field_actions() + [
-                ('Mark_parsed', patch_media({'ImportStatus': 'Parsed', 'ImportData': "@string(outputs('Compose_data'))", 'ImportPreview': "@outputs('Compose_preview')", 'ImportMessage': "@outputs('Compose_warnings')"}))],
-                [('Mark_unknown_layout', patch_media({'ImportStatus': 'Error', 'ImportMessage': "@concat('This does not look like one of the Central Deposit metadata forms (photo, podcast or video). Heading read: ', outputs('Compose_heading'))"}))]),),
+                ('Mark_parsed', patch_req_x({'ImportStatus': 'Parsed', 'ImportData': "@string(outputs('Compose_data'))", 'ImportPreview': "@outputs('Compose_preview')", 'ImportMessage': "@outputs('Compose_warnings')"}))],
+                [('Mark_unknown_layout', patch_req_x({'ImportStatus': 'Error', 'ImportMessage': "@concat('This does not look like one of the Central Deposit metadata forms (photo, podcast or video). Heading read: ', outputs('Compose_heading'))"}))])),
             ('Delete_zip', OD('DeleteFile', {'id': "@body('Create_zip_in_OneDrive')?['Id']"}))],
-            [('Mark_no_docx', patch_media({'ImportStatus': 'Error', 'ImportMessage': 'No .docx file was found on the upload.'}))]))]
-    # ---- phase 2: create
+            [('Mark_no_docx', patch_req_x({'ImportStatus': 'Error', 'ImportMessage': 'No .docx file was found on the upload.'}))]))]
+    # ---- phase 2: fill the request, create its media file
     d = lambda k: f"outputs('Compose_input')?['{k}']"
-    req = f"coalesce({T('ImportRequestorEmail')},'')"
     set_creator_body = {'formValues': [{'FieldName': 'Author', 'FieldValue': f"@concat('[{{\"Key\":\"i:0#.f|membership|', toLower({req}), '\"}}]')"}], 'bNewDocumentUpdate': True}
     create = [
+        ('Mark_creating', patch_req_x({'ImportStatus': 'Creating'})),
         ('Compose_input', compose(f"@json(triggerOutputs()?['body/ImportData'])")),
-        ('Get_last_request', sp('GetItems', {'dataset': P('SiteUrl'), 'table': LIST['requests'], '$orderby': 'ID desc', '$top': 1})),
-        ('Compose_year', compose("@formatDateTime(utcNow(),'yy')")),
-        ('Compose_last_number', compose("@coalesce(first(body('Get_last_request')?['value'])?['Title'], '')")),
-        ('Compose_next', compose("@if(startsWith(outputs('Compose_last_number'), concat(outputs('Compose_year'),'-')), add(int(substring(outputs('Compose_last_number'), 3, sub(length(outputs('Compose_last_number')),3))), 1), 1)")),
-        ('Compose_request_number', compose("@concat(outputs('Compose_year'), '-', substring(concat('0000', string(outputs('Compose_next'))), sub(length(concat('0000', string(outputs('Compose_next')))), 4), 4))")),
-        ('Create_request', sp('PostItem', {'dataset': P('SiteUrl'), 'table': LIST['requests'], 'item/Title': "@outputs('Compose_request_number')", 'item/RequestTitle': f"@{d('requestTitle')}",
-                                           'item/field_2': f"@{d('requestDescription')}", 'item/field_1/Value': f"@{T('ImportDG')}", 'item/field_5/Value': 'Draft',
-                                           'item/production_type_request/Value': f"@{d('type')}", 'item/ArchivedOnly': False})),
-        ('Try_set_creator', {'type': 'Scope', 'actions': seq([('Set_creator', http('POST', f"_api/web/lists(guid'{LIST['requests']}')/items(@{{body('Create_request')?['ID']}})/validateupdatelistitem", set_creator_body))])}),
+        ('Fill_request', patch_req_x({'RequestTitle': f"@{d('requestTitle')}", 'field_2': f"@{d('requestDescription')}", 'field_1/Value': f"@{T('ImportDG')}",
+                                      'production_type_request/Value': f"@{d('type')}", 'ArchivedOnly': False})),
+        ('Create_media_file', sp('PostItem', {'dataset': P('SiteUrl'), 'table': LIST['media'], 'item/Title': f"@concat({RN_T}, '-01')", 'item/field_30': f"@{RN_T}",
+            'item/field_25': f"@createArray(json(concat('{{\"Value\":\"', {d('type')}, '\"}}')))", 'item/field_29': [{'Value': 'Draft'}],
+            'item/ProductionTitle': f"@{d('mediaTitle')}", 'item/PhotoCaption': f"@{d('photoCaption')}", 'item/field_1': f"@{d('mediaDescription')}",
+            'item/field_5': f"@{d('episodeTitle')}", 'item/field_6': f"@{d('episodeSummary')}", 'item/field_2': f"@{d('place')}", 'item/field_9': f"@{d('links')}", 'item/field_10': f"@{d('tags')}",
+            'item/ScriptShotlist': f"@{d('script')}", 'item/CreditContact': f"@{d('credits')}", 'item/ContractingAuthority': f"@{d('contractingAuthority')}", 'item/ExecProducerName': f"@{d('executiveProducer')}",
+            'item/field_21': f"@if(empty({d('captureDate')}), null, {d('captureDate')})", 'item/field_24': f"@if(empty({d('productionEnd')}), null, {d('productionEnd')})",
+            'item/field_22': f"@if(empty({d('publicationStart')}), null, {d('publicationStart')})", 'item/field_23': f"@if(empty({d('publicationEnd')}), null, {d('publicationEnd')})",
+            'item/field_27': f"@if(empty({d('contractCase')}), null, createArray(json(concat('{{\"Value\":\"', {d('contractCase')}, '\"}}'))))",
+            'item/FrameworkContractSigned': f"@{d('framework')}", 'item/SpecificContractSigned': f"@{d('specific')}", 'item/OfferProvided': f"@{d('offer')}",
+            'item/ModelRelease': f"@{d('modelRelease')}", 'item/MusicUsed': f"@{d('music')}", 'item/PreexistingRights': f"@{d('preexisting')}"})),
+        ('Try_set_creator', {'type': 'Scope', 'actions': seq([('Set_creator', http('POST', f"_api/web/lists(guid'{LIST['requests']}')/items(@{{{ID_}}})/validateupdatelistitem", set_creator_body))])}),
         ('Compose_creator_set', compose("@equals(result('Try_set_creator')[0]['status'], 'Succeeded')")),
-        ('Turn_into_media', patch_media({
-            'field_30': "@outputs('Compose_request_number')", 'ImportStatus': 'Done', 'ImportRequestID': "@string(body('Create_request')?['ID'])",
-            'ImportMessage': f"@concat(coalesce({T('ImportMessage')},''), if(outputs('Compose_creator_set'), '', 'The creator could not be set to the requestor (kept as the flow account). '))",
-            'field_25': f"@createArray(json(concat('{{\"Value\":\"', {d('type')}, '\"}}')))", 'field_29': [{'Value': 'Draft'}],
-            'ProductionTitle': f"@{d('mediaTitle')}", 'PhotoCaption': f"@{d('photoCaption')}", 'field_1': f"@{d('mediaDescription')}",
-            'field_5': f"@{d('episodeTitle')}", 'field_6': f"@{d('episodeSummary')}", 'field_2': f"@{d('place')}", 'field_9': f"@{d('links')}", 'field_10': f"@{d('tags')}",
-            'ScriptShotlist': f"@{d('script')}", 'CreditContact': f"@{d('credits')}", 'ContractingAuthority': f"@{d('contractingAuthority')}", 'ExecProducerName': f"@{d('executiveProducer')}",
-            'field_21': f"@if(empty({d('captureDate')}), null, {d('captureDate')})", 'field_24': f"@if(empty({d('productionEnd')}), null, {d('productionEnd')})",
-            'field_22': f"@if(empty({d('publicationStart')}), null, {d('publicationStart')})", 'field_23': f"@if(empty({d('publicationEnd')}), null, {d('publicationEnd')})",
-            'field_27': f"@if(empty({d('contractCase')}), null, createArray(json(concat('{{\"Value\":\"', {d('contractCase')}, '\"}}'))))",
-            'FrameworkContractSigned': f"@{d('framework')}", 'SpecificContractSigned': f"@{d('specific')}", 'OfferProvided': f"@{d('offer')}",
-            'ModelRelease': f"@{d('modelRelease')}", 'MusicUsed': f"@{d('music')}", 'PreexistingRights': f"@{d('preexisting')}"},
-            title="@concat(outputs('Compose_request_number'), '-01')")),
+        ('Mark_done', patch_req_x({'ImportStatus': 'Done', 'ImportRequestID': f"@string({ID_})",
+            'ImportMessage': f"@concat(coalesce({T('ImportMessage')},''), if(outputs('Compose_creator_set'), '', 'The creator could not be set to the requestor (it stays the person who uploaded the form). '))"})),
         ('Filter_recipients', query(f"@union(createArray({req}), createArray({uploader}), createArray(variables('SupportMailbox')))", "@not(empty(item()))")),
-        ('Send_requestor_link', mail("@{join(body('Filter_recipients'),';')}", "[Central Deposit] Draft request @{outputs('Compose_request_number')} created from a metadata form",
-            f"<p>Hello,</p><p>A <b>draft</b> request was created from a Central Deposit metadata form: <b>@{{outputs('Compose_request_number')}} &middot; @{{{d('requestTitle')}}}</b>.</p>"
-            f"<p>Please open it, check the data, complete what is missing (attachments, legal documents, ...) and submit it.</p><p><a href=\"{P('AppBaseUrl')}&RequestID=@{{body('Create_request')?['ID']}}\">Open the draft request</a></p>"
-            f"<p>Uploaded by @{{{uploader}}}.</p>{SIGN}"))]
+        ('Try_send_link', {'type': 'Scope', 'actions': seq([('Send_requestor_link', mail("@{join(body('Filter_recipients'),';')}", f"[Central Deposit] Draft request @{{{RN_T}}} created from a metadata form",
+            f"<p>Hello,</p><p>A <b>draft</b> request was created from a Central Deposit metadata form: <b>@{{{RN_T}}} &middot; @{{{d('requestTitle')}}}</b>.</p>"
+            f"<p>Please open it, check the data, complete what is missing (attachments, legal documents, ...) and submit it.</p><p><a href=\"{P('AppBaseUrl')}&RequestID=@{{{ID_}}}\">Open the draft request</a></p>"
+            f"<p>Uploaded by @{{{uploader}}}.</p>{SIGN}"))])}),
+        ('Compose_link_sent', compose("@equals(result('Try_send_link')[0]['status'], 'Succeeded')")),
+        ('If_link_not_sent', cond("not(outputs('Compose_link_sent'))", [('Note_link_not_sent', patch_req_x({'ImportMessage': "@concat(coalesce(body('Mark_done')?['ImportMessage'],''), 'The e-mail with the link could not be sent. ')"}))]))]
     main = [('If_phase', cond(f"equals({st},'Uploaded')", read, [('If_confirmed', cond(f"equals({st},'Confirmed')", create))]))]
-    # catch: put the failure on the staging item, tell the support mailbox and the uploader
-    err = patch_media({'ImportStatus': 'Error', 'ImportMessage': "@substring(concat('The import failed: ', string(result('Scope_-_Main'))), 0, min(length(concat('The import failed: ', string(result('Scope_-_Main')))), 3000))"})
+    err = patch_req_x({'ImportStatus': 'Error', 'ImportMessage': "@substring(concat('The import failed: ', string(result('Scope_-_Main'))), 0, min(length(concat('The import failed: ', string(result('Scope_-_Main')))), 3000))"})
     actions = {'Initialize_SupportMailbox': {'type': 'InitializeVariable', 'runAfter': {}, 'inputs': {'variables': [{'name': 'SupportMailbox', 'type': 'string', 'value': 'audiovisual-service@ec.europa.eu'}]}},
                'Scope_-_Main': {'type': 'Scope', 'runAfter': {'Initialize_SupportMailbox': ['Succeeded']}, 'actions': seq(main)},
                'Scope_-_Catch': {'type': 'Scope', 'runAfter': {'Scope_-_Main': ['Failed', 'TimedOut']}, 'actions': seq([
                    ('Mark_import_error', err),
                    ('Send_failure_e-mail', mail(f"@{{join(union(createArray(variables('SupportMailbox')), createArray({uploader})), ';')}}", '[Central Deposit] The form import failed',
-                       f"<p>The import of a metadata form failed (staging item @{{{ID_}}}).</p><p>Run: @{{workflow()?['run']?['name']}}</p><p>@{{string(result('Scope_-_Main'))}}</p>"))])}}
-    # the creator step is optional: whatever happens, the flow goes on
-    ra = actions['Scope_-_Main']['actions']['If_phase']['else']['actions']['If_confirmed']['actions']['Compose_creator_set']
-    ra['runAfter'] = {'Try_set_creator': ['Succeeded', 'Failed', 'TimedOut', 'Skipped']}
-    return wrap(definition(trig_changed('media', f"or(equals({st},'Uploaded'), equals({st},'Confirmed'))", 'flow09'), actions), onedrive=True)
+                       f"<p>The import of a metadata form failed (request @{{{RN_T}}}, item @{{{ID_}}}).</p><p>Run: @{{workflow()?['run']?['name']}}</p><p>@{{string(result('Scope_-_Main'))}}</p>"))])}}
+    # the creator and the e-mail steps are optional: whatever happens, the flow goes on
+    cr = actions['Scope_-_Main']['actions']['If_phase']['else']['actions']['If_confirmed']['actions']
+    cr['Compose_creator_set']['runAfter'] = {'Try_set_creator': ['Succeeded', 'Failed', 'TimedOut', 'Skipped']}
+    cr['Compose_link_sent']['runAfter'] = {'Try_send_link': ['Succeeded', 'Failed', 'TimedOut', 'Skipped']}
+    return wrap(definition(trig_changed('requests', f"or(equals({st},'Uploaded'), equals({st},'Confirmed'))", 'flow09'), actions), onedrive=True)

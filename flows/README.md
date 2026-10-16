@@ -96,3 +96,7 @@ Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`
 ## Package 1.1.0.13 (flow 9 only)
 
 `CentralDepositFlows_1_1_0_13.zip`: **CD - 09 Import form** (reads the Word metadata form, writes the preview, then creates the Draft request). Needs a OneDrive for Business connection besides SharePoint and Mail. See `docs/import-form-spec.md` section 7. Build: `ALL=1 SKIP1=1 ONLY=9 python3 flows/build_solution.py`.
+
+## Package 1.1.0.15 (flow 9 only, staging on AV-CD-Requests)
+
+`CentralDepositFlows_1_1_0_15.zip` replaces 1.1.0.13: **CD - 09 Import form** now works on the request itself (the 8 import columns are on `AV-CD-Requests`, not on the media list). See `docs/import-form-spec.md` section 7. Build: `ALL=1 SKIP1=1 ONLY=9 python3 flows/build_solution.py`.

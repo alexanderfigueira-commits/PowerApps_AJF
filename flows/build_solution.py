@@ -11,7 +11,7 @@ PUBLISHER = 'Cr99038'          # the environment's publisher (prefix avcd, optio
 ALL = bool(os.environ.get('ALL'))
 SKIP1 = bool(os.environ.get('SKIP1'))      # flow 1 is already imported and tested: leave it out
 ONLY = os.environ.get('ONLY', '')            # e.g. ONLY=678 builds a package with just those flows
-VERSION = ('1.1.0.13' if ONLY else '1.1.0.6' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.3'
+VERSION = ('1.1.0.15' if ONLY else '1.1.0.6' if SKIP1 else '1.1.0.0') if ALL else '1.0.0.3'
 CONN_APPR = 'avcd_sharedapprovals_c5d18'
 CONN_OD = 'avcd_sharedonedriveforbusiness_d41f6'
 # stable ids so a re-import updates instead of duplicating
