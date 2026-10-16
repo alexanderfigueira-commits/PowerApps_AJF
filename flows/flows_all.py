@@ -56,6 +56,14 @@ EM = lambda f: f"coalesce({T(f)},'')"
 SIGN = '<p>Audiovisual Service, DG COMM</p>'
 def mail_to(parts):   # distinct, non-empty addresses joined by ';' (parts = expressions that return an array or a string)
     return parts
+# The administrator's message of a decision is a note of the request (AV-CD-Notes). The flows read the last one (no more ReviewerComments).
+def last_admin_note(name, rn_expr):
+    a = getitems('notes', f"ParentRequest eq '@{{{rn_expr}}}' and AuthorRole eq 'Administrator'", 1)
+    a['inputs']['parameters']['$orderby'] = 'ID desc'
+    return (name, a)
+def note_body(action):    # the text of that note without the "<b>Rejected</b> · " label
+    t = f"coalesce(first(body('{action}')?['value'])?['NoteText'], '')"
+    return f"if(contains({t}, ' · '), substring({t}, add(indexOf({t}, ' · '), 3)), {t})"
 # ---- shared steps ----
 REQUESTOR = f"@{{{EM('Author/Email')}}}"
 LINKC = f"{P('AppBaseUrl')}&RequestID=@{{{T('ID')}}}"
@@ -76,7 +84,8 @@ def flow02():
         ('Filter_recipients', query(f"@union(createArray({EM('Author/Email')}), createArray({EM('Assignee/Email')}), createArray({EM('CoAssignee/Email')}), createArray(variables('SupportMailbox')))", "@not(empty(item()))")),
         ('Compose_reviewer', compose(f"@coalesce(first(coalesce({T('field_8')}, createArray()))?['DisplayName'], 'the Audiovisual Service')")),
         ('Compose_decision_date', compose(f"@if(empty(coalesce({T('field_11')},'')), '', convertTimeZone({T('field_11')},'UTC','Romance Standard Time','dd-MM-yyyy HH:mm'))")),
-        ('Compose_comment', compose(f"@coalesce({T('field_10')}, 'No comment')")),
+        last_admin_note('Get_last_admin_note', RN_),
+        ('Compose_comment', compose(f"@if(empty({note_body('Get_last_admin_note')}), 'No comment', {note_body('Get_last_admin_note')})")),
         ('Switch_status', {'type': 'Switch', 'expression': f"@{st}", 'cases': {
             'Case_approved': {'case': 'Approved', 'actions': seq([('Send_2A_approved', mail(to, f"[Central Deposit] Request @{{{RN_}}} approved",
                 body(f"<p>Your request <b>{HEAD}</b> has been <b>approved</b>.</p><p>@{{if({archived}, 'It is kept in the Central Deposit archive and will not be published on the Audiovisual Service portal.', 'It will now be published on the Audiovisual Service portal.')}}</p><p>Comment:</p>" + comment)))])},
@@ -94,8 +103,10 @@ def flow03():
     # the assignee, the co-assignee (if there is one) and the support mailbox, always: never the list of all administrators
     to_3a = TO_TEAM(EM('Assignee/Email'), EM('CoAssignee/Email'))
     items = [
+        last_admin_note('Get_last_admin_note', RN_),
+        ('Compose_previous_message', compose(f"@if(empty({note_body('Get_last_admin_note')}), '-', {note_body('Get_last_admin_note')})")),
         ('Send_3A_to_assignee_and_support', mail(to_3a, f"[Central Deposit] Request @{{{RN_}}} resubmitted for review",
-            f"<p>Hello,</p><p><b>@{{{EM('Author/DisplayName')}}}</b> has updated and resubmitted the request <b>{HEAD}</b>.</p><p>Assignee: @{{coalesce({T('Assignee/DisplayName')},'not assigned yet')}}@{{if(empty({EM('CoAssignee/Email')}),'',concat(' &middot; Co-assignee: ', {EM('CoAssignee/DisplayName')}))}}</p><p>Your previous question: @{{{EM('field_10')}}}</p><p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}")),
+            f"<p>Hello,</p><p><b>@{{{EM('Author/DisplayName')}}}</b> has updated and resubmitted the request <b>{HEAD}</b>.</p><p>Assignee: @{{coalesce({T('Assignee/DisplayName')},'not assigned yet')}}@{{if(empty({EM('CoAssignee/Email')}),'',concat(' &middot; Co-assignee: ', {EM('CoAssignee/DisplayName')}))}}</p><p>Your previous question: @{{outputs('Compose_previous_message')}}</p><p><a href=\"{LINKC}\">Open the request</a></p>{SIGN}")),
         ('Send_3B_to_requestor', mail(REQUESTOR, f"[Central Deposit] Request @{{{RN_}}} resubmitted",
             f"<p>Hello @{{{EM('Author/DisplayName')}}},</p><p>Thank you: your request <b>@{{{RN_}}}</b> is back in <b>Processing</b>.</p><p><a href=\"{LINKC}\">Open your request</a></p>")),
         ('Mark_processing_notified', patch_req(f"@{T('ID')}", f"@{RN_}", f"@{T('field_5/Value')}", {'LastNotifiedStatus': 'Processing'}))]
@@ -165,11 +176,11 @@ def flow07():
     return wrap(definition(trig_schedule(9, 0, 'flow07'), scope_wrap('CD - 07 Unread messages', items, 'unread messages')))
 # FLOW 8: reminders (Processing for 7+ days, Pending for 7+ days, at most one reminder every 3 days: LastReminderOn)
 def flow08():
-    def block(kind, days_expr, subject_fn, body_fn, to_fn):
+    def block(kind, days_expr, subject_fn, body_fn, to_fn, pre=None):
         n = kind.lower()
         return [(f'Get_{n}_requests', getitems('requests', f"field_5 eq '{kind}' and {days_expr}", 200)),
                 (f'Filter_{n}_due', query(f"@body('Get_{n}_requests')?['value']", "@or(empty(coalesce(item()?['LastReminderOn'],'')), less(item()?['LastReminderOn'], addDays(utcNow(),-3)))")),
-                (f'For_each_{n}', foreach(f"@body('Filter_{n}_due')", [
+                (f'For_each_{n}', foreach(f"@body('Filter_{n}_due')", (pre or []) + [
                     (f'Send_reminder_{n}', mail(to_fn, subject_fn, body_fn)),
                     (f'Mark_reminder_{n}', sp('PatchItem', {'dataset': P('SiteUrl'), 'table': LIST['requests'], 'id': "@items('For_each_" + n + "')?['ID']", 'item/Title': "@items('For_each_" + n + "')?['Title']",
                                                          'item/field_5/Value': "@items('For_each_" + n + "')?['field_5']?['Value']", 'item/LastReminderOn': '@utcNow()'}))]))]
@@ -181,6 +192,8 @@ def flow08():
         f"<p>Hello,</p><p>The request <b>@{{{it('processing','Title')}}} &middot; @{{{it('processing','RequestTitle')}}}</b> from @{{{it('processing','Author/DisplayName')}}} has been in <b>Processing</b> since @{{formatDateTime({it('processing','field_6')},'dd-MM-yyyy')}} and is not reviewed yet.</p><p><a href=\"{link('processing')}\">Open the request</a></p>",
         proc_to) + block('Pending', "field_11 lt '@{addDays(utcNow(),-7)}'",
         f"[Central Deposit] Reminder: we are waiting for your answer on request @{{{it('pending','Title')}}}",
-        f"<p>Hello @{{{it('pending','Author/DisplayName')}}},</p><p>We asked for more information on <b>@{{{it('pending','Title')}}} &middot; @{{{it('pending','RequestTitle')}}}</b> and have not received it:</p><blockquote>@{{{it('pending','field_10')}}}</blockquote><p>Please open the request, update it and press <b>Resubmit for review</b>.</p><p><a href=\"{link('pending')}\">Open your request</a></p>",
-        f"@{{{it('pending','Author/Email')}}}")
+        f"<p>Hello @{{{it('pending','Author/DisplayName')}}},</p><p>We asked for more information on <b>@{{{it('pending','Title')}}} &middot; @{{{it('pending','RequestTitle')}}}</b> and have not received it:</p><blockquote>@{{outputs('Compose_pending_message')}}</blockquote><p>Please open the request, update it and press <b>Resubmit for review</b>.</p><p><a href=\"{link('pending')}\">Open your request</a></p>",
+        f"@{{{it('pending','Author/Email')}}}",
+        pre=[last_admin_note('Get_last_admin_note', "items('For_each_pending')?['Title']"),
+             ('Compose_pending_message', compose(f"@if(empty({note_body('Get_last_admin_note')}), '-', {note_body('Get_last_admin_note')})"))])
     return wrap(definition(trig_schedule(8, 30, 'flow08'), scope_wrap('CD - 08 Reminders', items, 'reminders')))

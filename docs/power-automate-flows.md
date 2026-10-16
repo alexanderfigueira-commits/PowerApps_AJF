@@ -42,7 +42,7 @@ Build these flows in the same environment as the app. They read and write the sa
 | `Created By` | requestor | person (e-mail = `Created By Email`) |
 | `StartRequestDate`, `SubmittedOn` | when the request was submitted | date |
 | `ReviewedByContact`, `ReviewedDate` | who decided and when | person (multi), date |
-| `ReviewerComments` | reason of the decision (rejection, need-info question, archive-only reason) | text |
+| ~~`ReviewerComments`~~ | **no longer used.** The administrator's message of a decision (rejection, need-info question, approval comment, archive-only reason) is a note in `AV-CD-Notes` (`AuthorRole = Administrator`). The flows read the **last administrator note** of the request (text after the `<b>label</b> · ` prefix). | |
 | `ArchivedOnly` | "Approved · archive only" (not published on the portal) | yes/no |
 | `PublishedDate` | when published | date |
 | `DG` | department | choice |
@@ -176,7 +176,7 @@ Same trigger as Flow 1 but the *Get changes* branch is `Status` changed **and** 
 <p>Hello,</p>
 <p><b>@{Created By DisplayName}</b> has updated and resubmitted the request <b>@{RequestNumber} · @{RequestTitle}</b>.</p>
 <p>Assignee: @{Assignee DisplayName, or "not assigned yet"}</p>
-<p>Your previous question: @{ReviewerComments}</p>
+<p>Your previous question: @{last administrator note of the request}</p>
 <p><a href="@{link}">Open the request</a></p>
 <p>Audiovisual Service, DG COMM</p>
 ```
@@ -295,7 +295,7 @@ The app lets the assignee or co-assignee press **Approve / Reject / Need info** 
      **Requestor:** @{Created By DisplayName}
      **Decision taken:** Approved @{if ArchivedOnly: "(archive only)"}
      **By:** @{reviewer} on @{decisionDate}
-     **Reason:** @{ReviewerComments}
+     **Reason:** @{last administrator note of the request}
      [Open the request](@{link})
      ```
    - **Item link:** `@{link}`
@@ -407,7 +407,7 @@ for @{days} days and is not reviewed yet.</p>
 ```html
 <p>Hello @{Created By DisplayName},</p>
 <p>We asked for more information on <b>@{RequestNumber} · @{RequestTitle}</b> on @{decisionDate} and have not received it:</p>
-<blockquote>@{ReviewerComments}</blockquote>
+<blockquote>@{last administrator note of the request}</blockquote>
 <p>Please open the request, update it and press <b>Resubmit for review</b>.</p>
 <p><a href="@{link}">Open your request</a></p>
 ```

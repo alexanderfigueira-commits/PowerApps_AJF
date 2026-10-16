@@ -100,3 +100,7 @@ Flow 1 from 1.0.0.2 writes only `SubmissionNotifiedOn` (not `LastNotifiedStatus`
 ## Package 1.1.0.15 (flow 9 only, staging on AV-CD-Requests)
 
 `CentralDepositFlows_1_1_0_15.zip` replaces 1.1.0.13: **CD - 09 Import form** now works on the request itself (the 8 import columns are on `AV-CD-Requests`, not on the media list). See `docs/import-form-spec.md` section 7. Build: `ALL=1 SKIP1=1 ONLY=9 python3 flows/build_solution.py`.
+
+## Package 1.1.0.16 (flows 2, 3 and 8)
+
+`CentralDepositFlows_1_1_0_16.zip`: the flows that quoted `ReviewerComments` (CD - 02 decision e-mails, CD - 03 "your previous question", CD - 08 pending reminder) now read the **last administrator note** of the request from `AV-CD-Notes` (the Review screen writes it there). The `ReviewerComments` column is no longer read by any flow. Build: `ALL=1 SKIP1=1 ONLY=238 python3 flows/build_solution.py`.
