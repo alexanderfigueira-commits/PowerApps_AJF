@@ -1,6 +1,6 @@
 # Import of the Central Deposit metadata form (Word) -> draft request
 
-Status: **first version built** (app FINAL113 + flow `CD - 09 Import form`, package 1.1.0.13). Not yet run end to end: see section 7. Decisions taken: DOCX; upload by administrators and by internal requestors; preview and confirmation before the draft is created; the original .docx is kept in the SharePoint folder `UploadAVRequests`. Based on the three templates `202601_Central_deposit_metadata_form_{photo,podcast,video}_2.docx`.
+Status: **ON STANDBY** (paused by decision; FINAL113 and package 1.1.0.13 are kept on the branch but are not part of the later app versions). First version built (app FINAL113 + flow `CD - 09 Import form`, package 1.1.0.13). Not yet run end to end: see section 7. Decisions taken: DOCX; upload by administrators and by internal requestors; preview and confirmation before the draft is created; the original .docx is kept in the SharePoint folder `UploadAVRequests`. Based on the three templates `202601_Central_deposit_metadata_form_{photo,podcast,video}_2.docx`.
 
 ## 1. Decision: DOCX, not PDF
 
