@@ -1,7 +1,7 @@
 """Proof of the reading technique: the same XPath 1.0 expressions would run in Power Automate (xpath(xml(...), ...)).
 1) fill a copy of each template the way a person would (text in the value cell, tick Word checkboxes)  2) read it back with XPath only."""
 import zipfile, shutil, sys, re, json
-from lxml import etree
+from lxml import etree  # pip install lxml
 NS = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main', 'w14': 'http://schemas.microsoft.com/office/word/2010/wordml'}
 W = '{%s}' % NS['w']
 def row_xp(label, exact): 
@@ -28,9 +28,9 @@ def fill(src, dst, texts, tick):
     zo = zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED)
     for i in z.infolist(): zo.writestr(i, etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True) if i.filename == 'word/document.xml' else z.read(i))
     zo.close()
-fill('../tpl/video.docx', 'video_filled.docx', {'Title': 'Opening ceremony 2026', 'Description/Summary': 'Short clip of the opening.', 'Production place': 'Brussels', 'Filming': '2026-03-02',
+fill('templates/video.docx', 'video_filled.docx', {'Title': 'Opening ceremony 2026', 'Description/Summary': 'Short clip of the opening.', 'Production place': 'Brussels', 'Filming': '2026-03-02',
      'Producer (contracting authority)': 'DG COMM', 'Pertinent tags': 'ceremony; opening'}, {'Case 1': [0, 1], 'Model release forms': [0]})
-fill('../tpl/podcast.docx', 'podcast_filled.docx', {'Title of the podcast': 'Voices of Europe', 'Season and/or Episode number': 'S1 / E1', 'Title of the Episode': 'Pilot', 'Recording': '2026-02-10'}, {'Case 2': [0], 'Podcast visual': [0]})
+fill('templates/podcast.docx', 'podcast_filled.docx', {'Title of the podcast': 'Voices of Europe', 'Season and/or Episode number': 'S1 / E1', 'Title of the Episode': 'Pilot', 'Recording': '2026-02-10'}, {'Case 2': [0], 'Podcast visual': [0]})
 # ---------- read back with XPath only (what the flow does)
 def read(path):
     doc = etree.fromstring(zipfile.ZipFile(path).read('word/document.xml'))
@@ -43,4 +43,4 @@ def read(path):
     for l in labels: out[l] = value(doc, l)
     out['cases'] = {c: ticks(doc, c) for c in ('Case 1', 'Case 2', 'Model release forms')}
     return out
-for f in ('video_filled.docx', 'podcast_filled.docx', '../tpl/photo.docx'): print(f, json.dumps(read(f), ensure_ascii=False))
+for f in ('video_filled.docx', 'podcast_filled.docx', 'templates/photo.docx'): print(f, json.dumps(read(f), ensure_ascii=False))
