@@ -1,0 +1,1 @@
+FINAL140 = FINAL137 (compact 960 px print geometry on the Photo / Video / Podcast print screens, full size on screen, paging) + the app is locked to landscape (Properties DocumentLayoutLockOrientation true, DocumentLayoutOrientation landscape), so Print() always produces a landscape page; the on-screen print hint now reads "Printed in landscape. Print dialog: A4 · Margins: None".
