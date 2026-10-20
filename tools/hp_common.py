@@ -121,22 +121,31 @@ class Builder:
         self.built.append(('clone', name, donor_screen, donor_name, overrides))
         return c
 
-    def swap(self, name, donor_screen, donor_name, overrides):
-        """Replace the control `name` in place (same parent, position, ids, name) by a copy of a donor of another control type."""
+    def swap(self, name, donor_screen, donor_name, overrides, new_name=None):
+        """Replace the control `name` in place (same parent and position) by a copy of a donor of another control type.
+        Without new_name the control keeps its name and ids; with new_name the old control is deleted and a new one
+        (new name, new ControlUniqueId) takes exactly its place."""
         old = find(self.tp, name)
         if old is None:
             sys.exit(f'! {name} not found on {self.screen}')
         if old.get('Children'):
             sys.exit(f'! {name} has children')
-        donor, c = self._make(name, donor_screen, donor_name, overrides)
-        for k in ('ControlUniqueId', 'PublishOrderIndex', 'Index', 'Parent'):
+        if new_name and find(self.tp, new_name):
+            sys.exit(f'! {new_name} already exists on {self.screen}')
+        donor, c = self._make(new_name or name, donor_screen, donor_name, overrides)
+        for k in ('PublishOrderIndex', 'Index', 'Parent'):
             c[k] = old[k]
+        if new_name:
+            c['ControlUniqueId'] = str(self.uid); self.uid += 1
+        else:
+            c['ControlUniqueId'] = old['ControlUniqueId']
         oz = [r['InvariantScript'] for r in old['Rules'] if r['Property'] == 'ZIndex']
         for r in c['Rules']:
             if r['Property'] == 'ZIndex' and oz:
                 r['InvariantScript'] = oz[0]
         host = find(self.tp, old['Parent']) if old['Parent'] != self.screen else self.tp
         host['Children'] = [c if k['Name'] == name else k for k in host['Children']]
+        self._new_name = getattr(self, '_new_name', {}); self._new_name[name] = new_name or name
         for g in self.tp['Children']:     # a group list keeps the name, nothing to change
             pass
         self.built.append(('swap', name, donor_screen, donor_name, overrides))
@@ -150,6 +159,7 @@ class Builder:
             lines = _read_lines(yf)
             dlines = lines if dscreen == self.screen else _read_lines(os.path.join(self.app.path, 'Src', f'{dscreen}.pa.yaml'))
             ctype, group, props, order, dmi = _donor_props(dlines, dname)
+            out_name = getattr(self, '_new_name', {}).get(name, name) if kind == 'swap' else name
             if kind == 'swap':
                 s, e = block_span(lines, name)
                 mi = _indent(lines[s])
@@ -159,7 +169,7 @@ class Builder:
             pi = mi + 6
             for p, v in overrides.items():
                 props[p] = _fmt(p, v, pi)
-            out = [' ' * mi + f'- {name}:', ' ' * (mi + 4) + ctype]
+            out = [' ' * mi + f'- {out_name}:', ' ' * (mi + 4) + ctype]
             if group and kind == 'swap':
                 pass  # a swapped control keeps no group line unless the old one had it (checked below)
             old_group = None
