@@ -110,14 +110,16 @@ class Builder:
         """New direct child of the screen (parent=None) cloned from a donor."""
         if find(self.tp, name):
             sys.exit(f'! {name} already exists on {self.screen}')
-        if parent is not None:
-            sys.exit('! nested clone not supported here')
+        host = self.tp if parent is None else find(self.tp, parent)
+        if host is None:
+            sys.exit(f'! parent {parent} not found on {self.screen}')
         donor, c = self._make(name, donor_screen, donor_name, overrides)
         c['ControlUniqueId'] = str(self.uid); self.uid += 1
         c['PublishOrderIndex'] = self.poi; self.poi += 1
         c['Index'] = 0
-        c['Parent'] = self.screen
-        self.tp['Children'].append(c)
+        c['Parent'] = self.screen if parent is None else parent
+        host['Children'].append(c)
+        self._parent = getattr(self, '_parent', {}); self._parent[name] = parent
         self.built.append(('clone', name, donor_screen, donor_name, overrides))
         return c
 
@@ -164,8 +166,15 @@ class Builder:
                 s, e = block_span(lines, name)
                 mi = _indent(lines[s])
             else:
-                mi = 6
-                s = e = None
+                par = getattr(self, '_parent', {}).get(name)
+                if par:
+                    ps, pe = block_span(lines, par)
+                    pmi = _indent(lines[ps])
+                    mi = next(_indent(l) for l in lines[ps + 1:pe] if CTL_RE.match(l) and _indent(l) > pmi + 4)
+                    s = e = None
+                else:
+                    mi = 6
+                    s = e = None
             pi = mi + 6
             for p, v in overrides.items():
                 props[p] = _fmt(p, v, pi)
@@ -192,9 +201,12 @@ class Builder:
             if kind == 'swap':
                 lines[s:e] = out
             else:
-                end = len(lines)
-                while end and not lines[end - 1].strip():
-                    end -= 1
+                if getattr(self, '_parent', {}).get(name):
+                    end = block_span(lines, self._parent[name])[1]
+                else:
+                    end = len(lines)
+                    while end and not lines[end - 1].strip():
+                        end -= 1
                 lines[end:end] = out
             open(yf, 'w', encoding='utf-8', newline='').write('\n'.join(lines))
         self.built = []
