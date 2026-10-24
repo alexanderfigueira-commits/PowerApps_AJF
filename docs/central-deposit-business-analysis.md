@@ -366,6 +366,19 @@ flowchart LR
   L -. "new" .-> IMP["ImportFormScreen"] -. "creates Draft" .-> D
 ```
 
+### 8.1 Wireframes and design system in Figma
+
+All 15 screens of the baseline, in their role and production-type variants (28 frames), and the four screens of the new requirements are in the Figma file **AV Central Deposit - App Screens** (https://www.figma.com/design/VMPaCaMP1CetCL9RdQRuZD): page `Screens` (32 frames), page `Components` (Button, Input, Checkbox, Status badge), page `Foundations` (tokens, type scale). The design system rules, the token table, the mapping of components to Power Apps controls and the frame index are in `docs/figma-design-system-rules.md`.
+
+| New screen (frame) | Requirement |
+|---|---|
+| `ImportFormScreen / NR-A upload (administrator)` | NR-A IMP-01 to IMP-05, IMP-09 |
+| `ImportFormScreen / NR-A preview and attachment check` | NR-A IMP-07, IMP-08 and NR-B ATT-03 to ATT-06 |
+| `ChildValidScreen / NR-B attachment rules (proposed)` | NR-B ATT-03 to ATT-09 |
+| `ChildLegalScreen / NR-B file-name hint and classification (proposed)` | NR-B ATT-01, ATT-07, ATT-10 |
+
+The wireframes are generated from the app source and are not a pixel-perfect capture; the limits are listed in section 9 of the design rules.
+
 ## 9. Data model
 
 ```mermaid
@@ -742,6 +755,8 @@ Steps: (1) confirm the open questions; (2) SharePoint changes (section 12); (3) 
 | O5 traceable communication | MSG-01 to MSG-04, NOT-01 to NOT-03 | BR-14 | RequesDetailScreen | 06, 07 | Week 2 e-mail checks |
 | O6 less typing | **NR-A (IMP-01 to IMP-12)**, MED-05 | | ImportFormScreen | 09 | IMP-AC1 to AC5 |
 
+Design: every row above has a frame in the Figma file (section 8.1); the frame index is in `docs/figma-design-system-rules.md`.
+
 ## 21. Open questions and decisions needed
 
 | ID | Question | Owner |
@@ -810,6 +825,8 @@ Checks that gate *Save Media*: media type set; title provided; capture date set;
 | `docs/power-automate-flows.md` | Flow specifications, e-mail texts, recipients |
 | `docs/import-form-spec.md` | Word form import, mapping, risks |
 | `docs/test-phase-checklist.md` | Test checklist and e-mail matrix |
+| `docs/figma-design-system-rules.md` | Figma file, tokens, components, layout and naming rules, frame index |
+| `tools/figma/` | Generator of the Figma wireframes from the app source |
 | `docs/TEST-file-findings.md` | Fields and validations per production type |
 | `flows/` | Flow packages and generators |
 | `msapp-versions/` | Every delivered app version (FINAL166 to FINAL184 in this phase) |
