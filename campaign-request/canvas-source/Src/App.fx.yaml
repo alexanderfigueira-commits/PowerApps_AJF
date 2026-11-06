@@ -1,10 +1,21 @@
 App As appinfo:
     BackEnabled: =false
     OnStart: |-
-        =ClearCollect(colCampaignRequests, {RequestId: "", Status: "", Title: ""});
-        Clear(colCampaignRequests);
+        =ClearCollect(colCampaignRequests,
+            {RequestId: "CR0042", Title: "Your Europe, your move: youth mobility launch", Status: "Draft", LastEdited: Now(), SectionsDone: 3, SectionsTotal: 6, StillMissing: "Strategic fit, Delivery", SubmittedOn: Blank(), CampaignWindow: "", NextStep: ""},
+            {RequestId: "CR0047", Title: "Digital Europe skills week", Status: "Draft", LastEdited: Date(2026, 10, 28), SectionsDone: 5, SectionsTotal: 6, StillMissing: "Delivery", SubmittedOn: Blank(), CampaignWindow: "", NextStep: ""},
+            {RequestId: "CR0045", Title: "Green Deal explained: Shorts series", Status: "Draft", LastEdited: Date(2026, 11, 3), SectionsDone: 1, SectionsTotal: 6, StillMissing: "5 sections", SubmittedOn: Blank(), CampaignWindow: "", NextStep: ""},
+            {RequestId: "CR0039", Title: "Cohesion policy in your region", Status: "Changes requested", LastEdited: Date(2026, 10, 29), SectionsDone: 6, SectionsTotal: 6, StillMissing: "", SubmittedOn: Date(2026, 10, 29), CampaignWindow: "10/12/2026 to 31/01/2027", NextStep: "Back with you, see comments"},
+            {RequestId: "CR0038", Title: "Space programme: Copernicus stories", Status: "Under review", LastEdited: Date(2026, 10, 27), SectionsDone: 6, SectionsTotal: 6, StillMissing: "", SubmittedOn: Date(2026, 10, 27), CampaignWindow: "01/12 to 31/12/2026", NextStep: "Waiting for DG COMM approval"},
+            {RequestId: "CR0036", Title: "Erasmus+ 40th anniversary", Status: "Approved", LastEdited: Date(2026, 10, 20), SectionsDone: 6, SectionsTotal: 6, StillMissing: "", SubmittedOn: Date(2026, 10, 20), CampaignWindow: "15/01 to 28/02/2027", NextStep: "Campaign setup by contractor"},
+            {RequestId: "CR0031", Title: "EU elections explainer series", Status: "Live", LastEdited: Date(2026, 10, 14), SectionsDone: 6, SectionsTotal: 6, StillMissing: "", SubmittedOn: Date(2026, 10, 14), CampaignWindow: "02/11 to 30/11/2026", NextStep: "Monitoring by contractor"},
+            {RequestId: "CR0024", Title: "European Year of Skills recap", Status: "Closed", LastEdited: Date(2026, 9, 2), SectionsDone: 6, SectionsTotal: 6, StillMissing: "", SubmittedOn: Date(2026, 9, 2), CampaignWindow: "15/09 to 15/10/2026", NextStep: "Final report received"}
+        );
+        Set(varFilterText, "");
+        Set(varFilterStatus, "All statuses");
+        Set(varFilterPeriod, "Last 6 months");
         Set(varStatus, "Draft");
-        Set(varRequestId, "CR" & Text(CountRows(colCampaignRequests) + 1, "0000"));
+        Set(varRequestId, "CR" & Text(Coalesce(Max(colCampaignRequests, Value(Right(RequestId, 4))), 0) + 1, "0000"));
         Set(varTitle, "");
         Set(varLead, User().FullName);
         Set(varDG, "");
@@ -32,7 +43,7 @@ App As appinfo:
         Set(varAck2, false);
         Set(varNotes, "");
         Set(varActiveSection, "General")
-    StartScreen: =CampaignRequestScreen
+    StartScreen: =MyRequestsScreen
     Theme: =PowerAppsTheme
 
     Host As hostControl.DefaultHostControlVariant:

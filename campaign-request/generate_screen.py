@@ -79,7 +79,7 @@ def ctl(scope, name, typ, indent, props, children=None):
 # ---------------------------------------------------------------- shared formulas
 VARS_RESET = [
     '"Draft"|varStatus',
-    '"CR" & Text(CountRows(colCampaignRequests) + 1, "0000")|varRequestId',
+    '"CR" & Text(Coalesce(Max(colCampaignRequests, Value(Right(RequestId, 4))), 0) + 1, "0000")|varRequestId',
     '""|varTitle',
     'User().FullName|varLead',
     '""|varDG',
@@ -126,6 +126,13 @@ def save_block(status):
         "    {\n"
         "        RequestId: varRequestId,\n"
         f'        Status: "{status}",\n'
+        "        LastEdited: Now(),\n"
+        "        SectionsDone: Value(StatCount.Text),\n"
+        "        SectionsTotal: 5,\n"
+        '        StillMissing: Concat(Filter([{n: "General", s: StatGeneral.Text}, {n: "Objectives & KPIs", s: StatObjectives.Text}, {n: "Audience", s: StatAudience.Text}, {n: "Delivery", s: StatDelivery.Text}], s <> "Complete"), n, ", "),\n'
+        + (f'        SubmittedOn: Now(),\n' if status == "Submitted" else '        SubmittedOn: Blank(),\n') +
+        '        CampaignWindow: If(IsBlank(varStartDate), "", Text(varStartDate, "dd/mm/yyyy") & " to " & Text(varEndDate, "dd/mm/yyyy")),\n'
+        + ('        NextStep: "Waiting for review",\n' if status == "Submitted" else '        NextStep: "",\n') +
         "        Title: varTitle,\n"
         "        CampaignLead: varLead,\n"
         "        DGUnit: varDG,\n"
@@ -209,16 +216,27 @@ def by_status(stat, complete, review, notstarted):
 
 # ---------------------------------------------------------------- App.fx.yaml
 def write_app():
-    init = (
-        "ClearCollect(colCampaignRequests, {RequestId: \"\", Status: \"\", Title: \"\"});\n"
-        "Clear(colCampaignRequests);\n" + reset_block()
-    )
+    def rec(i, t, st, le, d, tot, miss, sub, win, nxt):
+        return (f'{{RequestId: "{i}", Title: "{t}", Status: "{st}", LastEdited: {le}, SectionsDone: {d}, SectionsTotal: {tot}, '
+                f'StillMissing: "{miss}", SubmittedOn: {sub}, CampaignWindow: "{win}", NextStep: "{nxt}"}}')
+    seed = [
+        rec("CR0042", "Your Europe, your move: youth mobility launch", "Draft", "Now()", 3, 6, "Strategic fit, Delivery", "Blank()", "", ""),
+        rec("CR0047", "Digital Europe skills week", "Draft", "Date(2026, 10, 28)", 5, 6, "Delivery", "Blank()", "", ""),
+        rec("CR0045", "Green Deal explained: Shorts series", "Draft", "Date(2026, 11, 3)", 1, 6, "5 sections", "Blank()", "", ""),
+        rec("CR0039", "Cohesion policy in your region", "Changes requested", "Date(2026, 10, 29)", 6, 6, "", "Date(2026, 10, 29)", "10/12/2026 to 31/01/2027", "Back with you, see comments"),
+        rec("CR0038", "Space programme: Copernicus stories", "Under review", "Date(2026, 10, 27)", 6, 6, "", "Date(2026, 10, 27)", "01/12 to 31/12/2026", "Waiting for DG COMM approval"),
+        rec("CR0036", "Erasmus+ 40th anniversary", "Approved", "Date(2026, 10, 20)", 6, 6, "", "Date(2026, 10, 20)", "15/01 to 28/02/2027", "Campaign setup by contractor"),
+        rec("CR0031", "EU elections explainer series", "Live", "Date(2026, 10, 14)", 6, 6, "", "Date(2026, 10, 14)", "02/11 to 30/11/2026", "Monitoring by contractor"),
+        rec("CR0024", "European Year of Skills recap", "Closed", "Date(2026, 9, 2)", 6, 6, "", "Date(2026, 9, 2)", "15/09 to 15/10/2026", "Final report received"),
+    ]
+    init = ("ClearCollect(colCampaignRequests,\n    " + ",\n    ".join(seed) + "\n);\n"
+            'Set(varFilterText, "");\nSet(varFilterStatus, "All statuses");\nSet(varFilterPeriod, "Last 6 months");\n' + reset_block())
     lines = ["App As appinfo:", "    BackEnabled: =false", "    OnStart: |-"]
     for idx, ln in enumerate(init.split("\n")):
         assert ln.strip() != "", "blank line inside OnStart (breaks fx.yaml parser)"
         lines.append(f"        {'=' if idx == 0 else ''}{ln}")
     lines += [
-        "    StartScreen: =CampaignRequestScreen",
+        "    StartScreen: =MyRequestsScreen",
         "    Theme: =PowerAppsTheme",
         "",
         "    Host As hostControl.DefaultHostControlVariant:",
@@ -580,14 +598,14 @@ def build_screen():
     g += gl("FooterErrText", '"Fill in " & StatMissing.Text & " before you can submit."', 73, 2258, 330, 20,
             size=12, color=RED, weight="Normal", visible="Not(StatAll.Text = \"true\")")
     g += gb("BtnCancel", s("Cancel"), 773, 2252, 61, 32, CLEAR, TEXT, hover=GREYBG,
-            onselect=reset_block() + ";\nReset(InAttach);\nNotify(\"The form was cleared.\", NotificationType.Information)")
+            onselect=reset_block() + ";\nReset(InAttach);\nNotify(\"The form was cleared.\", NotificationType.Information);\nNavigate(MyRequestsScreen)")
     g += gb("BtnDraft", s("Save as draft"), 842, 2252, 114, 32, WHITE, NAVY, border=INPUTBORDER, hover=GREYBG,
             onselect='Set(varStatus, "Draft");\n' + save_block("Draft") +
-                     ';\nNotify("Draft " & varRequestId & " saved.", NotificationType.Success)')
+                     ';\nNotify("Draft " & varRequestId & " saved.", NotificationType.Success);\nNavigate(MyRequestsScreen)')
     g += gb("BtnSubmit", s("Submit request"), 964, 2252, 130, 32, BLUE, WHITE, hover=NAVY,
             onselect=save_block("Submitted") +
                      ';\nNotify("Request " & varRequestId & " submitted.", NotificationType.Success);\n' +
-                     reset_block() + ";\nReset(InAttach)",
+                     reset_block() + ";\nReset(InAttach);\nNavigate(MyRequestsScreen)",
             extra={"DisplayMode": 'If(StatAll.Text = "true", DisplayMode.Edit, DisplayMode.Disabled)',
                    "DisabledFill": BORDER, "DisabledColor": DISABLED, "DisabledBorderColor": BORDER})
 
@@ -599,12 +617,189 @@ def build_screen():
     return "\n".join(head + body + gallery)
 
 
+def build_my_requests():
+    sc = Scope()
+    body = []
+
+    def L(scope, ind, name, text, x, y, w, h, size=12, color=TEXT, weight="Normal", align=None, valign=None, extra=None):
+        p = {"Color": color, "FontWeight": f"FontWeight.{weight}", "Height": h, "Size": size, "Text": text,
+             "Width": w, "X": x, "Y": y}
+        if align:
+            p["Align"] = f"Align.{align}"
+        if valign:
+            p["VerticalAlign"] = f"VerticalAlign.{valign}"
+        if extra:
+            p.update(extra)
+        return ctl(scope, name, "label", ind, p)
+
+    def R(scope, ind, name, x, y, w, h, fill, border=None):
+        p = {"Fill": fill, "Height": h, "Width": w, "X": x, "Y": y}
+        if border:
+            p["BorderColor"] = border
+            p["BorderThickness"] = 1
+        return ctl(scope, name, "rectangle", ind, p)
+
+    def B(scope, ind, name, text, x, y, w, h, fill, color, onselect=None, border=None, hover=None, radius=4,
+          size=12, align=None, extra=None):
+        p = {"Color": color, "Fill": fill, "Height": h, "Size": size, "Text": text, "Width": w, "X": x, "Y": y,
+             "FontWeight": "FontWeight.Semibold", "BorderThickness": 1 if border else 0,
+             "RadiusTopLeft": radius, "RadiusTopRight": radius, "RadiusBottomLeft": radius, "RadiusBottomRight": radius,
+             "FocusedBorderThickness": 0}
+        if border:
+            p["BorderColor"] = border
+        if hover:
+            p["HoverFill"] = hover
+        if onselect:
+            p["OnSelect"] = onselect
+        if align:
+            p["Align"] = f"Align.{align}"
+        if extra:
+            p.update(extra)
+        return ctl(scope, name, "button", ind, p)
+
+    # header
+    body += R(sc, 4, "HdrBar", 0, 0, 1366, 56, NAVY)
+    body += R(sc, 4, "HdrLogoBox", 20, 12, 32, 32, BLUE)
+    body += L(sc, 4, "HdrLogoGlyph", s("\u25B6"), 20, 12, 32, 32, 11, WHITE, "Semibold", "Center", "Middle")
+    body += L(sc, 4, "HdrTitle", s("Campaign Requests"), 64, 17, 170, 22, 14, WHITE, "Semibold")
+    body += L(sc, 4, "HdrSep", s("/"), 231, 17, 10, 22, 14, LIGHTBLUE)
+    body += L(sc, 4, "HdrCrumb", s("My requests"), 247, 18, 200, 20, 12, LIGHTBLUE)
+    body += ctl(sc, "HdrAvatar", "circle", 4, {"Fill": TINT, "Height": 32, "Width": 32, "X": 1160, "Y": 12})
+    body += L(sc, 4, "HdrAvatarText",
+              'Upper(Left(User().FullName, 1)) & Upper(Mid(User().FullName, Find(" ", User().FullName & " ") + 1, 1))',
+              1160, 12, 32, 32, 10, NAVY, "Semibold", "Center", "Middle")
+    body += L(sc, 4, "HdrUserName", "User().FullName", 1204, 17, 142, 22, 12, WHITE)
+
+    # title bar
+    body += L(sc, 4, "PageTitle", s("My campaign requests"), 32, 66, 700, 32, 24, NAVY, "Bold")
+    body += L(sc, 4, "PageSubtitle", s("Continue a draft or follow the status of what you have submitted."),
+              32, 98, 700, 18, 12, MUTED)
+    body += B(sc, 4, "BtnNew", s("+  New request"), 1197, 72, 137, 32, BLUE, WHITE, hover=NAVY,
+              onselect=reset_block() + ";\nNavigate(CampaignRequestScreen)")
+
+    # filters
+    body += ctl(sc, "FilterSearch", "text", 4, {
+        "BorderColor": INPUTBORDER, "BorderThickness": 1, "Color": TEXT, "Default": "varFilterText", "Fill": WHITE,
+        "Height": 32, "HintText": s("Search by title or request ID"), "OnChange": "Set(varFilterText, Self.Value)",
+        "Size": 12, "Width": 360, "X": 32, "Y": 124})
+    body += ctl(sc, "FilterStatus", "dropdown", 4, {
+        "BorderColor": INPUTBORDER, "BorderThickness": 1, "ChevronBackground": WHITE, "ChevronFill": MUTED,
+        "Color": TEXT, "Default": "varFilterStatus", "Fill": WHITE, "Height": 32,
+        "Items": '["All statuses", "Draft", "Submitted", "Under review", "Changes requested", "Approved", "Rejected", "Live", "Closed"]',
+        "OnChange": "Set(varFilterStatus, Self.Selected.Value)", "Size": 12, "Width": 200, "X": 404, "Y": 124})
+    body += ctl(sc, "FilterPeriod", "dropdown", 4, {
+        "BorderColor": INPUTBORDER, "BorderThickness": 1, "ChevronBackground": WHITE, "ChevronFill": MUTED,
+        "Color": TEXT, "Default": "varFilterPeriod", "Fill": WHITE, "Height": 32,
+        "Items": '["Last 6 months", "Last 12 months", "All time"]',
+        "OnChange": "Set(varFilterPeriod, Self.Selected.Value)", "Size": 12, "Width": 200, "X": 616, "Y": 124})
+
+    srch = 'IsBlank(varFilterText) Or varFilterText in Title Or varFilterText in RequestId'
+    per = lambda col: f'varFilterPeriod = "All time" Or DateDiff({col}, Today(), TimeUnit.Months) < If(varFilterPeriod = "Last 6 months", 6, 12)'
+    drafts_items = (f'SortByColumns(Filter(colCampaignRequests, Status = "Draft", varFilterStatus = "All statuses" Or varFilterStatus = "Draft", '
+                    f'{srch}, {per("LastEdited")}), "LastEdited", SortOrder.Descending)')
+    sub_items = (f'SortByColumns(Filter(colCampaignRequests, Status <> "Draft", varFilterStatus = "All statuses" Or Status = varFilterStatus, '
+                 f'{srch}, {per("SubmittedOn")}), "SubmittedOn", SortOrder.Descending)')
+
+    def header_cells(prefix, y, cols):
+        out = []
+        for i, (t, x) in enumerate(cols):
+            out += L(sc, 4, f"{prefix}Col{i}", s(t), 52 + x, y, 220, 20, 12, TEXT, "Semibold", valign="Middle")
+        return out
+
+    # ---- drafts card
+    body += R(sc, 4, "DraftsCard", 32, 168, 1302, 232, WHITE, BORDER)
+    body += L(sc, 4, "DraftsTitle", s("Drafts"), 52, 180, 70, 26, 20, NAVY, "Semibold")
+    body += B(sc, 4, "DraftsCount", "Text(CountRows(DraftsGallery.AllItems))", 126, 183, 25, 22, GREYBG, TEXT,
+              border=BORDER, radius=11, size=10, extra={"DisplayMode": "DisplayMode.View"})
+    body += L(sc, 4, "DraftsSub", s("Only you can see your drafts until they are submitted"), 52, 207, 600, 14, 10, MUTED)
+    body += header_cells("Dr", 228, [("ID", 12), ("Campaign title", 122), ("Last edited", 462), ("Completion", 632), ("Still missing", 882)])
+    body += R(sc, 4, "DraftsHeaderLine", 52, 258, 1262, 1, BORDER)
+
+    gz = Scope()
+    g = []
+    G = 8
+    g += L(gz, G, "DrId", "ThisItem.RequestId", 12, 12, 98, 20, 12, BLUE, "Semibold")
+    g += L(gz, G, "DrTitle", "ThisItem.Title", 122, 12, 330, 20, 12)
+    g += L(gz, G, "DrEdited",
+           'If(Text(ThisItem.LastEdited, "yyyymmdd") = Text(Today(), "yyyymmdd"), "Today, " & Text(ThisItem.LastEdited, "hh:mm"), Text(ThisItem.LastEdited, "dd/mm/yyyy"))',
+           462, 12, 160, 20, 12)
+    g += R(gz, G, "DrBarTrack", 632, 8, 226, 4, BORDER)
+    g += R(gz, G, "DrBarFill", 632, 8, "226 * ThisItem.SectionsDone / ThisItem.SectionsTotal", 4, "RGBA(0, 0, 0, 0)")
+    g += L(gz, G, "DrProgText", 'ThisItem.SectionsDone & " of " & ThisItem.SectionsTotal & " sections"', 632, 18, 226, 16, 10, MUTED)
+    g += L(gz, G, "DrMissing", "ThisItem.StillMissing", 882, 12, 196, 20, 12)
+    load = (
+        "Set(varRequestId, ThisItem.RequestId);\nSet(varStatus, \"Draft\");\nSet(varTitle, Coalesce(ThisItem.Title, \"\"));\n"
+        "Set(varLead, Coalesce(ThisItem.CampaignLead, User().FullName));\nSet(varDG, Coalesce(ThisItem.DGUnit, \"\"));\n"
+        "Set(varBudget, Coalesce(ThisItem.EstimatedBudgetEUR, \"\"));\nSet(varObjective, Coalesce(ThisItem.PrimaryObjective, \"\"));\n"
+        "Set(varStartDate, ThisItem.StartDate);\nSet(varEndDate, ThisItem.EndDate);\nSet(varOutcome, Coalesce(ThisItem.ObjectiveOutcome, \"\"));\n"
+        "Set(varKpiViews, Coalesce(ThisItem.KpiEngagedViews, \"\"));\nSet(varKpiVTR, Coalesce(ThisItem.KpiViewThroughRate, \"\"));\n"
+        "Set(varKpiSubs, Coalesce(ThisItem.KpiNewSubscribers, \"\"));\nSet(varKpiCPS, Coalesce(ThisItem.KpiCostPerSubscriber, \"\"));\n"
+        "Set(varKpiOther, Coalesce(ThisItem.OtherKpis, \"\"));\nSet(varAges, Coalesce(ThisItem.AgeRanges, \"\"));\n"
+        "Set(varGender, Coalesce(ThisItem.Gender, \"All\"));\nSet(varLanguages, Coalesce(ThisItem.Languages, \"\"));\n"
+        "Set(varCountries, Coalesce(ThisItem.CountriesRegions, \"\"));\nSet(varInterests, Coalesce(ThisItem.Interests, \"\"));\n"
+        "Set(varAttachCount, 0);\nSet(varContractorOn, Coalesce(ThisItem.ContractorEngaged, false));\n"
+        "Set(varContractor, Coalesce(ThisItem.Contractor, \"\"));\nSet(varContractRef, Coalesce(ThisItem.ContractReference, \"\"));\n"
+        "Set(varReportDue, ThisItem.FinalReportDue);\nSet(varAck1, Coalesce(ThisItem.AckUnlisted, false));\n"
+        "Set(varAck2, Coalesce(ThisItem.AckCommentsDisabled, false));\nSet(varNotes, Coalesce(ThisItem.Observations, \"\"));\n"
+        "Set(varActiveSection, \"General\");\nNavigate(CampaignRequestScreen)")
+    g += B(gz, G, "DrContinue", s("\u270E  Continue"), 1092, 6, 114, 32, WHITE, TEXT, onselect=load, border=INPUTBORDER, hover=GREYBG)
+    g += B(gz, G, "DrDelete", s("\U0001F5D1"), 1210, 6, 32, 32, "RGBA(0, 0, 0, 0)", TEXT, hover=GREYBG,
+           onselect='RemoveIf(colCampaignRequests, RequestId = ThisItem.RequestId);\nNotify("Draft " & ThisItem.RequestId & " deleted.", NotificationType.Information)')
+    g += R(gz, G, "DrLine", 0, 43, 1262, 1, BORDER)
+    body += ctl(sc, "DraftsGallery", "gallery", 4, {
+        "Fill": WHITE, "Height": 132, "Items": drafts_items, "Layout": "Layout.Vertical", "TemplatePadding": 0,
+        "TemplateSize": 44, "Width": 1262, "X": 52, "Y": 259}, children=g)
+
+    # ---- submitted card
+    body += R(sc, 4, "SubCard", 32, 412, 1302, 344, WHITE, BORDER)
+    body += L(sc, 4, "SubTitle", s("Submitted"), 52, 424, 105, 26, 20, NAVY, "Semibold")
+    body += B(sc, 4, "SubCount", "Text(CountRows(SubmittedGallery.AllItems))", 161, 427, 25, 22, GREYBG, TEXT,
+              border=BORDER, radius=11, size=10, extra={"DisplayMode": "DisplayMode.View"})
+    body += L(sc, 4, "SubSub", s("Read only once submitted. Open a request to see its details and history."), 52, 451, 700, 14, 10, MUTED)
+    body += header_cells("Sb", 472, [("ID", 12), ("Campaign title", 122), ("Submitted on", 502), ("Campaign window", 652), ("Status", 892), ("Next step", 1062)])
+    body += R(sc, 4, "SubHeaderLine", 52, 502, 1262, 1, BORDER)
+
+    hz = Scope()
+    h = []
+    st = "ThisItem.Status"
+    sw = lambda a, b, c, d, e, f, dflt: (f'Switch({st}, "Changes requested", {a}, "Rejected", {a}, "Under review", {b}, "Approved", {c}, '
+                                         f'"Live", {d}, "Submitted", {d}, {dflt})')
+    h += L(hz, G, "SbId", "ThisItem.RequestId", 12, 14, 98, 20, 12, BLUE, "Semibold")
+    h += L(hz, G, "SbTitle", "ThisItem.Title", 122, 14, 370, 20, 12)
+    h += L(hz, G, "SbOn", 'Text(ThisItem.SubmittedOn, "dd/mm/yyyy")', 502, 14, 140, 20, 12)
+    h += L(hz, G, "SbWindow", "ThisItem.CampaignWindow", 652, 14, 236, 20, 12)
+    h += B(hz, G, "SbBadge", st, 892, 13, 'Switch(' + st + ', "Changes requested", 130, "Under review", 96, "Approved", 75, "Live", 42, "Closed", 57, "Rejected", 70, 80)',
+           22, sw("RGBA(254, 242, 242, 1)", AMBERBG, GREENBG, TINT, 0, 0, GREYBG),
+           sw(RED, AMBERTXT, GREEN, BLUE, 0, 0, MUTED),
+           border=sw(REDBORDER, AMBER, GREEN, LIGHTBLUE, 0, 0, BORDER), radius=11, size=10,
+           extra={"DisplayMode": "DisplayMode.View"})
+    h += L(hz, G, "SbNext", "ThisItem.NextStep", 1062, 4, 164, 40, 11, TEXT, valign="Middle")
+    h += B(hz, G, "SbOpen", s("\u203A"), 1228, 12, 24, 24, "RGBA(0, 0, 0, 0)", TEXT, hover=GREYBG, size=16,
+           onselect='Notify("Details for " & ThisItem.RequestId & " are not available yet.", NotificationType.Information)')
+    h += R(hz, G, "SbLine", 0, 47, 1262, 1, BORDER)
+    body += ctl(sc, "SubmittedGallery", "gallery", 4, {
+        "Fill": WHITE, "Height": 242, "Items": sub_items, "Layout": "Layout.Vertical", "TemplatePadding": 0,
+        "TemplateSize": 48, "Width": 1262, "X": 52, "Y": 503}, children=h)
+
+    head = ["MyRequestsScreen As screen:", f"    Fill: ={BG}", ""]
+    import re as _re
+    text = "\n".join(head + body)
+    return _re.sub(r"\b(Hdr[A-Za-z]+|PageTitle|PageSubtitle)\b", r"Mr\1", text)
+
+
 def main():
     os.makedirs(os.path.join(OUT, "Src"), exist_ok=True)
     write_app()
     text = build_screen().rstrip() + "\n"
     with open(os.path.join(OUT, "Src", "CampaignRequestScreen.fx.yaml"), "w", encoding="utf-8", newline="\n") as f:
         f.write(text)
+    with open(os.path.join(OUT, "Src", "MyRequestsScreen.fx.yaml"), "w", encoding="utf-8", newline="\n") as f:
+        f.write(build_my_requests().rstrip() + "\n")
+    import json
+    mp = os.path.join(OUT, "CanvasManifest.json")
+    m = json.load(open(mp, encoding="utf-8"))
+    m["ScreenOrder"] = ["MyRequestsScreen", "CampaignRequestScreen"]
+    json.dump(m, open(mp, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     print("written", len(text.splitlines()), "lines")
 
 

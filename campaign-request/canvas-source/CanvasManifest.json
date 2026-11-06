@@ -134,6 +134,7 @@
     "UserLocale": "en-US"
   },
   "ScreenOrder": [
+    "MyRequestsScreen",
     "CampaignRequestScreen"
   ]
 }

@@ -20,3 +20,9 @@ Rebuild:
 - Contractor list is empty and accepts typed values; connect it to a real list.
 - Side menu tabs highlight only: classic galleries cannot scroll to a position by formula.
 - Not tested in Power Apps Studio (no access here), only packed and unpacked with pac 2.8.1.
+
+## My requests screen
+`MyRequestsScreen` (start screen) follows `scrMyRequests`: search and filters, Drafts and Submitted tables,
+New request, Continue (loads the draft into the form), delete draft. Rows come from `colCampaignRequests`,
+seeded in `App.OnStart` with the sample rows from Figma (remove the seed when a real list exists).
+Spacing is slightly tighter than Figma so both tables fit in 768 px. The chevron on submitted rows is a placeholder.

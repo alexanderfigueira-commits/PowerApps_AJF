@@ -1918,7 +1918,7 @@ CampaignRequestScreen As screen:
             HoverFill: =RGBA(240, 242, 246, 1)
             OnSelect: |-
                 =Set(varStatus, "Draft");
-                Set(varRequestId, "CR" & Text(CountRows(colCampaignRequests) + 1, "0000"));
+                Set(varRequestId, "CR" & Text(Coalesce(Max(colCampaignRequests, Value(Right(RequestId, 4))), 0) + 1, "0000"));
                 Set(varTitle, "");
                 Set(varLead, User().FullName);
                 Set(varDG, "");
@@ -1947,7 +1947,8 @@ CampaignRequestScreen As screen:
                 Set(varNotes, "");
                 Set(varActiveSection, "General");
                 Reset(InAttach);
-                Notify("The form was cleared.", NotificationType.Information)
+                Notify("The form was cleared.", NotificationType.Information);
+                Navigate(MyRequestsScreen)
             RadiusBottomLeft: =4
             RadiusBottomRight: =4
             RadiusTopLeft: =4
@@ -1975,6 +1976,13 @@ CampaignRequestScreen As screen:
                     {
                         RequestId: varRequestId,
                         Status: "Draft",
+                        LastEdited: Now(),
+                        SectionsDone: Value(StatCount.Text),
+                        SectionsTotal: 5,
+                        StillMissing: Concat(Filter([{n: "General", s: StatGeneral.Text}, {n: "Objectives & KPIs", s: StatObjectives.Text}, {n: "Audience", s: StatAudience.Text}, {n: "Delivery", s: StatDelivery.Text}], s <> "Complete"), n, ", "),
+                        SubmittedOn: Blank(),
+                        CampaignWindow: If(IsBlank(varStartDate), "", Text(varStartDate, "dd/mm/yyyy") & " to " & Text(varEndDate, "dd/mm/yyyy")),
+                        NextStep: "",
                         Title: varTitle,
                         CampaignLead: varLead,
                         DGUnit: varDG,
@@ -2005,7 +2013,8 @@ CampaignRequestScreen As screen:
                         SavedBy: User().Email
                     }
                 );
-                Notify("Draft " & varRequestId & " saved.", NotificationType.Success)
+                Notify("Draft " & varRequestId & " saved.", NotificationType.Success);
+                Navigate(MyRequestsScreen)
             RadiusBottomLeft: =4
             RadiusBottomRight: =4
             RadiusTopLeft: =4
@@ -2035,6 +2044,13 @@ CampaignRequestScreen As screen:
                     {
                         RequestId: varRequestId,
                         Status: "Submitted",
+                        LastEdited: Now(),
+                        SectionsDone: Value(StatCount.Text),
+                        SectionsTotal: 5,
+                        StillMissing: Concat(Filter([{n: "General", s: StatGeneral.Text}, {n: "Objectives & KPIs", s: StatObjectives.Text}, {n: "Audience", s: StatAudience.Text}, {n: "Delivery", s: StatDelivery.Text}], s <> "Complete"), n, ", "),
+                        SubmittedOn: Now(),
+                        CampaignWindow: If(IsBlank(varStartDate), "", Text(varStartDate, "dd/mm/yyyy") & " to " & Text(varEndDate, "dd/mm/yyyy")),
+                        NextStep: "Waiting for review",
                         Title: varTitle,
                         CampaignLead: varLead,
                         DGUnit: varDG,
@@ -2067,7 +2083,7 @@ CampaignRequestScreen As screen:
                 );
                 Notify("Request " & varRequestId & " submitted.", NotificationType.Success);
                 Set(varStatus, "Draft");
-                Set(varRequestId, "CR" & Text(CountRows(colCampaignRequests) + 1, "0000"));
+                Set(varRequestId, "CR" & Text(Coalesce(Max(colCampaignRequests, Value(Right(RequestId, 4))), 0) + 1, "0000"));
                 Set(varTitle, "");
                 Set(varLead, User().FullName);
                 Set(varDG, "");
@@ -2095,7 +2111,8 @@ CampaignRequestScreen As screen:
                 Set(varAck2, false);
                 Set(varNotes, "");
                 Set(varActiveSection, "General");
-                Reset(InAttach)
+                Reset(InAttach);
+                Navigate(MyRequestsScreen)
             RadiusBottomLeft: =4
             RadiusBottomRight: =4
             RadiusTopLeft: =4
