@@ -1,0 +1,83 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+App:
+  Properties:
+    BackEnabled: =false
+    OnStart: |-
+      =Set(varUserRole, Coalesce(LookUp(RolesPermissionsList, UserEmail.Email = User().Email, Role.Value), "REQUESTOR"));
+      Set(MyProfile, IfError(Office365Users.MyProfile(), Blank()));
+      Set(varCurrentRequest, Defaults(AVCentralDepositRequests));
+      Set(varFilter, "All");
+      Set(varFilterDG, "");
+      Set(varFilterStartDate, Blank());
+      Set(varFilterEndDate, Blank());
+      Set(varRequestTitle, "");
+      Set(varRequestDG, "");
+      Set(varRequestDescription, "");
+      Set(varRequestOwnerContact, "");
+      Set(varRequestOwnerEmail, User().Email);
+      Set(varRequestMediaType, "");
+      Set(varRequestAIDeclared, false);
+      Set(varCurrentChildId, "");
+      Set(varChildTitle, "");
+      Set(varChildMediaType, "Photo");
+      Set(varChildDescription, "");
+      Set(varChildCaptureDate, Blank());
+      Set(varChildProductionPlace, "");
+      Set(varChildCredits, "");
+      Set(varChildLanguageVersions, "");
+      Set(varChildEpisodeTitle, "");
+      Set(varChildEpisodeSummary, "");
+      Set(varChildSeasonNumber, 0);
+      Set(varChildEpisodeNumber, 0);
+      Set(varChildSeriesTitle, "");
+      Set(varChildProductType, "");
+      Set(varChildProductionEndDate, Blank());
+      Set(varChildPublicationStartDate, Blank());
+      Set(varChildPublicationEndDate, Blank());
+      Set(varChildLinks, "");
+      Set(varChildTags, "");
+      Set(varChildFTPPath, "");
+      Set(varChildAIVoiceover, false);
+      Set(varChildContractCase, "");
+      Set(varChildContractCase1Sub, "");
+      Set(varChildModelRelease, false);
+      Set(varDocFramework, false); Set(varDocSpecific, false); Set(varDocOffer, false); Set(varChildContractingAuthority, ""); Set(varChildExecProducer, ""); Set(varChildProducer, ""); Set(varChildProducerSel, Blank()); Set(varChildPhotoCaption, ""); Set(varCurrentChildSPId, 0);
+      Set(varChildModelReleaseProvided, false);
+      Set(varChildMusicUsed, false);
+      Set(varChildMusicLicenceProvided, false);
+      Set(varChildPreexisting, false);
+      Set(varChildPreexistingProvided, false);
+      Set(varReviewComment, "");
+      Set(varReviewProject, Blank());
+      Set(varShowTemplatePicker, false);
+      Set(varShowTplConfirm, false);
+      Set(varTplSearch, "");
+      Set(varTplCandidate, Blank());
+      Set(varShowTypeConfirm, false);
+      Set(varPendingMediaType, "");
+      Set(varConfirmed, false);
+      Set(varRating, 0);
+      Set(varFeedbackText, "");
+      Set(varFeedbackSent, false);
+      Set(varMonthStart, Blank());
+      Set(varKpiRejectedAll, 0);
+      Set(varKpiRejectedMonth, 0);
+      Set(varKpiMyMonthTotal, 0);
+      Set(varKpiMyMonthSuccess, 0);
+      Set(varKpiAllMonthTotal, 0);
+      Set(varKpiAllMonthSuccess, 0);
+      Set(varKpiAvgPublishDays, If(false, 0));
+      Set(varNavArm, "");
+      ClearCollect(colManualContacts, {ContactType: "", Email: ""});
+      Clear(colManualContacts);
+      Set(varShowContactPopup, false);
+      Set(varContactTypeDefault, "");
+      Set(varContactError, "")
+    Theme: =PowerAppsTheme
