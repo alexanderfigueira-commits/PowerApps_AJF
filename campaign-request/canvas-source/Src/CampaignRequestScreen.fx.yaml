@@ -1,0 +1,2108 @@
+CampaignRequestScreen As screen:
+    Fill: =RGBA(247, 248, 250, 1)
+
+    HdrBar As rectangle:
+        Fill: =RGBA(0, 18, 107, 1)
+        Height: =56
+        Width: =1366
+        X: =0
+        Y: =0
+        ZIndex: =1
+
+    HdrLogoBox As rectangle:
+        Fill: =RGBA(56, 96, 178, 1)
+        Height: =32
+        Width: =32
+        X: =20
+        Y: =12
+        ZIndex: =2
+
+    HdrLogoGlyph As label:
+        Align: =Align.Center
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =32
+        Size: =11
+        Text: ="▶"
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =32
+        X: =20
+        Y: =12
+        ZIndex: =3
+
+    HdrTitle As label:
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        Size: =14
+        Text: ="Campaign Requests"
+        Width: =170
+        X: =64
+        Y: =17
+        ZIndex: =4
+
+    HdrSep As label:
+        Color: =RGBA(186, 202, 226, 1)
+        FontWeight: =FontWeight.Normal
+        Height: =22
+        Size: =14
+        Text: ="/"
+        Width: =10
+        X: =231
+        Y: =17
+        ZIndex: =5
+
+    HdrCrumb As label:
+        Color: =RGBA(186, 202, 226, 1)
+        FontWeight: =FontWeight.Normal
+        Height: =20
+        Size: =12
+        Text: ="New request"
+        Width: =200
+        X: =247
+        Y: =18
+        ZIndex: =6
+
+    HdrRequestId As label:
+        Align: =Align.Right
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =20
+        Size: =12
+        Text: =varRequestId
+        Width: =100
+        X: =800
+        Y: =18
+        ZIndex: =7
+
+    HdrStatusBadge As button:
+        BorderColor: =RGBA(186, 202, 226, 1)
+        BorderThickness: =1
+        Color: =If(varStatus = "Submitted", RGBA(22, 128, 80, 1), RGBA(0, 18, 107, 1))
+        DisplayMode: =DisplayMode.View
+        Fill: =If(varStatus = "Submitted", RGBA(223, 245, 233, 1), RGBA(230, 236, 245, 1))
+        FontWeight: =FontWeight.Semibold
+        Height: =22
+        RadiusBottomLeft: =11
+        RadiusBottomRight: =11
+        RadiusTopLeft: =11
+        RadiusTopRight: =11
+        Size: =10
+        Text: =varStatus
+        Width: =72
+        X: =908
+        Y: =17
+        ZIndex: =8
+
+    HdrAvatar As circle:
+        Fill: =RGBA(230, 236, 245, 1)
+        Height: =32
+        Width: =32
+        X: =992
+        Y: =12
+        ZIndex: =9
+
+    HdrAvatarText As label:
+        Align: =Align.Center
+        Color: =RGBA(0, 18, 107, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =32
+        Size: =10
+        Text: =Upper(Left(User().FullName, 1)) & Upper(Mid(User().FullName, Find(" ", User().FullName & " ") + 1, 1))
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =32
+        X: =992
+        Y: =12
+        ZIndex: =10
+
+    HdrUserName As label:
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Normal
+        Height: =22
+        Size: =12
+        Text: =User().FullName
+        Width: =310
+        X: =1036
+        Y: =17
+        ZIndex: =11
+
+    SideBg As rectangle:
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =712
+        Width: =240
+        X: =0
+        Y: =56
+        ZIndex: =12
+
+    SideDivider As rectangle:
+        Fill: =RGBA(220, 224, 230, 1)
+        Height: =712
+        Width: =1
+        X: =239
+        Y: =56
+        ZIndex: =13
+
+    SideTitle As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: ="Sections"
+        Width: =150
+        X: =24
+        Y: =76
+        ZIndex: =14
+
+    TabGeneral As button:
+        Align: =Align.Left
+        BorderThickness: =0
+        Color: =If(varActiveSection = "General", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(varActiveSection = "General", RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+        FocusedBorderThickness: =0
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varActiveSection, "General")
+        PaddingLeft: =14
+        RadiusBottomLeft: =0
+        RadiusBottomRight: =0
+        RadiusTopLeft: =0
+        RadiusTopRight: =0
+        Size: =12
+        Text: ="General"
+        Width: =215
+        X: =12
+        Y: =102
+        ZIndex: =15
+
+    TabGeneralIndicator As rectangle:
+        Fill: =RGBA(56, 96, 178, 1)
+        Height: =20
+        Visible: =varActiveSection = "General"
+        Width: =3
+        X: =12
+        Y: =112
+        ZIndex: =16
+
+    TabGeneralDot As circle:
+        BorderColor: =Switch(StatGeneral.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(140, 148, 160, 1))
+        BorderThickness: =1
+        Fill: =Switch(StatGeneral.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(255, 255, 255, 1))
+        Height: =16
+        Width: =16
+        X: =201
+        Y: =114
+        ZIndex: =17
+
+    TabGeneralGlyph As label:
+        Align: =Align.Center
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =9
+        Text: =Switch(StatGeneral.Text, "Complete", "✓", "Needs review", "!", "")
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =16
+        X: =201
+        Y: =114
+        ZIndex: =18
+
+    TabObjectives As button:
+        Align: =Align.Left
+        BorderThickness: =0
+        Color: =If(varActiveSection = "Objectives", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(varActiveSection = "Objectives", RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+        FocusedBorderThickness: =0
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varActiveSection, "Objectives")
+        PaddingLeft: =14
+        RadiusBottomLeft: =0
+        RadiusBottomRight: =0
+        RadiusTopLeft: =0
+        RadiusTopRight: =0
+        Size: =12
+        Text: ="Objectives & KPIs"
+        Width: =215
+        X: =12
+        Y: =144
+        ZIndex: =19
+
+    TabObjectivesIndicator As rectangle:
+        Fill: =RGBA(56, 96, 178, 1)
+        Height: =20
+        Visible: =varActiveSection = "Objectives"
+        Width: =3
+        X: =12
+        Y: =154
+        ZIndex: =20
+
+    TabObjectivesDot As circle:
+        BorderColor: =Switch(StatObjectives.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(140, 148, 160, 1))
+        BorderThickness: =1
+        Fill: =Switch(StatObjectives.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(255, 255, 255, 1))
+        Height: =16
+        Width: =16
+        X: =201
+        Y: =156
+        ZIndex: =21
+
+    TabObjectivesGlyph As label:
+        Align: =Align.Center
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =9
+        Text: =Switch(StatObjectives.Text, "Complete", "✓", "Needs review", "!", "")
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =16
+        X: =201
+        Y: =156
+        ZIndex: =22
+
+    TabAudience As button:
+        Align: =Align.Left
+        BorderThickness: =0
+        Color: =If(varActiveSection = "Audience", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(varActiveSection = "Audience", RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+        FocusedBorderThickness: =0
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varActiveSection, "Audience")
+        PaddingLeft: =14
+        RadiusBottomLeft: =0
+        RadiusBottomRight: =0
+        RadiusTopLeft: =0
+        RadiusTopRight: =0
+        Size: =12
+        Text: ="Audience"
+        Width: =215
+        X: =12
+        Y: =186
+        ZIndex: =23
+
+    TabAudienceIndicator As rectangle:
+        Fill: =RGBA(56, 96, 178, 1)
+        Height: =20
+        Visible: =varActiveSection = "Audience"
+        Width: =3
+        X: =12
+        Y: =196
+        ZIndex: =24
+
+    TabAudienceDot As circle:
+        BorderColor: =Switch(StatAudience.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(140, 148, 160, 1))
+        BorderThickness: =1
+        Fill: =Switch(StatAudience.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(255, 255, 255, 1))
+        Height: =16
+        Width: =16
+        X: =201
+        Y: =198
+        ZIndex: =25
+
+    TabAudienceGlyph As label:
+        Align: =Align.Center
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =9
+        Text: =Switch(StatAudience.Text, "Complete", "✓", "Needs review", "!", "")
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =16
+        X: =201
+        Y: =198
+        ZIndex: =26
+
+    TabAttachments As button:
+        Align: =Align.Left
+        BorderThickness: =0
+        Color: =If(varActiveSection = "Attachments", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(varActiveSection = "Attachments", RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+        FocusedBorderThickness: =0
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varActiveSection, "Attachments")
+        PaddingLeft: =14
+        RadiusBottomLeft: =0
+        RadiusBottomRight: =0
+        RadiusTopLeft: =0
+        RadiusTopRight: =0
+        Size: =12
+        Text: ="Attachments"
+        Width: =215
+        X: =12
+        Y: =228
+        ZIndex: =27
+
+    TabAttachmentsIndicator As rectangle:
+        Fill: =RGBA(56, 96, 178, 1)
+        Height: =20
+        Visible: =varActiveSection = "Attachments"
+        Width: =3
+        X: =12
+        Y: =238
+        ZIndex: =28
+
+    TabAttachmentsDot As circle:
+        BorderColor: =Switch(StatAttachments.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(140, 148, 160, 1))
+        BorderThickness: =1
+        Fill: =Switch(StatAttachments.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(255, 255, 255, 1))
+        Height: =16
+        Width: =16
+        X: =201
+        Y: =240
+        ZIndex: =29
+
+    TabAttachmentsGlyph As label:
+        Align: =Align.Center
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =9
+        Text: =Switch(StatAttachments.Text, "Complete", "✓", "Needs review", "!", "")
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =16
+        X: =201
+        Y: =240
+        ZIndex: =30
+
+    TabDelivery As button:
+        Align: =Align.Left
+        BorderThickness: =0
+        Color: =If(varActiveSection = "Delivery", RGBA(0, 18, 107, 1), RGBA(60, 66, 80, 1))
+        Fill: =If(varActiveSection = "Delivery", RGBA(230, 236, 245, 1), RGBA(0, 0, 0, 0))
+        FocusedBorderThickness: =0
+        FontWeight: =FontWeight.Semibold
+        Height: =40
+        HoverFill: =RGBA(240, 242, 246, 1)
+        OnSelect: =Set(varActiveSection, "Delivery")
+        PaddingLeft: =14
+        RadiusBottomLeft: =0
+        RadiusBottomRight: =0
+        RadiusTopLeft: =0
+        RadiusTopRight: =0
+        Size: =12
+        Text: ="Delivery"
+        Width: =215
+        X: =12
+        Y: =270
+        ZIndex: =31
+
+    TabDeliveryIndicator As rectangle:
+        Fill: =RGBA(56, 96, 178, 1)
+        Height: =20
+        Visible: =varActiveSection = "Delivery"
+        Width: =3
+        X: =12
+        Y: =280
+        ZIndex: =32
+
+    TabDeliveryDot As circle:
+        BorderColor: =Switch(StatDelivery.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(140, 148, 160, 1))
+        BorderThickness: =1
+        Fill: =Switch(StatDelivery.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(255, 255, 255, 1))
+        Height: =16
+        Width: =16
+        X: =201
+        Y: =282
+        ZIndex: =33
+
+    TabDeliveryGlyph As label:
+        Align: =Align.Center
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =9
+        Text: =Switch(StatDelivery.Text, "Complete", "✓", "Needs review", "!", "")
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =16
+        X: =201
+        Y: =282
+        ZIndex: =34
+
+    ProgressText As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =10
+        Text: =StatCount.Text & " of 5 sections complete"
+        Width: =190
+        X: =24
+        Y: =332
+        ZIndex: =35
+
+    ProgressTrack As rectangle:
+        Fill: =RGBA(220, 224, 230, 1)
+        Height: =2
+        Width: =191
+        X: =24
+        Y: =356
+        ZIndex: =36
+
+    ProgressFill As rectangle:
+        Fill: =RGBA(56, 96, 178, 1)
+        Height: =2
+        Width: =191 * Value(StatCount.Text) / 5
+        X: =24
+        Y: =356
+        ZIndex: =37
+
+    Legend0Dot As circle:
+        BorderColor: =RGBA(22, 128, 80, 1)
+        BorderThickness: =1
+        Fill: =RGBA(22, 128, 80, 1)
+        Height: =16
+        Width: =16
+        X: =24
+        Y: =374
+        ZIndex: =38
+
+    Legend0Glyph As label:
+        Align: =Align.Center
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =9
+        Text: ="✓"
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =16
+        X: =24
+        Y: =374
+        ZIndex: =39
+
+    Legend0Text As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Normal
+        Height: =16
+        Size: =10
+        Text: ="Complete"
+        Width: =150
+        X: =46
+        Y: =374
+        ZIndex: =40
+
+    Legend1Dot As circle:
+        BorderColor: =RGBA(245, 158, 11, 1)
+        BorderThickness: =1
+        Fill: =RGBA(245, 158, 11, 1)
+        Height: =16
+        Width: =16
+        X: =24
+        Y: =396
+        ZIndex: =41
+
+    Legend1Glyph As label:
+        Align: =Align.Center
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =9
+        Text: ="!"
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =16
+        X: =24
+        Y: =396
+        ZIndex: =42
+
+    Legend1Text As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Normal
+        Height: =16
+        Size: =10
+        Text: ="Needs review"
+        Width: =150
+        X: =46
+        Y: =396
+        ZIndex: =43
+
+    Legend2Dot As circle:
+        BorderColor: =RGBA(140, 148, 160, 1)
+        BorderThickness: =1
+        Fill: =RGBA(255, 255, 255, 1)
+        Height: =16
+        Width: =16
+        X: =24
+        Y: =418
+        ZIndex: =44
+
+    Legend2Glyph As label:
+        Align: =Align.Center
+        Color: =RGBA(255, 255, 255, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =16
+        Size: =9
+        Text: =""
+        VerticalAlign: =VerticalAlign.Middle
+        Width: =16
+        X: =24
+        Y: =418
+        ZIndex: =45
+
+    Legend2Text As label:
+        Color: =RGBA(96, 104, 120, 1)
+        FontWeight: =FontWeight.Normal
+        Height: =16
+        Size: =10
+        Text: ="Not started"
+        Width: =150
+        X: =46
+        Y: =418
+        ZIndex: =46
+
+    StatGeneral As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =10
+        Size: =12
+        Text: |-
+            =If(
+                Not(IsBlank(varTitle)) And Not(IsBlank(varLead)) And Not(IsBlank(varDG)),
+                "Complete",
+                If(Not(IsBlank(varTitle)) Or Not(IsBlank(varDG)) Or Not(IsBlank(varBudget)), "Needs review", "Not started")
+            )
+        Visible: =false
+        Width: =10
+        X: =0
+        Y: =0
+        ZIndex: =47
+
+    StatObjectives As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =10
+        Size: =12
+        Text: |-
+            =If(
+                Not(IsBlank(varObjective)) And Not(IsBlank(varStartDate)) And Not(IsBlank(varEndDate)) And varEndDate >= varStartDate
+                    And Not(IsBlank(varOutcome)) And Not(IsBlank(varKpiViews)) And Not(IsError(Value(varKpiViews))) And Not(IsBlank(varKpiSubs)) And Not(IsError(Value(varKpiSubs))),
+                "Complete",
+                If(Not(IsBlank(varObjective)) Or Not(IsBlank(varStartDate)) Or Not(IsBlank(varEndDate)) Or Not(IsBlank(varOutcome)) Or Not(IsBlank(varKpiViews)) Or Not(IsBlank(varKpiVTR)) Or Not(IsBlank(varKpiSubs)) Or Not(IsBlank(varKpiCPS)) Or Not(IsBlank(varKpiOther)), "Needs review", "Not started")
+            )
+        Visible: =false
+        Width: =10
+        X: =0
+        Y: =0
+        ZIndex: =48
+
+    StatAudience As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =10
+        Size: =12
+        Text: |-
+            =If(
+                Not(IsBlank(varAges)) And Not(IsBlank(varLanguages)) And Not(IsBlank(varCountries)),
+                "Complete",
+                If(Not(IsBlank(varAges)) Or Not(IsBlank(varLanguages)) Or Not(IsBlank(varCountries)) Or Not(IsBlank(varInterests)), "Needs review", "Not started")
+            )
+        Visible: =false
+        Width: =10
+        X: =0
+        Y: =0
+        ZIndex: =49
+
+    StatAttachments As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =10
+        Size: =12
+        Text: =If(varAttachCount > 0, "Complete", "Not started")
+        Visible: =false
+        Width: =10
+        X: =0
+        Y: =0
+        ZIndex: =50
+
+    StatDelivery As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =10
+        Size: =12
+        Text: |-
+            =If(
+                varAck1 And varAck2 And (Not(varContractorOn) Or Not(IsBlank(varContractor))),
+                "Complete",
+                If(
+                    varContractorOn Or varAck1 Or varAck2 Or Not(IsBlank(varContractor)) Or Not(IsBlank(varContractRef)) Or Not(IsBlank(varReportDue)) Or Not(IsBlank(varNotes)),
+                    "Needs review",
+                    "Not started"
+                )
+            )
+        Visible: =false
+        Width: =10
+        X: =0
+        Y: =0
+        ZIndex: =51
+
+    StatCount As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =10
+        Size: =12
+        Text: =Text(CountRows(Filter([StatGeneral.Text, StatObjectives.Text, StatAudience.Text, StatAttachments.Text, StatDelivery.Text], Value = "Complete")))
+        Visible: =false
+        Width: =10
+        X: =0
+        Y: =0
+        ZIndex: =52
+
+    StatMissing As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =10
+        Size: =12
+        Text: =If(StatGeneral.Text <> "Complete", "General", If(StatObjectives.Text <> "Complete", "Objectives & KPIs", If(StatAudience.Text <> "Complete", "Audience", "Delivery")))
+        Visible: =false
+        Width: =10
+        X: =0
+        Y: =0
+        ZIndex: =53
+
+    StatAll As label:
+        Color: =RGBA(60, 66, 80, 1)
+        FontWeight: =FontWeight.Semibold
+        Height: =10
+        Size: =12
+        Text: =StatGeneral.Text = "Complete" And StatObjectives.Text = "Complete" And StatAudience.Text = "Complete" And StatDelivery.Text = "Complete"
+        Visible: =false
+        Width: =10
+        X: =0
+        Y: =0
+        ZIndex: =54
+
+    MainScroll As gallery:
+        Fill: =RGBA(247, 248, 250, 1)
+        Height: =712
+        Items: |-
+            =[{id: 1}]
+        Layout: =Layout.Vertical
+        TemplatePadding: =0
+        TemplateSize: =2319
+        Width: =1126
+        X: =240
+        Y: =56
+        ZIndex: =55
+
+        PageTitle As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =36
+            Size: =24
+            Text: ="New campaign request"
+            Width: =700
+            X: =32
+            Y: =24
+            ZIndex: =1
+
+        PageSubtitle As label:
+            Color: =RGBA(96, 104, 120, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: ="Simplified request. Save a draft at any time and come back later."
+            Width: =700
+            X: =32
+            Y: =64
+            ZIndex: =2
+
+        SecGeneralTitle As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Size: =20
+            Text: ="General"
+            Width: =93
+            X: =32
+            Y: =116
+            ZIndex: =3
+
+        SecGeneralBadge As button:
+            BorderColor: =Switch(StatGeneral.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(220, 224, 230, 1))
+            BorderThickness: =1
+            Color: =Switch(StatGeneral.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(180, 95, 6, 1), RGBA(96, 104, 120, 1))
+            DisplayMode: =DisplayMode.View
+            Fill: =Switch(StatGeneral.Text, "Complete", RGBA(240, 253, 244, 1), "Needs review", RGBA(254, 243, 199, 1), RGBA(240, 242, 246, 1))
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            RadiusBottomLeft: =11
+            RadiusBottomRight: =11
+            RadiusTopLeft: =11
+            RadiusTopRight: =11
+            Size: =10
+            Text: =StatGeneral.Text
+            Width: =Switch(StatGeneral.Text, "Complete", 74, "Needs review", 96, 85)
+            X: =123
+            Y: =119
+            ZIndex: =4
+
+        GeneralCard As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =188
+            Width: =1062
+            X: =32
+            Y: =156
+            ZIndex: =5
+
+        LblTitle As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Campaign title *"
+            Width: =400
+            X: =52
+            Y: =172
+            ZIndex: =6
+
+        InTitle As text:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varTitle
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HintText: ="Name of the campaign"
+            OnChange: =Set(varTitle, Self.Value)
+            Size: =12
+            Width: =501
+            X: =52
+            Y: =196
+            ZIndex: =7
+
+        LblLead As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Campaign Lead *"
+            Width: =400
+            X: =573
+            Y: =172
+            ZIndex: =8
+
+        InLead As combobox:
+            AllowCustomValue: =true
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(96, 104, 120, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultSelectedItems: |-
+                =If(IsBlank(varLead), Table(), Table({Value: varLead}))
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            InputTextPlaceholder: ="Select the campaign lead"
+            Items: |-
+                =Table({Value: User().FullName})
+            OnChange: =Set(varLead, Coalesce(Self.Selected.Value, ""))
+            SelectMultiple: =false
+            Size: =12
+            Width: =501
+            X: =573
+            Y: =196
+            ZIndex: =9
+
+        LblDG As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="DG / Unit *"
+            Width: =300
+            X: =52
+            Y: =248
+            ZIndex: =10
+
+        InDG As combobox:
+            AllowCustomValue: =true
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(96, 104, 120, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultSelectedItems: |-
+                =If(IsBlank(varDG), Table(), Table({Value: varDG}))
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            InputTextPlaceholder: ="Select or type a DG / Unit"
+            Items: =["DG COMM, Unit B2"]
+            OnChange: =Set(varDG, Coalesce(Self.Selected.Value, ""))
+            SelectMultiple: =false
+            Size: =12
+            Width: =327
+            X: =52
+            Y: =272
+            ZIndex: =11
+
+        LblBudget As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Estimated budget (EUR)"
+            Width: =300
+            X: =399
+            Y: =248
+            ZIndex: =12
+
+        InBudget As text:
+            BorderColor: =If(Not(IsBlank(Self.Value)) And IsError(Value(Self.Value)), RGBA(193, 40, 40, 1), RGBA(186, 196, 214, 1))
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varBudget
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HintText: ="e.g. 45,000"
+            OnChange: =Set(varBudget, Self.Value)
+            Size: =12
+            Width: =327
+            X: =399
+            Y: =272
+            ZIndex: =13
+
+        LblReqId As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Request ID"
+            Width: =300
+            X: =746
+            Y: =248
+            ZIndex: =14
+
+        InReqId As text:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varRequestId
+            DisabledBorderColor: =RGBA(220, 224, 230, 1)
+            DisabledColor: =RGBA(140, 148, 160, 1)
+            DisabledFill: =RGBA(240, 242, 246, 1)
+            DisplayMode: =DisplayMode.Disabled
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HintText: =""
+            OnChange: =false
+            Size: =12
+            Width: =327
+            X: =746
+            Y: =272
+            ZIndex: =15
+
+        HelpReqId As label:
+            Color: =RGBA(96, 104, 120, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =16
+            Size: =10
+            Text: ="Generated automatically"
+            Width: =327
+            X: =746
+            Y: =308
+            ZIndex: =16
+
+        SecObjTitle As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Size: =20
+            Text: ="Objectives & KPIs"
+            Width: =183
+            X: =32
+            Y: =376
+            ZIndex: =17
+
+        SecObjBadge As button:
+            BorderColor: =Switch(StatObjectives.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(220, 224, 230, 1))
+            BorderThickness: =1
+            Color: =Switch(StatObjectives.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(180, 95, 6, 1), RGBA(96, 104, 120, 1))
+            DisplayMode: =DisplayMode.View
+            Fill: =Switch(StatObjectives.Text, "Complete", RGBA(240, 253, 244, 1), "Needs review", RGBA(254, 243, 199, 1), RGBA(240, 242, 246, 1))
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            RadiusBottomLeft: =11
+            RadiusBottomRight: =11
+            RadiusTopLeft: =11
+            RadiusTopRight: =11
+            Size: =10
+            Text: =StatObjectives.Text
+            Width: =Switch(StatObjectives.Text, "Complete", 74, "Needs review", 96, 85)
+            X: =213
+            Y: =379
+            ZIndex: =18
+
+        ObjCard As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =316
+            Width: =1062
+            X: =32
+            Y: =416
+            ZIndex: =19
+
+        ObjCardTitleHeader As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =15
+            Text: ="Campaign objective"
+            Width: =600
+            X: =52
+            Y: =432
+            ZIndex: =20
+
+        LblObjective As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Primary objective *"
+            Width: =400
+            X: =52
+            Y: =474
+            ZIndex: =21
+
+        InObjective As combobox:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(96, 104, 120, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultSelectedItems: |-
+                =If(IsBlank(varObjective), Table(), Table({Value: varObjective}))
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            InputTextPlaceholder: ="Select the primary objective"
+            Items: =["Engaged views", "Reach and impressions", "Video completions", "New subscribers", "Website traffic"]
+            OnChange: =Set(varObjective, Coalesce(Self.Selected.Value, ""))
+            SelectMultiple: =false
+            Size: =12
+            Width: =501
+            X: =52
+            Y: =498
+            ZIndex: =22
+
+        LblStart As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Start date *"
+            Width: =240
+            X: =573
+            Y: =474
+            ZIndex: =23
+
+        InStart As datepicker:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultDate: =varStartDate
+            Fill: =RGBA(255, 255, 255, 1)
+            Format: ="dd/mm/yyyy"
+            Height: =32
+            IconBackground: =RGBA(255, 255, 255, 1)
+            IconFill: =RGBA(96, 104, 120, 1)
+            OnChange: =Set(varStartDate, Self.SelectedDate)
+            Size: =12
+            Width: =240
+            X: =573
+            Y: =498
+            ZIndex: =24
+
+        LblEnd As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="End date *"
+            Width: =240
+            X: =833
+            Y: =474
+            ZIndex: =25
+
+        InEnd As datepicker:
+            BorderColor: =If(Not(IsBlank(varEndDate)) And Not(IsBlank(varStartDate)) And varEndDate < varStartDate, RGBA(193, 40, 40, 1), RGBA(186, 196, 214, 1))
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultDate: =varEndDate
+            Fill: =RGBA(255, 255, 255, 1)
+            Format: ="dd/mm/yyyy"
+            Height: =32
+            IconBackground: =RGBA(255, 255, 255, 1)
+            IconFill: =RGBA(96, 104, 120, 1)
+            OnChange: =Set(varEndDate, Self.SelectedDate)
+            Size: =12
+            Width: =240
+            X: =833
+            Y: =498
+            ZIndex: =26
+
+        LblOutcome As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Objective and expected outcome *"
+            Width: =500
+            X: =52
+            Y: =550
+            ZIndex: =27
+
+        InOutcome As text:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varOutcome
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =80
+            HintText: ="Describe the objective and the outcome you expect"
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varOutcome, Self.Value)
+            Size: =12
+            Width: =1022
+            X: =52
+            Y: =574
+            ZIndex: =28
+
+        SecondaryTrack As button:
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledFill: =RGBA(186, 202, 226, 1)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(186, 202, 226, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            RadiusBottomLeft: =10
+            RadiusBottomRight: =10
+            RadiusTopLeft: =10
+            RadiusTopRight: =10
+            Size: =12
+            Text: =""
+            Width: =40
+            X: =52
+            Y: =683
+            ZIndex: =29
+
+        SecondaryThumb As circle:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =14
+            Width: =14
+            X: =73
+            Y: =686
+            ZIndex: =30
+
+        SecondaryText As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: ="New Subscribers as secondary objective"
+            Width: =600
+            X: =100
+            Y: =674
+            ZIndex: =31
+
+        SecondaryHelp As label:
+            Color: =RGBA(96, 104, 120, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =16
+            Size: =10
+            Text: ="Always on. Required for all paid campaigns on the corporate YouTube channel."
+            Width: =700
+            X: =100
+            Y: =696
+            ZIndex: =32
+
+        KpiCard As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =318
+            Width: =1062
+            X: =32
+            Y: =744
+            ZIndex: =33
+
+        KpiCardTitleHeader As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =15
+            Text: ="KPI targets"
+            Width: =600
+            X: =52
+            Y: =760
+            ZIndex: =34
+
+        KpiCardTitleSub As label:
+            Color: =RGBA(96, 104, 120, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =16
+            Size: =10
+            Text: ="Numeric targets, compared with actuals in the final report"
+            Width: =700
+            X: =52
+            Y: =784
+            ZIndex: =35
+
+        LblKpiViews As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Engaged views *"
+            Width: =240
+            X: =52
+            Y: =820
+            ZIndex: =36
+
+        InKpiViews As text:
+            BorderColor: =If(Not(IsBlank(Self.Value)) And IsError(Value(Self.Value)), RGBA(193, 40, 40, 1), RGBA(186, 196, 214, 1))
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varKpiViews
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HintText: ="e.g. 250,000"
+            OnChange: =Set(varKpiViews, Self.Value)
+            Size: =12
+            Width: =240
+            X: =52
+            Y: =844
+            ZIndex: =37
+
+        LblKpiVTR As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="View through rate (%)"
+            Width: =240
+            X: =312
+            Y: =820
+            ZIndex: =38
+
+        InKpiVTR As text:
+            BorderColor: =If(Not(IsBlank(Self.Value)) And IsError(Value(Self.Value)), RGBA(193, 40, 40, 1), RGBA(186, 196, 214, 1))
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varKpiVTR
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HintText: ="e.g. 35"
+            OnChange: =Set(varKpiVTR, Self.Value)
+            Size: =12
+            Width: =240
+            X: =312
+            Y: =844
+            ZIndex: =39
+
+        LblKpiSubs As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="New subscribers *"
+            Width: =240
+            X: =572
+            Y: =820
+            ZIndex: =40
+
+        InKpiSubs As text:
+            BorderColor: =If(Not(IsBlank(Self.Value)) And IsError(Value(Self.Value)), RGBA(193, 40, 40, 1), RGBA(186, 196, 214, 1))
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varKpiSubs
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HintText: ="e.g. 3,000"
+            OnChange: =Set(varKpiSubs, Self.Value)
+            Size: =12
+            Width: =240
+            X: =572
+            Y: =844
+            ZIndex: =41
+
+        LblKpiCPS As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Cost per subscriber (EUR)"
+            Width: =240
+            X: =832
+            Y: =820
+            ZIndex: =42
+
+        InKpiCPS As text:
+            BorderColor: =If(Not(IsBlank(Self.Value)) And IsError(Value(Self.Value)), RGBA(193, 40, 40, 1), RGBA(186, 196, 214, 1))
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varKpiCPS
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HintText: ="e.g. 0.80"
+            OnChange: =Set(varKpiCPS, Self.Value)
+            Size: =12
+            Width: =240
+            X: =832
+            Y: =844
+            ZIndex: =43
+
+        LblKpiOther As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Other KPIs"
+            Width: =300
+            X: =52
+            Y: =896
+            ZIndex: =44
+
+        InKpiOther As text:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varKpiOther
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =64
+            HintText: ="Add any other KPI and its target"
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varKpiOther, Self.Value)
+            Size: =12
+            Width: =1022
+            X: =52
+            Y: =920
+            ZIndex: =45
+
+        InfoBar As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(240, 242, 246, 1)
+            Height: =38
+            Width: =1022
+            X: =52
+            Y: =1004
+            ZIndex: =46
+
+        InfoDot As circle:
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =20
+            Width: =20
+            X: =65
+            Y: =1013
+            ZIndex: =47
+
+        InfoGlyph As label:
+            Align: =Align.Center
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =11
+            Text: ="i"
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =20
+            X: =65
+            Y: =1013
+            ZIndex: =48
+
+        InfoText As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: ="Targets are compared against actuals in the contractor's final report."
+            Width: =900
+            X: =93
+            Y: =1013
+            ZIndex: =49
+
+        SecAudTitle As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Size: =20
+            Text: ="Audience"
+            Width: =106
+            X: =32
+            Y: =1094
+            ZIndex: =50
+
+        SecAudBadge As button:
+            BorderColor: =Switch(StatAudience.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(220, 224, 230, 1))
+            BorderThickness: =1
+            Color: =Switch(StatAudience.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(180, 95, 6, 1), RGBA(96, 104, 120, 1))
+            DisplayMode: =DisplayMode.View
+            Fill: =Switch(StatAudience.Text, "Complete", RGBA(240, 253, 244, 1), "Needs review", RGBA(254, 243, 199, 1), RGBA(240, 242, 246, 1))
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            RadiusBottomLeft: =11
+            RadiusBottomRight: =11
+            RadiusTopLeft: =11
+            RadiusTopRight: =11
+            Size: =10
+            Text: =StatAudience.Text
+            Width: =Switch(StatAudience.Text, "Complete", 74, "Needs review", 96, 85)
+            X: =136
+            Y: =1097
+            ZIndex: =51
+
+        AudCard As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =252
+            Width: =1062
+            X: =32
+            Y: =1134
+            ZIndex: =52
+
+        AudCardTitleHeader As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =15
+            Text: ="Core audience"
+            Width: =600
+            X: =52
+            Y: =1150
+            ZIndex: =53
+
+        AudCardTitleSub As label:
+            Color: =RGBA(96, 104, 120, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =16
+            Size: =10
+            Text: ="Who the campaign is mainly aimed at"
+            Width: =700
+            X: =52
+            Y: =1174
+            ZIndex: =54
+
+        LblAges As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Age ranges *"
+            Width: =300
+            X: =52
+            Y: =1210
+            ZIndex: =55
+
+        InAges As combobox:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(96, 104, 120, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultSelectedItems: |-
+                =If(IsBlank(varAges), Table(), ForAll(Split(varAges, ", "), {Value: Result}))
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            InputTextPlaceholder: ="Select age ranges"
+            Items: =["13 to 17", "18 to 24", "25 to 34", "35 to 44", "45 to 54", "55 to 64", "65 and over"]
+            OnChange: =Set(varAges, Concat(Self.SelectedItems, Value, ", "))
+            SelectMultiple: =true
+            Size: =12
+            Width: =327
+            X: =52
+            Y: =1234
+            ZIndex: =56
+
+        LblGender As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Gender"
+            Width: =300
+            X: =399
+            Y: =1210
+            ZIndex: =57
+
+        InGender As dropdown:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(96, 104, 120, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varGender
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            Items: =["All", "Women", "Men"]
+            OnChange: =Set(varGender, Self.Selected.Value)
+            Size: =12
+            Width: =327
+            X: =399
+            Y: =1234
+            ZIndex: =58
+
+        LblLanguages As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Languages *"
+            Width: =300
+            X: =746
+            Y: =1210
+            ZIndex: =59
+
+        InLanguages As combobox:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(96, 104, 120, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultSelectedItems: |-
+                =If(IsBlank(varLanguages), Table(), ForAll(Split(varLanguages, ", "), {Value: Result}))
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            InputTextPlaceholder: ="Select languages"
+            Items: =["Bulgarian", "Croatian", "Czech", "Danish", "Dutch", "English", "Estonian", "Finnish", "French", "German", "Greek", "Hungarian", "Irish", "Italian", "Latvian", "Lithuanian", "Maltese", "Polish", "Portuguese", "Romanian", "Slovak", "Slovenian", "Spanish", "Swedish"]
+            OnChange: =Set(varLanguages, Concat(Self.SelectedItems, Value, ", "))
+            SelectMultiple: =true
+            Size: =12
+            Width: =327
+            X: =746
+            Y: =1234
+            ZIndex: =60
+
+        LblCountries As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Countries / regions *"
+            Width: =300
+            X: =52
+            Y: =1286
+            ZIndex: =61
+
+        InCountries As combobox:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(96, 104, 120, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultSelectedItems: |-
+                =If(IsBlank(varCountries), Table(), ForAll(Split(varCountries, ", "), {Value: Result}))
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            InputTextPlaceholder: ="Select countries or regions"
+            Items: =["All EU27", "Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czechia", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", "Sweden"]
+            OnChange: =Set(varCountries, Concat(Self.SelectedItems, Value, ", "))
+            SelectMultiple: =true
+            Size: =12
+            Width: =501
+            X: =52
+            Y: =1310
+            ZIndex: =62
+
+        LblInterests As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Interests, behaviours and mindset"
+            Width: =400
+            X: =573
+            Y: =1286
+            ZIndex: =63
+
+        InInterests As text:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varInterests
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =56
+            HintText: ="Who they are and what they care about"
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varInterests, Self.Value)
+            Size: =12
+            Width: =501
+            X: =573
+            Y: =1310
+            ZIndex: =64
+
+        SecAttTitle As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Size: =20
+            Text: ="Attachments"
+            Width: =141
+            X: =32
+            Y: =1418
+            ZIndex: =65
+
+        SecAttBadge As button:
+            BorderColor: =Switch(StatAttachments.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(220, 224, 230, 1))
+            BorderThickness: =1
+            Color: =Switch(StatAttachments.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(180, 95, 6, 1), RGBA(96, 104, 120, 1))
+            DisplayMode: =DisplayMode.View
+            Fill: =Switch(StatAttachments.Text, "Complete", RGBA(240, 253, 244, 1), "Needs review", RGBA(254, 243, 199, 1), RGBA(240, 242, 246, 1))
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            RadiusBottomLeft: =11
+            RadiusBottomRight: =11
+            RadiusTopLeft: =11
+            RadiusTopRight: =11
+            Size: =10
+            Text: =StatAttachments.Text
+            Width: =Switch(StatAttachments.Text, "Complete", 74, "Needs review", 96, 85)
+            X: =171
+            Y: =1421
+            ZIndex: =66
+
+        AttCard As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =254
+            Width: =1062
+            X: =32
+            Y: =1458
+            ZIndex: =67
+
+        AttCardTitleHeader As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =15
+            Text: ="Attachments"
+            Width: =600
+            X: =52
+            Y: =1474
+            ZIndex: =68
+
+        AttCardTitleSub As label:
+            Color: =RGBA(96, 104, 120, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =16
+            Size: =10
+            Text: ="Creative brief, scripts, storyboards or media plan. Max 10 files, 10 MB each."
+            Width: =700
+            X: =52
+            Y: =1498
+            ZIndex: =69
+
+        InAttach As attachments:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            Height: =158
+            MaxAttachmentSize: =10
+            MaxAttachments: =10
+            OnAddFile: =Set(varAttachCount, CountRows(Self.Attachments))
+            OnRemoveFile: =Set(varAttachCount, CountRows(Self.Attachments))
+            Width: =1022
+            X: =52
+            Y: =1534
+            ZIndex: =70
+
+        SecDelTitle As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Size: =20
+            Text: ="Delivery"
+            Width: =95
+            X: =32
+            Y: =1744
+            ZIndex: =71
+
+        SecDelBadge As button:
+            BorderColor: =Switch(StatDelivery.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(245, 158, 11, 1), RGBA(220, 224, 230, 1))
+            BorderThickness: =1
+            Color: =Switch(StatDelivery.Text, "Complete", RGBA(22, 128, 80, 1), "Needs review", RGBA(180, 95, 6, 1), RGBA(96, 104, 120, 1))
+            DisplayMode: =DisplayMode.View
+            Fill: =Switch(StatDelivery.Text, "Complete", RGBA(240, 253, 244, 1), "Needs review", RGBA(254, 243, 199, 1), RGBA(240, 242, 246, 1))
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            RadiusBottomLeft: =11
+            RadiusBottomRight: =11
+            RadiusTopLeft: =11
+            RadiusTopRight: =11
+            Size: =10
+            Text: =StatDelivery.Text
+            Width: =Switch(StatDelivery.Text, "Complete", 74, "Needs review", 96, 85)
+            X: =125
+            Y: =1747
+            ZIndex: =72
+
+        DelCard As rectangle:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =412
+            Width: =1062
+            X: =32
+            Y: =1784
+            ZIndex: =73
+
+        DelCardTitleHeader As label:
+            Color: =RGBA(0, 18, 107, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =15
+            Text: ="Delivery"
+            Width: =600
+            X: =52
+            Y: =1800
+            ZIndex: =74
+
+        DelCardTitleSub As label:
+            Color: =RGBA(96, 104, 120, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =16
+            Size: =10
+            Text: ="Setup, publication rules and final reporting"
+            Width: =700
+            X: =52
+            Y: =1824
+            ZIndex: =75
+
+        ContractorTrack As button:
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            Fill: =If(varContractorOn, RGBA(56, 96, 178, 1), RGBA(186, 202, 226, 1))
+            FocusedBorderThickness: =0
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            OnSelect: =Set(varContractorOn, Not(varContractorOn))
+            RadiusBottomLeft: =10
+            RadiusBottomRight: =10
+            RadiusTopLeft: =10
+            RadiusTopRight: =10
+            Size: =12
+            Text: =""
+            Width: =40
+            X: =52
+            Y: =1860
+            ZIndex: =76
+
+        ContractorThumb As circle:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =14
+            OnSelect: =Set(varContractorOn, Not(varContractorOn))
+            Width: =14
+            X: =If(varContractorOn, 73, 55)
+            Y: =1863
+            ZIndex: =77
+
+        ContractorText As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: ="A contractor is engaged for setup, monitoring and the final report"
+            Width: =700
+            X: =100
+            Y: =1860
+            ZIndex: =78
+
+        LblContractor As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Contractor"
+            Width: =300
+            X: =52
+            Y: =1900
+            ZIndex: =79
+
+        InContractor As combobox:
+            AllowCustomValue: =true
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(96, 104, 120, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultSelectedItems: |-
+                =If(IsBlank(varContractor), Table(), Table({Value: varContractor}))
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            InputTextPlaceholder: ="Select a contractor"
+            Items: =Filter(["x"], false)
+            OnChange: =Set(varContractor, Coalesce(Self.Selected.Value, ""))
+            SelectMultiple: =false
+            Size: =12
+            Width: =327
+            X: =52
+            Y: =1924
+            ZIndex: =80
+
+        LblContractRef As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Contract reference"
+            Width: =300
+            X: =399
+            Y: =1900
+            ZIndex: =81
+
+        InContractRef As text:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varContractRef
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =32
+            HintText: ="Framework and specific contract"
+            OnChange: =Set(varContractRef, Self.Value)
+            Size: =12
+            Width: =327
+            X: =399
+            Y: =1924
+            ZIndex: =82
+
+        LblReportDue As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Final report due"
+            Width: =300
+            X: =746
+            Y: =1900
+            ZIndex: =83
+
+        InReportDue As datepicker:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            DefaultDate: =varReportDue
+            Fill: =RGBA(255, 255, 255, 1)
+            Format: ="dd/mm/yyyy"
+            Height: =32
+            IconBackground: =RGBA(255, 255, 255, 1)
+            IconFill: =RGBA(96, 104, 120, 1)
+            OnChange: =Set(varReportDue, Self.SelectedDate)
+            Size: =12
+            Width: =327
+            X: =746
+            Y: =1924
+            ZIndex: =84
+
+        ChkAck1 As checkbox.Checkbox:
+            CheckboxBackgroundFill: =RGBA(56, 96, 178, 1)
+            CheckboxBorderColor: =RGBA(186, 196, 214, 1)
+            CheckmarkFill: =RGBA(255, 255, 255, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varAck1
+            Height: =24
+            OnCheck: =Set(varAck1, true)
+            OnUncheck: =Set(varAck1, false)
+            Size: =12
+            Text: ="I acknowledge campaign assets will be published as unlisted videos on the corporate channel"
+            Width: =1022
+            X: =52
+            Y: =1976
+            ZIndex: =85
+
+        ChkAck2 As checkbox.Checkbox:
+            CheckboxBackgroundFill: =RGBA(56, 96, 178, 1)
+            CheckboxBorderColor: =RGBA(186, 196, 214, 1)
+            CheckmarkFill: =RGBA(255, 255, 255, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varAck2
+            Height: =24
+            OnCheck: =Set(varAck2, true)
+            OnUncheck: =Set(varAck2, false)
+            Size: =12
+            Text: ="I acknowledge comments will be disabled on campaign assets for the duration of the campaign"
+            Width: =1022
+            X: =52
+            Y: =2016
+            ZIndex: =86
+
+        LblNotes As label:
+            Color: =RGBA(60, 66, 80, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =12
+            Text: ="Observations"
+            Width: =300
+            X: =52
+            Y: =2056
+            ZIndex: =87
+
+        InNotes As text:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(60, 66, 80, 1)
+            Default: =varNotes
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =96
+            HintText: ="Add any notes for the reviewers or the contractor"
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varNotes, Self.Value)
+            Size: =12
+            Width: =1022
+            X: =52
+            Y: =2080
+            ZIndex: =88
+
+        FooterDivider As rectangle:
+            Fill: =RGBA(220, 224, 230, 1)
+            Height: =1
+            Width: =1062
+            X: =32
+            Y: =2228
+            ZIndex: =89
+
+        FooterErrBg As rectangle:
+            BorderColor: =RGBA(254, 202, 202, 1)
+            BorderThickness: =1
+            Fill: =RGBA(254, 242, 242, 1)
+            Height: =38
+            Visible: =Not(StatAll.Text = "true")
+            Width: =380
+            X: =32
+            Y: =2249
+            ZIndex: =90
+
+        FooterErrDot As circle:
+            Fill: =RGBA(193, 40, 40, 1)
+            Height: =20
+            Visible: =Not(StatAll.Text = "true")
+            Width: =20
+            X: =45
+            Y: =2258
+            ZIndex: =91
+
+        FooterErrGlyph As label:
+            Align: =Align.Center
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =20
+            Size: =11
+            Text: ="!"
+            VerticalAlign: =VerticalAlign.Middle
+            Visible: =Not(StatAll.Text = "true")
+            Width: =20
+            X: =45
+            Y: =2258
+            ZIndex: =92
+
+        FooterErrText As label:
+            Color: =RGBA(193, 40, 40, 1)
+            FontWeight: =FontWeight.Normal
+            Height: =20
+            Size: =12
+            Text: ="Fill in " & StatMissing.Text & " before you can submit."
+            Visible: =Not(StatAll.Text = "true")
+            Width: =330
+            X: =73
+            Y: =2258
+            ZIndex: =93
+
+        BtnCancel As button:
+            BorderThickness: =0
+            Color: =RGBA(60, 66, 80, 1)
+            Fill: =RGBA(0, 0, 0, 0)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+                =Set(varStatus, "Draft");
+                Set(varRequestId, "CR" & Text(CountRows(colCampaignRequests) + 1, "0000"));
+                Set(varTitle, "");
+                Set(varLead, User().FullName);
+                Set(varDG, "");
+                Set(varBudget, "");
+                Set(varObjective, "");
+                Set(varStartDate, Blank());
+                Set(varEndDate, Blank());
+                Set(varOutcome, "");
+                Set(varKpiViews, "");
+                Set(varKpiVTR, "");
+                Set(varKpiSubs, "");
+                Set(varKpiCPS, "");
+                Set(varKpiOther, "");
+                Set(varAges, "");
+                Set(varGender, "All");
+                Set(varLanguages, "");
+                Set(varCountries, "");
+                Set(varInterests, "");
+                Set(varAttachCount, 0);
+                Set(varContractorOn, false);
+                Set(varContractor, "");
+                Set(varContractRef, "");
+                Set(varReportDue, Blank());
+                Set(varAck1, false);
+                Set(varAck2, false);
+                Set(varNotes, "");
+                Set(varActiveSection, "General");
+                Reset(InAttach);
+                Notify("The form was cleared.", NotificationType.Information)
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =12
+            Text: ="Cancel"
+            Width: =61
+            X: =773
+            Y: =2252
+            ZIndex: =94
+
+        BtnDraft As button:
+            BorderColor: =RGBA(186, 196, 214, 1)
+            BorderThickness: =1
+            Color: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            HoverFill: =RGBA(240, 242, 246, 1)
+            OnSelect: |-
+                =Set(varStatus, "Draft");
+                RemoveIf(colCampaignRequests, RequestId = varRequestId);
+                Collect(
+                    colCampaignRequests,
+                    {
+                        RequestId: varRequestId,
+                        Status: "Draft",
+                        Title: varTitle,
+                        CampaignLead: varLead,
+                        DGUnit: varDG,
+                        EstimatedBudgetEUR: varBudget,
+                        PrimaryObjective: varObjective,
+                        StartDate: varStartDate,
+                        EndDate: varEndDate,
+                        ObjectiveOutcome: varOutcome,
+                        KpiEngagedViews: varKpiViews,
+                        KpiViewThroughRate: varKpiVTR,
+                        KpiNewSubscribers: varKpiSubs,
+                        KpiCostPerSubscriber: varKpiCPS,
+                        OtherKpis: varKpiOther,
+                        AgeRanges: varAges,
+                        Gender: varGender,
+                        Languages: varLanguages,
+                        CountriesRegions: varCountries,
+                        Interests: varInterests,
+                        AttachmentCount: varAttachCount,
+                        ContractorEngaged: varContractorOn,
+                        Contractor: varContractor,
+                        ContractReference: varContractRef,
+                        FinalReportDue: varReportDue,
+                        AckUnlisted: varAck1,
+                        AckCommentsDisabled: varAck2,
+                        Observations: varNotes,
+                        SavedOn: Now(),
+                        SavedBy: User().Email
+                    }
+                );
+                Notify("Draft " & varRequestId & " saved.", NotificationType.Success)
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =12
+            Text: ="Save as draft"
+            Width: =114
+            X: =842
+            Y: =2252
+            ZIndex: =95
+
+        BtnSubmit As button:
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(220, 224, 230, 1)
+            DisabledColor: =RGBA(140, 148, 160, 1)
+            DisabledFill: =RGBA(220, 224, 230, 1)
+            DisplayMode: =If(StatAll.Text = "true", DisplayMode.Edit, DisplayMode.Disabled)
+            Fill: =RGBA(56, 96, 178, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =32
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |-
+                =RemoveIf(colCampaignRequests, RequestId = varRequestId);
+                Collect(
+                    colCampaignRequests,
+                    {
+                        RequestId: varRequestId,
+                        Status: "Submitted",
+                        Title: varTitle,
+                        CampaignLead: varLead,
+                        DGUnit: varDG,
+                        EstimatedBudgetEUR: varBudget,
+                        PrimaryObjective: varObjective,
+                        StartDate: varStartDate,
+                        EndDate: varEndDate,
+                        ObjectiveOutcome: varOutcome,
+                        KpiEngagedViews: varKpiViews,
+                        KpiViewThroughRate: varKpiVTR,
+                        KpiNewSubscribers: varKpiSubs,
+                        KpiCostPerSubscriber: varKpiCPS,
+                        OtherKpis: varKpiOther,
+                        AgeRanges: varAges,
+                        Gender: varGender,
+                        Languages: varLanguages,
+                        CountriesRegions: varCountries,
+                        Interests: varInterests,
+                        AttachmentCount: varAttachCount,
+                        ContractorEngaged: varContractorOn,
+                        Contractor: varContractor,
+                        ContractReference: varContractRef,
+                        FinalReportDue: varReportDue,
+                        AckUnlisted: varAck1,
+                        AckCommentsDisabled: varAck2,
+                        Observations: varNotes,
+                        SavedOn: Now(),
+                        SavedBy: User().Email
+                    }
+                );
+                Notify("Request " & varRequestId & " submitted.", NotificationType.Success);
+                Set(varStatus, "Draft");
+                Set(varRequestId, "CR" & Text(CountRows(colCampaignRequests) + 1, "0000"));
+                Set(varTitle, "");
+                Set(varLead, User().FullName);
+                Set(varDG, "");
+                Set(varBudget, "");
+                Set(varObjective, "");
+                Set(varStartDate, Blank());
+                Set(varEndDate, Blank());
+                Set(varOutcome, "");
+                Set(varKpiViews, "");
+                Set(varKpiVTR, "");
+                Set(varKpiSubs, "");
+                Set(varKpiCPS, "");
+                Set(varKpiOther, "");
+                Set(varAges, "");
+                Set(varGender, "All");
+                Set(varLanguages, "");
+                Set(varCountries, "");
+                Set(varInterests, "");
+                Set(varAttachCount, 0);
+                Set(varContractorOn, false);
+                Set(varContractor, "");
+                Set(varContractRef, "");
+                Set(varReportDue, Blank());
+                Set(varAck1, false);
+                Set(varAck2, false);
+                Set(varNotes, "");
+                Set(varActiveSection, "General");
+                Reset(InAttach)
+            RadiusBottomLeft: =4
+            RadiusBottomRight: =4
+            RadiusTopLeft: =4
+            RadiusTopRight: =4
+            Size: =12
+            Text: ="Submit request"
+            Width: =130
+            X: =964
+            Y: =2252
+            ZIndex: =96

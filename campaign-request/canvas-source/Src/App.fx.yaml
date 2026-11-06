@@ -1,0 +1,43 @@
+App As appinfo:
+    BackEnabled: =false
+    OnStart: |-
+        =ClearCollect(colCampaignRequests, {RequestId: "", Status: "", Title: ""});
+        Clear(colCampaignRequests);
+        Set(varStatus, "Draft");
+        Set(varRequestId, "CR" & Text(CountRows(colCampaignRequests) + 1, "0000"));
+        Set(varTitle, "");
+        Set(varLead, User().FullName);
+        Set(varDG, "");
+        Set(varBudget, "");
+        Set(varObjective, "");
+        Set(varStartDate, Blank());
+        Set(varEndDate, Blank());
+        Set(varOutcome, "");
+        Set(varKpiViews, "");
+        Set(varKpiVTR, "");
+        Set(varKpiSubs, "");
+        Set(varKpiCPS, "");
+        Set(varKpiOther, "");
+        Set(varAges, "");
+        Set(varGender, "All");
+        Set(varLanguages, "");
+        Set(varCountries, "");
+        Set(varInterests, "");
+        Set(varAttachCount, 0);
+        Set(varContractorOn, false);
+        Set(varContractor, "");
+        Set(varContractRef, "");
+        Set(varReportDue, Blank());
+        Set(varAck1, false);
+        Set(varAck2, false);
+        Set(varNotes, "");
+        Set(varActiveSection, "General")
+    StartScreen: =CampaignRequestScreen
+    Theme: =PowerAppsTheme
+
+    Host As hostControl.DefaultHostControlVariant:
+        OnCancel: =false
+        OnEdit: =false
+        OnNew: =false
+        OnSave: =false
+        OnView: =false
