@@ -1,0 +1,244 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    },
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    }
+  },
+  "triggers": {
+    "manual": {
+      "type": "Request",
+      "kind": "PowerAppV2",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "required": [
+            "text",
+            "file"
+          ],
+          "properties": {
+            "text": {
+              "title": "FileName",
+              "type": "string",
+              "x-ms-dynamically-added": true,
+              "description": "PDF file name, e.g. 26-0023_Photo_20261117-1530.pdf",
+              "x-ms-content-hint": "TEXT"
+            },
+            "file": {
+              "title": "PdfFile",
+              "type": "object",
+              "x-ms-dynamically-added": true,
+              "description": "The PDF produced by PDF() in the app",
+              "x-ms-content-hint": "FILE",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "contentBytes": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "actions": {
+    "Get_administrators": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems",
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "parameters": {
+          "dataset": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",
+          "table": "58e5019a-29bb-4cca-94dd-733e418619a0",
+          "$filter": "Role eq 'ADMINISTRATOR'",
+          "$top": 500
+        },
+        "authentication": "@parameters('$authentication')"
+      },
+      "runAfter": {},
+      "description": "Administrators of the app (AV-CD-RolesPermissionsList, Role = ADMINISTRATOR)"
+    },
+    "Filter_caller_is_administrator": {
+      "type": "Query",
+      "runAfter": {
+        "Get_administrators": [
+          "Succeeded"
+        ]
+      },
+      "inputs": {
+        "from": "@outputs('Get_administrators')?['body/value']",
+        "where": "@equals(toLower(coalesce(item()?['UserEmail']?['Email'], '')), toLower(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'], '')))"
+      },
+      "description": "Keeps the administrator whose e-mail is the e-mail of the person who pressed the button in the app"
+    },
+    "Caller_is_administrator": {
+      "type": "If",
+      "runAfter": {
+        "Filter_caller_is_administrator": [
+          "Succeeded"
+        ]
+      },
+      "expression": {
+        "and": [
+          {
+            "greater": [
+              "@length(body('Filter_caller_is_administrator'))",
+              0
+            ]
+          }
+        ]
+      },
+      "actions": {
+        "Create_file": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "CreateFile",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",
+              "folderPath": "/AV-CD-Exports",
+              "name": "@triggerBody()?['text']",
+              "body": "@base64ToBinary(triggerBody()?['file']?['contentBytes'])"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runAfter": {},
+          "runtimeConfiguration": {
+            "contentTransfer": {
+              "transferMode": "Chunked"
+            }
+          }
+        },
+        "Respond_saved": {
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "fileurl": "@{concat('https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm', body('Create_file')?['Path'])}",
+              "status": "saved",
+              "message": "The PDF was saved in AV-CD-Exports."
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fileurl": {
+                  "title": "fileurl",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "status": {
+                  "title": "status",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "message": {
+                  "title": "message",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Create_file": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Respond_save_failed": {
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "fileurl": "",
+              "status": "error",
+              "message": "The PDF could not be saved in AV-CD-Exports (check the library and the flow connection)."
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fileurl": {
+                  "title": "fileurl",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "status": {
+                  "title": "status",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "message": {
+                  "title": "message",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Create_file": [
+              "Failed",
+              "TimedOut"
+            ]
+          }
+        }
+      },
+      "else": {
+        "actions": {
+          "Respond_not_administrator": {
+            "type": "Response",
+            "kind": "PowerApp",
+            "inputs": {
+              "statusCode": 200,
+              "body": {
+                "fileurl": "",
+                "status": "denied",
+                "message": "Only administrators can save the PDF in AV-CD-Exports."
+              },
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileurl": {
+                    "title": "fileurl",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "status": {
+                    "title": "status",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  },
+                  "message": {
+                    "title": "message",
+                    "x-ms-dynamically-added": true,
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "runAfter": {}
+          }
+        }
+      }
+    }
+  },
+  "outputs": {}
+}
