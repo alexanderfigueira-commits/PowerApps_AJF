@@ -2,7 +2,7 @@
 """FINAL200 on FINAL199. PDF(): the orientation enum is PaperOrientation (PageOrientation does not exist; Studio reported 5 errors per print sheet)."""
 import datetime, os, re, shutil
 from payaml import App
-SRC, NEW = 'newV61', 'newV62'
+SRC, NEW = os.environ.get('SRC', 'newV61'), os.environ.get('NEW', 'newV62')
 if os.path.exists(NEW): shutil.rmtree(NEW)
 shutil.copytree(SRC, NEW)
 app = App(NEW)

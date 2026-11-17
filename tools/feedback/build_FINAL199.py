@@ -7,7 +7,7 @@ control and the flow are in the app (they cannot be created from the file)."""
 import copy, datetime, os, re, shutil
 from payaml import App, find, _fmt
 from hp_common import Builder
-SRC, NEW = 'newV60', 'newV61'
+SRC, NEW = os.environ.get('SRC', 'newV60'), os.environ.get('NEW', 'newV61')
 if os.path.exists(NEW): shutil.rmtree(NEW)
 shutil.copytree(SRC, NEW)
 import hp_common; hp_common.NEW = NEW

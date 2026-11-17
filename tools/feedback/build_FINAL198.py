@@ -11,7 +11,10 @@ import datetime, math, os, re, shutil, sys
 from payaml import App, find
 sys.path.insert(0, '.')
 from fit_lib import two, line_h, cpl, text_lines, analyse, R, walk
-SRC, NEW = 'newV59', 'newV60'
+SRC, NEW = os.environ.get('SRC', 'newV59'), os.environ.get('NEW', 'newV60')
+LBL_SF, VAL_SF = int(os.environ.get('LBL_SF', 11)), int(os.environ.get('VAL_SF', 13))
+HEADER_V2 = os.environ.get('HEADER_V2') == '1'
+LBL_COLOR = os.environ.get('LBL_COLOR')
 if os.path.exists(NEW): shutil.rmtree(NEW)
 shutil.copytree(SRC, NEW)
 app = App(NEW)
@@ -34,7 +37,24 @@ for scr, p, per_page_wish in (('PrintVideoDetailScreen', 'PVD', 1), ('PrintPodca
     by = {i['name']: i for i in items}
     # ---------- request header: bigger text, two lines for the values
     hdr_val_h = 2 * line_h(12) + 2
-    for n in tp['Children']:
+    if HEADER_V2:
+        # header columns sized to their content (short ids narrow, names wide); 12 pt labels and values, top-aligned
+        COLSX = [(56, 120), (186, 90), (286, 150), (446, 250), (706, 250), (966, 110), (1086, 238)]
+        LBL_Y = 152; VAL_Y = LBL_Y + line_h(12)
+        for k, (x, w) in enumerate(COLSX):
+            for kind, y, hh in (('HdrLbl', LBL_Y, line_h(12)), ('HdrVal', VAL_Y, hdr_val_h)):
+                nm = f'{p}_{kind}{k}'
+                setp(scr, nm, 'X', iff(round(x * 0.7), x)); setp(scr, nm, 'Width', iff(round(w * 0.7), w))
+                setp(scr, nm, 'Y', str(y)); setp(scr, nm, 'Height', str(hh)); setp(scr, nm, 'Size', iff(8, 12))
+                setp(scr, nm, 'VerticalAlign', 'VerticalAlign.Top')
+                if kind == 'HdrLbl' and LBL_COLOR: setp(scr, nm, 'Color', LBL_COLOR)
+                if kind == 'HdrVal':
+                    r = R(find(tp, nm)); maxc = 2 * min(cpl(12, w), cpl(8, round(w * 0.7)))
+                    if 'Len(t) >' not in r['Text']: setp(scr, nm, 'Text', trunc(r['Text'], maxc))
+        card_bottom = VAL_Y + hdr_val_h + 6
+        setp(scr, f'{p}_HeaderCard', 'Y', '112'); setp(scr, f'{p}_HeaderCard', 'Height', str(card_bottom - 112))
+        GAL_Y = card_bottom + 6
+    for n in ([] if HEADER_V2 else tp['Children']):
         nm = n['Name']
         if re.fullmatch(rf'{p}_HdrLbl\d', nm):
             sc, sf = two(R(n)['Size'])
@@ -44,20 +64,26 @@ for scr, p, per_page_wish in (('PrintVideoDetailScreen', 'PVD', 1), ('PrintPodca
             setp(scr, nm, 'Size', iff(9, 12)); setp(scr, nm, 'Height', str(hdr_val_h)); setp(scr, nm, 'Y', str(HDR_VAL_Y))
             maxc = 2 * min(cpl(12, wf), cpl(9, wc))
             if 'Len(t) >' not in r['Text']: setp(scr, nm, 'Text', trunc(r['Text'], maxc))
-    GAL_Y = HDR_VAL_Y + hdr_val_h + 4
+    if not HEADER_V2: GAL_Y = HDR_VAL_Y + hdr_val_h + 4
     # ---------- media block
     # the compact layout is 70% of the width: its fonts follow the same ratio (FINAL197 had them at about 79%)
     for i in items:
         if i['kind'] in ('cap', 'sec', 'lbl', 'val'):
-            if i['kind'] == 'lbl' and i['sf'] > 11: i['sf'] = 11   # field names 11 pt: fewer wrapped names
-            if i['kind'] == 'val' and i['sf'] > 13: i['sf'] = 13   # values 13 pt (were 9 before FINAL197)
+            if i['kind'] == 'lbl': i['sf'] = LBL_SF   # field names (FINAL198: 11 pt; FINAL201: 12 pt)
+            if i['kind'] == 'val': i['sf'] = VAL_SF   # values (FINAL198: 13 pt; FINAL201: 12 pt)
             sc = max(7, round(i['sf'] * 0.70))
             setp(scr, i['name'], 'Size', iff(sc, i['sf'])); i['sc'] = sc
+    if LBL_COLOR:
+        for i in items:
+            if i['kind'] == 'lbl': setp(scr, i['name'], 'Color', LBL_COLOR)
+            if i['kind'] == 'val':
+                cr = R(find(tp, i['name'])).get('Color', '')
+                if 'RGBA(150, 155, 165, 1)' in cr: setp(scr, i['name'], 'Color', cr.replace('RGBA(150, 155, 165, 1)', 'RGBA(110, 116, 128, 1)'))
     cap = by[f'{p}_RowCaption']
     cap_h = line_h(cap['sf'])
     setp(scr, cap['name'], 'Height', str(cap_h))
     TOP = cap_h + TOP_GAP
-    LBL = {'c': line_h(8), 'f': line_h(11)}
+    LBL = {'c': line_h(max(7, round(LBL_SF * 0.70))), 'f': line_h(LBL_SF)}
     vals = [i for i in items if i['kind'] == 'val']
     for v in vals:
         t = v['text']
