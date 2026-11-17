@@ -7,7 +7,9 @@ import json, uuid, zipfile, datetime, io, os
 OUT = '/home/user/PowerApps_AJF/docs/flows'
 SITE = 'https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm'
 ROLES_LIST = '58e5019a-29bb-4cca-94dd-733e418619a0'      # AV-CD-RolesPermissionsList
-LIBRARY = '/AV-CD-Exports'
+LIBRARY = '/AVCDExports'
+PRINTS = '/AVCDPrints'
+PRINTS_LIB = 'AVCDPrints'
 NAME = 'AVCD_SavePrintPDF'
 FLOW_ID = 'b6f2a3d1-4c7e-4e0a-9a51-2d7c8e6f1a01'
 CR_LOGICAL = 'avcd_sharedsharepointonline_pdfexport'
@@ -34,7 +36,8 @@ definition = {
         'inputs': {'schema': {'type': 'object', 'required': ['text', 'file'], 'properties': {
             'text': {'title': 'FileName', 'type': 'string', 'x-ms-dynamically-added': True, 'description': 'PDF file name, e.g. 26-0023_Photo_20261117-1530.pdf', 'x-ms-content-hint': 'TEXT'},
             'file': {'title': 'PdfFile', 'type': 'object', 'x-ms-dynamically-added': True, 'description': 'The PDF produced by PDF() in the app', 'x-ms-content-hint': 'FILE',
-                     'properties': {'name': {'type': 'string'}, 'contentBytes': {'type': 'string', 'format': 'byte'}}}}}}}},
+                     'properties': {'name': {'type': 'string'}, 'contentBytes': {'type': 'string', 'format': 'byte'}}},
+            'mode': {'title': 'Mode', 'type': 'string', 'x-ms-dynamically-added': True, 'description': 'print = copy for the user to print or save (any app user); empty = archive in AVCDExports (administrators)', 'x-ms-content-hint': 'TEXT'}}}}}},
     'actions': {
         'Get_administrators': {**sp('GetItems', {'dataset': SITE, 'table': ROLES_LIST, '$filter': "Role eq 'ADMINISTRATOR'", '$top': 500}),
                                'runAfter': {}, 'description': 'Administrators of the app (AV-CD-RolesPermissionsList, Role = ADMINISTRATOR)'},
@@ -43,20 +46,42 @@ definition = {
             'inputs': {'from': "@outputs('Get_administrators')?['body/value']",
                        'where': f"@equals(toLower(coalesce(item()?['UserEmail']?['Email'], '')), {CALLER})"},
             'description': 'Keeps the administrator whose e-mail is the e-mail of the person who pressed the button in the app'},
-        'Caller_is_administrator': {
+        'Is_print_copy': {
             'type': 'If', 'runAfter': {'Filter_caller_is_administrator': ['Succeeded']},
-            'expression': {'and': [{'greater': ["@length(body('Filter_caller_is_administrator'))", 0]}]},
+            'description': 'Mode = print: a copy for the person who pressed Download PDF, in AVCDPrints, opened through a view-only link',
+            'expression': {'and': [{'equals': ["@toLower(coalesce(triggerBody()?['mode'], ''))", 'print']}]},
+            'actions': {
+                'Create_print_file': {**sp('CreateFile', {'dataset': SITE, 'folderPath': PRINTS,
+                                                          'name': "@triggerBody()?['text']",
+                                                          'body': "@base64ToBinary(triggerBody()?['file']?['contentBytes'])"}),
+                                      'runAfter': {}, 'runtimeConfiguration': {'contentTransfer': {'transferMode': 'Chunked'}}},
+                'Create_view_link': {**sp('CreateSharingLink', {'dataset': SITE, 'table': PRINTS_LIB,
+                                                                'id': "@body('Create_print_file')?['ItemId']",
+                                                                'permission/type': 'view', 'permission/scope': 'organization'}),
+                                     'runAfter': {'Create_print_file': ['Succeeded']}},
+                'Respond_print_link': {**respond("@body('Create_view_link')?['link']?['webUrl']", 'saved', 'The PDF is ready to print or save.'),
+                                       'runAfter': {'Create_view_link': ['Succeeded']}},
+                'Respond_print_failed': {**respond('', 'error', 'The PDF could not be prepared for download (check the AVCDPrints library and the flow connection).'),
+                                         'runAfter': {'Create_view_link': ['Failed', 'TimedOut', 'Skipped']}}},
+            'else': {'actions': {}}},
+        'Caller_is_administrator': {
+            'type': 'If', 'runAfter': {'Is_print_copy': ['Succeeded']},
+            'expression': {'and': [{'not': {'equals': ["@toLower(coalesce(triggerBody()?['mode'], ''))", 'print']}},
+                                   {'greater': ["@length(body('Filter_caller_is_administrator'))", 0]}]},
             'actions': {
                 'Create_file': {**sp('CreateFile', {'dataset': SITE, 'folderPath': LIBRARY,
                                                     'name': "@triggerBody()?['text']",
                                                     'body': "@base64ToBinary(triggerBody()?['file']?['contentBytes'])"}),
                                 'runAfter': {}, 'runtimeConfiguration': {'contentTransfer': {'transferMode': 'Chunked'}}},
-                'Respond_saved': {**respond(f"@{{concat('{SITE}', body('Create_file')?['Path'])}}", 'saved', 'The PDF was saved in AV-CD-Exports.'),
+                'Respond_saved': {**respond(f"@{{concat('{SITE}', body('Create_file')?['Path'])}}", 'saved', 'The PDF was saved in AVCDExports.'),
                                   'runAfter': {'Create_file': ['Succeeded']}},
-                'Respond_save_failed': {**respond('', 'error', 'The PDF could not be saved in AV-CD-Exports (check the library and the flow connection).'),
+                'Respond_save_failed': {**respond('', 'error', 'The PDF could not be saved in AVCDExports (check the library and the flow connection).'),
                                         'runAfter': {'Create_file': ['Failed', 'TimedOut']}}},
             'else': {'actions': {
-                'Respond_not_administrator': {**respond('', 'denied', 'Only administrators can save the PDF in AV-CD-Exports.'), 'runAfter': {}}}}}},
+                'Not_a_print_copy': {'type': 'If', 'runAfter': {},
+                                     'expression': {'and': [{'not': {'equals': ["@toLower(coalesce(triggerBody()?['mode'], ''))", 'print']}}]},
+                                     'actions': {'Respond_not_administrator': {**respond('', 'denied', 'Only administrators can save the PDF in AV-CD-Exports.'), 'runAfter': {}}},
+                                     'else': {'actions': {}}}}}}},
     'outputs': {}}
 
 def workflow_json(conn_refs):
@@ -73,9 +98,9 @@ solution_xml = f'''<ImportExportXml version="9.2.24101.200" SolutionPackageVersi
       <LocalizedName description="AV-CD Print PDF" languagecode="1033" />
     </LocalizedNames>
     <Descriptions>
-      <Description description="Flow AVCD_SavePrintPDF: saves the print PDF of a request in AV-CD-Exports (administrators only)." languagecode="1033" />
+      <Description description="Flow AVCD_SavePrintPDF: archive copy in AVCDExports (administrators) and print copy in AVCDPrints (any app user, view link)." languagecode="1033" />
     </Descriptions>
-    <Version>1.0.0.0</Version>
+    <Version>1.0.0.1</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>avcd</UniqueName>
