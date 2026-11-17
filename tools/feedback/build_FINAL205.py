@@ -4,7 +4,7 @@ the flow saves a copy in AVCDPrints with a view-only link and the app opens it i
 Needs the flow AVCD_SavePrintPDF 1.0.0.1 (optional input Mode) and a refresh of the flow in Studio."""
 import datetime, os, re, shutil
 from payaml import App
-SRC, NEW = 'newV66', 'newV67'
+SRC, NEW = os.environ.get('SRC', 'newV66'), os.environ.get('NEW', 'newV67')
 if os.path.exists(NEW): shutil.rmtree(NEW)
 shutil.copytree(SRC, NEW)
 app = App(NEW)
