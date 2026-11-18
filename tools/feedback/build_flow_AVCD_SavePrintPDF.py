@@ -84,6 +84,17 @@ definition = {
                                      'else': {'actions': {}}}}}}},
     'outputs': {}}
 
+# 1.0.0.2: one path for every app user (administrators and requestors): the PDF is saved in AVCDExports and the link is returned.
+definition['actions'] = {
+    'Create_file': {**sp('CreateFile', {'dataset': SITE, 'folderPath': LIBRARY,
+                                        'name': "@triggerBody()?['text']",
+                                        'body': "@base64ToBinary(triggerBody()?['file']?['contentBytes'])"}),
+                    'runAfter': {}, 'runtimeConfiguration': {'contentTransfer': {'transferMode': 'Chunked'}},
+                    'description': 'Saves the PDF of the print preview in AVCDExports'},
+    'Respond_saved': {**respond(f"@{{concat('{SITE}', body('Create_file')?['Path'])}}", 'saved', 'The PDF was saved.'),
+                      'runAfter': {'Create_file': ['Succeeded']}},
+    'Respond_save_failed': {**respond('', 'error', 'The PDF could not be saved in AVCDExports (check the library and the flow connection).'),
+                            'runAfter': {'Create_file': ['Failed', 'TimedOut']}}}
 def workflow_json(conn_refs):
     return {'properties': {'connectionReferences': conn_refs, 'definition': definition, 'templateName': ''}, 'schemaVersion': '1.0.0.0'}
 
@@ -98,9 +109,9 @@ solution_xml = f'''<ImportExportXml version="9.2.24101.200" SolutionPackageVersi
       <LocalizedName description="AV-CD Print PDF" languagecode="1033" />
     </LocalizedNames>
     <Descriptions>
-      <Description description="Flow AVCD_SavePrintPDF: archive copy in AVCDExports (administrators) and print copy in AVCDPrints (any app user, view link)." languagecode="1033" />
+      <Description description="Flow AVCD_SavePrintPDF: saves the print PDF of a request in AVCDExports and returns its link (every app user)." languagecode="1033" />
     </Descriptions>
-    <Version>1.0.0.1</Version>
+    <Version>1.0.0.2</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>avcd</UniqueName>
@@ -245,7 +256,7 @@ print('wrote', p)
 # ---------- 2. legacy package
 FLOW_RES, API_RES, CONN_RES = str(uuid.uuid5(uuid.NAMESPACE_URL, 'avcd-flow')), str(uuid.uuid5(uuid.NAMESPACE_URL, 'avcd-api')), str(uuid.uuid5(uuid.NAMESPACE_URL, 'avcd-conn'))
 ICON = 'https://connectoricons-prod.azureedge.net/releases/v1.0.1676/1.0.1676.3617/sharepointonline/icon.png'
-manifest = {'schema': '1.0', 'details': {'displayName': NAME, 'description': 'Saves the print PDF of a request in AV-CD-Exports (administrators only).',
+manifest = {'schema': '1.0', 'details': {'displayName': NAME, 'description': 'Saves the print PDF of a request in AVCDExports and returns its link (every app user).',
             'createdTime': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.0000000Z'), 'packageTelemetryId': str(uuid.uuid4()),
             'creator': 'AV Central Deposit', 'sourceEnvironment': ''},
             'resources': {

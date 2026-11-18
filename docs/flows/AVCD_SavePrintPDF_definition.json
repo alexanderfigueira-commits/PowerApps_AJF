@@ -59,366 +59,103 @@
     }
   },
   "actions": {
-    "Get_administrators": {
+    "Create_file": {
       "type": "OpenApiConnection",
       "inputs": {
         "host": {
           "connectionName": "shared_sharepointonline",
-          "operationId": "GetItems",
+          "operationId": "CreateFile",
           "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
         },
         "parameters": {
           "dataset": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",
-          "table": "58e5019a-29bb-4cca-94dd-733e418619a0",
-          "$filter": "Role eq 'ADMINISTRATOR'",
-          "$top": 500
+          "folderPath": "/AVCDExports",
+          "name": "@triggerBody()?['text']",
+          "body": "@base64ToBinary(triggerBody()?['file']?['contentBytes'])"
         },
         "authentication": "@parameters('$authentication')"
       },
       "runAfter": {},
-      "description": "Administrators of the app (AV-CD-RolesPermissionsList, Role = ADMINISTRATOR)"
-    },
-    "Filter_caller_is_administrator": {
-      "type": "Query",
-      "runAfter": {
-        "Get_administrators": [
-          "Succeeded"
-        ]
+      "runtimeConfiguration": {
+        "contentTransfer": {
+          "transferMode": "Chunked"
+        }
       },
+      "description": "Saves the PDF of the print preview in AVCDExports"
+    },
+    "Respond_saved": {
+      "type": "Response",
+      "kind": "PowerApp",
       "inputs": {
-        "from": "@outputs('Get_administrators')?['body/value']",
-        "where": "@equals(toLower(coalesce(item()?['UserEmail']?['Email'], '')), toLower(coalesce(triggerOutputs()?['headers']?['x-ms-user-email'], '')))"
-      },
-      "description": "Keeps the administrator whose e-mail is the e-mail of the person who pressed the button in the app"
-    },
-    "Is_print_copy": {
-      "type": "If",
-      "runAfter": {
-        "Filter_caller_is_administrator": [
-          "Succeeded"
-        ]
-      },
-      "description": "Mode = print: a copy for the person who pressed Download PDF, in AVCDPrints, opened through a view-only link",
-      "expression": {
-        "and": [
-          {
-            "equals": [
-              "@toLower(coalesce(triggerBody()?['mode'], ''))",
-              "print"
-            ]
-          }
-        ]
-      },
-      "actions": {
-        "Create_print_file": {
-          "type": "OpenApiConnection",
-          "inputs": {
-            "host": {
-              "connectionName": "shared_sharepointonline",
-              "operationId": "CreateFile",
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
-            },
-            "parameters": {
-              "dataset": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",
-              "folderPath": "/AVCDPrints",
-              "name": "@triggerBody()?['text']",
-              "body": "@base64ToBinary(triggerBody()?['file']?['contentBytes'])"
-            },
-            "authentication": "@parameters('$authentication')"
-          },
-          "runAfter": {},
-          "runtimeConfiguration": {
-            "contentTransfer": {
-              "transferMode": "Chunked"
-            }
-          }
+        "statusCode": 200,
+        "body": {
+          "fileurl": "@{concat('https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm', body('Create_file')?['Path'])}",
+          "status": "saved",
+          "message": "The PDF was saved."
         },
-        "Create_view_link": {
-          "type": "OpenApiConnection",
-          "inputs": {
-            "host": {
-              "connectionName": "shared_sharepointonline",
-              "operationId": "CreateSharingLink",
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        "schema": {
+          "type": "object",
+          "properties": {
+            "fileurl": {
+              "title": "fileurl",
+              "x-ms-dynamically-added": true,
+              "type": "string"
             },
-            "parameters": {
-              "dataset": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",
-              "table": "AVCDPrints",
-              "id": "@body('Create_print_file')?['ItemId']",
-              "permission/type": "view",
-              "permission/scope": "organization"
+            "status": {
+              "title": "status",
+              "x-ms-dynamically-added": true,
+              "type": "string"
             },
-            "authentication": "@parameters('$authentication')"
-          },
-          "runAfter": {
-            "Create_print_file": [
-              "Succeeded"
-            ]
-          }
-        },
-        "Respond_print_link": {
-          "type": "Response",
-          "kind": "PowerApp",
-          "inputs": {
-            "statusCode": 200,
-            "body": {
-              "fileurl": "@body('Create_view_link')?['link']?['webUrl']",
-              "status": "saved",
-              "message": "The PDF is ready to print or save."
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "fileurl": {
-                  "title": "fileurl",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                },
-                "status": {
-                  "title": "status",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                },
-                "message": {
-                  "title": "message",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                }
-              }
+            "message": {
+              "title": "message",
+              "x-ms-dynamically-added": true,
+              "type": "string"
             }
-          },
-          "runAfter": {
-            "Create_view_link": [
-              "Succeeded"
-            ]
-          }
-        },
-        "Respond_print_failed": {
-          "type": "Response",
-          "kind": "PowerApp",
-          "inputs": {
-            "statusCode": 200,
-            "body": {
-              "fileurl": "",
-              "status": "error",
-              "message": "The PDF could not be prepared for download (check the AVCDPrints library and the flow connection)."
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "fileurl": {
-                  "title": "fileurl",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                },
-                "status": {
-                  "title": "status",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                },
-                "message": {
-                  "title": "message",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "runAfter": {
-            "Create_view_link": [
-              "Failed",
-              "TimedOut",
-              "Skipped"
-            ]
           }
         }
       },
-      "else": {
-        "actions": {}
+      "runAfter": {
+        "Create_file": [
+          "Succeeded"
+        ]
       }
     },
-    "Caller_is_administrator": {
-      "type": "If",
+    "Respond_save_failed": {
+      "type": "Response",
+      "kind": "PowerApp",
+      "inputs": {
+        "statusCode": 200,
+        "body": {
+          "fileurl": "",
+          "status": "error",
+          "message": "The PDF could not be saved in AVCDExports (check the library and the flow connection)."
+        },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "fileurl": {
+              "title": "fileurl",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+            },
+            "status": {
+              "title": "status",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+            },
+            "message": {
+              "title": "message",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+            }
+          }
+        }
+      },
       "runAfter": {
-        "Is_print_copy": [
-          "Succeeded"
+        "Create_file": [
+          "Failed",
+          "TimedOut"
         ]
-      },
-      "expression": {
-        "and": [
-          {
-            "not": {
-              "equals": [
-                "@toLower(coalesce(triggerBody()?['mode'], ''))",
-                "print"
-              ]
-            }
-          },
-          {
-            "greater": [
-              "@length(body('Filter_caller_is_administrator'))",
-              0
-            ]
-          }
-        ]
-      },
-      "actions": {
-        "Create_file": {
-          "type": "OpenApiConnection",
-          "inputs": {
-            "host": {
-              "connectionName": "shared_sharepointonline",
-              "operationId": "CreateFile",
-              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
-            },
-            "parameters": {
-              "dataset": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",
-              "folderPath": "/AVCDExports",
-              "name": "@triggerBody()?['text']",
-              "body": "@base64ToBinary(triggerBody()?['file']?['contentBytes'])"
-            },
-            "authentication": "@parameters('$authentication')"
-          },
-          "runAfter": {},
-          "runtimeConfiguration": {
-            "contentTransfer": {
-              "transferMode": "Chunked"
-            }
-          }
-        },
-        "Respond_saved": {
-          "type": "Response",
-          "kind": "PowerApp",
-          "inputs": {
-            "statusCode": 200,
-            "body": {
-              "fileurl": "@{concat('https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm', body('Create_file')?['Path'])}",
-              "status": "saved",
-              "message": "The PDF was saved in AVCDExports."
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "fileurl": {
-                  "title": "fileurl",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                },
-                "status": {
-                  "title": "status",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                },
-                "message": {
-                  "title": "message",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "runAfter": {
-            "Create_file": [
-              "Succeeded"
-            ]
-          }
-        },
-        "Respond_save_failed": {
-          "type": "Response",
-          "kind": "PowerApp",
-          "inputs": {
-            "statusCode": 200,
-            "body": {
-              "fileurl": "",
-              "status": "error",
-              "message": "The PDF could not be saved in AVCDExports (check the library and the flow connection)."
-            },
-            "schema": {
-              "type": "object",
-              "properties": {
-                "fileurl": {
-                  "title": "fileurl",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                },
-                "status": {
-                  "title": "status",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                },
-                "message": {
-                  "title": "message",
-                  "x-ms-dynamically-added": true,
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "runAfter": {
-            "Create_file": [
-              "Failed",
-              "TimedOut"
-            ]
-          }
-        }
-      },
-      "else": {
-        "actions": {
-          "Not_a_print_copy": {
-            "type": "If",
-            "runAfter": {},
-            "expression": {
-              "and": [
-                {
-                  "not": {
-                    "equals": [
-                      "@toLower(coalesce(triggerBody()?['mode'], ''))",
-                      "print"
-                    ]
-                  }
-                }
-              ]
-            },
-            "actions": {
-              "Respond_not_administrator": {
-                "type": "Response",
-                "kind": "PowerApp",
-                "inputs": {
-                  "statusCode": 200,
-                  "body": {
-                    "fileurl": "",
-                    "status": "denied",
-                    "message": "Only administrators can save the PDF in AV-CD-Exports."
-                  },
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "fileurl": {
-                        "title": "fileurl",
-                        "x-ms-dynamically-added": true,
-                        "type": "string"
-                      },
-                      "status": {
-                        "title": "status",
-                        "x-ms-dynamically-added": true,
-                        "type": "string"
-                      },
-                      "message": {
-                        "title": "message",
-                        "x-ms-dynamically-added": true,
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "runAfter": {}
-              }
-            },
-            "else": {
-              "actions": {}
-            }
-          }
-        }
       }
     }
   },
