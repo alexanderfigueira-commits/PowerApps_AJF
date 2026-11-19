@@ -1,0 +1,808 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  HelpScreen:
+    Properties:
+      Fill: =RGBA(247, 248, 250, 1)
+      LoadingSpinnerColor: =RGBA(0, 51, 102, 1)
+      OnVisible: =Set(varFeedbackSent, false)
+    Children:
+      - HL_TopBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Width: =1366
+      - HL_Card:
+          Control: Rectangle@2.3.0
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =634
+            Width: =900
+            X: =27
+            Y: =72
+      - HL_Title:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =36
+            Size: =22
+            Text: ="Help & Useful Resources"
+            Width: =840
+            X: =51
+            Y: =96
+      - HL_Subtitle:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =24
+            Text: ="Quick access to guidelines, portals and contacts for the AV Central Deposit process."
+            Width: =840
+            X: =51
+            Y: =136
+      - HL_Divider1:
+          Control: Rectangle@2.3.0
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(220, 224, 230, 1)
+            Height: =1
+            Width: =840
+            X: =51
+            Y: =168
+      - HL_SectionLinks:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Size: =15
+            Text: ="Links"
+            Width: =840
+            X: =51
+            Y: =180
+      - HL_Link1:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverFill: =RGBA(227, 234, 243, 1)
+            OnSelect: =Launch("https://eceuropaeu.sharepoint.com/sites/comm-services-portal/SitePages/Central-deposit.aspx?xsdata=MDV8MDJ8fDQ2MzlhYmMyOGQzNDRjYzAwMzFjMDhkZWM3YjgzNzE2fGIyNGM4YjA2NTIyYzQ2ZmU5MDgwNzA5MjZmOGRkZGIxfDB8MHw2MzkxNjc3OTExNDUyODg0NzZ8VW5rbm93bnxWR1ZoYlhOVFpXTjFjbWwwZVZObGNuWnBZMlY4ZXlKRFFTSTZJbFJsWVcxelgwRlVVRk5sY25acFkyVmZVMUJQVEU5R0lpd2lWaUk2SWpBdU1DNHdNREF3SWl3aVVDSTZJbGRwYmpNeUlpd2lRVTRpT2lKUGRHaGxjaUlzSWxkVUlqb3hNWDA9fDF8TDJOb1lYUnpMekU1T2pFek1EVXhNREZpTFdSaU9EUXROREF3WlMxaFpqQTRMV0UzTVRVNE9UY3pPV0ZrT1Y4NE9XVTBaRGN4TnkxbU5EazJMVFF4TVRBdFltWm1ZaTFrT1RsbU5EVXlNalJtWWpkQWRXNXhMbWRpYkM1emNHRmpaWE12YldWemMyRm5aWE12TVRjNE1URTRNak14TWpNeE1RPT18OWU1MzE2NjFjMjAxNDE0NjZmOGQwOGRlYzdiODM3MTV8NTRjMTc1OGViMjFiNGIwNDk3NmJhNDZhNWUxM2JlMmI%3D&sdata=K2RoU01vcVZtWGlzNWh6dXBxbTlNNUdCVFZSNitCZ2dwbXJPcndBVTRUZz0%3D&ovuser=b24c8b06-522c-46fe-9080-70926f8dddb1%2CAlexander.JARDIM-FIGUEIRA%40ext.ec.europa.eu&TeamsCID=09ad6518-18d8-437a-875b-b7f85c08bc70&OR=Teams-HL&CT=1781621902599&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNjA1MTQxNjcxNSIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%3D%3D")
+            Size: =14
+            Text: ="→  Central deposit guidelines"
+            Width: =840
+            X: =51
+            Y: =216
+      - HL_Link1Sub:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            Size: =12
+            Text: ="Official documentation for submitting AV productions to the Central Deposit."
+            Width: =840
+            X: =51
+            Y: =258
+      - HL_Link2:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverFill: =RGBA(227, 234, 243, 1)
+            OnSelect: =Launch("https://audiovisual.ec.europa.eu/en")
+            Size: =14
+            Text: ="→  AV Portal"
+            Tooltip: ="Open the EU Audiovisual Portal"
+            Width: =840
+            X: =51
+            Y: =290
+      - HL_Link2Sub:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            Size: =12
+            Text: ="Browse and search published AV content on the EU Audiovisual Portal."
+            Width: =840
+            X: =51
+            Y: =332
+      - HL_Link3:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverFill: =RGBA(227, 234, 243, 1)
+            OnSelect: =Launch("mailto:recipient@example.com")
+            Size: =14
+            Text: ="→  Contact the AV Library team"
+            Tooltip: ="Send an email to the AV Library team"
+            Width: =840
+            X: =51
+            Y: =364
+      - HL_Link3Sub:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            Size: =12
+            Text: ="For questions about submissions, rights, contracts or technical issues."
+            Width: =840
+            X: =51
+            Y: =406
+      - HL_Divider2:
+          Control: Rectangle@2.3.0
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(220, 224, 230, 1)
+            Height: =1
+            Width: =840
+            X: =51
+            Y: =512
+      - HL_SectionAbout:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            Size: =15
+            Text: ="About this app"
+            Width: =840
+            X: =51
+            Y: =524
+      - HL_About:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =88
+            Text: ="AV Central Deposit is a ticket system for DG COMM and associated services to submit audiovisual productions for archiving. Each request groups one or more archives by production type (Photo, Video or Podcast) and goes through a review workflow before being approved for deposit."
+            Width: =840
+            X: =51
+            Y: =554
+      - HL_RateCard:
+          Control: Rectangle@2.3.0
+          Group: Rate Screen
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =400
+            Width: =400
+            X: =946
+            Y: =72
+      - HL_RateTitle:
+          Control: Label@2.5.1
+          Group: Rate Screen
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =18
+            Text: ="Rate this application"
+            Width: =360
+            X: =970
+            Y: =92
+      - HL_RateSub:
+          Control: Label@2.5.1
+          Group: Rate Screen
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Size: =12
+            Text: ="How satisfied are you? Your feedback helps us improve."
+            Width: =360
+            X: =970
+            Y: =124
+      - HL_Star1:
+          Control: Classic/Button@2.2.0
+          Group: Rate Screen
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =If(varRating >= 1, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =Set(varRating, 1);
+              Set(varFeedbackSent, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =28
+            Text: =If(varRating >= 1, "★", "☆")
+            Width: =52
+            X: =970
+            Y: =170
+      - HL_Star2:
+          Control: Classic/Button@2.2.0
+          Group: Rate Screen
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =If(varRating >= 2, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =Set(varRating, 2);
+              Set(varFeedbackSent, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =28
+            Text: =If(varRating >= 2, "★", "☆")
+            Width: =52
+            X: =1026
+            Y: =170
+      - HL_Star3:
+          Control: Classic/Button@2.2.0
+          Group: Rate Screen
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =If(varRating >= 3, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =Set(varRating, 3);
+              Set(varFeedbackSent, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =28
+            Text: =If(varRating >= 3, "★", "☆")
+            Width: =52
+            X: =1082
+            Y: =170
+      - HL_Star4:
+          Control: Classic/Button@2.2.0
+          Group: Rate Screen
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =If(varRating >= 4, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =Set(varRating, 4);
+              Set(varFeedbackSent, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =28
+            Text: =If(varRating >= 4, "★", "☆")
+            Width: =52
+            X: =1138
+            Y: =170
+      - HL_Star5:
+          Control: Classic/Button@2.2.0
+          Group: Rate Screen
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderThickness: =0
+            Color: =If(varRating >= 5, RGBA(245, 158, 11, 1), RGBA(186, 196, 214, 1))
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(247, 248, 250, 1)
+            OnSelect: |-
+              =Set(varRating, 5);
+              Set(varFeedbackSent, false)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =28
+            Text: =If(varRating >= 5, "★", "☆")
+            Width: =52
+            X: =1194
+            Y: =170
+      - HL_RatingHint:
+          Control: Label@2.5.1
+          Group: Rate Screen
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(varRating > 0, RGBA(22, 128, 80, 1), RGBA(96, 104, 120, 1))
+            Font: =Font.'Open Sans'
+            Height: =24
+            Size: =12
+            Text: |-
+              =Switch(varRating,
+                  0, "Select a rating (required)",
+                  1, "1/5 — Very dissatisfied",
+                  2, "2/5 — Dissatisfied",
+                  3, "3/5 — Neutral",
+                  4, "4/5 — Satisfied",
+                  5, "5/5 — Very satisfied")
+            Width: =360
+            X: =970
+            Y: =228
+      - HL_FeedbackLbl:
+          Control: Label@2.5.1
+          Group: Rate Screen
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(60, 66, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =22
+            Size: =12
+            Text: ="Written feedback (optional)"
+            Width: =360
+            X: =970
+            Y: =262
+      - HL_Feedback:
+          Control: Classic/TextInput@2.3.2
+          Group: Rate Screen
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =varFeedbackText
+            Font: =Font.'Open Sans'
+            Height: =100
+            HintText: ="Tell us what works well and what could be improved..."
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            OnChange: =Set(varFeedbackText, Self.Text)
+            Width: =360
+            X: =970
+            Y: =288
+      - HL_BtnSubmitRating:
+          Control: Classic/Button@2.2.0
+          Group: Rate Screen
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledColor: =RGBA(255, 255, 255, 1)
+            DisabledFill: =RGBA(186, 196, 214, 1)
+            DisplayMode: =If(varRating > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 18, 107, 1)
+            OnSelect: |-
+              =Notify("Thank you for your feedback!", NotificationType.Success);
+              Set(varFeedbackSent, true);
+              Set(varRating, 0);
+              Set(varFeedbackText, "")
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =13
+            Text: ="Submit feedback"
+            Width: =180
+            X: =970
+            Y: =404
+      - HL_ThanksMsg:
+          Control: Label@2.5.1
+          Group: Rate Screen
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(22, 128, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Text: ="Thank you for your feedback!"
+            Visible: =varFeedbackSent
+            Width: =360
+            X: =970
+            Y: =452
+      - HL_Link3_1:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverFill: =RGBA(227, 234, 243, 1)
+            OnSelect: =Launch("https://eceuropaeu.sharepoint.com/sites/comm-services-portal/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2Fcomm%2Dservices%2Dportal%2FShared%20Documents%2FAudioVisual%2FAV%20Materials%20for%20the%20AV%20Central%20Deposit%20%28guidance%29%2Epdf&parent=%2Fsites%2Fcomm%2Dservices%2Dportal%2FShared%20Documents%2FAudioVisual")
+            Size: =14
+            Text: ="→  AV Materials for the AV Central Deposit (guidance)"
+            Tooltip: ="AV Materials for the AV Central Deposit of the AV Service Do's and Don'ts"
+            Width: =840
+            X: =51
+            Y: =432
+      - HL_Link3_1Sub:
+          Control: Label@2.5.1
+          Group: Group5
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(96, 104, 120, 1)
+            Font: =Font.'Open Sans'
+            Height: =20
+            Size: =12
+            Text: ="AV Materials for the AV Central Deposit of the AV Service - Do's and Don'ts."
+            Width: =840
+            X: =51
+            Y: =480
+      - Label12_5:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(149, 149, 149, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: |-
+              ="Audiovisual Service - DG COMM
+              This site is managed by the Directorate-General for Communication"
+            Width: =691
+            X: =265
+            Y: =717
+      - NoInternetIcon_5:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 0, 0, 1)
+            DisplayMode: =DisplayMode.View
+            FocusedBorderThickness: =0
+            Height: =44
+            Icon: =Icon.GlobeNotConnected
+            PaddingBottom: =5
+            PaddingLeft: =5
+            PaddingRight: =5
+            PaddingTop: =5
+            Tooltip: ="No internet connection detected. Please verify your connection and try again."
+            Visible: =!Connection.Connected
+            X: =16
+            Y: =719
+      - HomeAppTitle_6:
+          Control: Label@2.5.1
+          Group: Group4_3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =37
+            Size: =14
+            Text: ="Central Deposit"
+            VerticalAlign: =VerticalAlign.Bottom
+            Width: =193
+            X: =244
+            Y: =8
+      - Logo_EC_Form_11:
+          Control: Image@2.2.3
+          Group: Group4_3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =50
+            Image: ='LOGO CE_EN_RGB_HORIZONTAL_NEG1'
+            PaddingLeft: =15
+            Width: =186
+            X: =2
+            Y: =2
+      - CD_Logo_6:
+          Control: Image@2.2.3
+          Group: Group4_3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =31
+            Image: =cd_badge_play
+            Width: =31
+            X: =208
+            Y: =20
+      - HomeAppSubtitle_6:
+          Control: Label@2.5.1
+          Group: Group4_3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.'Open Sans'
+            Height: =22
+            Size: =10
+            Text: ="Ticket System"
+            VerticalAlign: =VerticalAlign.Top
+            X: =266
+            Y: =32
+      - HomeUserName_2:
+          Control: Label@2.5.1
+          Group: Header_2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(186, 202, 226, 1)
+            Font: =Font.Arial
+            Height: =47
+            Size: =11
+            Text: |-
+              =User().FullName & " - " & If(
+                  Find(".", Office365Users.MyProfile().Department) > 0,
+                  Left(Office365Users.MyProfile().Department, Find(".", Office365Users.MyProfile().Department) - 1),
+                  Office365Users.MyProfile().Department
+              )
+            Width: =174
+            X: =1139
+            Y: =6
+      - Image1_7:
+          Control: Image@2.2.3
+          Group: Header_2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =56
+            Image: =User().Image
+            RadiusBottomLeft: =3
+            RadiusBottomRight: =3
+            RadiusTopLeft: =3
+            RadiusTopRight: =3
+            Tooltip: |-
+              =Office365Users.MyProfile().JobTitle & " " & User().FullName & Char(13) &
+              Office365Users.MyProfile().MailNickname & " | " &Office365Users.MyProfile().Department
+            Width: =61
+            X: =1305
+      - NavPanel_MyRequestScreen_3:
+          Control: Classic/Button@2.2.0
+          Group: Group3_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =RGBA(255, 255, 255, 0.10)
+            DisplayMode: =DisplayMode.View
+            Fill: =RGBA(255, 255, 255, 0.10)
+            Font: =Font.'Open Sans'
+            Height: =52
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(255, 255, 255, 0.10)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(255, 255, 255, 0.10)
+            RadiusBottomLeft: =24
+            RadiusBottomRight: =24
+            RadiusTopLeft: =24
+            RadiusTopRight: =24
+            Size: =10
+            TabIndex: =-1
+            Text: =""
+            Visible: =true
+            Width: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  439,
+                  356
+              )
+            X: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  666,
+                  749
+              )
+            Y: =4
+      - NavBtnRequests_MyRequestScreen_3:
+          Control: Classic/Button@2.2.0
+          Group: Group3_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = MyRequestScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(MyRequestScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📋 Requests"
+            Tooltip: ="Requests"
+            Visible: =true
+            Width: =83
+            X: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  678,
+                  761
+              )
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_6:
+          Control: Classic/Button@2.2.0
+          Group: Group3_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = DashboardScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            Height: =38
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(DashboardScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📊" & Char(10) & "Dashboard"
+            Tooltip: ="Dashboard"
+            Visible: =true
+            Width: =83
+            X: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  761,
+                  844
+              )
+            Y: =9
+      - NavBtnReview_MyRequestScreen_3:
+          Control: Classic/Button@2.2.0
+          Group: Group3_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(ReviewScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="👁" & Char(10) & "Review"
+            Tooltip: ="Review"
+            Visible: =varUserRole = "ADMINISTRATOR"
+            Width: =83
+            X: |-
+              =If(
+                  varUserRole = "ADMINISTRATOR",
+                  844,
+                  927
+              )
+            Y: =9
+      - NavBtnHelp_MyRequestScreen_3:
+          Control: Classic/Button@2.2.0
+          Group: Group3_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = HelpScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: =Navigate(HelpScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="🔎" & Char(10) & "Help"
+            Tooltip: ="Help"
+            Visible: =true
+            Width: =83
+            X: =1010
+            Y: =9
+      - NavBtnDashboard_MyRequestScreen_7:
+          Control: Classic/Button@2.2.0
+          Group: Group3_3
+          Properties:
+            BorderColor: =RGBA(220, 224, 230, 1)
+            BorderThickness: =0
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =If(App.ActiveScreen = ReviewScreen, RGBA(56, 96, 178, 1), RGBA(0, 0, 0, 0))
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(56, 96, 178, 0.75)
+            OnSelect: |-
+              =ClearCollect(colPrintData, HomeGallery.AllItems);
+              Navigate(HomePrintScreen)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 18, 107, 1)
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Size: =10
+            Text: |-
+              ="📂
+              Export"
+            Tooltip: ="Dashboard"
+            Visible: =true
+            Width: =83
+            X: =927
+            Y: =9

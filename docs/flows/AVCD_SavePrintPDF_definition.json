@@ -1,0 +1,163 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    },
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    }
+  },
+  "triggers": {
+    "manual": {
+      "type": "Request",
+      "kind": "PowerAppV2",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "required": [
+            "text",
+            "file"
+          ],
+          "properties": {
+            "text": {
+              "title": "FileName",
+              "type": "string",
+              "x-ms-dynamically-added": true,
+              "description": "PDF file name, e.g. 26-0023_Photo_20261117-1530.pdf",
+              "x-ms-content-hint": "TEXT"
+            },
+            "file": {
+              "title": "PdfFile",
+              "type": "object",
+              "x-ms-dynamically-added": true,
+              "description": "The PDF produced by PDF() in the app",
+              "x-ms-content-hint": "FILE",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "contentBytes": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            },
+            "mode": {
+              "title": "Mode",
+              "type": "string",
+              "x-ms-dynamically-added": true,
+              "description": "print = copy for the user to print or save (any app user); empty = archive in AVCDExports (administrators)",
+              "x-ms-content-hint": "TEXT"
+            }
+          }
+        }
+      }
+    }
+  },
+  "actions": {
+    "Create_file": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "connectionName": "shared_sharepointonline",
+          "operationId": "CreateFile",
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "parameters": {
+          "dataset": "https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm",
+          "folderPath": "/AVCDExports",
+          "name": "@triggerBody()?['text']",
+          "body": "@base64ToBinary(triggerBody()?['file']?['contentBytes'])"
+        },
+        "authentication": "@parameters('$authentication')"
+      },
+      "runAfter": {},
+      "runtimeConfiguration": {
+        "contentTransfer": {
+          "transferMode": "Chunked"
+        }
+      },
+      "description": "Saves the PDF of the print preview in AVCDExports"
+    },
+    "Respond_saved": {
+      "type": "Response",
+      "kind": "PowerApp",
+      "inputs": {
+        "statusCode": 200,
+        "body": {
+          "fileurl": "@{concat('https://eceuropaeu.sharepoint.com/teams/GRP-EBSProductionForm', body('Create_file')?['Path'])}",
+          "status": "saved",
+          "message": "The PDF was saved."
+        },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "fileurl": {
+              "title": "fileurl",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+            },
+            "status": {
+              "title": "status",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+            },
+            "message": {
+              "title": "message",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "runAfter": {
+        "Create_file": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Respond_save_failed": {
+      "type": "Response",
+      "kind": "PowerApp",
+      "inputs": {
+        "statusCode": 200,
+        "body": {
+          "fileurl": "",
+          "status": "error",
+          "message": "The PDF could not be saved in AVCDExports (check the library and the flow connection)."
+        },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "fileurl": {
+              "title": "fileurl",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+            },
+            "status": {
+              "title": "status",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+            },
+            "message": {
+              "title": "message",
+              "x-ms-dynamically-added": true,
+              "type": "string"
+            }
+          }
+        }
+      },
+      "runAfter": {
+        "Create_file": [
+          "Failed",
+          "TimedOut"
+        ]
+      }
+    }
+  },
+  "outputs": {}
+}

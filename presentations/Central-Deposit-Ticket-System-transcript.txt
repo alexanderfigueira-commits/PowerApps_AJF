@@ -1,0 +1,188 @@
+====================================================
+Central Deposit Ticket System – Presenter Transcript
+====================================================
+
+Oct 5, 2026
+
+HOW TO USE THIS TRANSCRIPT
+==========================
+
+The talk runs about 8 minutes across 10 slides, roughly 45 seconds per slide. Read it aloud three times before the meeting: once slowly for meaning, once with the marks, once standing up with the slides.
+
+  /  ->  Short pause, about one second
+  //  ->  Long pause, two seconds; let the point land
+  **word**  ->  Stress this word; say it a little louder and slower
+  (look up)  ->  Look at the audience, not the screen
+  (click)  ->  Move to the next slide
+
+Rehearsal routine, 15 minutes a day for three days:
+
+1. Record yourself on your phone reading slides 1 to 10.
+2. Listen once and mark where you rushed or dropped your voice at the end of a sentence.
+3. Read again, finishing every sentence with a steady, downward tone.
+4. On day three, present from the cheat sheet at the end, not the full script.
+
+TONE GUIDE: CONFIDENT AND OPEN
+==============================
+
+Confident means you speak about the work as something you know well. Open means you invite the audience in and welcome their view. You need both: confidence without openness sounds closed, openness without confidence sounds unsure.
+
+  "We built…", "This means…"  ->  "We tried to…", "I think maybe…"
+  Short sentences, then a pause  ->  Long sentences joined with "and… and…"
+  End sentences on a falling tone  ->  Rising at the end, which sounds like a question
+  "Let me show you…"  ->  "Sorry, just quickly…"
+  "That's a good point; here's how it works today."  ->  "No, that's not right."
+  "I'll check and come back to you by Friday."  ->  "I don't know."
+
+Ready-made phrases:
+
+- **Opening:** "Thank you for your time. In the next eight minutes I'll show you what we built and why it matters."
+- **Moving on:** "So that's the why. Now let's look at the how." / "Here's where it gets practical."
+- **Owning a decision:** "We chose this on purpose, because…"
+- **Inviting input:** "I'd really value your view on this." / "What would make this more useful for your team?"
+- **Buying time:** "Good question. Let me make sure I understand it: you're asking about…"
+- **Not knowing:** "I don't have that figure with me. I'll send it to you after the meeting."
+- **Closing:** "Your feedback shapes the next version. Thank you."
+
+SLIDE-BY-SLIDE SCRIPT
+=====================
+
+Slide 1 · Central Deposit Ticket System (30 s)
+----------------------------------------------
+
+On screen: title, "From request to archive, in one place", camera, video and microphone icons.
+
+Good morning, everyone, / and thank you for your time. // (look up) Today I'll show you the **Central Deposit Ticket System**: / the app we built for the AV Central Deposit of the Audiovisual Service. // In about eight minutes / you'll see **why** we built it, / **how** it works, / and **what comes next**. (click)
+
+Key message: this is a finished, working tool, and you are about to see it.
+
+Slide 2 · Why we built it (50 s)
+--------------------------------
+
+On screen: three problems on the left, three answers on the right.
+
+Let's start with the **why**. // Before this app, / deposits reached us through **many channels**: / emails, shared drives, phone calls. / Rights and legal documents were **hard to check**. / And nobody could easily see **where a request stood**. // (look up) So we set one goal: / **one place** for every audiovisual deposit. // Today, every production is **one request**, / with its media items, / its documents / and a **clear status**. (click)
+
+Key message: we replaced scattered work with one reliable process.
+
+Slide 3 · One app on Microsoft 365 (50 s)
+-----------------------------------------
+
+On screen: four numbers: 3 production types, 2 roles, 4 steps per media item, 1 place.
+
+The app runs on the tools we **already have**: / **Power Apps** for the screens, / **SharePoint** lists for the data, / and **Power Automate** for e-mail notifications. // Nothing new / for our users to install or learn from scratch. // It handles **three** production types: / photo or reportage, / video / and podcast. / And it serves **two** roles: / requestors / and administrators. (click)
+
+Key message: built on tools the organisation already uses and trusts.
+
+Slide 4 · How a request flows (60 s)
+------------------------------------
+
+On screen: five steps with status pills: Draft, Pending, Processing, Approved or Rejected, Published.
+
+Here's how a request moves. // A requestor **creates** a request / and adds one or more **media items**. / Each item is completed in **four** short tabs: / Info, / Metadata, / Legal and Docs, / and Validations. // When it's ready, / they **submit** it, / and the status becomes **Pending**. / An administrator **reviews** it, / it moves to **Processing**, / and it ends **approved** / or **rejected**, / and then **published**. // (look up) At every moment, / everyone can see **exactly** where it is. (click)
+
+Key message: a clear, visible path from start to finish.
+
+Slide 5 · Two roles, two dashboards (60 s)
+------------------------------------------
+
+On screen: the Requestor and Administrator dashboards side by side.
+
+Each role opens on **its own dashboard**. // For requestors, / the first list is "**Requires my attention**": / what they need to do **now**. / For administrators, / it's the **TODO** list: / what waits for validation, / **oldest first**, / so nothing waits too long. // Next to it, / the **five latest updates** / and the **final decisions**. // Every list has a **counter** / and an **information icon** / that explains how it's sorted. // (look up) In **one glance**, / you know your priorities. (click)
+
+Key message: people see what matters to them, first.
+
+Slide 6 · Quality built in (60 s)
+---------------------------------
+
+On screen: a form with yellow-bordered fields, the validation checklist, an image preview.
+
+We built **quality checks** into the process, / so problems are caught **early**, / not at the end. // Any **mandatory** field that is still empty / gets a **yellow border**. / You see straight away / what is missing. // The validation checklist **adapts** / to photo, video or podcast. / Legal checks cover the **contract case**, / model releases, / music licences / and subtitle files. // And image previews show if a visual has the **right size**. (click)
+
+Key message: fewer errors, less back and forth.
+
+Slide 7 · Nothing slips through (50 s)
+--------------------------------------
+
+On screen: the notes icon, the bell icon, an e-mail notification.
+
+Three small signals / keep everyone **on time**. // A **notes** icon on every request / shows when there are notes to read. / A **bell** shows the days left / to the shooting or filming date, / and it turns **red** / when fewer than **seven days** remain. // And **e-mail notifications** / tell people / when a status changes / or a request is handed over. (click)
+
+Key message: the app warns you before something becomes a problem.
+
+Slide 8 · One consistent experience (50 s)
+------------------------------------------
+
+On screen: the same header and menu across several screens.
+
+We also made the app **consistent**. // Every screen has the **same header** / and the **same menu**. / The menu shows each person only what their **role** allows. // Administrators can jump from the review list / **straight into** a request, / and **back** again with one click. // Numbers are short and readable, / like **26-0001-01**, / and every request **prints** on one clear page. (click)
+
+Key message: easy to learn, easy to use every day.
+
+Slide 9 · Where we are and next steps (50 s)
+--------------------------------------------
+
+On screen: three next steps: user testing, notifications, training and go-live.
+
+So, / where are we? // The app is **built** / and has been refined in **short, regular iterations**. // Our next steps are **clear**. / **One:** test it with requestors and administrators. / **Two:** switch on the e-mail notifications. / **Three:** train the users / and go live. // (look up) And this is where **you** come in: / we'd really value your feedback **before** go-live. (click)
+
+Key message: ready for testing, with a clear plan to go live.
+
+Slide 10 · Thank you (30 s)
+---------------------------
+
+On screen: "Thank you. Your feedback shapes the next version."
+
+Thank you. // **Your feedback** / shapes the next version. // (look up, smile) I'm happy to take your **questions** now.
+
+PRONUNCIATION AND WORD STRESS
+=============================
+
+Capital letters show the stressed syllable. Say these slowly a few times before the meeting; they are the words most likely to trip you up.
+
+  stakeholders  |  Say it like: STAKE-hole-derz  |  Tip: Stress the first part only
+  deposit  |  Say it like: deh-POZ-it  |  Tip: Not "DEE-posit"
+  audiovisual  |  Say it like: AW-dee-oh-VIZH-oo-ul  |  Tip: Five syllables, smooth
+  SharePoint  |  Say it like: SHAIR-point  |  Tip: Two equal beats
+  Power Automate  |  Say it like: POW-er AW-toh-mate  |  Tip: "Automate" rhymes with "great"
+  administrator  |  Say it like: ad-MIN-is-tray-ter  |  Tip: Stress MIN, not the end
+  requestor  |  Say it like: rih-KWEST-er  |  Tip: Same stress as "request"
+  podcast  |  Say it like: POD-cast  |  Tip: Short "o", as in "hot"
+  validation  |  Say it like: val-ih-DAY-shun  |  Tip: Stress DAY
+  iteration  |  Say it like: it-er-AY-shun  |  Tip: Stress AY
+  priorities  |  Say it like: pry-OR-ih-teez  |  Tip: Stress OR
+  subtitles  |  Say it like: SUB-ty-tulz  |  Tip: Stress SUB
+  archive  |  Say it like: AR-kyve  |  Tip: "chive" as in the herb
+  26-0001-01  |  Say it like: "twenty-six, zero-zero-zero-one, zero-one"  |  Tip: Say each group, short pause between
+
+LIKELY QUESTIONS AND ANSWERS
+============================
+
+Start every answer with the short answer, then one reason. Thank people for a hard question; it shows you are open, not defensive. Check the answers about rollout and maintenance against your actual plans before the meeting, and adjust any that aren't decided yet.
+
+  When can we start using it?  ->  "It's ready for user testing now. We go live once testing is done and the users are trained. I'll share the dates as soon as the testing group is confirmed."
+  Who can see what?  ->  "Each person sees what their role allows. Requestors see their own requests; administrators see every submitted request and the review tools."
+  Where is the data stored?  ->  "In our own SharePoint lists, inside Microsoft 365. Nothing leaves our environment."
+  What happens to the old way of working?  ->  "We move deposits into the app step by step, so nobody is left without a channel during the change."
+  Can it handle large files?  ->  "Visuals and documents are attached in the app. For very large video or audio files we keep the FTP path, which the form asks for."
+  What if someone forgets a mandatory field?  ->  "They can't miss it: the field turns yellow until it's filled, and the validation step lists what's still needed."
+  How do people know something changed?  ->  "The dashboards show it first, and e-mail notifications tell them when a status changes or a request is handed over."
+  Can we add more production types or fields later?  ->  "Yes. The app is built to be extended, and your feedback decides what comes next."
+  Who maintains it?  ->  "It runs on standard Microsoft 365 tools that we already support, and the app is fully documented."
+  A question you can't answer  ->  "That's a good question, and I want to give you an accurate answer. Let me check and come back to you by [day]."
+
+CHEAT SHEET: THE 10 KEY MESSAGES
+================================
+
+Keep this page next to the laptop. If you lose your place, find the slide number and say its line.
+
+1. **Title:** A finished, working tool: one place from request to archive.
+2. **Why:** We replaced scattered channels with one reliable process.
+3. **What:** Built on Power Apps, SharePoint and Power Automate; 3 production types, 2 roles.
+4. **Flow:** Draft, Pending, Processing, Approved or Rejected, Published, always visible.
+5. **Dashboards:** Each role sees its priorities first, oldest waiting items on top.
+6. **Quality:** Empty mandatory fields turn yellow; checks adapt to photo, video or podcast.
+7. **Signals:** Notes icon, a bell that turns red under 7 days, e-mail notifications.
+8. **Consistency:** Same header and menu everywhere; Review to request and back in one click.
+9. **Next:** Test with users, switch on notifications, train, go live.
+10. **Close:** Your feedback shapes the next version. Questions?
